@@ -1,0 +1,50 @@
+sudo: required
+
+dist: trusty
+
+language: c
+compiler:
+  - gcc
+
+addons:
+  apt:
+    sources:
+    - sourceline: 'deb http://pkg.mxe.cc/repos/apt/debian jessie main'
+      key_url: 'http://pkg.mxe.cc/repos/apt/conf/mxeapt.gpg'
+    packages:
+    # MXE requirements
+    - p7zip-full
+    # libvips web dependencies
+    - mxe-x86-64-w64-mingw32.shared-gcc
+    - mxe-x86-64-w64-mingw32.shared-libwebp
+    - mxe-x86-64-w64-mingw32.shared-librsvg
+    - mxe-x86-64-w64-mingw32.shared-giflib
+    - mxe-x86-64-w64-mingw32.shared-glib
+    - mxe-x86-64-w64-mingw32.shared-pango
+    - mxe-x86-64-w64-mingw32.shared-fftw
+    - mxe-x86-64-w64-mingw32.shared-libgsf
+    - mxe-x86-64-w64-mingw32.shared-libjpeg-turbo
+    - mxe-x86-64-w64-mingw32.shared-tiff
+    - mxe-x86-64-w64-mingw32.shared-lcms
+    # TODO: libexif.mk and libexif-0.6-fixes.patch needs to be added upstream
+    # - mxe-x86-64-w64-mingw32.shared-libexif
+    - mxe-x86-64-w64-mingw32.shared-libpng
+    # libvips additional dependencies
+    # - mxe-x86-64-w64-mingw32.shared-matio
+    - mxe-x86-64-w64-mingw32.shared-poppler
+    # TODO: openslide.mk and openslide-3-fixes.patch needs to be added upstream
+    # - mxe-x86-64-w64-mingw32.shared-openslide
+    - mxe-x86-64-w64-mingw32.shared-imagemagick
+
+env:
+  global:
+    - VIPS_VERSION=8.6
+    - MXE_DIR=/usr/lib/mxe
+    - MXE_TARGET=x86_64-w64-mingw32.shared
+    - MXE_INCLUDE_PATH=$MXE_DIR/usr/$MXE_TARGET/include
+    - MXE_LIB_PATH=$MXE_DIR/usr/$MXE_TARGET/lib
+
+script:
+    - cd $MXE_DIR
+    # TODO: Wait for https://github.com/mxe/mxe/issues/2021
+    # - sudo make vips-web MXE_TARGETS=$MXE_TARGET MXE_PLUGIN_DIRS=$TRAVIS_BUILD_DIR/$VIPS_VERSION

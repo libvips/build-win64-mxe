@@ -1,0 +1,91 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <info@kleisauke.nl>
+Date: Sat, 2 June 2018 14:20:00 +0200
+Subject: [PATCH 1/1] Windows fixes
+
+- Fix compile errors with labeled statements named `OUT`.
+- The `host_os` and `build_os` variables may contain the
+  `.shared` or `.static` suffix.
+
+diff --git a/configure.ac b/configure.ac
+index 1111111..2222222 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -27,7 +27,10 @@ AC_TYPE_UINTPTR_T
+ LT_PREREQ([2.2.5])
+ LT_INIT([win32-dll disable-static])
+ LT_LANG([Windows Resource])
+-AM_CONDITIONAL([WINDOWS_RESOURCES], [test x$RC != x])
++AS_CASE([$host_os],
++  [mingw*], [AM_CONDITIONAL([WINDOWS_RESOURCES], [true])],
++  [AM_CONDITIONAL([WINDOWS_RESOURCES], [false])]
++)
+ 
+ # for windows manifest
+ WINDOWS_VERSIONINFO=$(echo "${VERSION}.0.0.0" | cut -f1-4 -d. | tr . ,)
+@@ -137,7 +140,7 @@ gl_VISIBILITY
+ # CLOEXEC
+ AC_MSG_CHECKING([fopen() close-on-exec flag])
+ AS_CASE([$host_os],
+-  [mingw32], [
++  [mingw32*], [
+     # Assume that if we're building for Windows, we want to pass N to fopen().
+     AC_MSG_RESULT([N])
+     AC_DEFINE([FOPEN_CLOEXEC_FLAG], ["N"], [Set to the fopen() flag string that sets FD_CLOEXEC, or an empty string if not supported.])
+@@ -182,28 +185,39 @@ AC_CHECK_FUNCS([fcntl])
+ 
+ # The test driver has special support for testing Windows builds from Cygwin
+ AC_MSG_CHECKING([whether to cross-test from Cygwin])
+-if test "$host_os" = "mingw32" -a "$build_os" = "cygwin"; then
+-  AC_MSG_RESULT([yes])
+-  CYGWIN_CROSS_TEST=yes
+-else
+-  AC_MSG_RESULT([no])
+-  CYGWIN_CROSS_TEST=""
+-fi
++case ${host_os}+${build_os} in
++  mingw32*+cygwin*)
++    AC_MSG_RESULT([yes])
++    CYGWIN_CROSS_TEST=yes
++    ;;
++  *)
++    AC_MSG_RESULT([no])
++    CYGWIN_CROSS_TEST=""
++    ;;
++esac
+ AC_SUBST([CYGWIN_CROSS_TEST])
+ AM_CONDITIONAL([CYGWIN_CROSS_TEST], [test -n "$CYGWIN_CROSS_TEST"])
+ 
+ # Only enable this on MinGW, since otherwise gcc will complain about an
+ # unknown option whenever it produces any *other* warnings
+-if test "$host_os" = "mingw32"; then
+-  CFLAG_MS_FORMAT=-Wno-pedantic-ms-format
+-else
+-  CFLAG_MS_FORMAT=""
+-fi
++# The CFLAG_NO_PSEUDO_MODIFIERS variable prevents Windows.h from 
++# defining IN or OUT.
++case "$host_os" in
++  mingw32*)
++    CFLAG_MS_FORMAT=-Wno-pedantic-ms-format
++    CFLAG_NO_PSEUDO_MODIFIERS=-D_NO_W32_PSEUDO_MODIFIERS
++    ;;
++  *)
++    CFLAG_MS_FORMAT=""
++    CFLAG_NO_PSEUDO_MODIFIERS=""
++    ;;
++esac
+ AC_SUBST([CFLAG_MS_FORMAT])
++AC_SUBST([CFLAG_NO_PSEUDO_MODIFIERS])
+ 
+ # The min/max glib version is actually 2.16, but glib doesn't have special
+ # handling for API changes that old
+-AC_SUBST(AM_CFLAGS, ['-Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs $(CFLAG_MS_FORMAT) $(CFLAG_VISIBILITY) -DG_DISABLE_SINGLE_INCLUDES -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_26 -DGLIB_VERSION_MAX_ALLOWED=GLIB_VERSION_MIN_REQUIRED -fno-common'])
++AC_SUBST(AM_CFLAGS, ['-Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs $(CFLAG_MS_FORMAT) $(CFLAG_VISIBILITY) $(CFLAG_NO_PSEUDO_MODIFIERS) -DG_DISABLE_SINGLE_INCLUDES -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_26 -DGLIB_VERSION_MAX_ALLOWED=GLIB_VERSION_MIN_REQUIRED -fno-common'])
+ 
+ AC_SUBST(FEATURE_FLAGS)
+ 

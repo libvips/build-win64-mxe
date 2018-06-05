@@ -1,0 +1,57 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Mark Brand <mabrand@mabrand.nl>
+Date: Thu, 23 Sep 2010 21:42:46 +0200
+Subject: [PATCH 1/2] fix tool paths
+
+
+diff --git a/glib-2.0.pc.in b/glib-2.0.pc.in
+index 1111111..2222222 100644
+--- a/glib-2.0.pc.in
++++ b/glib-2.0.pc.in
+@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
+ libdir=@libdir@
+ includedir=@includedir@
+ 
+-glib_genmarshal=glib-genmarshal
+-gobject_query=gobject-query
+-glib_mkenums=glib-mkenums
++glib_genmarshal=@bindir@/glib-genmarshal
++gobject_query=@bindir@/gobject-query
++glib_mkenums=@bindir@/glib-mkenums
+ 
+ Name: GLib
+ Description: C Utility Library
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Hans Petter Jansson <hpj@cl.no>
+Date: Fri, 15 Jun 2012 15:27:22 +0200
+Subject: [PATCH 2/2] Allow building without inotify support
+
+
+diff --git a/configure.ac b/configure.ac
+index 1111111..2222222 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1604,10 +1604,15 @@ AC_SUBST(SELINUX_LIBS)
+ dnl *****************************
+ dnl ** Check for inotify (GIO) **
+ dnl *****************************
++AC_ARG_ENABLE(inotify,
++              AC_HELP_STRING([--disable-inotify],
++                             [build without inotify support]))
+ inotify_support=no
+-AC_CHECK_HEADERS([sys/inotify.h],
+-[
+-  AC_CHECK_FUNCS(inotify_init1, [inotify_support=yes], [inotify_support=no])
++AS_IF([ test "x$enable_inotify" != "xno"], [
++ AC_CHECK_HEADERS([sys/inotify.h],
++ [
++   AC_CHECK_FUNCS(inotify_init1, [inotify_support=yes], [inotify_support=no])
++ ])
+ ])
+ 
+ AM_CONDITIONAL(HAVE_INOTIFY, [test "$inotify_support" = "yes"])
