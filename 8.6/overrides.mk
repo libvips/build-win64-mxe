@@ -23,8 +23,8 @@ libxml2_URL      := http://xmlsoft.org/sources/$(libxml2_FILE)
 libxml2_URL_2    := ftp://xmlsoft.org/libxml2/$(libxml2_FILE)
 
 # upstream version is 3.3.6-pl1
-fftw_VERSION  := 3.3.7
-fftw_CHECKSUM := 3b609b7feba5230e8f6dd8d245ddbefac324c5a6ae4186947670d9ac2cd25573
+fftw_VERSION  := 3.3.8
+fftw_CHECKSUM := 6113262f6e92c5bd474f2875fa1b01054c4ad5040f6b0da7c03c98821d9ae303
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
@@ -40,8 +40,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.9-50
-imagemagick_CHECKSUM := b6a8b6afea4cd0ea87e752a83bc66b13200e219e0a476156a83a259be3760560
+imagemagick_VERSION  := 6.9.10-1
+imagemagick_CHECKSUM := 15e07e394cbaed88d64aa76d97f1b9a7284dffdb36138decc77a2b4489ce01d4
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -52,8 +52,8 @@ imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 # Note: static linking is broken on 2.42, if static linking is needed; stick with 2.40.20.
 # See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.42.4
-librsvg_CHECKSUM := 225280a2a69ee4cce6452a1a92d9297cc1b34a8faface2bf2b4b9da48f044de3
+librsvg_VERSION  := 2.43.0
+librsvg_CHECKSUM := 4c7bb265314b0ec38b0ec292e11adc62dc1bb4953e920472fe4e2e3b0fe12422
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -107,11 +107,19 @@ glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 1.14.30
+# TODO: version 1.14.43 is broken. (`conflicting types for 'gsf_input_set_modtime_from_stat'`)
 libgsf_VERSION  := 1.14.42
 libgsf_CHECKSUM := 29fffb87b278b3fb1b8ae9138c3b4529c1fce664f1f94297c146a8563df80dc2
 libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
 libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)
+
+# upstream version is 1.15.4
+cairo_VERSION  := 1.15.12
+cairo_CHECKSUM := 7623081b94548a47ee6839a7312af34e9322997806948b6eec421a8c6d0594c9
+cairo_SUBDIR   := cairo-$(cairo_VERSION)
+cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
+cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
 
 # zlib will make libzlib.dll, but we want libz.dll so we must 
 # patch CMakeLists.txt
@@ -270,12 +278,15 @@ define librsvg_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-gtk-doc \
-        --disable-introspection
+        --disable-introspection \
+        --disable-tools \
+        LIBS="-lws2_32 -luserenv" \
+        RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu
 
-    # pass static rust package to linker
+    # Pass static Rust package to linker
     $(SED) -i 's,^deplibs_check_method=.*,deplibs_check_method="pass_all",g' $(BUILD_DIR)/libtool
 
-    # fix RUST_LIB linking
+    # Fix RUST_LIB linking
     $(SED) -i 's,\($$(.*_la_OBJECTS)\) \($$(.*_la_DEPENDENCIES)\),\1 $$\(RUST_LIB\) \2,g' $(SOURCE_DIR)/Makefile.in
     $(SED) -i 's,\($$(.*_la_OBJECTS)\) \($$(.*_la_LIBADD)\),\1 $$\(RUST_LIB\) \2,g' $(SOURCE_DIR)/Makefile.in
 

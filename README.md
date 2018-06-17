@@ -6,16 +6,16 @@ Experiment with building a libvips binary for 64-bit Windows with [MXE](https://
 | Name | [MXE](https://github.com/mxe/mxe) version | [build-win64](https://github.com/jcupitt/build-win64) version | New version | &#x1F53A;/&#x1F537;/&#x1F53B; | Notes
 | --- | --- | --- | --- | --- | --- |
 | [expat](https://github.com/libexpat/libexpat) | [2.2.5](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/expat.mk#L7) | [2.2.5](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L261) | 2.2.5 | &#x1F537; | -
-| [fftw](https://github.com/FFTW/fftw3) | [3.3.6-pl1](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/fftw.mk#L6) | [3.3.7](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L481) | 3.3.7 | &#x1F537; | -
+| [fftw](https://github.com/FFTW/fftw3) | [3.3.6-pl1](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/fftw.mk#L6) | [3.3.7](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L481) | 3.3.8 | &#x1F53A; | -
 | [giflib](https://sourceforge.net/projects/giflib/) | [5.1.4](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/giflib.mk#L6) | [5.1.4](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L387) | 5.1.4 | &#x1F537; | -
 | [glib](https://github.com/GNOME/glib) | [2.50.2](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/glib.mk#L7) | [2.54.2](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L760) | 2.54.2 | &#x1F537; | -
-| [imagemagick](https://github.com/ImageMagick/ImageMagick6) | [6.9.0-0](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/imagemagick.mk#L7) | [6.8.9](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L663) | 6.9.9-50 | &#x1F53A; | -
+| [imagemagick](https://github.com/ImageMagick/ImageMagick6) | [6.9.0-0](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/imagemagick.mk#L7) | [6.8.9](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L663) | 6.9.10-1 | &#x1F53A; | -
 | [lcms](https://github.com/mm2/Little-CMS) | [2.9](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/lcms.mk#L6) | [2.9](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L494) | 2.9 | &#x1F537; | -
 | [libexif](https://github.com/libexif/libexif) | - | [0.6.21](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L601) | 0.6.21 | &#x1F537; | + shutter speed math exception patch.
 | [libgsf](https://github.com/GNOME/libgsf) | [1.14.30](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/libgsf.mk#L6) | [1.14.42](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L865) | 1.14.42 | &#x1F537; | -
 | [libjpeg-turbo](https://libjpeg-turbo.org/) | [1.5.3](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/libjpeg-turbo.mk#L6) | [1.5.3](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L580) | 1.5.3 | &#x1F537; | Replaced [this patch](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/patches/libjpeg-turbo-bool.patch) with [this one](https://github.com/Alexpux/MINGW-packages/blob/65b698ce5ddc501b9aa9fb649b640f44284eb6df/mingw-w64-libjpeg-turbo/0001-header-compat.mingw.patch).
 | [libpng](https://github.com/glennrp/libpng) | [1.6.34](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/libpng.mk#L6) | [1.6.30](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L368) | 1.6.34 | &#x1F53A; | -
-| [librsvg](https://github.com/GNOME/librsvg) | [2.40.5](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/librsvg.mk#L6) | [2.40.19](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L420) | 2.42.4 | &#x1F53A; | Requires the Rust toolchain + added some patches.
+| [librsvg](https://github.com/GNOME/librsvg) | [2.40.5](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/librsvg.mk#L6) | [2.40.19](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L420) | 2.43.0 | &#x1F53A; | Requires the Rust toolchain + added patch for 'librsvg_internals' linking.
 | [libwebp](https://github.com/webmproject/libwebp) | [0.4.4](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/libwebp.mk#L6) | [0.6.1](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L720) | 1.0.0 | &#x1F53A; | -
 | [matio](https://github.com/tbeu/matio) | [1.5.2](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/matio.mk#L6) | [1.5.6](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L940) | 1.5.12 | &#x1F53A; | -
 | [openslide](https://github.com/openslide/openslide) | - | [3.4.1](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L552) | 3.4.1 | &#x1F537; | Added some MXE specific patches.
@@ -26,7 +26,7 @@ Experiment with building a libvips binary for 64-bit Windows with [MXE](https://
 ## Sub-dependencies updates
 | Name | [MXE](https://github.com/mxe/mxe) version | [build-win64](https://github.com/jcupitt/build-win64) version | New version | &#x1F53A;/&#x1F537;/&#x1F53B; | Notes
 | --- | --- | --- | --- | --- | --- |
-| [cairo](https://cairographics.org/) | [1.15.4](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/cairo.mk#L6) | [1.14.12](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L799) | 1.15.4 | &#x1F53A; | -
+| [cairo](https://cairographics.org/) | [1.15.4](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/cairo.mk#L6) | [1.14.12](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L799) | 1.15.12 | &#x1F53A; | -
 | [fontconfig](https://www.fontconfig.org/) | [2.12.6](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/fontconfig.mk#L6) | [2.12.6](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L329) | 2.12.6 | &#x1F537; | -
 | [freetype](https://www.freetype.org/) | [2.9.1](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/freetype.mk#L6) | [2.9](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L276) | 2.9.1 | &#x1F53A; | -
 | [fribidi](https://github.com/fribidi/fribidi) | [0.19.6](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/fribidi.mk#L7) | - | 0.19.7 | &#x1F53A; (new) | -
@@ -211,7 +211,7 @@ Same as libvips-web + these extra dependencies:
 
 ```
 libvips-42.dll
-└───libMagickCore-6.Q16-2.dll
+└───libMagickCore-6.Q16-6.dll
 │   └───libcairo-2.dll
 │   │   └───libgcc_s_seh-1.dll
 │   │   └───libfontconfig-1.dll
