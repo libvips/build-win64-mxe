@@ -40,8 +40,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-1
-imagemagick_CHECKSUM := 15e07e394cbaed88d64aa76d97f1b9a7284dffdb36138decc77a2b4489ce01d4
+imagemagick_VERSION  := 6.9.10-4
+imagemagick_CHECKSUM := 281caddca858604e026036cdc62fbb5d5fc5a1e1190dfd8c704fb09ed1f1e24a
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -52,8 +52,8 @@ imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 # Note: static linking is broken on 2.42, if static linking is needed; stick with 2.40.20.
 # See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.43.0
-librsvg_CHECKSUM := 4c7bb265314b0ec38b0ec292e11adc62dc1bb4953e920472fe4e2e3b0fe12422
+librsvg_VERSION  := 2.43.1
+librsvg_CHECKSUM := 1d631f21c9150bf408819ed94d29829b509392bc2884f9be3c02ec2ed2d77d87
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -91,8 +91,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 0.51.0
-poppler_VERSION  := 0.65.0
-poppler_CHECKSUM := 89c8cf73f83efda78c5a9bd37c28f4593ad0e8a51556dbe39ed81e1ae2dd8f07
+poppler_VERSION  := 0.66.0
+poppler_CHECKSUM := 2c096431adfb74bc2f53be466889b7646e1b599f28fa036094f3f7235cc9eae7
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -221,8 +221,6 @@ define imagemagick_BUILD
         --with-freetype='$(PREFIX)/$(TARGET)/bin/freetype-config' \
         CPPFLAGS="`'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
         LIBS="`'$(TARGET)-pkg-config' --libs jpeg-turbo`"
-    $(SED) -i 's/#define MAGICKCORE_HAVE_PTHREAD 1//g' '$(SOURCE_DIR)/magick/magick-baseconfig.h'
-    $(SED) -i 's/#define MAGICKCORE_ZLIB_DELEGATE 1//g' '$(SOURCE_DIR)/magick/magick-config.h'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_PROGRAMS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install bin_PROGRAMS=
 endef
