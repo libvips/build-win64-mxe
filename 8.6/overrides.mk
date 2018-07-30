@@ -1,9 +1,16 @@
 $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 
+# We don't need debugging symbols.
+# For e.g. this commit:
+# https://github.com/GNOME/librsvg/commit/8215d7f1f581f0aaa317cccc3e974c61d1a6ad84
+# adds ~26 MB to the librsvg DLL if we don't install-strip it.
+STRIP_LIB := $(true)
+
 ## Update dependencies
 
-# don't build from git ... it does some introspection to build the test
-# suite build files, which won't work in cross-compiler mode
+# version 2.37.0 requires the Meson build system and
+# fail to build in a cross-compiler. See:
+# https://gitlab.gnome.org/GNOME/gdk-pixbuf/issues/80
 # upstream version is 2.32.3
 gdk-pixbuf_VERSION  := 2.36.12
 gdk-pixbuf_CHECKSUM := fff85cf48223ab60e3c3c8318e2087131b590fd6f1737e42cb3759a3b427a334
@@ -29,8 +36,6 @@ fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
-# 1.5.6 works
-# 1.5.8 and 1.5.11 fail to build in a cross-compiler
 # upstream version is 1.5.2
 matio_VERSION  := 1.5.12
 matio_CHECKSUM := 8695e380e465056afa5b5e20128935afe7d50e03830f9f7778a72e1e1894d8a9
@@ -40,28 +45,26 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-4
-imagemagick_CHECKSUM := 281caddca858604e026036cdc62fbb5d5fc5a1e1190dfd8c704fb09ed1f1e24a
+imagemagick_VERSION  := 6.9.10-8
+imagemagick_CHECKSUM := 991bccd1548f69c4ddf5ca4f7a826f816167555c8651311157a6337833864e50
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
 imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 
-# librsvg v2.40.20 has a small memory leak, v2.42.0+ requires 
-# Rust toolchain
 # Note: static linking is broken on 2.42, if static linking is needed; stick with 2.40.20.
 # See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.43.1
-librsvg_CHECKSUM := 1d631f21c9150bf408819ed94d29829b509392bc2884f9be3c02ec2ed2d77d87
+librsvg_VERSION  := 2.43.2
+librsvg_CHECKSUM := 6c43e82d2c6214694d04d702baf3a628fedf6da12c27b7b2c7fc090d560d4f19
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.42.1
-pango_CHECKSUM := 915a6756b298578ff27c7a6393f8c2e62e6e382f9411f2504d7af1a13c7bce32
+pango_VERSION  := 1.42.2
+pango_CHECKSUM := b1e416b4d40416ef6c8224cf146492b86848703264ba88f792290992cf3ca1e2
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -91,8 +94,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 0.51.0
-poppler_VERSION  := 0.66.0
-poppler_CHECKSUM := 2c096431adfb74bc2f53be466889b7646e1b599f28fa036094f3f7235cc9eae7
+poppler_VERSION  := 0.67.0
+poppler_CHECKSUM := a34a4f1a0f5b610c584c65824e92e3ba3e08a89d8ab4622aee11b8ceea5366f9
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -125,7 +128,12 @@ cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
 # patch CMakeLists.txt
 zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/zlib-[0-9]*.patch)))
 
-# fix typedef conflicts
+# upstream version is 1.5.3
+libjpeg-turbo_VERSION  := 2.0.0
+libjpeg-turbo_CHECKSUM := 778876105d0d316203c928fd2a0374c8c01f755d0a00b12a1c8934aeccff8868
+libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
+libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
+libjpeg-turbo_URL      := https://$(SOURCEFORGE_MIRROR)/project/libjpeg-turbo/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libjpeg-turbo-[0-9]*.patch)))
 
 ## Override sub-dependencies
@@ -154,6 +162,7 @@ define harfbuzz_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --with-icu=no \
         ac_cv_header_sys_mman_h=no \
+        CXXFLAGS='-std=c++11' \
         LIBS='-lstdc++'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
@@ -225,36 +234,22 @@ define imagemagick_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install bin_PROGRAMS=
 endef
 
-# without-turbojpeg turns off a library we don't use (we just use the 
+# Upstream switched build system to CMake.
+# WITH_TURBOJPEG=OFF turns off a library we don't use (we just use the 
 # libjpeg API)
 define libjpeg-turbo_BUILD
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --libdir='$(PREFIX)/$(TARGET)/lib/$(PKG)' \
-        --includedir='$(PREFIX)/$(TARGET)/include/$(PKG)' \
-        --without-turbojpeg \
-        NASM=$(TARGET)-yasm
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
+    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DWITH_TURBOJPEG=OFF \
+        -DCMAKE_INCLUDE_PATH='$(PREFIX)/$(TARGET)/include/$(PKG)' \
+        -DCMAKE_LIBRARY_PATH='$(PREFIX)/$(TARGET)/lib/$(PKG)' \
+        '$(SOURCE_DIR)'
 
-    # create pkg-config file
-    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/pkgconfig'
-    (echo 'Name: jpeg-turbo'; \
-     echo 'Version: $($(PKG)_VERSION)'; \
-     echo 'Description: jpeg-turbo'; \
-     echo 'Cflags: -I$(PREFIX)/$(TARGET)/include/$(PKG)'; \
-     echo 'Libs: -L$(PREFIX)/$(TARGET)/lib/$(PKG) -ljpeg';) \
-     > '$(PREFIX)/$(TARGET)/lib/pkgconfig/jpeg-turbo.pc'
-
-    '$(TARGET)-gcc' \
-        -W -Wall -Werror -ansi -pedantic \
-        '$(TOP_DIR)/src/jpeg-test.c' -o '$(PREFIX)/$(TARGET)/bin/test-$(PKG).exe' \
-        `'$(TARGET)-pkg-config' jpeg-turbo --cflags --libs`
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
 # disable GObject introspection
 define pango_BUILD
-    rm '$(SOURCE_DIR)'/docs/Makefile.am
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --enable-explicit-deps \
@@ -295,7 +290,7 @@ define librsvg_BUILD
         CARGO_HOME='/usr/local/cargo' \
         PATH='/usr/local/cargo/bin:$(PATH)'
 
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
 
     '$(TARGET)-gcc' \
         -mwindows -W -Wall -Werror -Wno-deprecated-declarations \

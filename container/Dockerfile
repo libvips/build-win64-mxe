@@ -14,7 +14,14 @@ RUN \
 # Install Wine to test the build
 RUN \
     apt-get install -y \
-         wine
+        wine
+
+# Enable if 32-bit is needed.
+# RUN \
+#     dpkg --add-architecture i386 && \
+#     apt-get update && \
+#     apt-get install -y \
+#        wine32
 
 # Add Windows target for cross-compilation
 # TODO: Switch to i686-pc-windows-gnu if 32-bit is needed.
