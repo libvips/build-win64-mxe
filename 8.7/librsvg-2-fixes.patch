@@ -1,0 +1,60 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "fix@me" <fix@me>
+Date: Mon, 27 Sep 2010 12:00:52 +0200
+Subject: [PATCH 1/2] fix .pc requirements
+
+
+diff --git a/librsvg.pc.in b/librsvg.pc.in
+index 1111111..2222222 100644
+--- a/librsvg.pc.in
++++ b/librsvg.pc.in
+@@ -9,7 +9,7 @@ css_supported=true
+ Name: librsvg
+ Description: library that renders svg files
+ Version: @VERSION@
+-Requires: glib-2.0 gio-2.0 gdk-pixbuf-2.0 cairo
++Requires: glib-2.0 gio-2.0 gdk-pixbuf-2.0 cairo libgsf-1 pangocairo libcroco-0.6
+ Requires.private:
+ Libs: -L${libdir} -lrsvg-@RSVG_API_MAJOR_VERSION@ -lm
+ Cflags: -I${includedir}/librsvg-@RSVG_API_VERSION@
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 17 Jun 2018 14:00:00 +0200
+Subject: [PATCH 2/2] Fix 'librsvg_internals' linking
+
+
+diff --git a/Makefile.am b/Makefile.am
+index 1111111..2222222 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -148,6 +148,7 @@ cargo_verbose_0 =
+ cargo_verbose_1 = --verbose
+ 
+ RUST_LIB=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/librsvg_internals.a
++RUST_LIB_WIN=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/rsvg_internals.lib
+ CARGO_TARGET_DIR=@abs_top_builddir@/target
+ 
+ check-local:
+@@ -169,7 +170,8 @@ $(RUST_LIB): $(RUST_SRC)
+ 	PKG_CONFIG_ALLOW_CROSS=1						\
+ 	PKG_CONFIG='$(PKG_CONFIG)'						\
+ 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR)					\
+-	cargo build $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS)
++	cargo build $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS) \
++	&& cp $(RUST_LIB_WIN) $(RUST_LIB)
+ 
+ librsvg_@RSVG_API_MAJOR_VERSION@_la_CPPFLAGS = \
+ 	-I$(top_srcdir) 			\
+@@ -197,7 +199,6 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_LDFLAGS = \
+ librsvg_@RSVG_API_MAJOR_VERSION@_la_LIBADD = \
+ 	$(LIBRSVG_LIBS) 	\
+ 	$(LIBM)			\
+-	$(RUST_LIB)		\
+ 	$(DLOPEN_LIBS)
+ 
+ librsvgincdir = $(includedir)/librsvg-$(RSVG_API_VERSION)/librsvg
