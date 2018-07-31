@@ -9,7 +9,12 @@ RUN \
         g++-multilib gettext git gperf intltool libc6-dev-i386 \
         libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin \
         libxml-parser-perl make openssl p7zip-full patch perl \
-        pkg-config python ruby scons sed unzip wget xz-utils 
+        pkg-config python ruby scons sed unzip wget xz-utils
+
+# Enable if 32-bit is needed.
+# RUN \
+#     dpkg --add-architecture i386 \
+#     && apt-get update 
 
 # Add Windows target for cross-compilation
 # TODO: Switch to i686-pc-windows-gnu if 32-bit is needed.

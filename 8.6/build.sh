@@ -25,6 +25,11 @@ fi
 
 cd $mxe_dir
 
+# Always checkout a particular revision which will successfully build.
+# This ensures that it will not suddenly break a build.
+# Note: Must be regularly updated.
+git checkout 510e097797568d45483c290bf9ec7daec2bc7367
+
 # GLib needs to be built first (otherwise gdk-pixbuf can't find glib-genmarshal)
 make glib MXE_TARGETS=${target%%-*}-pc-linux-gnu
 
