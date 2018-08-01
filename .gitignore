@@ -1,2 +1,5 @@
 # MXE directory
-/mxe
+mxe
+.*.swp
+vips-dev-*
+.update-timestamp

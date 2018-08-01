@@ -1,0 +1,27 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "fix@me" <fix@me>
+Date: Sat, 26 July 2014 15:07:56 +0200
+Subject: [PATCH 1/1] Fix shutter speed math exception
+
+The patch sanity checks the shutter speed and stops pow(2, -inf), which
+causes an uncaught math exception on mingw 
+
+diff --git a/libexif/exif-entry.c b/libexif/exif-entry.c
+index 1111111..2222222 100644
+--- a/libexif/exif-entry.c
++++ b/libexif/exif-entry.c
+@@ -1101,6 +1101,10 @@ exif_entry_get_value (ExifEntry *e, char *val, unsigned int maxlen)
+ 			break;
+ 		}
+ 		d = (double) v_srat.numerator / (double) v_srat.denominator;
++		/* Crazy numbers can cause math exceptions on some platforms.
++		 */
++		if( d < 0 )
++			d = 0;
+ 		snprintf (val, maxlen, _("%.02f EV"), d);
+ 		d = 1. / pow (2, d);
+ 		if (d < 1)
