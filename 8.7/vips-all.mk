@@ -8,8 +8,8 @@ $(PKG)_GH_CONF  := jcupitt/libvips/releases/download,v,-rc1
 $(PKG)_SUBDIR   := $(subst -all,,$(PKG))-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(subst -all,,$(PKG))-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
-	           libgsf libjpeg-turbo tiff openslide lcms libexif \
-		   imagemagick libpng
+                   libgsf libjpeg-turbo tiff openslide lcms libexif \
+                   imagemagick libpng
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
