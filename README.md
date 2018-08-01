@@ -2,48 +2,96 @@
 
 Experiment with building a libvips binary for 64-bit Windows with [MXE](https://github.com/mxe/mxe).
 
-## Dependencies updates
-| Name | [MXE](https://github.com/mxe/mxe) version | [build-win64](https://github.com/jcupitt/build-win64) version | New version | &#x1F53A;/&#x1F537;/&#x1F53B; | Notes
-| --- | --- | --- | --- | --- | --- |
-| [expat](https://github.com/libexpat/libexpat) | [2.2.5](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/expat.mk#L7) | [2.2.5](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L261) | 2.2.5 | &#x1F537; | -
-| [fftw](https://github.com/FFTW/fftw3) | [3.3.6-pl1](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/fftw.mk#L6) | [3.3.7](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L481) | 3.3.8 | &#x1F53A; | -
-| [giflib](https://sourceforge.net/projects/giflib/) | [5.1.4](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/giflib.mk#L6) | [5.1.4](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L387) | 5.1.4 | &#x1F537; | -
-| [glib](https://github.com/GNOME/glib) | [2.50.2](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/glib.mk#L7) | [2.54.2](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L760) | 2.54.2 | &#x1F537; | -
-| [imagemagick](https://github.com/ImageMagick/ImageMagick6) | [6.9.0-0](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/imagemagick.mk#L7) | [6.8.9](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L663) | 6.9.10-8 | &#x1F53A; | -
-| [lcms](https://github.com/mm2/Little-CMS) | [2.9](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/lcms.mk#L6) | [2.9](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L494) | 2.9 | &#x1F537; | -
-| [libexif](https://github.com/libexif/libexif) | - | [0.6.21](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L601) | 0.6.21 | &#x1F537; | + shutter speed math exception patch.
-| [libgsf](https://github.com/GNOME/libgsf) | [1.14.30](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/libgsf.mk#L6) | [1.14.42](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L865) | 1.14.42 | &#x1F537; | -
-| [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) | [1.5.3](https://github.com/mxe/mxe/blob/510e097797568d45483c290bf9ec7daec2bc7367/src/libjpeg-turbo.mk#L6) | [1.5.3](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L580) | 2.0.0 | &#x1F53A; | Switched to CMake.
-| [libpng](https://github.com/glennrp/libpng) | [1.6.35](https://github.com/mxe/mxe/blob/510e097797568d45483c290bf9ec7daec2bc7367/src/libpng.mk#L6) | [1.6.30](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L368) | 1.6.35 | &#x1F53A; | -
-| [librsvg](https://github.com/GNOME/librsvg) | [2.40.5](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/librsvg.mk#L6) | [2.40.19](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L420) | 2.43.2 | &#x1F53A; | Requires the Rust toolchain + added patch for 'librsvg_internals' linking.
-| [libwebp](https://github.com/webmproject/libwebp) | [0.4.4](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/libwebp.mk#L6) | [0.6.1](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L720) | 1.0.0 | &#x1F53A; | -
-| [matio](https://github.com/tbeu/matio) | [1.5.2](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/matio.mk#L6) | [1.5.6](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L940) | 1.5.12 | &#x1F53A; | -
-| [openslide](https://github.com/openslide/openslide) | - | [3.4.1](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L552) | 3.4.1 | &#x1F537; | Added some MXE specific patches.
-| [pango](https://www.pango.org/) | [1.37.4](https://github.com/mxe/mxe/blob/510e097797568d45483c290bf9ec7daec2bc7367/src/pango.mk#L7) | [1.40.14](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L821) | 1.42.2 | &#x1F53A; | -
-| [poppler](https://poppler.freedesktop.org/) | [0.51.0](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/poppler.mk#L6) | [0.46.0](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L462) | 0.67.0 | &#x1F53A; | Switched to CMake.
-| [tiff](http://www.simplesystems.org/libtiff/) | [4.0.9](https://github.com/mxe/mxe/blob/510e097797568d45483c290bf9ec7daec2bc7367/src/tiff.mk#L7) | [4.0.9](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L627) | 4.0.9 | &#x1F537; | -
+## libvips-web dependencies
+| Dependency      | Version  | Used under the terms of         |
+|-----------------|----------|---------------------------------|
+| [cairo]         | 1.15.12  | Mozilla Public License 2.0      |
+| [expat]         | 2.2.5    | MIT Licence                     |
+| [fftw]          | 3.3.8    | GPLv2                           |
+| [fontconfig]    | 2.13.0   | [fontconfig Licence] (BSD-like) |
+| [freetype]      | 2.9.1    | [freetype Licence] (BSD-like)   |
+| [fribidi]       | 0.19.7   | LGPLv3                          |
+| [gdk-pixbuf]    | 2.36.12  | LGPLv3                          |
+| [gettext]       | 0.19.8.1 | LGPLv3                          |
+| [giflib]        | 5.1.4    | MIT Licence                     |
+| [glib]          | 2.54.2   | LGPLv3                          |
+| [harfbuzz]      | 1.8.4    | MIT Licence                     |
+| [lcms]          | 2.9      | MIT Licence                     |
+| [libcroco]      | 0.6.12   | LGPLv3                          |
+| [libexif]       | 0.6.21   | LGPLv3                          |
+| [libffi]        | 3.2.1    | MIT Licence                     |
+| [libgsf]        | 1.14.42  | LGPLv3                          |
+| [libiconv]      | 1.15     | LGPLv3                          |
+| [libjpeg-turbo] | 2.0.0    | [zlib License, IJG License]     |
+| [libpng]        | 1.6.35   | [libpng License]                |
+| [librsvg]       | 2.43.2   | LGPLv3                          |
+| [libtiff]       | 4.0.9    | [libtiff License] (BSD-like)    |
+| [libvips]       | 8.6.5    | LGPLv3                          |
+| [libwebp]       | 1.0.0    | New BSD License                 |
+| [libxml2]       | 2.9.8    | MIT Licence                     |
+| [pango]         | 1.42.2   | LGPLv3                          |
+| [pixman]        | 0.33.6   | MIT Licence                     |
+| [zlib]          | 1.2.11   | [zlib Licence]                  |
 
-## Sub-dependencies updates
-| Name | [MXE](https://github.com/mxe/mxe) version | [build-win64](https://github.com/jcupitt/build-win64) version | New version | &#x1F53A;/&#x1F537;/&#x1F53B; | Notes
-| --- | --- | --- | --- | --- | --- |
-| [cairo](https://cairographics.org/) | [1.15.4](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/cairo.mk#L6) | [1.14.12](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L799) | 1.15.12 | &#x1F53A; | -
-| [fontconfig](https://www.fontconfig.org/) | [2.13.0](https://github.com/mxe/mxe/blob/510e097797568d45483c290bf9ec7daec2bc7367/src/fontconfig.mk#L6) | [2.12.6](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L329) | 2.13.0 | &#x1F53A; | -
-| [freetype](https://www.freetype.org/) | [2.9.1](https://github.com/mxe/mxe/blob/510e097797568d45483c290bf9ec7daec2bc7367/src/freetype.mk#L6) | [2.9](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L276) | 2.9.1 | &#x1F53A; | -
-| [fribidi](https://github.com/fribidi/fribidi) | [0.19.6](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/fribidi.mk#L7) | - | 0.19.7 | &#x1F53A; (new) | -
-| [gdk-pixbuf](https://github.com/GNOME/gdk-pixbuf) | [2.32.3](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/gdk-pixbuf.mk#L7) | [2.36.0](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L847) | 2.36.12 | &#x1F53A; | Thumbnailer cross-compile failure patch added.
-| [gettext](https://www.gnu.org/software/gettext/) | [0.19.8.1](https://github.com/mxe/mxe/blob/510e097797568d45483c290bf9ec7daec2bc7367/src/gettext.mk#L6) | [0.19.8](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L248) | 0.19.8.1 | &#x1F53A; | -
-| [harfbuzz](https://github.com/harfbuzz/harfbuzz) | [1.8.4](https://github.com/mxe/mxe/blob/510e097797568d45483c290bf9ec7daec2bc7367/src/harfbuzz.mk#L7) | [1.7.6](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L295) | 1.8.4 | &#x1F53A; | -
-| [hdf5](https://www.hdfgroup.org/solutions/hdf5/) | [1.8.12](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/hdf5.mk#L7) | - | 1.8.12 | &#x1F53A; (new) | -
-| [libcroco](https://github.com/GNOME/libcroco) | [0.6.2](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/libcroco.mk#L7) | [0.6.12](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L400) | 0.6.12 | &#x1F537; | -
-| [libffi](https://sourceware.org/libffi/) | [3.2.1](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/libffi.mk#L6) | [3.2.1](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L736) | 3.2.1 | &#x1F537; | -
-| [libiconv](https://www.gnu.org/software/libiconv/) | [1.15](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/libiconv.mk#L6) | [1.15](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L237) | 1.15 | &#x1F537; | -
-| [libxml2](https://github.com/GNOME/libxml2) | [2.9.4](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/libxml2.mk#L6) | [2.9.8](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L350) | 2.9.8 | &#x1F537; | -
-| [openjpeg](http://www.openjpeg.org/) | [2.3.0](https://github.com/mxe/mxe/blob/510e097797568d45483c290bf9ec7daec2bc7367/src/openjpeg.mk#L8) | [2.1](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L520) | 2.3.0 | &#x1F53A; | -
-| [pixman](http://www.pixman.org/) | [0.33.6](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/pixman.mk#L6) | [0.34.0](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L776) | 0.33.6 | &#x1F53B; | Couldn't find a tarball for version 0.34.0 [here](https://cairographics.org/snapshots/).
-| [sqlite](https://www.sqlite.org/) | [3.24.0](https://github.com/mxe/mxe/blob/d6abd58b848ea228f10a994f7d5847d0c3fe83b6/src/sqlite.mk#L7) | [3.22.0](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L538) | 3.24.0 | &#x1F53A; | -
-| [zlib](https://zlib.net/) | [1.2.11](https://github.com/mxe/mxe/blob/5d4c388be33414e7a802c4959d3d22f759840587/src/zlib.mk#L6) | [1.2.11](https://github.com/jcupitt/build-win64/blob/c5d82ef4d6caf9f58956ba9d666d42805454d67e/8.6/vips.modules#L225) | 1.2.11 | &#x1F537; | + libz.dll naming patch & switched to CMake.
+[cairo]: https://cairographics.org/
+[expat]: https://github.com/libexpat/libexpat
+[fftw]: https://github.com/FFTW/fftw3
+[fontconfig]: https://www.fontconfig.org/
+[fontconfig Licence]: https://cgit.freedesktop.org/fontconfig/tree/COPYING
+[freetype]: https://www.freetype.org/
+[freetype Licence]: http://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/FTL.TXT
+[fribidi]: https://github.com/fribidi/fribidi
+[gdk-pixbuf]: https://github.com/GNOME/gdk-pixbuf
+[gettext]: https://www.gnu.org/software/gettext/
+[giflib]: https://sourceforge.net/projects/giflib/
+[glib]: https://github.com/GNOME/glib
+[harfbuzz]: https://github.com/harfbuzz/harfbuzz
+[lcms]: https://github.com/mm2/Little-CMS
+[libcroco]: https://github.com/GNOME/libcroco
+[libexif]: https://github.com/libexif/libexif
+[libffi]: https://sourceware.org/libffi/
+[libgsf]: https://github.com/GNOME/libgsf
+[libiconv]: https://www.gnu.org/software/libiconv/
+[libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
+[zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
+[libpng]: https://github.com/glennrp/libpng
+[libpng License]: http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
+[librsvg]: https://github.com/GNOME/librsvg
+[libtiff]: http://www.simplesystems.org/libtiff/
+[libtiff License]: http://www.simplesystems.org/libtiff/misc.html
+[libvips]: https://github.com/jcupitt/libvips
+[libwebp]: https://github.com/webmproject/libwebp
+[libxml2]: https://github.com/GNOME/libxml2
+[pango]: https://www.pango.org/
+[pixman]: http://www.pixman.org/
+[zlib]: https://zlib.net/
+[zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h
+
+## libvips-all dependencies
+Same as libvips-web + these extra dependencies:
+
+| Dependency      | Version  | Used under the terms of          |
+|-----------------|----------|----------------------------------|
+| [hdf5]          | 1.8.12   | BSD-like                         |
+| [imagemagick]   | 6.9.10-8 | [ImageMagick License] (GPL-like) |
+| [matio]         | 1.5.12   | BSD 2-Clause                     |
+| [openjpeg]      | 2.3.0    | BSD 2-Clause                     |
+| [openslide]     | 3.4.1    | LGPLv3                           |
+| [poppler]       | 0.67.0   | GPLv2                            |
+| [sqlite]        | 3.24.0   | Public domain                    |
+
+[hdf5]: https://www.hdfgroup.org/solutions/hdf5/
+[imagemagick]: https://github.com/ImageMagick/ImageMagick6
+[ImageMagick License]: https://www.imagemagick.org/script/license.php
+[matio]: https://github.com/tbeu/matio
+[openjpeg]: http://www.openjpeg.org/
+[openslide]: https://github.com/openslide/openslide
+[poppler]: https://poppler.freedesktop.org/
+[sqlite]: https://www.sqlite.org/
 
 ## Dependencies overview
+Generated by the [open-source modern Dependency Walker](https://github.com/lucasg/Dependencies).
+
 <details>
  <summary>libvips-web</summary>
 
@@ -331,26 +379,3 @@ libvips-42.dll
         └───libffi-6.dll
 ```
 </details>
-
-## TODO
-- [ ] Try to build with [orc](https://github.com/GStreamer/orc).
-- [ ] Add [cfitsio](https://heasarc.gsfc.nasa.gov/fitsio/) to the 'all target'. MXE already has [this dependency](https://github.com/mxe/mxe/blob/master/src/cfitsio.mk).
-- [ ] Add [OpenEXR](https://github.com/openexr/openexr) to the 'all target'. MXE already has [this dependency](https://github.com/mxe/mxe/blob/master/src/openexr.mk).
-- [X] Try to update ImageMagick6 to the latest version (latest versions of ImageMagick are continuous fuzzed by [OSS-Fuzz](https://github.com/google/oss-fuzz), so it'll reduce the attack surface).
-- [ ] Try to build libvips as static library.
-  - [ ] Does it violate the LGPL license? libvips has a lot of LGPL dependencies.
-    - [ ] "[Provide everything that allow the user to relink the application with a different version of the LGPL source code](https://www.gnu.org/licenses/gpl-faq.html#LGPLStaticVsDynamic)".
-  - [ ] librsvg can't be build statically ([it's broken on 2.42](https://gitlab.gnome.org/GNOME/librsvg/issues/159), stick with 2.40.20 if we need to build statically).
-  - [ ] GObject (libgobject-2.0-0.dll) and GLib (libglib-2.0-0.dll) needs to be build shared (for the libvips bindings).
-- [ ] Let Travis build libvips with pre-compiled dependencies.
-  - [ ] Wait for: https://github.com/mxe/mxe/issues/2021.
-- [ ] Do we need to add `libvipsCC-42.dll` and `libvips-cpp-42.dll`? For NetVips this isn't necessary.
-- [ ] Should we include the `etc`, `include`, `lib` and `share` folders? Also this isn't necessary for NetVips.
-- [ ] `AUTHORS`, `ChangeLog`, `COPYING` and `README.md` needs to be added.
-- [ ] Incorporate all new dependencies and patches into [MXE](https://github.com/mxe/mxe).
-  - [ ] Should we also add libvips-web?
-  - [ ] Not sure about `librsvg`, because v2.42.0+ requires the Rust toolchain.
-- [ ] Do we need to add `expat`, `zlib`, `gettext` to `vips-all_DEPS` and `vips-web_DEPS`?
-- [ ] Try to update Pixman to 0.34.0.
-- [ ] Try to build with 32-bit architecture. I'm not sure if this is still being distributed.
-- [ ] Try to test the binaries with the Python test suite on Wine.

@@ -1,0 +1,18 @@
+## TODO
+- [ ] Add headers, link libraries and def files to the `-dev` packages.
+  - [ ] For NetVips this isn't necessary, so make a `-slim` package which contains only runtime DDLs and relevant EXEs.
+  - [ ] `libvipsCC-42.dll` and `libvips-cpp-42.dll` also needs to be added.
+  - [ ] `AUTHORS`, `ChangeLog`, `COPYING` and `README.md` also needs to be added.
+- [ ] Try to build with [orc](https://github.com/GStreamer/orc).
+- [ ] Add [cfitsio](https://heasarc.gsfc.nasa.gov/fitsio/) to the 'all target'. MXE already has [this dependency](https://github.com/mxe/mxe/blob/master/src/cfitsio.mk).
+- [ ] Add [OpenEXR](https://github.com/openexr/openexr) to the 'all target'. MXE already has [this dependency](https://github.com/mxe/mxe/blob/master/src/openexr.mk).
+- [X] Try to update ImageMagick6 to the latest version (latest versions of ImageMagick are continuous fuzzed by [OSS-Fuzz](https://github.com/google/oss-fuzz), so it'll reduce the attack surface).
+- [ ] Let Travis build libvips with pre-compiled dependencies.
+  - [ ] Wait for: https://github.com/mxe/mxe/issues/2021.
+- [ ] Incorporate all new dependencies and patches into [MXE](https://github.com/mxe/mxe).
+  - [ ] Should we also add libvips-web?
+  - [ ] Not sure about `librsvg`, because v2.42.0+ requires the Rust toolchain.
+- [ ] Do we need to add `expat`, `zlib`, `gettext` to `vips-all_DEPS` and `vips-web_DEPS`?
+- [ ] Try to update Pixman to 0.34.0. Couldn't find a tarball for version 0.34.0 [here](https://cairographics.org/snapshots/).
+- [ ] Try to build with 32-bit architecture (not sure if this is still being distributed).
+- [ ] Try to test the binaries with the Python test suite on Wine.
