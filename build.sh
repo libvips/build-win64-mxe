@@ -44,7 +44,7 @@ docker run --rm -t -u $(id -u):$(id -g) -v $PWD/$version:/data \
   libvips-build-win-mxe $deps $target
 
 # test outside the container ... saves us having to install wine inside docker
-if type wine > /dev/null; then
+if [ -x "$(command -v wine)" ]; then
   echo -n "testing build ... "
   wine $version/vips-dev-$version/bin/vips.exe --help > /dev/null
   if [ "$?" -ne "0" ]; then

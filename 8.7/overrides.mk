@@ -8,7 +8,7 @@ STRIP_LIB := $(true)
 
 ## Update dependencies
 
-# version 2.37.0 requires the Meson build system and
+# version 2.37.0 requires the Meson build system which
 # fail to build in a cross-compiler. See:
 # https://gitlab.gnome.org/GNOME/gdk-pixbuf/issues/80
 # upstream version is 2.32.3
@@ -45,8 +45,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-8
-imagemagick_CHECKSUM := 991bccd1548f69c4ddf5ca4f7a826f816167555c8651311157a6337833864e50
+imagemagick_VERSION  := 6.9.10-9
+imagemagick_CHECKSUM := 94e3cf653abd3c8728eaa1d852bfe63e8b632ad8cab885683ec87ea0b2c3058d
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -55,8 +55,8 @@ imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 # Note: static linking is broken on 2.42, if static linking is needed; stick with 2.40.20.
 # See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.43.2
-librsvg_CHECKSUM := 6c43e82d2c6214694d04d702baf3a628fedf6da12c27b7b2c7fc090d560d4f19
+librsvg_VERSION  := 2.43.4
+librsvg_CHECKSUM := 3aa1eb392fc467aaffa7153fe8586f3e93eedbdfb443ca7d4707663c9d1773bc
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -110,9 +110,9 @@ glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 1.14.30
-# TODO: version 1.14.43 is broken. (`conflicting types for 'gsf_input_set_modtime_from_stat'`)
-libgsf_VERSION  := 1.14.42
-libgsf_CHECKSUM := 29fffb87b278b3fb1b8ae9138c3b4529c1fce664f1f94297c146a8563df80dc2
+libgsf_VERSION  := 1.14.44
+libgsf_CHECKSUM := 68bede10037164764992970b4cb57cd6add6986a846d04657af9d5fac774ffde
+libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libgsf-[0-9]*.patch)))
 libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
 libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)

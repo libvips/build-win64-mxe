@@ -20,11 +20,11 @@ Experiment with building a libvips binary for 64-bit Windows with [MXE](https://
 | [libcroco]      | 0.6.12   | LGPLv3                          |
 | [libexif]       | 0.6.21   | LGPLv3                          |
 | [libffi]        | 3.2.1    | MIT Licence                     |
-| [libgsf]        | 1.14.42  | LGPLv3                          |
+| [libgsf]        | 1.14.44  | LGPLv3                          |
 | [libiconv]      | 1.15     | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.0    | [zlib License, IJG License]     |
 | [libpng]        | 1.6.35   | [libpng License]                |
-| [librsvg]       | 2.43.2   | LGPLv3                          |
+| [librsvg]       | 2.43.4   | LGPLv3                          |
 | [libtiff]       | 4.0.9    | [libtiff License] (BSD-like)    |
 | [libvips]       | 8.6.5    | LGPLv3                          |
 | [libwebp]       | 1.0.0    | New BSD License                 |
@@ -73,7 +73,7 @@ Same as libvips-web + these extra dependencies:
 | Dependency      | Version  | Used under the terms of          |
 |-----------------|----------|----------------------------------|
 | [hdf5]          | 1.8.12   | BSD-like                         |
-| [imagemagick]   | 6.9.10-8 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.10-9 | [ImageMagick License] (GPL-like) |
 | [matio]         | 1.5.12   | BSD 2-Clause                     |
 | [openjpeg]      | 2.3.0    | BSD 2-Clause                     |
 | [openslide]     | 3.4.1    | LGPLv3                           |

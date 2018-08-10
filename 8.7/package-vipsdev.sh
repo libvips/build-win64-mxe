@@ -26,7 +26,7 @@ $mxe_dir/tools/copydlldeps.sh -c \
   -R $mxe_prefix/$target \
   -o $mxe_prefix/bin/$target-objdump > /dev/null 2>&1
 
-# Copy all relevant vips exectuables to the bin directory
+# Copy all relevant vips executables to the bin directory
 cp $mxe_prefix/$target/bin/vips.exe $repackage_dir/bin
 cp $mxe_prefix/$target/bin/vipsedit.exe $repackage_dir/bin
 cp $mxe_prefix/$target/bin/vipsheader.exe $repackage_dir/bin

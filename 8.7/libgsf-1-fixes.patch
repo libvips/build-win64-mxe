@@ -1,0 +1,80 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "fix@me" <fix@me>
+Date: Fri, 24 Sep 2010 23:34:26 +0200
+Subject: [PATCH 1/2] s,DllMain,static _disabled_DllMain,
+
+
+diff --git a/gsf/gsf-utils.c b/gsf/gsf-utils.c
+index 1111111..2222222 100644
+--- a/gsf/gsf-utils.c
++++ b/gsf/gsf-utils.c
+@@ -76,9 +76,9 @@ static GTypeModule *static_type_module = NULL;
+ #include <windows.h>
+ static HMODULE gsf_dll_hmodule;
+ BOOL WINAPI
+-DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved);
++static _disabled_DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved);
+ BOOL WINAPI
+-DllMain (HINSTANCE hinstDLL, DWORD fdwReason, G_GNUC_UNUSED LPVOID lpvReserved)
++static _disabled_DllMain (HINSTANCE hinstDLL, DWORD fdwReason, G_GNUC_UNUSED LPVOID lpvReserved)
+ {
+ 	if (fdwReason == DLL_PROCESS_ATTACH) gsf_dll_hmodule = hinstDLL;
+ 	return TRUE;
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kouhei Sutou <kou@clear-code.com>
+Date: Wed, 6 Jun 2018 06:37:19 +0200
+Subject: [PATCH 2/2] Include <sys/stat.h> instead of "struct stat" forward declaration
+
+It causes a build error with MinGW:
+
+      CC       gsf-input.lo
+    gsf-input.c:632:1: error: conflicting types for 'gsf_input_set_modtime_from_stat'
+     gsf_input_set_modtime_from_stat (GsfInput *input,
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    In file included from ../gsf/gsf.h:54:0,
+                     from gsf-input.c:24:
+    ../gsf/gsf-input-impl.h:67:10: note: previous declaration of 'gsf_input_set_modtime_from_stat' was here
+     gboolean gsf_input_set_modtime_from_stat (GsfInput *input,
+              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Makefile:705: recipe for target 'gsf-input.lo' failed
+
+<sys/stat.h> is enough portable because glib/gstdio.h uses it.
+
+diff --git a/gsf/gsf-input-impl.h b/gsf/gsf-input-impl.h
+index 1111111..2222222 100644
+--- a/gsf/gsf-input-impl.h
++++ b/gsf/gsf-input-impl.h
+@@ -22,6 +22,8 @@
+ #ifndef GSF_INPUT_IMPL_H
+ #define GSF_INPUT_IMPL_H
+ 
++#include <sys/stat.h>
++
+ #include <gsf/gsf-fwd.h>
+ 
+ G_BEGIN_DECLS
+@@ -63,7 +65,6 @@ gboolean gsf_input_set_size	 (GsfInput *input, gsf_off_t size);
+ gboolean gsf_input_set_modtime   (GsfInput *input, GDateTime *modtime);
+ gboolean gsf_input_seek_emulate  (GsfInput *input, gsf_off_t pos);
+ 
+-struct stat;
+ gboolean gsf_input_set_modtime_from_stat (GsfInput *input,
+ 					  const struct stat *st);
+ 
+diff --git a/gsf/gsf-input.c b/gsf/gsf-input.c
+index 1111111..2222222 100644
+--- a/gsf/gsf-input.c
++++ b/gsf/gsf-input.c
+@@ -25,7 +25,6 @@
+ #include <glib/gi18n-lib.h>
+ 
+ #include <string.h>
+-#include <sys/stat.h>
+ 
+ 
+ /*
