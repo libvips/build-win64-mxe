@@ -102,8 +102,8 @@ poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
 poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.54.2
-glib_CHECKSUM := bb89e5c5aad33169a8c7f28b45671c7899c12f74caf707737f784d7102758e6c
+glib_VERSION  := 2.57.2
+glib_CHECKSUM := e19f795baabb52651ddea90bb5dc8f696939e15290c3cb7cfa684d4e1628c1a8
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
