@@ -128,12 +128,6 @@ cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
 # patch CMakeLists.txt
 zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/zlib-[0-9]*.patch)))
 
-# Files can't be renamed and removed while the file handles
-# are still open on Windows. To match the behavior of Linux
-# we need to patch libtiff by adding 'FILE_SHARE_DELETE' to
-# the file sharing mode.
-tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/tiff-[0-9]*.patch)))
-
 # upstream version is 1.5.3
 libjpeg-turbo_VERSION  := 2.0.0
 libjpeg-turbo_CHECKSUM := 778876105d0d316203c928fd2a0374c8c01f755d0a00b12a1c8934aeccff8868
