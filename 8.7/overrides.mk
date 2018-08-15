@@ -45,8 +45,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-9
-imagemagick_CHECKSUM := 94e3cf653abd3c8728eaa1d852bfe63e8b632ad8cab885683ec87ea0b2c3058d
+imagemagick_VERSION  := 6.9.10-10
+imagemagick_CHECKSUM := f09488e6d8e4c703609a3be4244690a5f533d765fd2b0822c05dbd6a6ae71c2c
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -127,6 +127,12 @@ cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
 # zlib will make libzlib.dll, but we want libz.dll so we must 
 # patch CMakeLists.txt
 zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/zlib-[0-9]*.patch)))
+
+# Files can't be renamed and removed while the file handles
+# are still open on Windows. To match the behavior of Linux
+# we need to patch libtiff by adding 'FILE_SHARE_DELETE' to
+# the file sharing mode.
+tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/tiff-[0-9]*.patch)))
 
 # upstream version is 1.5.3
 libjpeg-turbo_VERSION  := 2.0.0
