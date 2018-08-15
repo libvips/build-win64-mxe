@@ -1,0 +1,71 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <info@kleisauke.nl>
+Date: Wed, 15 Aug 2018 12:00:00 +0200
+Subject: [PATCH 1/1] Use g_open and g_fopen on Win32
+
+
+diff --git a/libvips/iofuncs/util.c b/libvips/iofuncs/util.c
+index 1111111..2222222 100644
+--- a/libvips/iofuncs/util.c
++++ b/libvips/iofuncs/util.c
+@@ -55,6 +55,7 @@
+ 
+ #ifdef OS_WIN32
+ #include <windows.h>
++#include <glib/gstdio.h>
+ #endif /*OS_WIN32*/
+ 
+ #include <vips/vips.h>
+@@ -582,20 +583,10 @@ vips__open( const char *filename, int flags, ... )
+ 
+ #ifdef OS_WIN32
+ {
+-	wchar_t *path16;
+-
+-	if( !(path16 = (wchar_t *) 
+-		g_utf8_to_utf16( filename, -1, NULL, NULL, NULL )) ) { 
+-		errno = EACCES;
+-		return( -1 );
+-	}
+-
+-	fd = _wopen( path16, flags, mode );
++	fd = g_open( filename, flags, mode );
+ 
+ 	if( mode & O_CREAT )
+ 		vips__set_create_time( fd ); 
+-
+-	g_free( path16 );
+ }
+ #else /*!OS_WIN32*/
+ 	fd = open( filename, flags, mode );
+@@ -618,25 +609,7 @@ vips__fopen( const char *filename, const char *mode )
+ 	FILE *fp;
+ 
+ #ifdef OS_WIN32
+-	wchar_t *path16, *mode16;
+-	
+-	if( !(path16 = (wchar_t *) 
+-		g_utf8_to_utf16( filename, -1, NULL, NULL, NULL )) ) { 
+-		errno = EACCES;
+-		return( NULL );
+-	}
+-
+-	if( !(mode16 = (wchar_t *) 
+-		g_utf8_to_utf16( mode, -1, NULL, NULL, NULL )) ) { 
+-		g_free( path16 );
+-		errno = EACCES;
+-		return( NULL );
+-	}
+-
+-	fp = _wfopen( path16, mode16 );
+-
+-	g_free( path16 );
+-	g_free( mode16 );
++	fp = g_fopen( filename, mode );
+ 
+ 	if( mode[0] == 'w' )
+ 		vips__set_create_time( _fileno( fp ) ); 
