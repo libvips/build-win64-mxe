@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <info@kleisauke.nl>
 Date: Wed, 15 Aug 2018 20:00:00 +0200
-Subject: [PATCH 1/1] Also close file handles as soon as we can
+Subject: [PATCH 1/1] Close file handles as soon as we can
 
 
 diff --git a/libvips/foreign/jpeg2vips.c b/libvips/foreign/jpeg2vips.c
@@ -20,4 +20,34 @@ index 1111111..2222222 100644
 +		(void) readjpeg_free( jpeg );
  
  	VIPS_GATE_STOP( "read_jpeg_generate: work" );
+ 
+diff --git a/libvips/foreign/tiff2vips.c b/libvips/foreign/tiff2vips.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/tiff2vips.c
++++ b/libvips/foreign/tiff2vips.c
+@@ -1880,6 +1880,9 @@ rtiff_stripwise_generate( VipsRegion *or,
+ 		y += hit.height;
+ 	}
+ 
++	if( y >= or->im->Ysize - r->top ) 
++		VIPS_FREEF( TIFFClose, rtiff->tiff );
++
+ 	VIPS_GATE_STOP( "rtiff_stripwise_generate: work" ); 
+ 
+ 	return( 0 );
+
+diff --git a/libvips/foreign/pdfload.c b/libvips/foreign/pdfload.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/pdfload.c
++++ b/libvips/foreign/pdfload.c
+@@ -393,6 +393,10 @@ vips_foreign_load_pdf_generate( VipsRegion *or,
+ 			(guint32 *) VIPS_REGION_ADDR( or, r->left, r->top + y ), 
+ 			r->width ); 
+ 
++	if( y >= or->im->Ysize ) 
++		VIPS_UNREF( pdf->page );
++		VIPS_UNREF( pdf->doc );
++
+ 	return( 0 ); 
+ }
  
