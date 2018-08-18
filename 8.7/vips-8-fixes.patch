@@ -5,49 +5,42 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <info@kleisauke.nl>
 Date: Wed, 15 Aug 2018 20:00:00 +0200
-Subject: [PATCH 1/1] Close file handles as soon as we can
+Subject: [PATCH 1/1] Add znzlib to libniftiio linker flags
 
 
-diff --git a/libvips/foreign/jpeg2vips.c b/libvips/foreign/jpeg2vips.c
+diff --git a/m4/nifti.m4 b/m4/nifti.m4
 index 1111111..2222222 100644
---- a/libvips/foreign/jpeg2vips.c
-+++ b/libvips/foreign/jpeg2vips.c
-@@ -668,7 +668,7 @@ read_jpeg_generate( VipsRegion *or,
- 	 * object, destroy as soon as we can. Safe to call many times. 
- 	 */
- 	if( jpeg->y_pos >= or->im->Ysize ) 
--		jpeg_destroy_decompress( &jpeg->cinfo );
-+		(void) readjpeg_free( jpeg );
+--- a/m4/nifti.m4
++++ b/m4/nifti.m4
+@@ -30,7 +30,7 @@ AC_ARG_WITH(nifti-includes,
+ AC_ARG_WITH(nifti-libraries,
+   AS_HELP_STRING([--with-nifti-libraries=DIR], 
+     [libniftiio libraries are in DIR]),
+-  NIFTI_LIBS="-L$withval -lniftiio"
++  NIFTI_LIBS="-L$withval -lniftiio -lznz"
+ )
  
- 	VIPS_GATE_STOP( "read_jpeg_generate: work" );
+ AC_MSG_CHECKING(for NIFTI)
+@@ -64,19 +64,19 @@ if test "$NIFTI_LIBS" = ""; then
+   nifti_save_LIBS="$LIBS"
+   nifti_save_CFLAGS="$CFLAGS"
  
-diff --git a/libvips/foreign/tiff2vips.c b/libvips/foreign/tiff2vips.c
-index 1111111..2222222 100644
---- a/libvips/foreign/tiff2vips.c
-+++ b/libvips/foreign/tiff2vips.c
-@@ -1880,6 +1880,9 @@ rtiff_stripwise_generate( VipsRegion *or,
- 		y += hit.height;
- 	}
+-  LIBS="-lniftiio -lm $nifti_save_LIBS"
++  LIBS="-lniftiio -lznz -lm $nifti_save_LIBS"
+   CFLAGS="$NIFTI_INCLUDES $CFLAGS"
  
-+	if( y >= or->im->Ysize - r->top ) 
-+		VIPS_FREEF( TIFFClose, rtiff->tiff );
-+
- 	VIPS_GATE_STOP( "rtiff_stripwise_generate: work" ); 
+   # Try the standard search path first
+   AC_TRY_LINK([#include <nifti1_io.h>],[is_nifti_file("")], [
+-    NIFTI_LIBS="-lniftiio"
++    NIFTI_LIBS="-lniftiio -lznz"
+   ], [
+     # libniftiio is not in the standard search path, try $prefix
  
- 	return( 0 );
-
-diff --git a/libvips/foreign/pdfload.c b/libvips/foreign/pdfload.c
-index 1111111..2222222 100644
---- a/libvips/foreign/pdfload.c
-+++ b/libvips/foreign/pdfload.c
-@@ -393,6 +393,10 @@ vips_foreign_load_pdf_generate( VipsRegion *or,
- 			(guint32 *) VIPS_REGION_ADDR( or, r->left, r->top + y ), 
- 			r->width ); 
+     LIBS="-L${prefix}/lib $LIBS"
  
-+	if( y >= or->im->Ysize ) 
-+		VIPS_UNREF( pdf->page );
-+		VIPS_UNREF( pdf->doc );
-+
- 	return( 0 ); 
- }
- 
+     AC_TRY_LINK([#include <nifti1_io.h>],[is_nifti_file("")], [
+-      NIFTI_LIBS="-L${prefix}/lib -lniftiio"
++      NIFTI_LIBS="-L${prefix}/lib -lniftiio -lznz"
+     ], [
+       NIFTI_LIBS=no
+     ])

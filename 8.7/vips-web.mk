@@ -18,7 +18,9 @@ define $(PKG)_BUILD
         --without-magick \
         --without-openslide \
         --without-poppler \
+        --without-cfitsio \
         --without-OpenEXR \
+        --without-nifti \
         --without-matio \
         --without-ppm \
         --without-analyze \

@@ -10,13 +10,12 @@ $(PKG)_SUBDIR   := $(subst -all,,$(PKG))-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(subst -all,,$(PKG))-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
                    libgsf libjpeg-turbo tiff openslide lcms libexif \
-                   imagemagick libpng
+                   imagemagick libpng openexr cfitsio nifticlib
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
-        --without-OpenEXR \
         --disable-introspection \
         --with-jpeg-includes='$(PREFIX)/$(TARGET)/include/libjpeg-turbo' \
         --with-jpeg-libraries='$(PREFIX)/$(TARGET)/lib/libjpeg-turbo' \

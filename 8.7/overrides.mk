@@ -131,10 +131,35 @@ zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 # upstream version is 1.5.3
 libjpeg-turbo_VERSION  := 2.0.0
 libjpeg-turbo_CHECKSUM := 778876105d0d316203c928fd2a0374c8c01f755d0a00b12a1c8934aeccff8868
+libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libjpeg-turbo-[0-9]*.patch)))
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://$(SOURCEFORGE_MIRROR)/project/libjpeg-turbo/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
-libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libjpeg-turbo-[0-9]*.patch)))
+
+# upstream version is 2.2.0
+openexr_VERSION  := 2.3.0
+openexr_CHECKSUM := 8243b7de12b52239fe9235a6aeb4e35ead2247833e4fbc41541774b222717933
+openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/openexr-[0-9]*.patch)))
+openexr_SUBDIR   := openexr-$(openexr_VERSION)
+openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
+# See: https://github.com/openexr/openexr/issues/333
+openexr_URL      := https://github.com/openexr/openexr/archive/v$(openexr_VERSION).tar.gz
+
+# upstream version is 2.2.0
+ilmbase_VERSION  := 2.3.0
+ilmbase_CHECKSUM := 456978d1a978a5f823c7c675f3f36b0ae14dba36638aeaa3c4b0e784f12a3862
+ilmbase_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/ilmbase-[0-9]*.patch)))
+ilmbase_SUBDIR   := ilmbase-$(ilmbase_VERSION)
+ilmbase_FILE     := ilmbase-$(ilmbase_VERSION).tar.gz
+ilmbase_URL      := https://github.com/openexr/openexr/releases/download/v$(ilmbase_VERSION)/$(ilmbase_FILE)
+
+# upstream version is 3410
+cfitsio_VERSION  := 3450
+cfitsio_CHECKSUM := bf6012dbe668ecb22c399c4b7b2814557ee282c74a7d5dc704eb17c30d9fb92e
+cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/cfitsio-[0-9]*.patch)))
+cfitsio_SUBDIR   := cfitsio
+cfitsio_FILE     := cfitsio$(cfitsio_VERSION).tar.gz
+cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 ## Override sub-dependencies
 
@@ -470,4 +495,86 @@ define glib_BUILD
     $(MAKE) -C '$(BUILD_DIR)/gio'     -j '$(JOBS)' install bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS= MISC_STUFF=
     $(MAKE) -C '$(BUILD_DIR)'         -j '$(JOBS)' install-pkgconfigDATA
     $(MAKE) -C '$(BUILD_DIR)/m4macros' install
+endef
+
+# build with CMake.
+define openexr_BUILD
+    # downgrade minimum required version of CMake (it's unnecessarily high).
+    find '$(SOURCE_DIR)' -name 'CMakeLists.txt' \
+        -exec $(SED) -i 's,CMAKE_MINIMUM_REQUIRED(VERSION 3.11),CMAKE_MINIMUM_REQUIRED(VERSION 3.10),g' {} \;
+
+    # Use autotools with README.md
+    ln -s '$(SOURCE_DIR)/IlmBase/README.md' '$(SOURCE_DIR)/IlmBase/README'
+
+    # Update auto-stuff, except autoheader, because if fails...
+    cd '$(SOURCE_DIR)/IlmBase' && AUTOHEADER=true autoreconf -fi
+
+    # build a native version of IlmBase
+    cd '$(SOURCE_DIR)/IlmBase' && $(SHELL) ./configure \
+        --build="`config.guess`" \
+        --disable-shared \
+        --prefix='$(SOURCE_DIR)/IlmBase' \
+        --enable-threading=yes \
+        CONFIG_SHELL=$(SHELL) \
+        SHELL=$(SHELL)
+    $(MAKE) -C '$(SOURCE_DIR)/IlmBase' -j '$(JOBS)' install $(MXE_DISABLE_PROGRAMS)
+
+    # build OpenEXR with CMake.
+    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DOPENEXR_BUILD_ILMBASE=OFF \
+        -DOPENEXR_BUILD_PYTHON_LIBS=OFF \
+        -DOPENEXR_BUILD_TESTS=OFF \
+        -DOPENEXR_BUILD_UTILS=OFF \
+        -DOPENEXR_BUILD_SHARED=$(if $(BUILD_STATIC),OFF,ON) \
+        -DOPENEXR_BUILD_STATIC=$(if $(BUILD_STATIC),ON,OFF) \
+        -DILMBASE_PACKAGE_PREFIX='$(PREFIX)/$(TARGET)' \
+        -DILMBASE_INCLUDE_DIR='$(PREFIX)/$(TARGET)/include' \
+        -DILMBASE_LIBRARIES='$(PREFIX)/$(TARGET)/lib' \
+        '$(SOURCE_DIR)'
+
+    # build the code generator manually
+    cd '$(SOURCE_DIR)/OpenEXR/IlmImf/' && $(BUILD_CXX) -O2 \
+        -I'$(SOURCE_DIR)/IlmBase/include/OpenEXR' \
+        -L'$(SOURCE_DIR)/IlmBase/lib' \
+        b44ExpLogTable.cpp \
+        -lHalf \
+        -o b44ExpLogTable
+    '$(SOURCE_DIR)/OpenEXR/IlmImf/b44ExpLogTable' > '$(SOURCE_DIR)/OpenEXR/IlmImf/b44ExpLogTable.h'
+    cd '$(SOURCE_DIR)/OpenEXR/IlmImf/' && $(BUILD_CXX) -O2 \
+        -I'$(SOURCE_DIR)/OpenEXR/config.windows' -I. \
+        -I'$(SOURCE_DIR)/IlmBase/include/OpenEXR' \
+        -L'$(SOURCE_DIR)/IlmBase/lib' \
+        dwaLookups.cpp \
+        -lHalf -lIlmThread -lIex -lpthread \
+        -o dwaLookups
+    '$(SOURCE_DIR)/OpenEXR/IlmImf/dwaLookups' > '$(SOURCE_DIR)/OpenEXR/IlmImf/dwaLookups.h'
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+endef
+
+# build with CMake.
+define ilmbase_BUILD
+    # downgrade minimum required version of CMake (it's unnecessarily high).
+    find '$(SOURCE_DIR)' -name 'CMakeLists.txt' \
+        -exec $(SED) -i 's,CMAKE_MINIMUM_REQUIRED(VERSION 3.11),CMAKE_MINIMUM_REQUIRED(VERSION 3.10),g' {} \;
+    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DOPENEXR_FORCE_CXX03=ON \
+        -DENABLE_TESTS=OFF \
+        -DBUILD_ILMBASE_STATIC=ON \
+        '$(SOURCE_DIR)'
+
+    # do the first build step by hand, because programs are built that
+    # generate source files
+    cd '$(SOURCE_DIR)/Half' && $(BUILD_CXX) eLut.cpp -o eLut
+    '$(SOURCE_DIR)/Half/eLut' > '$(BUILD_DIR)/Half/eLut.h'
+    cd '$(SOURCE_DIR)/Half' && $(BUILD_CXX) toFloat.cpp -o toFloat
+    '$(SOURCE_DIR)/Half/toFloat' > '$(BUILD_DIR)/Half/toFloat.h'
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+endef
+
+define cfitsio_BUILD_SHARED
+     $($(PKG)_BUILD)
 endef

@@ -14,7 +14,7 @@ Experiment with building a libvips binary for 64-bit Windows with [MXE](https://
 | [gdk-pixbuf]    | 2.36.12  | LGPLv3                          |
 | [gettext]       | 0.19.8.1 | LGPLv3                          |
 | [giflib]        | 5.1.4    | MIT Licence                     |
-| [glib]          | 2.54.2   | LGPLv3                          |
+| [glib]          | 2.57.2   | LGPLv3                          |
 | [harfbuzz]      | 1.8.4    | MIT Licence                     |
 | [lcms]          | 2.9      | MIT Licence                     |
 | [libcroco]      | 0.6.12   | LGPLv3                          |
@@ -70,20 +70,26 @@ Experiment with building a libvips binary for 64-bit Windows with [MXE](https://
 ## libvips-all dependencies
 Same as libvips-web + these extra dependencies:
 
-| Dependency      | Version  | Used under the terms of          |
-|-----------------|----------|----------------------------------|
-| [hdf5]          | 1.8.12   | BSD-like                         |
-| [imagemagick]   | 6.9.10-9 | [ImageMagick License] (GPL-like) |
-| [matio]         | 1.5.12   | BSD 2-Clause                     |
-| [openjpeg]      | 2.3.0    | BSD 2-Clause                     |
-| [openslide]     | 3.4.1    | LGPLv3                           |
-| [poppler]       | 0.67.0   | GPLv2                            |
-| [sqlite]        | 3.24.0   | Public domain                    |
+| Dependency      | Version   | Used under the terms of          |
+|-----------------|-----------|----------------------------------|
+| [cfitsio]       | 3.450     | BSD-like                         |
+| [hdf5]          | 1.8.12    | BSD-like                         |
+| [imagemagick]   | 6.9.10-10 | [ImageMagick License] (GPL-like) |
+| [matio]         | 1.5.12    | BSD 2-Clause                     |
+| [nifticlib]     | 2.0.0     | Public domain                    |
+| [openexr]       | 2.3.0     | BSD 3-Clause                     |
+| [openjpeg]      | 2.3.0     | BSD 2-Clause                     |
+| [openslide]     | 3.4.1     | LGPLv3                           |
+| [poppler]       | 0.67.0    | GPLv2                            |
+| [sqlite]        | 3.24.0    | Public domain                    |
 
+[cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [hdf5]: https://www.hdfgroup.org/solutions/hdf5/
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://www.imagemagick.org/script/license.php
 [matio]: https://github.com/tbeu/matio
+[nifticlib]: https://nifti.nimh.nih.gov/
+[openexr]: https://github.com/openexr/openexr
 [openjpeg]: http://www.openjpeg.org/
 [openslide]: https://github.com/openslide/openslide
 [poppler]: https://poppler.freedesktop.org/
@@ -259,6 +265,10 @@ Same as libvips-web + these extra dependencies:
 
 ```
 libvips-42.dll
+└───libIlmImf-2_3.dll
+│   └───libgcc_s_seh-1.dll
+│   └───libstdc++-6.dll
+│   └───libz1.dll
 └───libMagickCore-6.Q16-6.dll
 │   └───libcairo-2.dll
 │   │   └───libgcc_s_seh-1.dll
@@ -304,9 +314,13 @@ libvips-42.dll
 │   │   └───libz1.dll
 │   │   └───libiconv-2.dll
 │   └───libz1.dll
+└───libcfitsio.dll
 └───libmatio-4.dll
 │   └───libz1.dll
 │   └───libhdf5-8.dll
+│       └───libz1.dll
+└───libniftiio.dll
+│   └───libznz.dll
 │       └───libz1.dll
 └───libopenslide-0.dll
 │   └───libcairo-2.dll
@@ -347,35 +361,37 @@ libvips-42.dll
 │   │   └───libiconv-2.dll
 │   └───libz1.dll
 └───libpoppler-glib-8.dll
-    └───libpoppler-78.dll
-    │   └───libstdc++-6.dll
-    │   └───liblcms2-2.dll
-    │   └───libopenjp2.dll
-    │   └───libjpeg-62.dll
-    │   └───libpng16-16.dll
-    │   └───libtiff-5.dll
-    │   └───libz1.dll
-    └───libstdc++-6.dll
-    └───libcairo-2.dll
-    │   └───libgcc_s_seh-1.dll
-    │   └───libfontconfig-1.dll
-    │   └───libfreetype-6.dll
-    │   └───libpixman-1-0.dll
-    │   └───libpng16-16.dll
-    │   └───libz1.dll
-    └───libfreetype-6.dll
-    │   └───libharfbuzz-0.dll  
-    │   └───libpng16-16.dll
-    │   └───libz1.dll
-    └───libgio-2.0-0.dll
-    │   └───libglib-2.0-0.dll
-    │   └───libgmodule-2.0-0.dll
-    │   └───libgobject-2.0-0.dll
-    │   └───libz1.dll
-    └───libglib-2.0-0.dll
-    │   └───libintl-8.dll
-    └───libgobject-2.0-0.dll
-        └───libglib-2.0-0.dll
-        └───libffi-6.dll
+│   └───libpoppler-78.dll
+│   │   └───libstdc++-6.dll
+│   │   └───liblcms2-2.dll
+│   │   └───libopenjp2.dll
+│   │   └───libjpeg-62.dll
+│   │   └───libpng16-16.dll
+│   │   └───libtiff-5.dll
+│   │   └───libz1.dll
+│   └───libstdc++-6.dll
+│   └───libcairo-2.dll
+│   │   └───libgcc_s_seh-1.dll
+│   │   └───libfontconfig-1.dll
+│   │   └───libfreetype-6.dll
+│   │   └───libpixman-1-0.dll
+│   │   └───libpng16-16.dll
+│   │   └───libz1.dll
+│   └───libfreetype-6.dll
+│   │   └───libharfbuzz-0.dll  
+│   │   └───libpng16-16.dll
+│   │   └───libz1.dll
+│   └───libgio-2.0-0.dll
+│   │   └───libglib-2.0-0.dll
+│   │   └───libgmodule-2.0-0.dll
+│   │   └───libgobject-2.0-0.dll
+│   │   └───libz1.dll
+│   └───libglib-2.0-0.dll
+│   │   └───libintl-8.dll
+│   └───libgobject-2.0-0.dll
+│       └───libglib-2.0-0.dll
+│       └───libffi-6.dll
+└───libznz.dll
+    └───libz1.dll
 ```
 </details>

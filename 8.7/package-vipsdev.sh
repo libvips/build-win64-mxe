@@ -37,15 +37,20 @@ echo Cleaning build $repackage_dir
 # Remove unneeded dependencies
 ( cd $repackage_dir/bin ; rm -f libgomp*.dll )
 ( cd $repackage_dir/bin ; rm -f libquadmath*.dll )
-( cd $repackage_dir/bin ; rm -f libwinpthread*.dll )
 ( cd $repackage_dir/bin ; rm -f libharfbuzz-subset*.dll )
 
+# Be careful, if we're going to build with '.posix'
+# (to enable C++11/C11 multithreading features) this
+# DLL can't be removed
+( cd $repackage_dir/bin ; rm -f libwinpthread*.dll )
+
 if [ "$deps" = "web" ]; then
-  # Poppler needs this dependency, can safely be removed
-  # when targeting web
+  # Poppler and OpenEXR needs this dependency, can safely be
+  # removed when targeting web
   ( cd $repackage_dir/bin ; rm -f libstdc++*.dll )
 else
   # We don't need these dependencies
+  ( cd $repackage_dir/bin ; rm -f libnifticdf.dll )
   ( cd $repackage_dir/bin ; rm -f libhdf5_hl*.dll )
   ( cd $repackage_dir/bin ; rm -f libMagickWand*.dll )
 fi
