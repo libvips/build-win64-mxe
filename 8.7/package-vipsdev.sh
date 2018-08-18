@@ -58,7 +58,7 @@ fi
 # Remove all symbols that are not needed
 ( cd $repackage_dir/bin ; strip --strip-unneeded *.exe )
 
-zipfile=$vips_package-dev-w64-$deps-$vips_version.$vips_micro_version.zip
+zipfile=$vips_package-dev-w64-$deps-$vips_version.$vips_micro_version-close-input-early.zip
 echo Creating $zipfile
 rm -f $zipfile
 zip -r -qq $zipfile $repackage_dir

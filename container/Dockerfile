@@ -21,6 +21,11 @@ RUN \
 RUN \
     rustup target add x86_64-pc-windows-gnu
 
+# For a full build from the git sources, we'll need more packages
+RUN \
+    apt-get install -y \
+        gobject-introspection swig gtk-doc-tools 
+
 # the versioned build dir is mounted at /data, so this runs the build script
 # in that
 ENTRYPOINT ["/bin/bash", "/data/build.sh"]
