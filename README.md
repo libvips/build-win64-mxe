@@ -6,7 +6,7 @@ Experiment with building a libvips binary for 64-bit Windows with [MXE](https://
 | Dependency      | Version  | Used under the terms of         |
 |-----------------|----------|---------------------------------|
 | [cairo]         | 1.15.12  | Mozilla Public License 2.0      |
-| [expat]         | 2.2.5    | MIT Licence                     |
+| [expat]         | 2.2.6    | MIT Licence                     |
 | [fftw]          | 3.3.8    | GPLv2                           |
 | [fontconfig]    | 2.13.0   | [fontconfig Licence] (BSD-like) |
 | [freetype]      | 2.9.1    | [freetype Licence] (BSD-like)   |
@@ -15,7 +15,7 @@ Experiment with building a libvips binary for 64-bit Windows with [MXE](https://
 | [gettext]       | 0.19.8.1 | LGPLv3                          |
 | [giflib]        | 5.1.4    | MIT Licence                     |
 | [glib]          | 2.57.2   | LGPLv3                          |
-| [harfbuzz]      | 1.8.4    | MIT Licence                     |
+| [harfbuzz]      | 1.8.8    | MIT Licence                     |
 | [lcms]          | 2.9      | MIT Licence                     |
 | [libcroco]      | 0.6.12   | LGPLv3                          |
 | [libexif]       | 0.6.21   | LGPLv3                          |
@@ -80,7 +80,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 2.3.0     | BSD 3-Clause                     |
 | [openjpeg]      | 2.3.0     | BSD 2-Clause                     |
 | [openslide]     | 3.4.1     | LGPLv3                           |
-| [poppler]       | 0.67.0    | GPLv2                            |
+| [poppler]       | 0.68.0    | GPLv2                            |
 | [sqlite]        | 3.24.0    | Public domain                    |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -361,7 +361,7 @@ libvips-42.dll
 │   │   └───libiconv-2.dll
 │   └───libz1.dll
 └───libpoppler-glib-8.dll
-│   └───libpoppler-78.dll
+│   └───libpoppler-79.dll
 │   │   └───libstdc++-6.dll
 │   │   └───liblcms2-2.dll
 │   │   └───libopenjp2.dll

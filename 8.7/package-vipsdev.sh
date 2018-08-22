@@ -21,7 +21,7 @@ echo Copying libvips and dependencies
 rm -rf $repackage_dir
 
 $mxe_dir/tools/copydlldeps.sh -c \
-  -f $mxe_prefix/$target/bin/libvips-42.dll \
+  -f $mxe_prefix/$target/bin/vips.exe \
   -d $repackage_dir/bin \
   -R $mxe_prefix/$target \
   -o $mxe_prefix/bin/$target-objdump > /dev/null 2>&1
