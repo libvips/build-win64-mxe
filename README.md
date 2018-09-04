@@ -61,6 +61,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 [libvips]: https://github.com/jcupitt/libvips
 [libwebp]: https://github.com/webmproject/libwebp
 [libxml2]: https://github.com/GNOME/libxml2
+[orc]: https://github.com/GStreamer/orc
 [pango]: https://www.pango.org/
 [pixman]: http://www.pixman.org/
 [zlib]: https://zlib.net/
