@@ -1,10 +1,49 @@
 $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 
-# We don't need debugging symbols.
-# For e.g. this commit:
-# https://github.com/GNOME/librsvg/commit/8215d7f1f581f0aaa317cccc3e974c61d1a6ad84
-# adds ~26 MB to the librsvg DLL if we don't install-strip it.
-STRIP_LIB := $(true)
+# Install the mingw-w64 headers somewhere else
+# because we need to distribute the /include and
+# /lib directories
+mingw-w64-headers_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw'
+
+# Some optimizations / stripping don't work for 
+# gcc, mingw-w64-crt and winpthreads
+common_FLAGS=CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include $(filter-out -fdata-sections -ffunction-sections -fPIC ,$(CFLAGS))' \
+CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include $(filter-out -fdata-sections -ffunction-sections -fPIC ,$(CXXFLAGS))' \
+LDFLAGS='$(filter-out -Wl$(comma)--gc-sections ,$(LDFLAGS))'
+
+# Common configure options for building mingw-w64-crt 
+# and winpthreads somewhere else
+common_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw' \
+--with-sysroot='$(PREFIX)/$(TARGET)/mingw' \
+$(common_FLAGS) \
+RCFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include'
+
+# Point native system header dir to /mingw/include and
+# compile without some optimizations / stripping
+gcc_CONFIGURE_OPTS=--with-native-system-header-dir='/mingw/include' \
+$(subst -I$(PREFIX)/$(TARGET)/mingw/include ,,$(common_FLAGS))
+
+# The trick here is to symlink all files from /mingw/{bin,lib,include}/
+# to $(PREFIX)/$(TARGET) just before the make command
+# This ensures that all files are found during linking and that we
+# can clean up those unnecessary files afterwards
+define gcc_BUILD_x86_64-w64-mingw32
+    $(subst # build rest of gcc, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
+    ln -sf $(PREFIX)/$(TARGET)/mingw/lib/* $(PREFIX)/$(TARGET)/lib && \
+    ln -sf $(PREFIX)/$(TARGET)/mingw/include/* $(PREFIX)/$(TARGET)/include, \
+    $(subst @gcc-crt-config-opts@,--disable-lib32 $(common_CONFIGURE_OPTS), \
+    $(subst winpthreads/configure' $(MXE_CONFIGURE_OPTS),winpthreads/configure' $(MXE_CONFIGURE_OPTS) $(common_CONFIGURE_OPTS), \
+    $(gcc_BUILD_mingw-w64))))
+endef
+
+define gcc_BUILD_i686-w64-mingw32
+    $(subst # build rest of gcc, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
+    ln -sf $(PREFIX)/$(TARGET)/mingw/lib/* $(PREFIX)/$(TARGET)/lib && \
+    ln -sf $(PREFIX)/$(TARGET)/mingw/include/* $(PREFIX)/$(TARGET)/include, \
+    $(subst @gcc-crt-config-opts@,--disable-lib64 $(common_CONFIGURE_OPTS), \
+    $(subst winpthreads/configure' $(MXE_CONFIGURE_OPTS),winpthreads/configure' $(MXE_CONFIGURE_OPTS) $(common_CONFIGURE_OPTS), \
+    $(gcc_BUILD_mingw-w64))))
+endef
 
 ## Update dependencies
 
@@ -45,8 +84,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-10
-imagemagick_CHECKSUM := f09488e6d8e4c703609a3be4244690a5f533d765fd2b0822c05dbd6a6ae71c2c
+imagemagick_VERSION  := 6.9.10-11
+imagemagick_CHECKSUM := 2d1c61999a9b1f663a085d6657cc4db4b1652af6462256d1aa3c467df3e9e6eb
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -55,16 +94,16 @@ imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 # Note: static linking is broken on 2.42, if static linking is needed; stick with 2.40.20.
 # See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.43.4
-librsvg_CHECKSUM := 3aa1eb392fc467aaffa7153fe8586f3e93eedbdfb443ca7d4707663c9d1773bc
+librsvg_VERSION  := 2.44.2
+librsvg_CHECKSUM := 4eec96cc53ed499417dac3db9b4604f80a76f377f8f791641c458df1d7a3631f
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.42.2
-pango_CHECKSUM := b1e416b4d40416ef6c8224cf146492b86848703264ba88f792290992cf3ca1e2
+pango_VERSION  := 1.42.4
+pango_CHECKSUM := 1d2b74cd63e8bd41961f2f8d952355aa0f9be6002b52c8aa7699d9f5da597c9d
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -187,7 +226,7 @@ define harfbuzz_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --with-icu=no \
         ac_cv_header_sys_mman_h=no \
-        CXXFLAGS='-std=c++11' \
+        CXXFLAGS='$(CXXFLAGS) -std=c++11' \
         LIBS='-lstdc++'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
@@ -218,7 +257,7 @@ define gdk-pixbuf_BUILD
         --disable-modules \
         --with-included-loaders \
         --without-gdiplus \
-        CPPFLAGS="`'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
+        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
         GLIB_GENMARSHAL='$(PREFIX)/$(TARGET)/bin/glib-genmarshal' \
         LIBS="`'$(TARGET)-pkg-config' --libs libtiff-4 jpeg-turbo`"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
@@ -253,7 +292,7 @@ define imagemagick_BUILD
         --disable-openmp \
         --without-zlib \
         --with-freetype='$(PREFIX)/$(TARGET)/bin/freetype-config' \
-        CPPFLAGS="`'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
+        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
         LIBS="`'$(TARGET)-pkg-config' --libs jpeg-turbo`"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_PROGRAMS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install bin_PROGRAMS=
@@ -289,6 +328,7 @@ endef
 define librsvg_BUILD
     cd '$(SOURCE_DIR)' && autoreconf -fi -I'$(PREFIX)/$(TARGET)/share/aclocal'
     cd '$(BUILD_DIR)' && RUSTUP_HOME='/usr/local/rustup' \
+    RUSTFLAGS='-C panic=abort' \
     CARGO_HOME='/usr/local/cargo' \
     PATH='/usr/local/cargo/bin:$(PATH)' \
     $(SOURCE_DIR)/configure \
@@ -312,6 +352,7 @@ define librsvg_BUILD
         -C '$(BUILD_DIR)' \
         -j '$(JOBS)' \
         RUSTUP_HOME='/usr/local/rustup' \
+        RUSTFLAGS='-C panic=abort' \
         CARGO_HOME='/usr/local/cargo' \
         PATH='/usr/local/cargo/bin:$(PATH)'
 
@@ -375,7 +416,7 @@ define zlib_BUILD
 endef
 
 define zlib_BUILD_SHARED
-     $($(PKG)_BUILD)
+    $($(PKG)_BUILD)
 endef
 
 # disable the C++ API for now, we don't use it anyway
@@ -398,7 +439,7 @@ define libwebp_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --enable-libwebpmux \
         --enable-libwebpdemux \
-        CPPFLAGS="`'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
+        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
         LIBS="`'$(TARGET)-pkg-config' --libs jpeg-turbo`"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
@@ -408,7 +449,8 @@ endef
 define cairo_BUILD
     $(SED) -i 's,libpng12,libpng16,g'                        '$(SOURCE_DIR)/configure'
     $(SED) -i 's,^\(Libs:.*\),\1 @CAIRO_NONPKGCONFIG_LIBS@,' '$(SOURCE_DIR)/src/cairo.pc.in'
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+    cd '$(BUILD_DIR)' && ax_cv_c_float_words_bigendian=no \
+    $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gl \
         --disable-lto \
@@ -449,7 +491,7 @@ define matio_BUILD
 endef
 
 define matio_BUILD_SHARED
-     $($(PKG)_BUILD)
+    $($(PKG)_BUILD)
 endef
 
 # build without lzma
@@ -576,5 +618,21 @@ define ilmbase_BUILD
 endef
 
 define cfitsio_BUILD_SHARED
-     $($(PKG)_BUILD)
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
+        -DBUILD_SHARED_LIBS=ON
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+
+    # create pkg-config files
+    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/pkgconfig'
+    (echo 'Name: $(PKG)'; \
+     echo 'Version: $($(PKG)_VERSION)'; \
+     echo 'Libs: -l$(PKG)';) \
+     > '$(PREFIX)/$(TARGET)/lib/pkgconfig/$(PKG).pc'
+
+    '$(TARGET)-gcc' \
+        -W -Wall -Werror -ansi \
+        '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-cfitsio.exe' \
+        `'$(TARGET)-pkg-config' cfitsio --cflags --libs`
 endef

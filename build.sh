@@ -1,11 +1,13 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-  echo "Usage: $0 VERSION [DEPS]"
-  echo "Build libvips for win64 in a Docker container"
+  echo "Usage: $0 VERSION [DEPS] [ARCH]"
+  echo "Build libvips for Windows in a Docker container"
   echo "VERSION is the name of a versioned subdirectory, e.g. 8.1"
   echo "DEPS is the group of dependencies to build libvips with,"
   echo "    defaults to 'all'"
+  echo "ARCH is the architecture name to build libvips with,"
+  echo "    defaults to 'x86_64'"
   exit 1
 fi
 
@@ -17,9 +19,8 @@ fi
 version="$1"
 deps="${2:-all}"
 
-# Note: When 32-bit is needed, also change the Docker rustup target (see TODO).
 # ARCH='i686'
-arch='x86_64'
+arch="${3:-x86_64}"
 
 # Note: librsvg can't be build statically (it's broken on 2.42, stick 
 # with 2.40.20 if we need to build statically).
@@ -37,7 +38,7 @@ fi
 docker pull rust:stretch
 
 # Create a machine image with all the required build tools pre-installed
-docker build -t libvips-build-win-mxe container
+docker build --build-arg ARCH=$arch -t libvips-build-win-mxe container
 
 # Run build scripts inside container
 docker run --rm -t -u $(id -u):$(id -g) -v $PWD/$version:/data \
