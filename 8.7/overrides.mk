@@ -84,8 +84,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-11
-imagemagick_CHECKSUM := 2d1c61999a9b1f663a085d6657cc4db4b1652af6462256d1aa3c467df3e9e6eb
+imagemagick_VERSION  := 6.9.10-12
+imagemagick_CHECKSUM := 54549fe394598f6a7cec8cb5adc45d5d65b8b4f043745c6610693618b1372966
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -94,8 +94,8 @@ imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 # Note: static linking is broken on 2.42, if static linking is needed; stick with 2.40.20.
 # See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.44.2
-librsvg_CHECKSUM := 4eec96cc53ed499417dac3db9b4604f80a76f377f8f791641c458df1d7a3631f
+librsvg_VERSION  := 2.44.4
+librsvg_CHECKSUM := bd913b1f598d2dec70762849e51c5db334d072648557821e3908a2c43bad5f3d
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -133,8 +133,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 0.51.0
-poppler_VERSION  := 0.68.0
-poppler_CHECKSUM := f90d04f0fb8df6923ecb0f106ae866cf9f8761bb537ddac64dfb5322763d0e58
+poppler_VERSION  := 0.69.0
+poppler_CHECKSUM := 637ff943f805f304ff1da77ba2e7f1cbd675f474941fd8ae1e0fc01a5b45a3f9
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -157,8 +157,8 @@ libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
 libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)
 
 # upstream version is 1.15.4
-cairo_VERSION  := 1.15.12
-cairo_CHECKSUM := 7623081b94548a47ee6839a7312af34e9322997806948b6eec421a8c6d0594c9
+cairo_VERSION  := 1.15.14
+cairo_CHECKSUM := 16566b6c015a761bb0b7595cf879b77f8de85f90b443119083c4c2769b93298d
 cairo_SUBDIR   := cairo-$(cairo_VERSION)
 cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
 cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
@@ -199,6 +199,13 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio
 cfitsio_FILE     := cfitsio$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
+
+# upstream version is 0.33.6
+pixman_VERSION  := 0.34.0
+pixman_CHECKSUM := 21b6b249b51c6800dc9553b65106e1e37d0e25df942c90531d4c3997aa20a88e
+pixman_SUBDIR   := pixman-$(pixman_VERSION)
+pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
+pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 ## Override sub-dependencies
 

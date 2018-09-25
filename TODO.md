@@ -27,6 +27,6 @@
 - [ ] Incorporate all new dependencies and patches into [MXE](https://github.com/mxe/mxe).
   - [ ] Should we also add libvips-web?
   - [ ] Not sure about `librsvg`, because v2.42.0+ requires the Rust toolchain.
-- [ ] Try to update Pixman to 0.34.0. Couldn't find a tarball for version 0.34.0 [here](https://cairographics.org/snapshots/).
+- [X] Try to update Pixman to 0.34.0. Couldn't find a tarball for version 0.34.0 [here](https://cairographics.org/snapshots/).
 - [X] Try to build with 32-bit architecture (not sure if this is still being distributed).
 - [ ] Try to test the binaries with the Python test suite on Wine.
