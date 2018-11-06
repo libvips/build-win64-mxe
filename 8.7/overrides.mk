@@ -76,16 +76,16 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 1.5.2
-matio_VERSION  := 1.5.12
-matio_CHECKSUM := 8695e380e465056afa5b5e20128935afe7d50e03830f9f7778a72e1e1894d8a9
+matio_VERSION  := 1.5.13
+matio_CHECKSUM := feadb2f54ba7c9db6deba8c994e401d7a1a8e7afd0fe74487691052b8139e5cb
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-12
-imagemagick_CHECKSUM := 54549fe394598f6a7cec8cb5adc45d5d65b8b4f043745c6610693618b1372966
+imagemagick_VERSION  := 6.9.10-14
+imagemagick_CHECKSUM := d123d4ad4e5bf72c51a6f528a2dbbbd4bf4249f25b36045017c9c634db968e6d
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -94,8 +94,8 @@ imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 # Note: static linking is broken on 2.42, if static linking is needed; stick with 2.40.20.
 # See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.44.4
-librsvg_CHECKSUM := bd913b1f598d2dec70762849e51c5db334d072648557821e3908a2c43bad5f3d
+librsvg_VERSION  := 2.44.8
+librsvg_CHECKSUM := ae0c5c52bdc3cb077d82f83622307c01d21c104ea24af67c0193aae8e0773745
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -110,12 +110,12 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 0.19.6
-fribidi_VERSION  := 0.19.7
-fribidi_CHECKSUM := 08222a6212bbc2276a2d55c3bf370109ae4a35b689acbc66571ad2a670595a8e
+fribidi_VERSION  := 1.0.5
+fribidi_CHECKSUM := 6a64f2a687f5c4f203a46fa659f43dd43d1f8b845df8d723107e8a7e6158e4ce
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/fribidi-[0-9]*.patch)))
 fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.bz2
-fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/$(fribidi_VERSION)/$(fribidi_FILE)
+fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.12
@@ -133,16 +133,16 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 0.51.0
-poppler_VERSION  := 0.69.0
-poppler_CHECKSUM := 637ff943f805f304ff1da77ba2e7f1cbd675f474941fd8ae1e0fc01a5b45a3f9
+poppler_VERSION  := 0.71.0
+poppler_CHECKSUM := badbecd2dddf63352fd85ec08a9c2ed122fdadacf2a34fcb4cc227c4d01f2cf9
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
 poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.57.2
-glib_CHECKSUM := e19f795baabb52651ddea90bb5dc8f696939e15290c3cb7cfa684d4e1628c1a8
+glib_VERSION  := 2.58.1
+glib_CHECKSUM := 97d6a9d926b6aa3dfaadad3077cfb43eec74432ab455dff14250c769d526d7d6
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -157,11 +157,11 @@ libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
 libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)
 
 # upstream version is 1.15.4
-cairo_VERSION  := 1.15.14
-cairo_CHECKSUM := 16566b6c015a761bb0b7595cf879b77f8de85f90b443119083c4c2769b93298d
+cairo_VERSION  := 1.16.0
+cairo_CHECKSUM := 5e7b29b3f113ef870d1e3ecf8adf21f923396401604bda16d44be45e66052331
 cairo_SUBDIR   := cairo-$(cairo_VERSION)
 cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
-cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
+cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
 
 # zlib will make libzlib.dll, but we want libz.dll so we must 
 # patch CMakeLists.txt
@@ -223,6 +223,7 @@ poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms li
 libwebp_DEPS            := cc gettext giflib libjpeg-turbo tiff libpng
 cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
 librsvg_DEPS            := cc cairo gdk-pixbuf glib libcroco libgsf pango
+fribidi_DEPS            := $(filter-out glib,$(fribidi_DEPS))
 
 ## Override build scripts
 
@@ -286,7 +287,6 @@ endef
 define imagemagick_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
-        --without-threads \
         --without-x \
         --without-lzma \
         --without-modules \
@@ -328,6 +328,15 @@ define pango_BUILD
         --without-dynamic-modules \
         --disable-introspection \
         CXX='$(TARGET)-g++'
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' install $(MXE_DISABLE_PROGRAMS)
+endef
+
+# glib dependency was completely removed.
+define fribidi_BUILD
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS) \
+        --disable-debug \
+        --disable-deprecated
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' install $(MXE_DISABLE_PROGRAMS)
 endef
 
@@ -482,7 +491,6 @@ define cairo_BUILD
         --enable-ft \
         --enable-pdf \
         --enable-svg \
-        --disable-pthread \
         --without-x \
         CFLAGS="$(CFLAGS) $(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD)" \
         LIBS="-lmsimg32 -lgdi32 `$(TARGET)-pkg-config pixman-1 --libs`"

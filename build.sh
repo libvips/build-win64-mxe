@@ -22,11 +22,15 @@ deps="${2:-all}"
 # ARCH='i686'
 arch="${3:-x86_64}"
 
-# Note: librsvg can't be build statically (it's broken on 2.42, stick 
-# with 2.40.20 if we need to build statically).
+# Note: librsvg can't be built statically (it's broken on 2.42, stick 
+# with 2.40.20 if we need to build it statically).
 # See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # target="$arch-w64-mingw32.static"
-target="$arch-w64-mingw32.shared"
+# Note 2: .posix enables C++11/C11 multithreading features by 
+# depending on libwinpthreads (will distribute an additional DLL).
+# Note 3: Poppler can't be built without .posix (since version 0.70)
+# see: https://cgit.freedesktop.org/poppler/poppler/commit/poppler/Annot.cc?id=e5aff4b4fcbd3e1cbdd7d6329c00eee10b36e94d 
+target="$arch-w64-mingw32.shared.posix"
 
 if ! type docker > /dev/null; then
   echo "Please install docker"
