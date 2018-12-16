@@ -54,7 +54,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
 [libpng]: https://github.com/glennrp/libpng
-[libpng License]: http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
+[libpng License version 2]: http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
 [librsvg]: https://github.com/GNOME/librsvg
 [libtiff]: http://www.simplesystems.org/libtiff/
 [libtiff License]: http://www.simplesystems.org/libtiff/misc.html
