@@ -20,7 +20,7 @@ target="${2:-x86_64-w64-mingw32.shared}"
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="379534c7bf0dfadfbae7fc68d57c54c2d77e912e"
+revision="ed88c4cd8d1cdf6423c078955293070b2632ed4b"
 
 if [ -f "$mxe_dir/Makefile" ]; then
   echo "Skip cloning, MXE already exists at $mxe_dir"
@@ -59,12 +59,12 @@ cp -f $work_dir/settings.mk $mxe_dir
 # Prepare MinGW directories
 mkdir -p $mxe_prefix/$target/mingw/{bin,include,lib}
 
-# GLib needs to be built first (otherwise gdk-pixbuf can't find glib-genmarshal)
-# Also build pe-util, handy for copying DLL dependencies.
-make glib pe-util MXE_TARGETS=`$mxe_dir/ext/config.guess`
+# Build pe-util, handy for copying DLL dependencies.
+make pe-util MXE_TARGETS=`$mxe_dir/ext/config.guess`
 
-# Build libvips and dependencies
-make gendef cmake vips-$deps MXE_PLUGIN_DIRS=$work_dir MXE_TARGETS=$target
+# Build gendef (a tool for generating def files from DLLs)
+# and libvips (+ dependencies).
+make gendef vips-$deps MXE_PLUGIN_DIRS=$work_dir MXE_TARGETS=$target
 
 cd $work_dir
 

@@ -4,8 +4,10 @@ JOBS := 4
 
 # Special flags for compiler.
 export CPPFLAGS := -D_FORTIFY_SOURCE=2
-export CFLAGS   := -s -Os -ffast-math -ftree-vectorize -fdata-sections -ffunction-sections -fPIC $(CPPFLAGS) -static-libgcc
-export CXXFLAGS := -s -Os -ffast-math -ftree-vectorize -fdata-sections -ffunction-sections -fPIC $(CPPFLAGS) -static-libgcc -static-libstdc++
+export CFLAGS   := -s -Os -ffast-math -ftree-vectorize -ffunction-sections \
+                   -fPIC $(CPPFLAGS) -static-libgcc
+export CXXFLAGS := -s -Os -ffast-math -ftree-vectorize -ffunction-sections \
+                   -fPIC $(CPPFLAGS) -static-libgcc -static-libstdc++
 export LDFLAGS  := -Wl,--gc-sections -Wl,--strip-all -Wl,--as-needed
 
 # We don't need debugging symbols.
@@ -15,5 +17,8 @@ export LDFLAGS  := -Wl,--gc-sections -Wl,--strip-all -Wl,--as-needed
 STRIP_LIB := $(true)
 
 # This variable controls which plugins are in use.
-# Build with GCC 6.1.
-override MXE_PLUGIN_DIRS += plugins/gcc6
+# Build with GCC 8.2.
+override MXE_PLUGIN_DIRS += plugins/gcc8
+
+# Override GCC patches with 0005-Windows-Don-t-ignore-native-system-header-dir.patch
+override gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/gcc-[0-9]*.patch)))

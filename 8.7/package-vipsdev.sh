@@ -35,6 +35,7 @@ if [ "$slim_build" = true ]; then
     $mxe_prefix/$target/bin/libvips-42.dll \
     --clear-path \
     --path $mxe_prefix/$target/bin \
+    --path $mxe_prefix/$target/bin/libjpeg-turbo \
     -a \
     -w USERENV.dll \
     -w USP10.dll \
@@ -48,6 +49,7 @@ else
     $mxe_prefix/$target/bin/libvips-cpp-42.dll \
     --clear-path \
     --path $mxe_prefix/$target/bin \
+    --path $mxe_prefix/$target/bin/libjpeg-turbo \
     -a \
     -w USERENV.dll \
     -w USP10.dll \

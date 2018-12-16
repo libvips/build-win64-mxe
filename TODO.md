@@ -30,3 +30,5 @@
 - [X] Try to update Pixman to 0.34.0. Couldn't find a tarball for version 0.34.0 [here](https://cairographics.org/snapshots/).
 - [X] Try to build with 32-bit architecture (not sure if this is still being distributed).
 - [ ] Try to test the binaries with the Python test suite on Wine.
+- [ ] Try to build Pango (1.43.0) and gdk-pixbuf with [MXE's meson-wrapper](https://github.com/mxe/mxe/blob/master/plugins/meson-wrapper/meson-wrapper.mk).
+  - [ ] Wait for a new release of gdk-pixbuf with [this PR](https://gitlab.gnome.org/GNOME/gdk-pixbuf/merge_requests/20) incorporated.

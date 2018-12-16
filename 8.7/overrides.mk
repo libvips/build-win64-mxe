@@ -5,23 +5,23 @@ $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 # /lib directories
 mingw-w64-headers_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw'
 
-# Some optimizations / stripping don't work for 
-# gcc, mingw-w64-crt and winpthreads
-common_FLAGS=CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include $(filter-out -fdata-sections -ffunction-sections -fPIC ,$(CFLAGS))' \
-CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include $(filter-out -fdata-sections -ffunction-sections -fPIC ,$(CXXFLAGS))' \
-LDFLAGS='$(filter-out -Wl$(comma)--gc-sections ,$(LDFLAGS))'
-
-# Common configure options for building mingw-w64-crt 
+# Common configure options for building mingw-w64-crt
 # and winpthreads somewhere else
 common_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw' \
 --with-sysroot='$(PREFIX)/$(TARGET)/mingw' \
-$(common_FLAGS) \
+CPPFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -D_FORTIFY_SOURCE=2' \
+CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -Os -ffast-math -ftree-vectorize -static-libgcc' \
+CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -Os -ffast-math -ftree-vectorize -static-libgcc -static-libstdc++' \
+LDFLAGS='-L$(PREFIX)/$(TARGET)/mingw/lib' \
 RCFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include'
 
 # Point native system header dir to /mingw/include and
 # compile without some optimizations / stripping
 gcc_CONFIGURE_OPTS=--with-native-system-header-dir='/mingw/include' \
-$(subst -I$(PREFIX)/$(TARGET)/mingw/include ,,$(common_FLAGS))
+CPPFLAGS='-D_FORTIFY_SOURCE=2' \
+CFLAGS='-s -Os -ffast-math -ftree-vectorize -static-libgcc' \
+CXXFLAGS='-s -Os -ffast-math -ftree-vectorize -static-libgcc -static-libstdc++' \
+LDFLAGS=''
 
 # The trick here is to symlink all files from /mingw/{bin,lib,include}/
 # to $(PREFIX)/$(TARGET) just before the make command
@@ -47,9 +47,9 @@ endef
 
 ## Update dependencies
 
-# version 2.37.0 requires the Meson build system which
-# fail to build in a cross-compiler. See:
-# https://gitlab.gnome.org/GNOME/gdk-pixbuf/issues/80
+# Wait for version 2.38.0+ (it requires the Meson build system)
+# now that https://gitlab.gnome.org/GNOME/gdk-pixbuf/issues/64
+# is fixed.
 # upstream version is 2.32.3
 gdk-pixbuf_VERSION  := 2.36.12
 gdk-pixbuf_CHECKSUM := fff85cf48223ab60e3c3c8318e2087131b590fd6f1737e42cb3759a3b427a334
@@ -68,13 +68,6 @@ libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.gz
 libxml2_URL      := http://xmlsoft.org/sources/$(libxml2_FILE)
 libxml2_URL_2    := ftp://xmlsoft.org/libxml2/$(libxml2_FILE)
 
-# upstream version is 3.3.6-pl1
-fftw_VERSION  := 3.3.8
-fftw_CHECKSUM := 6113262f6e92c5bd474f2875fa1b01054c4ad5040f6b0da7c03c98821d9ae303
-fftw_SUBDIR   := fftw-$(fftw_VERSION)
-fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
-fftw_URL      := http://www.fftw.org/$(fftw_FILE)
-
 # upstream version is 1.5.2
 matio_VERSION  := 1.5.13
 matio_CHECKSUM := feadb2f54ba7c9db6deba8c994e401d7a1a8e7afd0fe74487691052b8139e5cb
@@ -84,8 +77,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-14
-imagemagick_CHECKSUM := d123d4ad4e5bf72c51a6f528a2dbbbd4bf4249f25b36045017c9c634db968e6d
+imagemagick_VERSION  := 6.9.10-16
+imagemagick_CHECKSUM := 3dd570fd1b770fbdf30015131ca1ad06606a340b04a348d4276d509493d98bfa
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -94,13 +87,14 @@ imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 # Note: static linking is broken on 2.42, if static linking is needed; stick with 2.40.20.
 # See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.44.8
-librsvg_CHECKSUM := ae0c5c52bdc3cb077d82f83622307c01d21c104ea24af67c0193aae8e0773745
+librsvg_VERSION  := 2.45.1
+librsvg_CHECKSUM := 1323c90cd31bbaf0ff11e8c3ecd3896a63017144c4e45e20af096b27dfc353e8
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
+# Pango version 1.43.0 requires the Meson build system.
 # upstream version is 1.37.4
 pango_VERSION  := 1.42.4
 pango_CHECKSUM := 1d2b74cd63e8bd41961f2f8d952355aa0f9be6002b52c8aa7699d9f5da597c9d
@@ -109,14 +103,6 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 0.19.6
-fribidi_VERSION  := 1.0.5
-fribidi_CHECKSUM := 6a64f2a687f5c4f203a46fa659f43dd43d1f8b845df8d723107e8a7e6158e4ce
-fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/fribidi-[0-9]*.patch)))
-fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
-fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.bz2
-fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
-
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.12
 libcroco_CHECKSUM := ddc4b5546c9fb4280a5017e2707fbd4839034ed1aba5b7d4372212f34f84f860
@@ -124,17 +110,17 @@ libcroco_SUBDIR   := libcroco-$(libcroco_VERSION)
 libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
 
-# upstream version is 0.4.4
-libwebp_VERSION  := 1.0.0
-libwebp_CHECKSUM := 84259c4388f18637af3c5a6361536d754a5394492f91be1abc2e981d4983225b
+# upstream version is 1.0.0
+libwebp_VERSION  := 1.0.1
+libwebp_CHECKSUM := 8c744a5422dbffa0d1f92e90b34186fb8ed44db93fbacb55abd751ac8808d922
 libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libwebp-[0-9]*.patch)))
 libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
 libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 0.51.0
-poppler_VERSION  := 0.71.0
-poppler_CHECKSUM := badbecd2dddf63352fd85ec08a9c2ed122fdadacf2a34fcb4cc227c4d01f2cf9
+poppler_VERSION  := 0.72.0
+poppler_CHECKSUM := c1747eb8f26e9e753c4001ed951db2896edc1021b6d0f547a0bd2a27c30ada51
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -156,24 +142,9 @@ libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
 libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)
 
-# upstream version is 1.15.4
-cairo_VERSION  := 1.16.0
-cairo_CHECKSUM := 5e7b29b3f113ef870d1e3ecf8adf21f923396401604bda16d44be45e66052331
-cairo_SUBDIR   := cairo-$(cairo_VERSION)
-cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
-cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
-
 # zlib will make libzlib.dll, but we want libz.dll so we must 
 # patch CMakeLists.txt
 zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/zlib-[0-9]*.patch)))
-
-# upstream version is 1.5.3
-libjpeg-turbo_VERSION  := 2.0.0
-libjpeg-turbo_CHECKSUM := 778876105d0d316203c928fd2a0374c8c01f755d0a00b12a1c8934aeccff8868
-libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libjpeg-turbo-[0-9]*.patch)))
-libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
-libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
-libjpeg-turbo_URL      := https://$(SOURCEFORGE_MIRROR)/project/libjpeg-turbo/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 2.2.0
 openexr_VERSION  := 2.3.0
@@ -201,29 +172,56 @@ cfitsio_FILE     := cfitsio$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 0.33.6
-pixman_VERSION  := 0.34.0
-pixman_CHECKSUM := 21b6b249b51c6800dc9553b65106e1e37d0e25df942c90531d4c3997aa20a88e
+pixman_VERSION  := 0.36.0
+pixman_CHECKSUM := 1ca19c8d4d37682adfbc42741d24977903fec1169b4153ec05bb690d4acf9fae
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 ## Override sub-dependencies
+# HarfBuzz:
+#  Removed: icu4c
+# libgsf:
+#  Removed: bzip2
+# freetype:
+#  Removed: bzip2
+# freetype-bootstrap: 
+#  Removed: bzip2
+# GLib: 
+#  Removed: dbus, libiconv, pcre
+# GDK-PixBuf: 
+#  Removed: jasper, libiconv
+#  Replaced: jpeg with libjpeg-turbo
+# lcms:
+#  Removed: jpeg, tiff
+# TIFF:
+#  Replaced: jpeg with libjpeg-turbo
+# ImageMagick:
+#  Removed: bzip2, ffmpeg, freetype, jasper, liblqr-1, libltdl, libpng, openexr, pthreads, tiff
+#  Replaced: jpeg with libjpeg-turbo
+# Pango:
+#  Added: fribidi
+# Poppler:
+#  Removed: curl, qtbase
+#  Added: libjpeg-turbo, openjpeg, lcms
+# libwebp:
+#  Added: gettext, giflib, libjpeg-turbo, tiff, libpng
+# Cairo:
+#  Removed: lzo zlib
 
 harfbuzz_DEPS           := $(filter-out icu4c,$(harfbuzz_DEPS))
 libgsf_DEPS             := $(filter-out bzip2 ,$(libgsf_DEPS))
 freetype_DEPS           := $(filter-out bzip2 ,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(filter-out bzip2 ,$(freetype-bootstrap_DEPS))
 glib_DEPS               := cc gettext libffi zlib
-gdk-pixbuf_DEPS         := cc glib libjpeg-turbo tiff libpng
-lcms_DEPS               := cc zlib
-tiff_DEPS               := cc libjpeg-turbo xz zlib
+gdk-pixbuf_DEPS         := cc glib libjpeg-turbo libpng tiff
+lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
+tiff_DEPS               := $(subst jpeg,libjpeg-turbo,$(tiff_DEPS))
 imagemagick_DEPS        := cc lcms fftw tiff libjpeg-turbo freetype
-pango_DEPS              := cc cairo fontconfig freetype glib harfbuzz fribidi
+pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
-libwebp_DEPS            := cc gettext giflib libjpeg-turbo tiff libpng
+libwebp_DEPS            := $(libwebp_DEPS) gettext giflib libjpeg-turbo tiff libpng
 cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
-librsvg_DEPS            := cc cairo gdk-pixbuf glib libcroco libgsf pango
-fribidi_DEPS            := $(filter-out glib,$(fribidi_DEPS))
 
 ## Override build scripts
 
@@ -265,9 +263,10 @@ define gdk-pixbuf_BUILD
         --disable-modules \
         --with-included-loaders \
         --without-gdiplus \
-        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
+        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`" \
         GLIB_GENMARSHAL='$(PREFIX)/$(TARGET)/bin/glib-genmarshal' \
-        LIBS="`'$(TARGET)-pkg-config' --libs libtiff-4 jpeg-turbo`"
+        GLIB_MKENUMS='$(PREFIX)/$(TARGET)/bin/glib-mkenums' \
+        LIBS="`'$(TARGET)-pkg-config' --libs libtiff-4 '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
@@ -299,22 +298,23 @@ define imagemagick_BUILD
         --disable-openmp \
         --without-zlib \
         --with-freetype='$(PREFIX)/$(TARGET)/bin/freetype-config' \
-        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
-        LIBS="`'$(TARGET)-pkg-config' --libs jpeg-turbo`"
+        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`" \
+        LIBS="`'$(TARGET)-pkg-config' --libs '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_PROGRAMS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install bin_PROGRAMS=
 endef
 
-# Upstream switched build system to CMake.
 # WITH_TURBOJPEG=OFF turns off a library we don't use (we just use the 
 # libjpeg API)
 define libjpeg-turbo_BUILD
-    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
         -DWITH_TURBOJPEG=OFF \
-        -DCMAKE_INCLUDE_PATH='$(PREFIX)/$(TARGET)/include/$(PKG)' \
-        -DCMAKE_LIBRARY_PATH='$(PREFIX)/$(TARGET)/lib/$(PKG)' \
-        '$(SOURCE_DIR)'
-
+        -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
+        -DENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
+        -DCMAKE_INSTALL_BINDIR='$(PREFIX)/$(TARGET)/bin/$(PKG)' \
+        -DCMAKE_INSTALL_INCLUDEDIR='$(PREFIX)/$(TARGET)/include/$(PKG)' \
+        -DCMAKE_INSTALL_LIBDIR='$(PREFIX)/$(TARGET)/lib/$(PKG)' \
+        -DCMAKE_ASM_NASM_COMPILER=$(TARGET)-yasm
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
@@ -328,15 +328,6 @@ define pango_BUILD
         --without-dynamic-modules \
         --disable-introspection \
         CXX='$(TARGET)-g++'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' install $(MXE_DISABLE_PROGRAMS)
-endef
-
-# glib dependency was completely removed.
-define fribidi_BUILD
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --disable-debug \
-        --disable-deprecated
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' install $(MXE_DISABLE_PROGRAMS)
 endef
 
@@ -455,8 +446,8 @@ define libwebp_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --enable-libwebpmux \
         --enable-libwebpdemux \
-        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
-        LIBS="`'$(TARGET)-pkg-config' --libs jpeg-turbo`"
+        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`" \
+        LIBS="`'$(TARGET)-pkg-config' --libs '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
@@ -484,7 +475,7 @@ define cairo_BUILD
         --disable-directfb \
         --disable-atomic \
         --disable-ps \
-        --disable-script
+        --disable-script \
         --enable-win32 \
         --enable-win32-font \
         --enable-png \

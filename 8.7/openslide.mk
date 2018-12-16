@@ -13,8 +13,8 @@ define $(PKG)_BUILD
     cd '$(SOURCE_DIR)' && autoreconf -fi -I'$(PREFIX)/$(TARGET)/share/aclocal'
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
-        CFLAGS="`'$(TARGET)-pkg-config' --cflags jpeg-turbo`" \
-        LIBS="`'$(TARGET)-pkg-config' --libs jpeg-turbo`"
+        CFLAGS="$(CFLAGS) `'$(TARGET)-pkg-config' --cflags '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`" \
+        LIBS="`'$(TARGET)-pkg-config' --libs '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' noinst_SCRIPTS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install noinst_SCRIPTS=
 endef
