@@ -20,7 +20,7 @@ target="${2:-x86_64-w64-mingw32.shared}"
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="ed88c4cd8d1cdf6423c078955293070b2632ed4b"
+revision="1d099ddc4a10383a946a76fecc16a9626d03a034"
 
 if [ -f "$mxe_dir/Makefile" ]; then
   echo "Skip cloning, MXE already exists at $mxe_dir"

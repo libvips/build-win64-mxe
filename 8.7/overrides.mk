@@ -60,8 +60,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.9.4
-libxml2_VERSION  := 2.9.8
-libxml2_CHECKSUM := 0b74e51595654f958148759cfef0993114ddccccbb6f31aee018f3558e8e2732
+libxml2_VERSION  := 2.9.9
+libxml2_CHECKSUM := 94fb70890143e3c6549f265cee93ec064c80a84c42ad0f23e85ee1fd6540a871
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.gz
@@ -77,8 +77,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-16
-imagemagick_CHECKSUM := 3dd570fd1b770fbdf30015131ca1ad06606a340b04a348d4276d509493d98bfa
+imagemagick_VERSION  := 6.9.10-23
+imagemagick_CHECKSUM := 6c7e2c25e0b1c39ec42024d04cbdb2abc94806aaa24a0e7d9103ad347e4c11f8
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -87,8 +87,8 @@ imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 # Note: static linking is broken on 2.42, if static linking is needed; stick with 2.40.20.
 # See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.45.1
-librsvg_CHECKSUM := 1323c90cd31bbaf0ff11e8c3ecd3896a63017144c4e45e20af096b27dfc353e8
+librsvg_VERSION  := 2.45.4
+librsvg_CHECKSUM := eeb6105cb28deec7a8a2ef270ae86b13fc555ff7dc85014a6b3e7cf0e88a7b4f
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -119,24 +119,24 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 0.51.0
-poppler_VERSION  := 0.72.0
-poppler_CHECKSUM := c1747eb8f26e9e753c4001ed951db2896edc1021b6d0f547a0bd2a27c30ada51
+poppler_VERSION  := 0.73.0
+poppler_CHECKSUM := e44b5543903128884ba4538c2a97d3bcc8889e97ffacc4636112101f0238db03
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
 poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.58.1
-glib_CHECKSUM := 97d6a9d926b6aa3dfaadad3077cfb43eec74432ab455dff14250c769d526d7d6
+glib_VERSION  := 2.59.0
+glib_CHECKSUM := 664a5dee7307384bb074955f8e5891c7cecece349bbcc8a8311890dc185b428e
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 1.14.30
-libgsf_VERSION  := 1.14.44
-libgsf_CHECKSUM := 68bede10037164764992970b4cb57cd6add6986a846d04657af9d5fac774ffde
+libgsf_VERSION  := 1.14.45
+libgsf_CHECKSUM := 5cbc2c0f1dc44d202fa0c6e3a51e9f17b0c2deb8711ba650432bfde3180b69fa
 libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libgsf-[0-9]*.patch)))
 libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz

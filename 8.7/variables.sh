@@ -2,7 +2,7 @@
 
 vips_package=vips
 vips_version=8.7
-vips_micro_version=2
+vips_micro_version=3
 
 # Do we need a slim build?
 slim_build=false
