@@ -77,8 +77,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-23
-imagemagick_CHECKSUM := 6c7e2c25e0b1c39ec42024d04cbdb2abc94806aaa24a0e7d9103ad347e4c11f8
+imagemagick_VERSION  := 6.9.10-24
+imagemagick_CHECKSUM := a8adb58d40933c97a3f528264588cf3c52f776df9719b79b8e5f7a80cdbdd618
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
