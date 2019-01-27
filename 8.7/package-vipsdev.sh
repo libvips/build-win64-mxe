@@ -15,6 +15,7 @@ fi
 deps="${1:-all}"
 target="${2:-x86_64-w64-mingw32.shared}"
 arch=${target%%-*}
+type="${target#*.}"
 build_os=`$mxe_dir/ext/config.guess`
 
 if [ "$arch" = "i686" ]; then
@@ -29,8 +30,8 @@ echo "Copying libvips and dependencies"
 rm -rf $repackage_dir
 mkdir -p $repackage_dir/bin
 
-if [ "$slim_build" = true ]; then
-  # Slim build? Only copy libvips-42.dll and dependencies with pe-util
+if [ "$type" = "static" ]; then
+  # Static build? Only copy libvips-42.dll and dependencies with pe-util
   $mxe_prefix/$build_os/bin/peldd \
     $mxe_prefix/$target/bin/libvips-42.dll \
     --clear-path \
@@ -43,7 +44,7 @@ if [ "$slim_build" = true ]; then
     -w IPHLPAPI.DLL \
     -w MSIMG32.DLL | xargs cp -t $repackage_dir/bin
 else
-  # No slim build? Copy libvips-cpp-42.dll and dependencies with pe-util
+  # Shared build? Copy libvips-cpp-42.dll and dependencies with pe-util
   # + additional headers, link libraries and def files
   $mxe_prefix/$build_os/bin/peldd \
     $mxe_prefix/$target/bin/libvips-cpp-42.dll \
@@ -66,10 +67,6 @@ else
   cp -r $mxe_prefix/$target/{lib,include} $repackage_dir
   find $repackage_dir/{lib,include} -type l -exec rm -f {} \;
 
-  echo "Copying packaging files"
-
-  cp $mxe_dir/vips-packaging/{COPYING,ChangeLog,README.md,AUTHORS} $repackage_dir
-
   echo "Generating import files"
   ./gendeflibs.sh $target
 
@@ -88,17 +85,21 @@ else
 
   # Remove those .gitkeep files
   rm $repackage_dir/{include/.gitkeep,lib/.gitkeep,share/.gitkeep}
+
+  echo "Copying vips executables"
+
+  # We still need to copy the vips executables.
+  cp $mxe_prefix/$target/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
+
+  echo "Strip unneeded symbols"
+
+  # Remove all symbols that are not needed
+  strip --strip-unneeded $repackage_dir/bin/*.exe
 fi
 
-echo "Copying vips executables"
+echo "Copying packaging files"
 
-# We still need to copy the vips executables.
-cp $mxe_prefix/$target/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
-
-echo "Strip unneeded symbols"
-
-# Remove all symbols that are not needed
-strip --strip-unneeded $repackage_dir/bin/*.exe
+cp $mxe_dir/vips-packaging/{COPYING,ChangeLog,README.md,AUTHORS} $repackage_dir
 
 echo "Creating $zipfile"
 

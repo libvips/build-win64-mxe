@@ -1,13 +1,15 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-  echo "Usage: $0 VERSION [DEPS] [ARCH]"
+  echo "Usage: $0 VERSION [DEPS] [ARCH] [TYPE]"
   echo "Build libvips for Windows in a Docker container"
-  echo "VERSION is the name of a versioned subdirectory, e.g. 8.1"
+  echo "VERSION is the name of a versioned subdirectory, e.g. 8.7"
   echo "DEPS is the group of dependencies to build libvips with,"
   echo "    defaults to 'all'"
   echo "ARCH is the architecture name to build libvips with,"
   echo "    defaults to 'x86_64'"
+  echo "TYPE specifies the type of binary to be created,"
+  echo "    defaults to 'shared'"
   exit 1
 fi
 
@@ -18,16 +20,16 @@ fi
 
 version="$1"
 deps="${2:-all}"
-
-# ARCH='i686'
 arch="${3:-x86_64}"
+type="${4:-shared}"
 
-# Note: librsvg can't be built statically (it's broken on 2.42, stick 
-# with 2.40.20 if we need to build it statically).
-# See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
-# target="$arch-w64-mingw32.static"
-# Note 2: Since January 2019 posix threads is used by default.
-target="$arch-w64-mingw32.shared"
+if [ "$type" = "static" ] && [ "$deps" == "all" ]; then
+  echo "WARNING: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
+  exit 1
+fi
+
+# Note: Since January 2019 posix threads is used by default.
+target="$arch-w64-mingw32.$type"
 
 if ! type docker > /dev/null; then
   echo "Please install docker"

@@ -84,8 +84,6 @@ imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
 imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 
-# Note: static linking is broken on 2.42, if static linking is needed; stick with 2.40.20.
-# See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
 # upstream version is 2.40.5
 librsvg_VERSION  := 2.45.4
 librsvg_CHECKSUM := eeb6105cb28deec7a8a2ef270ae86b13fc555ff7dc85014a6b3e7cf0e88a7b4f
@@ -300,8 +298,8 @@ define imagemagick_BUILD
         --with-freetype='$(PREFIX)/$(TARGET)/bin/freetype-config' \
         CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`" \
         LIBS="`'$(TARGET)-pkg-config' --libs '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`"
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_PROGRAMS=
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install bin_PROGRAMS=
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
 
 # WITH_TURBOJPEG=OFF turns off a library we don't use (we just use the 
@@ -351,10 +349,6 @@ define librsvg_BUILD
     # Pass static Rust package to linker
     $(SED) -i 's,^deplibs_check_method=.*,deplibs_check_method="pass_all",g' $(BUILD_DIR)/libtool
 
-    # Fix RUST_LIB linking
-    $(SED) -i 's,\($$(.*_la_OBJECTS)\) \($$(.*_la_DEPENDENCIES)\),\1 $$\(RUST_LIB\) \2,g' $(SOURCE_DIR)/Makefile.in
-    $(SED) -i 's,\($$(.*_la_OBJECTS)\) \($$(.*_la_LIBADD)\),\1 $$\(RUST_LIB\) \2,g' $(SOURCE_DIR)/Makefile.in
-
     $(MAKE) \
         -C '$(BUILD_DIR)' \
         -j '$(JOBS)' \
@@ -364,12 +358,6 @@ define librsvg_BUILD
         PATH='/usr/local/cargo/bin:$(PATH)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
-
-    '$(TARGET)-gcc' \
-        -mwindows -W -Wall -Werror -Wno-deprecated-declarations \
-        -std=c99 -pedantic \
-        '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-librsvg.exe' \
-        `'$(TARGET)-pkg-config' librsvg-2.0 --cflags --libs`
 endef
 
 # compile with CMake and with libjpeg-turbo
@@ -401,8 +389,9 @@ define poppler_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
-# the zlib configure is a bit basic, so use cmake
-define zlib_BUILD
+# the zlib configure is a bit basic, so use cmake for shared
+# builds
+define zlib_BUILD_SHARED
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
@@ -420,10 +409,6 @@ define zlib_BUILD
      echo 'Libs: -L$${libdir} -lz'; \
      echo 'Cflags: -I$${includedir}';) \
      > '$(PREFIX)/$(TARGET)/lib/pkgconfig/$(PKG).pc'
-endef
-
-define zlib_BUILD_SHARED
-    $($(PKG)_BUILD)
 endef
 
 # disable the C++ API for now, we don't use it anyway
@@ -510,8 +495,8 @@ define libxml2_BUILD
         --without-debug \
         --without-python \
         --without-threads
-    $(MAKE) -C '$(1)' -j '$(JOBS)' bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS=
-    $(MAKE) -C '$(1)' -j 1 install bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS=
+    $(MAKE) -C '$(1)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(1)' -j 1 install $(MXE_DISABLE_CRUFT)
     ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
 endef
 
@@ -527,7 +512,7 @@ define glib_BUILD
     cd '$(SOURCE_DIR)' && NOCONFIGURE=true ./autogen.sh
     cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/configure' \
         $(MXE_CONFIGURE_OPTS) \
-        --with-threads=win32 \
+        --with-threads=posix \
         --with-pcre=internal \
         --with-libiconv=gnu \
         --disable-inotify \
@@ -536,13 +521,23 @@ define glib_BUILD
         GLIB_GENMARSHAL='$(PREFIX)/$(TARGET)/bin/glib-genmarshal' \
         GLIB_COMPILE_SCHEMAS='$(PREFIX)/$(TARGET)/bin/glib-compile-schemas' \
         GLIB_COMPILE_RESOURCES='$(PREFIX)/$(TARGET)/bin/glib-compile-resources'
-    $(MAKE) -C '$(BUILD_DIR)/glib'    -j '$(JOBS)' install sbin_PROGRAMS= noinst_PROGRAMS=
-    $(MAKE) -C '$(BUILD_DIR)/gmodule' -j '$(JOBS)' install bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS=
-    $(MAKE) -C '$(BUILD_DIR)/gthread' -j '$(JOBS)' install bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS=
-    $(MAKE) -C '$(BUILD_DIR)/gobject' -j '$(JOBS)' install bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS=
-    $(MAKE) -C '$(BUILD_DIR)/gio'     -j '$(JOBS)' install bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS= MISC_STUFF=
+    $(MAKE) -C '$(BUILD_DIR)/glib'    -j '$(JOBS)' install $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)/gmodule' -j '$(JOBS)' install $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)/gthread' -j '$(JOBS)' install $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)/gobject' -j '$(JOBS)' install $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)/gio'     -j '$(JOBS)' install $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)'         -j '$(JOBS)' install-pkgconfigDATA
     $(MAKE) -C '$(BUILD_DIR)/m4macros' install
+
+    # We need `libgobject-2.0-0.dll` and `libglib-2.0-0.dll` for the language bindings
+    $(if $(BUILD_STATIC), \
+        $(foreach LIB, glib gobject, \
+            $(MAKE_SHARED_FROM_STATIC) --libdir '$(PREFIX)/$(TARGET)/lib' \
+            --libprefix 'lib' --libsuffix '-0' \
+            '$(BUILD_DIR)/$(LIB)/.libs/lib$(LIB)-2.0.a' \
+            `$(TARGET)-pkg-config --libs-only-l $(LIB)-2.0` && \
+            ln -sf '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0-0.dll.a' \
+                   '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0.a';))
 endef
 
 # build with CMake.

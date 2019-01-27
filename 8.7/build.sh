@@ -8,7 +8,8 @@ if [ $# -lt 1 ]; then
   echo "Build libvips for win"
   echo "DEPS is the group of dependencies to build libvips with,"
   echo "    defaults to 'all'"
-  echo "TARGET is the binary target, defaults to x86_64-w64-mingw32.shared"
+  echo "TARGET is the binary target,"
+  echo "    defaults to 'x86_64-w64-mingw32.shared'"
   exit 1
 fi
 
@@ -55,6 +56,9 @@ fi
 
 # Copy settings
 cp -f $work_dir/settings.mk $mxe_dir
+
+# Copy our customized tool
+cp -f $work_dir/tools/make-shared-from-static $mxe_dir/tools
 
 # Prepare MinGW directories
 mkdir -p $mxe_prefix/$target/mingw/{bin,include,lib}

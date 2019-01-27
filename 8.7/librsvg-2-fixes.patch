@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: "fix@me" <fix@me>
 Date: Mon, 27 Sep 2010 12:00:52 +0200
-Subject: [PATCH 1/2] fix .pc requirements
+Subject: [PATCH 1/3] fix .pc requirements
 
 
 diff --git a/librsvg.pc.in b/librsvg.pc.in
@@ -24,37 +24,195 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sun, 17 Jun 2018 14:00:00 +0200
-Subject: [PATCH 2/2] Fix 'librsvg_internals' linking
+Date: Sun, 27 Jan 2019 14:00:00 +0200
+Subject: [PATCH 2/3] Fix Windows build and static linking
 
+Partially from:
+https://aur.archlinux.org/cgit/aur.git/tree/makefile-fix.patch?h=mingw-w64-librsvg
 
 diff --git a/Makefile.am b/Makefile.am
 index 1111111..2222222 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -148,6 +148,7 @@ cargo_verbose_0 =
+@@ -4,6 +4,7 @@ NULL =
+ BUILT_SOURCES =
+ 
+ lib_LTLIBRARIES = librsvg-@RSVG_API_MAJOR_VERSION@.la
++noinst_LTLIBRARIES = librsvg_internals.la
+ 
+ bin_PROGRAMS = rsvg-convert
+ if HAVE_GTK_3
+@@ -34,7 +35,7 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_SOURCES =	\
+ 	librsvg/rsvg.h				\
+ 	$(NULL)
+ 
+-RUST_SRC =							\
++librsvg_internals_la_SOURCES =	\
+ 	Cargo.toml						\
+ 	rsvg_internals/Cargo.toml				\
+ 	rsvg_internals/build.rs					\
+@@ -121,7 +122,8 @@ RUST_SRC =							\
+ 	rsvg_internals/src/viewport.rs				\
+ 	rsvg_internals/src/xml.rs				\
+ 	rsvg_internals/src/xml2.rs				\
+-	rsvg_internals/src/xml2_load.rs
++	rsvg_internals/src/xml2_load.rs		\
++	$(NULL)
+ 
+ RUST_EXTRA = 						\
+ 	Cargo.lock					\
+@@ -148,6 +150,10 @@ cargo_verbose_0 =
  cargo_verbose_1 = --verbose
  
  RUST_LIB=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/librsvg_internals.a
 +RUST_LIB_WIN=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/rsvg_internals.lib
++RUST_LIB_TARGET=@abs_top_builddir@/.libs/librsvg_internals.a
++RUST_LT_LIB=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/librsvg_internals.la
++RUST_LT_TARGET=@abs_top_builddir@/librsvg_internals.la
  CARGO_TARGET_DIR=@abs_top_builddir@/target
  
  check-local:
-@@ -176,7 +177,8 @@ $(RUST_LIB): $(RUST_SRC)
+@@ -171,12 +177,19 @@ dist-hook:
+ 	mkdir .cargo &&								\
+ 	cp cargo-vendor-config .cargo/config)
+ 
+-$(RUST_LIB): $(RUST_SRC)
++librsvg_internals.la: $(librsvg_internals_la_SOURCES)
+ 	+cd $(top_srcdir)/rsvg_internals &&					\
  	PKG_CONFIG_ALLOW_CROSS=1						\
  	PKG_CONFIG='$(PKG_CONFIG)'						\
  	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR)					\
 -	cargo build $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS)
 +	cargo build $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS) \
-+	&& cp $(RUST_LIB_WIN) $(RUST_LIB)
++	&& mkdir -p `dirname $(RUST_LIB_TARGET)`	\
++	&& if [[ -e $(RUST_LIB_WIN) ]] ; then 		\
++		cp $(RUST_LIB_WIN) $(RUST_LIB_TARGET);	\
++	else										\
++		cp $(RUST_LIB) $(RUST_LIB_TARGET);		\
++	fi											\
++	&& cp $(RUST_LT_LIB) $(RUST_LT_TARGET)
  
  librsvg_@RSVG_API_MAJOR_VERSION@_la_CPPFLAGS = \
  	-I$(top_srcdir) 			\
-@@ -202,7 +204,6 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_LDFLAGS = \
+@@ -202,7 +215,7 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_LDFLAGS = \
  	$(AM_LDFLAGS)
  
  librsvg_@RSVG_API_MAJOR_VERSION@_la_LIBADD = \
 -	$(RUST_LIB)		\
++	librsvg_internals.la \
  	$(LIBRSVG_LIBS) 	\
  	$(LIBM)			\
  	$(DLOPEN_LIBS)
+@@ -274,7 +287,7 @@ dist_doc_DATA =				\
+ 	code-of-conduct.md
+ 
+ EXTRA_DIST =				\
+-	$(RUST_SRC)			\
++	$(librsvg_internals_la_SOURCES)		\
+ 	$(RUST_EXTRA)			\
+ 	librsvg.doap			\
+ 	AUTHORS				\
+diff --git a/rsvg_internals/build.rs b/rsvg_internals/build.rs
+index 1111111..2222222 100644
+--- a/rsvg_internals/build.rs
++++ b/rsvg_internals/build.rs
+@@ -2,11 +2,15 @@ extern crate phf_codegen;
+ 
+ use std::env;
+ use std::fs::File;
++use std::fs;
+ use std::io::{BufWriter, Write};
++use std::os::unix::fs::symlink;
+ use std::path::Path;
++use std::path::PathBuf;
+ 
+ fn main() {
+     generate_phf_of_svg_attributes();
++    generate_convenience_lib("librsvg_internals").unwrap();
+ }
+ 
+ /// Creates a perfect hash function (PHF) to map SVG attribute names to enum values.
+@@ -200,6 +204,63 @@ fn generate_phf_of_svg_attributes() {
+     output_srgb_tables();
+ }
+ 
++/// Generate libtool archive file ${lib}.la
++/// From https://docs.rs/libtool/0.1.1/libtool/
++/// Upstream doesn't handle some of the directory structure we use in librsvg,
++/// use a few extra environment variables to properly determine the target paths.
++pub fn generate_convenience_lib(lib: &str) -> std::io::Result<()> {
++    let self_version = env!("CARGO_PKG_VERSION");
++    let profile = env::var("PROFILE").unwrap();
++    let target_arch = env::var("TARGET").unwrap();
++    let target_dir_env = env::var("CARGO_TARGET_DIR").unwrap();
++
++    /* Check if the output directory will include the arch */
++    let target_dir = if PathBuf::from(format!("{}/{}",
++                                target_dir_env, target_arch)).exists() {
++        format!("{}/{}/{}", target_dir_env, target_arch, profile)
++    } else {
++        format!("{}/{}", target_dir_env, profile)
++    };
++
++    /* Location of original static library */
++    let old_lib_path = PathBuf::from(format!("{}/{}.a",
++                                            target_dir, lib));
++    /* Paths for new .la file and symlinks */
++    let libs_dir = format!("{}/.libs", target_dir);
++    let libs_path = PathBuf::from(&libs_dir);
++    let la_path = PathBuf::from(format!("{}/{}.la",
++                                        target_dir, lib));
++    let new_lib_path = PathBuf::from(format!("{}/{}.a", libs_dir, lib));
++
++    match fs::create_dir_all(&libs_path) {
++        Ok(()) => println!("libs_path created"),
++        _ => panic!("Failed to create libs_path"),
++    }
++
++    if la_path.exists() {
++        fs::remove_file(&la_path)?;
++    }
++
++    /* PathBuf.exists() traverses symlinks so just try and remove it */
++    match fs::remove_file(&new_lib_path) {
++        Ok(_v) => {},
++        Err(e) => println!("Error removing symlink: {:?}", e),
++    }
++
++    let mut file = File::create(&la_path)?;
++    writeln!(file, "# {}.la - a libtool library file", lib)?;
++    writeln!(file, "# Generated by libtool-rust {}", self_version)?;
++    writeln!(file, "dlname=''")?;
++    writeln!(file, "library_names=''")?;
++    writeln!(file, "old_library='{}.a'", lib)?;
++    writeln!(file, "inherited_linker_flags=' '")?;
++    writeln!(file, "installed=no")?;
++    writeln!(file, "shouldnotlink=no")?;
++
++    symlink(&old_lib_path, &new_lib_path)?;
++    Ok(())
++}
++
+ /// Converts an sRGB color value to a linear sRGB color value (undoes the gamma correction).
+ ///
+ /// The input and the output are supposed to be in the [0, 1] range.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 27 Jan 2019 15:00:00 +0200
+Subject: [PATCH 3/3] Revert "Include Rust debuginfo in release builds"
+
+This reverts commit 8215d7f1f581f0aaa317cccc3e974c61d1a6ad84.
+
+diff --git a/Cargo.toml b/Cargo.toml
+index 1111111..2222222 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -5,7 +5,6 @@ members = [
+ 
+ [profile.release]
+ lto = true
+-debug = true
+ 
+ [profile.bench]
+ lto = true

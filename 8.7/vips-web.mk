@@ -39,4 +39,10 @@ define $(PKG)_BUILD
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+
+    $(if $(BUILD_STATIC), \
+        $(MAKE_SHARED_FROM_STATIC) --libdir '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo' \
+        --libprefix 'lib' --libsuffix '-42' \
+        '$(BUILD_DIR)/libvips/.libs/libvips.a' \
+        `$(TARGET)-pkg-config --libs-only-l vips` -luserenv -ldnsapi -liphlpapi -lcairo-gobject -lgif)
 endef
