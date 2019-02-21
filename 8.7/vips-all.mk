@@ -23,9 +23,7 @@ define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
-        --disable-introspection \
-        --with-jpeg-includes='$(PREFIX)/$(TARGET)/include/libjpeg-turbo' \
-        --with-jpeg-libraries='$(PREFIX)/$(TARGET)/lib/libjpeg-turbo'
+        --disable-introspection
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install

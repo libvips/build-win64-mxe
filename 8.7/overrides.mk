@@ -47,12 +47,9 @@ endef
 
 ## Update dependencies
 
-# Wait for version 2.38.0+ (it requires the Meson build system)
-# now that https://gitlab.gnome.org/GNOME/gdk-pixbuf/issues/64
-# is fixed.
 # upstream version is 2.32.3
-gdk-pixbuf_VERSION  := 2.36.12
-gdk-pixbuf_CHECKSUM := fff85cf48223ab60e3c3c8318e2087131b590fd6f1737e42cb3759a3b427a334
+gdk-pixbuf_VERSION  := 2.38.0
+gdk-pixbuf_CHECKSUM := dd50973c7757bcde15de6bcd3a6d462a445efd552604ae6435a0532fbbadae47
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -77,25 +74,24 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-24
-imagemagick_CHECKSUM := a8adb58d40933c97a3f528264588cf3c52f776df9719b79b8e5f7a80cdbdd618
+imagemagick_VERSION  := 6.9.10-28
+imagemagick_CHECKSUM := 4b2a2666c6a0acc6f2c469e7df82a090e4d10e39b7035ed911dbd65d0c4d688c
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
 imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.45.4
-librsvg_CHECKSUM := eeb6105cb28deec7a8a2ef270ae86b13fc555ff7dc85014a6b3e7cf0e88a7b4f
+librsvg_VERSION  := 2.45.5
+librsvg_CHECKSUM := 600872dc608fe5e01bfd8d5b3046d01b53b99121bc5ab9663531b53630843700
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
-# Pango version 1.43.0 requires the Meson build system.
 # upstream version is 1.37.4
-pango_VERSION  := 1.42.4
-pango_CHECKSUM := 1d2b74cd63e8bd41961f2f8d952355aa0f9be6002b52c8aa7699d9f5da597c9d
+pango_VERSION  := 1.43.0
+pango_CHECKSUM := d2c0c253a5328a0eccb00cdd66ce2c8713fabd2c9836000b6e22a8b06ba3ddd2
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -108,25 +104,17 @@ libcroco_SUBDIR   := libcroco-$(libcroco_VERSION)
 libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
 
-# upstream version is 1.0.0
-libwebp_VERSION  := 1.0.1
-libwebp_CHECKSUM := 8c744a5422dbffa0d1f92e90b34186fb8ed44db93fbacb55abd751ac8808d922
-libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libwebp-[0-9]*.patch)))
-libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
-libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
-libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
-
 # upstream version is 0.51.0
-poppler_VERSION  := 0.73.0
-poppler_CHECKSUM := e44b5543903128884ba4538c2a97d3bcc8889e97ffacc4636112101f0238db03
+poppler_VERSION  := 0.74.0
+poppler_CHECKSUM := 92e09fd3302567fd36146b36bb707db43ce436e8841219025a82ea9fb0076b2f
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
 poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.59.0
-glib_CHECKSUM := 664a5dee7307384bb074955f8e5891c7cecece349bbcc8a8311890dc185b428e
+glib_VERSION  := 2.59.3
+glib_CHECKSUM := dfefafbc37bbcfb8101f3f181f880e8b7a8bee48620c92869ec4ef1d3d648e5e
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -170,11 +158,23 @@ cfitsio_FILE     := cfitsio$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 0.33.6
-pixman_VERSION  := 0.36.0
-pixman_CHECKSUM := 1ca19c8d4d37682adfbc42741d24977903fec1169b4153ec05bb690d4acf9fae
+# Note: Can't build statically with the Meson build system,
+# it will always output a shared library.
+pixman_VERSION  := 0.38.0
+pixman_CHECKSUM := a7592bef0156d7c27545487a52245669b00cf7e70054505381cff2136d890ca8
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
+
+# upstream version is 2.2.0
+harfbuzz_VERSION  := 2.3.1
+harfbuzz_CHECKSUM := f205699d5b91374008d6f8e36c59e419ae2d9a7bb8c5d9f34041b9a5abcae468
+harfbuzz_SUBDIR   := harfbuzz-$(harfbuzz_VERSION)
+harfbuzz_FILE     := harfbuzz-$(harfbuzz_VERSION).tar.bz2
+harfbuzz_URL      := https://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz_FILE)
+
+# Override libjpeg-turbo patch with our own
+libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libjpeg-turbo-[0-9]*.patch)))
 
 ## Override sub-dependencies
 # HarfBuzz:
@@ -254,19 +254,20 @@ define libgsf_BUILD
 endef
 
 # build gdk-pixbuf with libjpeg-turbo
+# and the Meson build system
 define gdk-pixbuf_BUILD
-    cd '$(SOURCE_DIR)' && autoreconf -fi -I'$(PREFIX)/$(TARGET)/share/aclocal'
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --disable-modules \
-        --with-included-loaders \
-        --without-gdiplus \
-        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`" \
-        GLIB_GENMARSHAL='$(PREFIX)/$(TARGET)/bin/glib-genmarshal' \
-        GLIB_MKENUMS='$(PREFIX)/$(TARGET)/bin/glib-mkenums' \
-        LIBS="`'$(TARGET)-pkg-config' --libs libtiff-4 '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`"
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
+    '$(TARGET)-meson' \
+        --libdir='lib' \
+        --bindir='bin' \
+        --libexecdir='bin' \
+        --includedir='include' \
+        -Dbuiltin_loaders='jpeg,png,tiff' \
+        -Dgir=false \
+        -Dx11=false \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+    ninja -C '$(BUILD_DIR)' install
 endef
 
 # exclude jpeg, tiff dependencies
@@ -295,9 +296,7 @@ define imagemagick_BUILD
         --without-rsvg \
         --disable-openmp \
         --without-zlib \
-        --with-freetype='$(PREFIX)/$(TARGET)/bin/freetype-config' \
-        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`" \
-        LIBS="`'$(TARGET)-pkg-config' --libs '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`"
+        --with-freetype='$(PREFIX)/$(TARGET)/bin/freetype-config'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
@@ -309,24 +308,23 @@ define libjpeg-turbo_BUILD
         -DWITH_TURBOJPEG=OFF \
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
         -DENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
-        -DCMAKE_INSTALL_BINDIR='$(PREFIX)/$(TARGET)/bin/$(PKG)' \
-        -DCMAKE_INSTALL_INCLUDEDIR='$(PREFIX)/$(TARGET)/include/$(PKG)' \
-        -DCMAKE_INSTALL_LIBDIR='$(PREFIX)/$(TARGET)/lib/$(PKG)' \
         -DCMAKE_ASM_NASM_COMPILER=$(TARGET)-yasm
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
 # disable GObject introspection
+# build with the Meson build system
 define pango_BUILD
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --enable-explicit-deps \
-        --with-included-modules \
-        --without-dynamic-modules \
-        --disable-introspection \
-        CXX='$(TARGET)-g++'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' install $(MXE_DISABLE_PROGRAMS)
+    '$(TARGET)-meson' \
+        --libdir='lib' \
+        --libexecdir='bin' \
+        --includedir='include' \
+        -Dgir=false \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+    ninja -C '$(BUILD_DIR)' install
 endef
 
 # compile with the Rust toolchain 
@@ -345,9 +343,6 @@ define librsvg_BUILD
         --disable-tools \
         LIBS="-lws2_32 -luserenv" \
         RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu
-
-    # Pass static Rust package to linker
-    $(SED) -i 's,^deplibs_check_method=.*,deplibs_check_method="pass_all",g' $(BUILD_DIR)/libtool
 
     $(MAKE) \
         -C '$(BUILD_DIR)' \
@@ -381,8 +376,6 @@ define poppler_BUILD
         -DBUILD_QT5_TESTS=OFF \
         -DBUILD_CPP_TESTS=OFF \
         -DENABLE_GTK_DOC=OFF \
-        -DCMAKE_INCLUDE_PATH='$(PREFIX)/$(TARGET)/include/libjpeg-turbo' \
-        -DCMAKE_LIBRARY_PATH='$(PREFIX)/$(TARGET)/lib/libjpeg-turbo' \
         '$(SOURCE_DIR)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
@@ -418,9 +411,7 @@ define tiff_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --without-x \
         --disable-cxx \
-        --disable-lzma \
-        --with-jpeg-include-dir='$(PREFIX)/$(TARGET)/include/libjpeg-turbo' \
-        --with-jpeg-lib-dir='$(PREFIX)/$(TARGET)/lib/libjpeg-turbo'
+        --disable-lzma
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
@@ -430,9 +421,7 @@ define libwebp_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --enable-libwebpmux \
-        --enable-libwebpdemux \
-        CPPFLAGS="$(CPPFLAGS) `'$(TARGET)-pkg-config' --cflags '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`" \
-        LIBS="`'$(TARGET)-pkg-config' --libs '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`"
+        --enable-libwebpdemux
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
@@ -500,7 +489,9 @@ define libxml2_BUILD
     ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
 endef
 
-# compile with the internal PCRE library
+# build with the Meson build system
+# compile with the internal PCRE library and
+# posix threads
 define glib_BUILD
     # other packages expect glib-tools in $(TARGET)/bin
     rm -f  '$(PREFIX)/$(TARGET)/bin/glib-*'
@@ -509,33 +500,26 @@ define glib_BUILD
     ln -sf '$(PREFIX)/$(BUILD)/bin/glib-compile-resources' '$(PREFIX)/$(TARGET)/bin/'
 
     # cross build
-    cd '$(SOURCE_DIR)' && NOCONFIGURE=true ./autogen.sh
-    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/configure' \
-        $(MXE_CONFIGURE_OPTS) \
-        --with-threads=posix \
-        --with-pcre=internal \
-        --with-libiconv=gnu \
-        --disable-inotify \
-        CXX='$(TARGET)-g++' \
-        PKG_CONFIG='$(PREFIX)/bin/$(TARGET)-pkg-config' \
-        GLIB_GENMARSHAL='$(PREFIX)/$(TARGET)/bin/glib-genmarshal' \
-        GLIB_COMPILE_SCHEMAS='$(PREFIX)/$(TARGET)/bin/glib-compile-schemas' \
-        GLIB_COMPILE_RESOURCES='$(PREFIX)/$(TARGET)/bin/glib-compile-resources'
-    $(MAKE) -C '$(BUILD_DIR)/glib'    -j '$(JOBS)' install $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)/gmodule' -j '$(JOBS)' install $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)/gthread' -j '$(JOBS)' install $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)/gobject' -j '$(JOBS)' install $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)/gio'     -j '$(JOBS)' install $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)'         -j '$(JOBS)' install-pkgconfigDATA
-    $(MAKE) -C '$(BUILD_DIR)/m4macros' install
+    '$(TARGET)-meson' \
+        --libdir='lib' \
+        --bindir='bin' \
+        --libexecdir='bin' \
+        --includedir='include' \
+        -Dforce_posix_threads=true \
+        -Dinternal_pcre=true \
+        -Diconv='native' \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+    ninja -C '$(BUILD_DIR)' install
 
     # We need `libgobject-2.0-0.dll` and `libglib-2.0-0.dll` for the language bindings
     $(if $(BUILD_STATIC), \
         $(foreach LIB, glib gobject, \
             $(MAKE_SHARED_FROM_STATIC) --libdir '$(PREFIX)/$(TARGET)/lib' \
-            --libprefix 'lib' --libsuffix '-0' \
-            '$(BUILD_DIR)/$(LIB)/.libs/lib$(LIB)-2.0.a' \
-            `$(TARGET)-pkg-config --libs-only-l $(LIB)-2.0` && \
+            --libprefix 'lib' --libsuffix '-0' --objext '.obj' \
+            '$(BUILD_DIR)/$(LIB)/lib$(LIB)-2.0.a' \
+            `$(TARGET)-pkg-config --libs-only-l $(LIB)-2.0` -lintl && \
             ln -sf '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0-0.dll.a' \
                    '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0.a';))
 endef

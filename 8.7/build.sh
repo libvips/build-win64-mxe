@@ -18,33 +18,25 @@ fi
 deps="${1:-all}"
 target="${2:-x86_64-w64-mingw32.shared}"
 
+# TODO: Remove if https://github.com/mesonbuild/meson/pull/3939 is merged
+if [ ! -f "/usr/local/etc/is-meson-patched" ]; then
+  echo "Patching meson"
+  touch /usr/local/etc/is-meson-patched
+  (cd `python3 -c "import site; print(site.getsitepackages()[0])"` && git apply $work_dir/meson-3939.patch)
+fi
+
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="1d099ddc4a10383a946a76fecc16a9626d03a034"
+revision="6e2d845c6e2dfe9bc59c1012260defede64b20ec"
+initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
   echo "Skip cloning, MXE already exists at $mxe_dir"
   cd $mxe_dir && git fetch
 else
   git clone https://github.com/mxe/mxe && cd $mxe_dir
-fi
-
-branch_name=$(git rev-parse --abbrev-ref HEAD)
-
-# Are we building on the correct branch?
-if [ ! "$branch_name" = "vips-$deps" ]; then
-  # Reset into a clean state
-  git reset --hard $revision && git clean -dfx
-
-  # Does the branch already exists?
-  if ! git rev-parse --verify --quiet "vips-$deps" >/dev/null; then
-    # Check out new branch and set upstream
-    git checkout -b vips-$deps -t origin/master
-  else
-    # Just a regular checkout
-    git checkout vips-$deps
-  fi
+  initialize=true
 fi
 
 curr_revision=$(git rev-parse HEAD)
@@ -52,23 +44,30 @@ curr_revision=$(git rev-parse HEAD)
 # Is our branch up-to-date?
 if [ ! "$curr_revision" = "$revision" ]; then
   git pull && git reset --hard $revision
+  initialize=true
 fi
 
-# Copy settings
-cp -f $work_dir/settings.mk $mxe_dir
+if [ "$initialize" = true ] ; then
+  # Copy settings
+  cp -f $work_dir/settings.mk $mxe_dir
 
-# Copy our customized tool
-cp -f $work_dir/tools/make-shared-from-static $mxe_dir/tools
+  # Copy our customized tool
+  cp -f $work_dir/tools/make-shared-from-static $mxe_dir/tools
+
+  # Copy our customized Meson cross file
+  cp -f $work_dir/mxe-crossfile.meson.in $mxe_dir/plugins/meson-wrapper/conf
+fi
 
 # Prepare MinGW directories
-mkdir -p $mxe_prefix/$target/mingw/{bin,include,lib}
+mkdir -p $mxe_prefix/$target.$deps/mingw/{bin,include,lib}
 
 # Build pe-util, handy for copying DLL dependencies.
 make pe-util MXE_TARGETS=`$mxe_dir/ext/config.guess`
 
-# Build gendef (a tool for generating def files from DLLs)
+# Build MXE's meson-wrapper (needed by pango, GDK-PixBuf and GLib), 
+# gendef (a tool for generating def files from DLLs)
 # and libvips (+ dependencies).
-make gendef vips-$deps MXE_PLUGIN_DIRS=$work_dir MXE_TARGETS=$target
+make meson-wrapper gendef vips-$deps MXE_PLUGIN_DIRS=$work_dir MXE_TARGETS=$target.$deps
 
 cd $work_dir
 

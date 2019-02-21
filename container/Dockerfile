@@ -7,16 +7,21 @@ RUN \
     apt-get update \
     && apt-get install -y \
         # http://mxe.cc/#requirements-debian
-        autoconf automake autopoint bash bison bzip2 flex g++ \
-        g++-multilib gettext git gperf intltool libc6-dev-i386 \
-        libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin \
-        libxml-parser-perl make openssl p7zip-full patch perl \
-        pkg-config python ruby scons sed unzip wget xz-utils \
-        gobject-introspection swig gtk-doc-tools
+        autopoint bison flex gettext gperf intltool \ 
+        libtool-bin libxml-parser-perl lzip p7zip-full \
+        ruby g++-multilib libc6-dev-i386 \
+        # needed when building libvips from git
+        gobject-introspection swig gtk-doc-tools \
+        # needed for Ninja and Meson
+        python3-pip
 
 # Add Windows target for cross-compilation
 RUN \
     rustup target add ${ARCH}-pc-windows-gnu
+
+# Install Ninja and Meson
+RUN \
+    pip3 install ninja meson
 
 # the versioned build dir is mounted at /data, so this runs the build script
 # in that

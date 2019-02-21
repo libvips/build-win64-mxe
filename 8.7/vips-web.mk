@@ -33,16 +33,13 @@ define $(PKG)_BUILD
         --without-ppm \
         --without-analyze \
         --without-radiance \
-        --disable-introspection \
-        --with-jpeg-includes='$(PREFIX)/$(TARGET)/include/libjpeg-turbo' \
-        --with-jpeg-libraries='$(PREFIX)/$(TARGET)/lib/libjpeg-turbo'
+        --disable-introspection
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 
     $(if $(BUILD_STATIC), \
-        $(MAKE_SHARED_FROM_STATIC) --libdir '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo' \
-        --libprefix 'lib' --libsuffix '-42' \
+        $(MAKE_SHARED_FROM_STATIC) --libprefix 'lib' --libsuffix '-42' \
         '$(BUILD_DIR)/libvips/.libs/libvips.a' \
         `$(TARGET)-pkg-config --libs-only-l vips` -luserenv -ldnsapi -liphlpapi -lcairo-gobject -lgif)
 endef

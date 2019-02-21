@@ -12,9 +12,7 @@ define $(PKG)_BUILD
     # This can be removed once the patch "openslide-3-fixes.patch" is accepted by upstream
     cd '$(SOURCE_DIR)' && autoreconf -fi -I'$(PREFIX)/$(TARGET)/share/aclocal'
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        CFLAGS="$(CFLAGS) `'$(TARGET)-pkg-config' --cflags '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`" \
-        LIBS="`'$(TARGET)-pkg-config' --libs '$(PREFIX)/$(TARGET)/lib/libjpeg-turbo/pkgconfig/libjpeg.pc'`"
+        $(MXE_CONFIGURE_OPTS)
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' noinst_SCRIPTS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install noinst_SCRIPTS=
 endef

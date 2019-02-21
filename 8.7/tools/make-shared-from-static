@@ -23,6 +23,7 @@ msvclibmode=false
 libprefix=
 libsuffix=
 LIBS=
+objext='.o'
 
 custom_link_args="-s -Os -ffast-math -ftree-vectorize -ffunction-sections -fPIC -D_FORTIFY_SOURCE=2 -static-libgcc -Wl,--gc-sections -Wl,--strip-all -Wl,--as-needed"
 
@@ -113,6 +114,16 @@ do
         exit 1
       fi
     ;;
+    --objext)
+      shift
+      if [ $# -gt 0 ]; then
+        objext="$1"
+        shift
+      else
+        echo "make-shared-from-static: expecting argument for --objext option" 1>&2
+        exit 1
+      fi
+    ;;
     -l*)
       LIBS="$LIBS $1"
       shift
@@ -196,14 +207,14 @@ mkdir $tmpdir
       if $msvclibmode; then
         libobjs="$infile"
       else
-        libobjs="*.o"
+        libobjs="*$objext"
       fi
       convenience=
       eval cmd=\"$export_symbols_cmds\"
       eval "$cmd"
       link_args="-Wl,-def:$export_symbols $libobjs"
     else
-      link_args="$custom_link_args -Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--enable-auto-image-base *.o"
+      link_args="$custom_link_args -Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--enable-auto-image-base *$objext"
 	fi
     set -x
     $LD -shared $link_args -Wl,--out-implib="$implibfile" -o "$outfile" $LIBDIR_ARGS $LIBS

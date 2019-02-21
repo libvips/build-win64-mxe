@@ -3,39 +3,9 @@ This file is part of MXE. See LICENSE.md for licensing information.
 Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Hans Petter Jansson <hpj@cl.no>
-Date: Fri, 15 Jun 2012 15:27:22 +0200
-Subject: [PATCH 1/2] Allow building without inotify support
-
-
-diff --git a/configure.ac b/configure.ac
-index 1111111..2222222 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -1637,10 +1637,15 @@ AC_SUBST(SELINUX_LIBS)
- dnl *****************************
- dnl ** Check for inotify (GIO) **
- dnl *****************************
-+AC_ARG_ENABLE(inotify,
-+              AC_HELP_STRING([--disable-inotify],
-+                             [build without inotify support]))
- inotify_support=no
--AC_CHECK_HEADERS([sys/inotify.h],
--[
--  AC_CHECK_FUNCS(inotify_init1, [inotify_support=yes], [inotify_support=no])
-+AS_IF([ test "x$enable_inotify" != "xno"], [
-+ AC_CHECK_HEADERS([sys/inotify.h],
-+ [
-+   AC_CHECK_FUNCS(inotify_init1, [inotify_support=yes], [inotify_support=no])
-+ ])
- ])
- 
- AM_CONDITIONAL(HAVE_INOTIFY, [test "$inotify_support" = "yes"])
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Christoph Reiter <reiter.christoph@gmail.com>
 Date: Sat, 6 Jan 2018 22:04:23 +0100
-Subject: [PATCH 2/2] win32: Make the static build work with MinGW when posix
+Subject: [PATCH 1/3] win32: Make the static build work with MinGW when posix
  threads are used
 
 MinGW does not support the use of DllMain() for static builds, but that
@@ -109,3 +79,44 @@ index 1111111..2222222 100644
  
  BOOL WINAPI DllMain (HINSTANCE hinstDLL,
                       DWORD     fdwReason,
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Christoph Reiter <reiter.christoph@gmail.com>
+Date: Wed, 19 Dec 2018 05:40:23 +0100
+Subject: [PATCH 2/3] Disable some tests when static
+
+
+diff --git a/gio/tests/meson.build b/gio/tests/meson.build
+index 1111111..2222222 100644
+--- a/gio/tests/meson.build
++++ b/gio/tests/meson.build
+@@ -454,7 +454,8 @@ if installed_tests_enabled
+   install_data('static-link.py', install_dir : installed_tests_execdir)
+ endif
+ 
+-if not meson.is_cross_build() or meson.has_exe_wrapper()
++windows_static = host_system == 'windows' and get_option('default_library') == 'static'
++if (not meson.is_cross_build() or meson.has_exe_wrapper()) and not windows_static
+ 
+   plugin_resources_c = custom_target('plugin-resources.c',
+     input : 'test4.gresource.xml',
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 2 Feb 2019 15:00:00 +0200
+Subject: [PATCH 3/3] Add missing -liconv to linker
+
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1682,7 +1682,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
+ 
+ # On Windows, just always use the built-in implementation
+ if host_system == 'windows'
+-  libiconv = []
++  libiconv = [cc.find_library('iconv')]
+   glib_conf.set('USE_LIBICONV_NATIVE', true)
+ else
+   found_iconv = false
