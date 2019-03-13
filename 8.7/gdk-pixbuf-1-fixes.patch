@@ -5,14 +5,14 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jeroen Ooms <jeroenooms@gmail.com>
 Date: Tue, 2 Aug 2016 16:05:31 +0200
-Subject: [PATCH 1/2] Remove DllMain from static glib2 libraries
+Subject: [PATCH 1/1] Remove DllMain from static glib2 libraries
 
 
 diff --git a/gdk-pixbuf/gdk-pixbuf-io.c b/gdk-pixbuf/gdk-pixbuf-io.c
 index 1111111..2222222 100644
 --- a/gdk-pixbuf/gdk-pixbuf-io.c
 +++ b/gdk-pixbuf/gdk-pixbuf-io.c
-@@ -191,7 +191,7 @@
+@@ -191,7 +191,7 @@ get_file_formats (void)
          return file_formats;
  }
  
@@ -21,7 +21,7 @@ index 1111111..2222222 100644
  
  /* DllMain function needed to tuck away the gdk-pixbuf DLL handle */
  
-@@ -221,7 +221,7 @@
+@@ -221,7 +221,7 @@ gdk_pixbuf_get_toplevel (void)
    static gchar *toplevel = NULL;
  
    if (toplevel == NULL) {
@@ -30,7 +30,7 @@ index 1111111..2222222 100644
      toplevel = g_win32_get_package_installation_directory_of_module (gdk_pixbuf_dll);
  #elif defined(OS_DARWIN)
      char pathbuf[PATH_MAX + 1];
-@@ -232,7 +232,7 @@
+@@ -232,7 +232,7 @@ gdk_pixbuf_get_toplevel (void)
      bin_dir = g_dirname(pathbuf);
      toplevel = g_build_path (G_DIR_SEPARATOR_S, bin_dir, "..", NULL);
      g_free (bin_dir);
@@ -39,136 +39,3 @@ index 1111111..2222222 100644
      gchar *exe_path, *bin_dir;
  
      exe_path = g_file_read_link ("/proc/self/exe", NULL);
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sat, 2 Feb 2019 14:00:00 +0200
-Subject: [PATCH 2/2] Backport e191c75683e6e1db639a0e4213a169fdb3a805ea
-
-Backport:
-https://gitlab.gnome.org/GNOME/gdk-pixbuf/merge_requests/20/
-
-diff --git a/gdk-pixbuf/meson.build b/gdk-pixbuf/meson.build
-index 1111111..2222222 100644
---- a/gdk-pixbuf/meson.build
-+++ b/gdk-pixbuf/meson.build
-@@ -125,6 +125,7 @@ foreach l: loaders
- 
-     mod = static_library('staticpixbufloader-@0@'.format(name),
-                          sources,
-+                         gdkpixbuf_enum_h,
-                          dependencies: loaders_deps + gdk_pixbuf_deps,
-                          include_directories: [ root_inc, gdk_pixbuf_inc ],
-                          c_args: common_cflags + gdk_pixbuf_cflags + cflags + cflag_for_included_loader)
-@@ -149,6 +150,7 @@ if native_windows_loaders
- 
-     mod = static_library('staticpixbufloader-gdiplus',
-                          win_loader_sources,
-+                         gdkpixbuf_enum_h,
-                          dependencies: loaders_deps + gdk_pixbuf_deps,
-                          include_directories: [ root_inc, gdk_pixbuf_inc ],
-                          c_args: common_cflags + gdk_pixbuf_cflags + cflag_for_included_loader)
-@@ -242,6 +244,7 @@ foreach l: loaders
-   if cond and not (builtin_loaders.contains(name) or builtin_all_loaders)
-     mod = shared_module('pixbufloader-@0@'.format(name),
-                         sources,
-+                        gdkpixbuf_enum_h,
-                         dependencies: loaders_deps + gdk_pixbuf_deps + [ gdkpixbuf_dep ],
-                         include_directories: [ root_inc, gdk_pixbuf_inc ],
-                         c_args: common_cflags + gdk_pixbuf_cflags + cflags,
-@@ -261,6 +264,7 @@ if native_windows_loaders
- 
-       mod = shared_module('pixbufloader-gdip-@0@'.format(loader),
-                           loader_sources,
-+                          gdkpixbuf_enum_h,
-                           dependencies: loaders_deps + gdk_pixbuf_deps + [ gdkpixbuf_dep ],
-                           include_directories: [ root_inc, gdk_pixbuf_inc ],
-                           c_args: common_cflags + gdk_pixbuf_cflags + cflags,
-@@ -282,6 +286,7 @@ foreach bin: gdkpixbuf_bin
-   bin_source = bin.get(1, bin_name + '.c')
- 
-   bin = executable(bin_name, bin_source,
-+                   gdkpixbuf_enum_h,
-                    dependencies: gdk_pixbuf_deps + [ gdkpixbuf_dep ],
-                    include_directories: [ root_inc, gdk_pixbuf_inc ],
-                    c_args: common_cflags + gdk_pixbuf_cflags,
-@@ -291,17 +296,23 @@ foreach bin: gdkpixbuf_bin
-   set_variable(bin_name.underscorify(), bin)
- endforeach
- 
--# The 'loaders.cache' used for testing, so we don't accidentally
--# load the installed cache; we always build it by default
--loaders_cache = custom_target('loaders.cache',
--                              output: 'loaders.cache',
--                              capture: true,
--                              command: [
--                                gdk_pixbuf_query_loaders,
--                                dynamic_loaders,
--                              ],
--                              build_by_default: true)
--loaders_dep = declare_dependency(sources: [ loaders_cache ])
-+if not meson.is_cross_build()
-+  # The 'loaders.cache' used for testing, so we don't accidentally
-+  # load the installed cache; we always build it by default
-+  loaders_cache = custom_target('loaders.cache',
-+                                output: 'loaders.cache',
-+                                capture: true,
-+                                command: [
-+                                  gdk_pixbuf_query_loaders,
-+                                  dynamic_loaders,
-+                                ],
-+                                depends: dynamic_loaders_dep,
-+                                build_by_default: true)
-+  loaders_dep = declare_dependency(sources: [ loaders_cache ])
-+else
-+  loaders_cache = []
-+  loaders_dep = declare_dependency()
-+endif
- 
- pkgconfig = import('pkgconfig')
- pkgconfig.generate(
-diff --git a/meson.build b/meson.build
-index 1111111..2222222 100644
---- a/meson.build
-+++ b/meson.build
-@@ -189,11 +189,11 @@ gmodule_dep = dependency('gmodule-no-export-2.0')
- gio_dep = dependency('gio-2.0')
- 
- # On non-Windows/macOS systems we always required shared-mime-info and GIO
--if host_system != 'windows' and host_system != 'darwin'
--  shared_mime_dep = dependency('shared-mime-info')
-+# shared_mime_dep = []
-+shared_mime_dep = []
-+if get_option('gio_sniffing') and host_system != 'windows' and host_system != 'darwin'
-+  shared_mime_dep += dependency('shared-mime-info')
-   gdk_pixbuf_conf.set('GDK_PIXBUF_USE_GIO_MIME', 1)
--else
--  shared_mime_dep = []
- endif
- 
- # Check if medialib is available
-@@ -396,8 +396,10 @@ endif
- # i18n
- subdir('po')
- 
--subdir('tests')
--subdir('thumbnailer')
-+if not meson.is_cross_build()
-+  subdir('tests')
-+  subdir('thumbnailer')
-+endif
- 
- # Documentation
- subdir('docs')
-diff --git a/meson_options.txt b/meson_options.txt
-index 1111111..2222222 100644
---- a/meson_options.txt
-+++ b/meson_options.txt
-@@ -46,3 +46,7 @@ option('installed_tests',
-        description: 'Install the test suite',
-        type: 'boolean',
-        value: true)
-+option('gio_sniffing',
-+       description: 'Perform file type detection using GIO (Unused on MacOS and Windows)',
-+       type: 'boolean',
-+       value: true)

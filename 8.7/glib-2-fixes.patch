@@ -90,7 +90,7 @@ diff --git a/gio/tests/meson.build b/gio/tests/meson.build
 index 1111111..2222222 100644
 --- a/gio/tests/meson.build
 +++ b/gio/tests/meson.build
-@@ -454,7 +454,8 @@ if installed_tests_enabled
+@@ -453,7 +453,8 @@ if installed_tests_enabled
    install_data('static-link.py', install_dir : installed_tests_execdir)
  endif
  

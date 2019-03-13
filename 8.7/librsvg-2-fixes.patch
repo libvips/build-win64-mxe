@@ -216,32 +216,160 @@ index 1111111..2222222 100644
  lto = true
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Mon, 18 Feb 2019 20:00:00 +0200
-Subject: [PATCH 4/4] Only construct valid URIs with `g_file_new_for_uri`
+From: Federico Mena Quintero <federico@gnome.org>
+Date: Thu, 21 Feb 2019 18:08:00 -0600
+Subject: [PATCH 4/4] wip: Test the part of rsvg_handle_new_from_file() that
+ decides between files and URLs
 
-GLib 2.59.3 (on Windows) has a stricter URI parser that doesn't accept
-anything other than URIs, see:
-https://gitlab.gnome.org/GNOME/glib/commit/ccbadcfb0457bf028eecbaa432ad694ad46cf2df
+This does not quite work yet; the tests fail on Linux, and I'm not
+sure they are correct on Windows.
 
-Resolves: https://gitlab.gnome.org/GNOME/librsvg/issues/426
+This commit introduces a PathOrUrl enum, which gets created out of
+a *const libc::c_char.  The idea is that it will figure out whether
+the string that comes from C represents a path or a URL, so the code
+can decide whether to call gio::File::new_for_path() or
+gio::File::new_for_uri().
 
 diff --git a/rsvg_internals/src/handle.rs b/rsvg_internals/src/handle.rs
 index 1111111..2222222 100644
 --- a/rsvg_internals/src/handle.rs
 +++ b/rsvg_internals/src/handle.rs
-@@ -1034,7 +1034,13 @@ pub unsafe extern "C" fn rsvg_handle_rust_new_from_file(
-         .to_str()
-         .map_err(|_| ())
-         .and_then(|utf8| Url::parse(utf8).map_err(|_| ()))
+@@ -1024,18 +1024,16 @@ pub unsafe extern "C" fn rsvg_handle_rust_new_from_file(
+     filename: *const libc::c_char,
+     error: *mut *mut glib_sys::GError,
+ ) -> *mut RsvgHandle {
+-    // This API lets the caller pass a URI, or a file name in the operating system's
+-    // encoding.  So, first we'll see if it's UTF-8, and in that case, try the URL version.
+-    // Otherwise, we'll try building a path name.
++    let file = match PathOrUrl::new(filename) {
++        Ok(PathOrUrl::Path(path)) => gio::File::new_for_path(path),
+ 
+-    let cstr = CStr::from_ptr(filename);
++        Ok(PathOrUrl::Url(url)) => gio::File::new_for_uri(url.as_str()),
+ 
+-    let file = cstr
+-        .to_str()
+-        .map_err(|_| ())
+-        .and_then(|utf8| Url::parse(utf8).map_err(|_| ()))
 -        .and_then(|url| Ok(gio::File::new_for_uri(url.as_str())))
-+        .and_then(|url| {
-+            if url.origin().is_tuple() {
-+                Ok(gio::File::new_for_uri(url.as_str()))
-+            } else {
-+                Ok(gio::File::new_for_path(PathBuf::from_glib_none(filename)))
-+            }
-+        })
-         .unwrap_or_else(|_| gio::File::new_for_path(PathBuf::from_glib_none(filename)));
+-        .unwrap_or_else(|_| gio::File::new_for_path(PathBuf::from_glib_none(filename)));
++        Err(e) => {
++            set_gerror(error, 0, &format!("{}", e));
++            return ptr::null_mut();
++        }
++    };
  
      rsvg_handle_rust_new_from_gfile_sync(file.to_glib_none().0, 0, ptr::null_mut(), error)
+ }
+@@ -1124,3 +1122,111 @@ pub unsafe extern "C" fn rsvg_handle_rust_new_from_data(
+     gobject_sys::g_object_unref(raw_stream as *mut _);
+     ret
+ }
++
++/// Detects whether a `*const libc::c_char` is a path or a URI
++///
++/// `rsvg_handle_new_from_file()` takes a `filename` argument, and advertises
++/// that it will detect either a file system path, or a proper URI.  It will then use
++/// `gio::File::new_for_path()` or `gio::File::new_for_uri()` as appropriate.
++///
++/// This enum does the magic heuristics to figure this out.
++enum PathOrUrl {
++    Path(PathBuf),
++    Url(Url),
++}
++
++impl PathOrUrl {
++    unsafe fn new(s: *const libc::c_char) -> Result<PathOrUrl, LoadingError> {
++        // We do this with the glib C function like in the original implementation
++
++        let cstr = CStr::from_ptr(s);
++
++        Ok(cstr
++            .to_str()
++            .map_err(|_| ())
++            .and_then(|utf8| Url::parse(utf8).map_err(|_| ()))
++            .and_then(|url| {
++                if url.origin().is_tuple() || url.scheme() == "file" {
++                    Ok(PathOrUrl::Url(url))
++                } else {
++                    Ok(PathOrUrl::Path(url.to_file_path()?))
++                }
++            })
++            .unwrap_or_else(|_| PathOrUrl::Path(PathBuf::from_glib_none(s))))
++        // let scheme = glib_sys::g_uri_parse_scheme(s);
++        //
++        // if scheme.is_null() {
++        // Ok(PathOrUrl::Path(PathBuf::from_glib_none(s)))
++        // } else {
++        // glib_sys::g_free(scheme as *mut _);
++        //
++        // let cstr = CStr::from_ptr(s);
++        //
++        // cstr.to_str()
++        // .map_err(|_| ())
++        // .and_then(|utf8| Url::parse(utf8).map_err(|_| ()))
++        // .map(|url| PathOrUrl::Url(url))
++        // .map_err(|_| LoadingError::BadUrl)
++        // }
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn path_or_url_unix() {
++        unsafe {
++            match PathOrUrl::new(b"/foo/bar\0" as *const u8 as *const _).unwrap() {
++                PathOrUrl::Path(_) => (),
++                _ => panic!("unix filename should be a PathOrUrl::Path"),
++            }
++
++            match PathOrUrl::new(b"foo/bar\0" as *const u8 as *const _).unwrap() {
++                PathOrUrl::Path(_) => (),
++                _ => panic!("unix filename should be a PathOrUrl::Path"),
++            }
++        }
++    }
++
++    #[test]
++    fn path_or_url_windows() {
++        unsafe {
++            match PathOrUrl::new(b"c:/foo/bar\0" as *const u8 as *const _).unwrap() {
++                PathOrUrl::Path(_) => (),
++                _ => panic!("windows filename should be a PathOrUrl::Path"),
++            }
++
++            match PathOrUrl::new(b"C:/foo/bar\0" as *const u8 as *const _).unwrap() {
++                PathOrUrl::Path(_) => (),
++                _ => panic!("windows filename should be a PathOrUrl::Path"),
++            }
++        }
++    }
++
++    #[test]
++    fn path_or_url_unix_url() {
++        unsafe {
++            match PathOrUrl::new(b"file:///foo/bar\0" as *const u8 as *const _).unwrap() {
++                PathOrUrl::Url(_) => (),
++                _ => panic!("file:// unix filename should be a PathOrUrl::Url"),
++            }
++        }
++    }
++
++    #[test]
++    fn path_or_url_windows_url() {
++        unsafe {
++            match PathOrUrl::new(b"file://c:/foo/bar\0" as *const u8 as *const _).unwrap() {
++                PathOrUrl::Url(_) => (),
++                _ => panic!("file:// windows filename should be a PathOrUrl::Url"),
++            }
++
++            match PathOrUrl::new(b"file://C:/foo/bar\0" as *const u8 as *const _).unwrap() {
++                PathOrUrl::Url(_) => (),
++                _ => panic!("file:// windows filename should be a PathOrUrl::Url"),
++            }
++        }
++    }
++}

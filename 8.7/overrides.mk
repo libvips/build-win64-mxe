@@ -48,8 +48,8 @@ endef
 ## Update dependencies
 
 # upstream version is 2.32.3
-gdk-pixbuf_VERSION  := 2.38.0
-gdk-pixbuf_CHECKSUM := dd50973c7757bcde15de6bcd3a6d462a445efd552604ae6435a0532fbbadae47
+gdk-pixbuf_VERSION  := 2.38.1
+gdk-pixbuf_CHECKSUM := f19ff836ba991031610dcc53774e8ca436160f7d981867c8c3a37acfe493ab3a
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -74,8 +74,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-28
-imagemagick_CHECKSUM := 4b2a2666c6a0acc6f2c469e7df82a090e4d10e39b7035ed911dbd65d0c4d688c
+imagemagick_VERSION  := 6.9.10-33
+imagemagick_CHECKSUM := 1d824ccce4f1d8b126d2058f1829eb594dd727791c019ee3e2aa1471c108ff14
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -104,17 +104,9 @@ libcroco_SUBDIR   := libcroco-$(libcroco_VERSION)
 libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
 
-# upstream version is 0.51.0
-poppler_VERSION  := 0.74.0
-poppler_CHECKSUM := 92e09fd3302567fd36146b36bb707db43ce436e8841219025a82ea9fb0076b2f
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
-
 # upstream version is 2.50.2
-glib_VERSION  := 2.59.3
-glib_CHECKSUM := dfefafbc37bbcfb8101f3f181f880e8b7a8bee48620c92869ec4ef1d3d648e5e
+glib_VERSION  := 2.60.0
+glib_CHECKSUM := 20865d8b96840d89d9340fc485b4b1131c1bb24d16a258a22d642c3bb1b44353
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -156,6 +148,7 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio
 cfitsio_FILE     := cfitsio$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
+cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
 # upstream version is 0.33.6
 # Note: Can't build statically with the Meson build system,
@@ -200,8 +193,8 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 # Pango:
 #  Added: fribidi
 # Poppler:
-#  Removed: curl, qtbase
-#  Added: libjpeg-turbo, openjpeg, lcms
+#  Removed: curl, qtbase, libwebp
+#  Added: libjpeg-turbo, lcms
 # libwebp:
 #  Added: gettext, giflib, libjpeg-turbo, tiff, libpng
 # Cairo:
@@ -335,7 +328,6 @@ define librsvg_BUILD
     CARGO_HOME='/usr/local/cargo' \
     PATH='/usr/local/cargo/bin:$(PATH)' \
     $(SOURCE_DIR)/configure \
-        $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-gtk-doc \
@@ -344,9 +336,7 @@ define librsvg_BUILD
         LIBS="-lws2_32 -luserenv" \
         RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu
 
-    $(MAKE) \
-        -C '$(BUILD_DIR)' \
-        -j '$(JOBS)' \
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' \
         RUSTUP_HOME='/usr/local/rustup' \
         RUSTFLAGS='-C panic=abort' \
         CARGO_HOME='/usr/local/cargo' \
@@ -358,6 +348,7 @@ endef
 # compile with CMake and with libjpeg-turbo
 define poppler_BUILD
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DENABLE_TESTS=OFF \
         -DENABLE_ZLIB=ON \
         -DENABLE_LIBTIFF=ON \
         -DENABLE_LIBPNG=ON \

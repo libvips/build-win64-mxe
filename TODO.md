@@ -19,5 +19,4 @@
   - [ ] Should we also add libvips-web?
   - [ ] Not sure about `librsvg`, because v2.42.0+ requires the Rust toolchain.
 - [ ] Try to test the binaries with the Python test suite on Wine.
-- [ ] Remove the backported patch ([for this PR](https://gitlab.gnome.org/GNOME/gdk-pixbuf/merge_requests/20)) if a new version of GDK-PixBuf is available.
 - [ ] Remove `meson-3939.patch` if [PR #3939](https://github.com/mesonbuild/meson/pull/3939) is merged.
