@@ -1,0 +1,122 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Christoph Reiter <reiter.christoph@gmail.com>
+Date: Sat, 6 Jan 2018 22:04:23 +0100
+Subject: [PATCH 1/3] win32: Make the static build work with MinGW when posix
+ threads are used
+
+MinGW does not support the use of DllMain() for static builds, but that
+is currently always used on Windows, partly because it is needed for
+handling win32 threads and because there are problems with MSVC
+optimizing constructors away (see 7a29771a743a8b5337).
+
+To make the static build at least work in case mingw+posix threads are used,
+switch to using constructors for that. The g_clock_win32_init() call is
+moved into glib_init(), so it's also called in that case.
+
+If mingw+static+win32 threads are used abort the build early and print
+an error message.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=792297
+
+diff --git a/glib/glib-init.c b/glib/glib-init.c
+index 1111111..2222222 100644
+--- a/glib/glib-init.c
++++ b/glib/glib-init.c
+@@ -264,19 +264,29 @@ glib_init (void)
+ 
+   glib_inited = TRUE;
+ 
++#ifdef G_OS_WIN32
++  g_clock_win32_init ();
++#endif
+   g_messages_prefixed_init ();
+   g_debug_init ();
+   g_quark_init ();
+ }
+ 
+ #if defined (G_OS_WIN32)
++HMODULE glib_dll;
++#endif
++
++#if defined(__MINGW32__) && defined(GLIB_STATIC_COMPILATION) && !defined(THREADS_POSIX)
++/* MinGW static builds do not work with DllMain, but win32 threads need it atm */
++#error "Static build under MinGW only supported when build with posix threads"
++#endif
++
++#if defined (G_OS_WIN32) && (!defined(__MINGW32__) || defined(DLL_EXPORT))
+ 
+ BOOL WINAPI DllMain (HINSTANCE hinstDLL,
+                      DWORD     fdwReason,
+                      LPVOID    lpvReserved);
+ 
+-HMODULE glib_dll;
+-
+ BOOL WINAPI
+ DllMain (HINSTANCE hinstDLL,
+          DWORD     fdwReason,
+@@ -286,7 +296,6 @@ DllMain (HINSTANCE hinstDLL,
+     {
+     case DLL_PROCESS_ATTACH:
+       glib_dll = hinstDLL;
+-      g_clock_win32_init ();
+ #ifdef THREADS_WIN32
+       g_thread_win32_init ();
+ #endif
+diff --git a/gobject/gtype.c b/gobject/gtype.c
+index 1111111..2222222 100644
+--- a/gobject/gtype.c
++++ b/gobject/gtype.c
+@@ -4451,7 +4451,7 @@ gobject_init (void)
+   _g_signal_init ();
+ }
+ 
+-#if defined (G_OS_WIN32)
++#if defined (G_OS_WIN32) && (!defined(__MINGW32__) || defined(DLL_EXPORT))
+ 
+ BOOL WINAPI DllMain (HINSTANCE hinstDLL,
+                      DWORD     fdwReason,
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Christoph Reiter <reiter.christoph@gmail.com>
+Date: Wed, 19 Dec 2018 05:40:23 +0100
+Subject: [PATCH 2/3] Disable some tests when static
+
+
+diff --git a/gio/tests/meson.build b/gio/tests/meson.build
+index 1111111..2222222 100644
+--- a/gio/tests/meson.build
++++ b/gio/tests/meson.build
+@@ -453,7 +453,8 @@ if installed_tests_enabled
+   install_data('static-link.py', install_dir : installed_tests_execdir)
+ endif
+ 
+-if not meson.is_cross_build() or meson.has_exe_wrapper()
++windows_static = host_system == 'windows' and get_option('default_library') == 'static'
++if (not meson.is_cross_build() or meson.has_exe_wrapper()) and not windows_static
+ 
+   plugin_resources_c = custom_target('plugin-resources.c',
+     input : 'test4.gresource.xml',
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 2 Feb 2019 15:00:00 +0200
+Subject: [PATCH 3/3] Add missing -liconv to linker
+
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1682,7 +1682,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
+ 
+ # On Windows, just always use the built-in implementation
+ if host_system == 'windows'
+-  libiconv = []
++  libiconv = [cc.find_library('iconv')]
+   glib_conf.set('USE_LIBICONV_NATIVE', true)
+ else
+   found_iconv = false
