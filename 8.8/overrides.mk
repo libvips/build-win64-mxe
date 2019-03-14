@@ -282,6 +282,7 @@ define imagemagick_BUILD
         --without-lzma \
         --without-modules \
         --without-openexr \
+        --without-heic \
         --without-gvc \
         --without-lqr \
         --without-magick-plus-plus \

@@ -1,11 +1,8 @@
 # included by all scripts
 
 vips_package=vips
-vips_version=8.7
-vips_micro_version=4
-
-# Do we need a slim build?
-slim_build=false
+vips_version=8.8
+vips_micro_version=0
 
 # build-win64/x.xx dir we are building
 work_dir=$(pwd)

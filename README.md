@@ -76,6 +76,8 @@ Same as libvips-web + these extra dependencies:
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.8.12    | BSD-like                         |
 | [imagemagick]   | 6.9.10-37 | [ImageMagick License] (GPL-like) |
+| [libde265]      | 1.0.3     | LGPLv3                           |
+| [libheif]       | 1.4.0     | LGPLv3                           |
 | [matio]         | 1.5.15    | BSD 2-Clause                     |
 | [nifticlib]     | 2.0.0     | Public domain                    |
 | [openexr]       | 2.3.0     | BSD 3-Clause                     |
@@ -83,11 +85,14 @@ Same as libvips-web + these extra dependencies:
 | [openslide]     | 3.4.1     | LGPLv3                           |
 | [poppler]       | 0.75.0    | GPLv2                            |
 | [sqlite]        | 3.27.2    | Public domain                    |
+| [x265]          | 2.4       | GPLv2                            |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [hdf5]: https://www.hdfgroup.org/solutions/hdf5/
 [fftw]: https://github.com/FFTW/fftw3
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
+[libde265]: https://github.com/strukturag/libde265
+[libheif]: https://github.com/strukturag/libheif
 [ImageMagick License]: https://www.imagemagick.org/script/license.php
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://nifti.nimh.nih.gov/
@@ -96,3 +101,4 @@ Same as libvips-web + these extra dependencies:
 [openslide]: https://github.com/openslide/openslide
 [poppler]: https://poppler.freedesktop.org/
 [sqlite]: https://www.sqlite.org/
+[x265]: http://x265.org/

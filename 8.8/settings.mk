@@ -5,9 +5,9 @@ JOBS := 4
 # Special flags for compiler.
 export CPPFLAGS := -D_FORTIFY_SOURCE=2
 export CFLAGS   := -s -Os -ffast-math -ftree-vectorize -ffunction-sections \
-                   -fPIC $(CPPFLAGS) -static-libgcc
+                   -fPIC $(CPPFLAGS)
 export CXXFLAGS := -s -Os -ffast-math -ftree-vectorize -ffunction-sections \
-                   -fPIC $(CPPFLAGS) -static-libgcc -static-libstdc++
+                   -fPIC $(CPPFLAGS)
 export LDFLAGS  := -Wl,--gc-sections -Wl,--strip-all -Wl,--as-needed
 
 # We don't need debugging symbols.
