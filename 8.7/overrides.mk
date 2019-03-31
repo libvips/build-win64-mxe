@@ -66,16 +66,17 @@ libxml2_URL      := http://xmlsoft.org/sources/$(libxml2_FILE)
 libxml2_URL_2    := ftp://xmlsoft.org/libxml2/$(libxml2_FILE)
 
 # upstream version is 1.5.2
-matio_VERSION  := 1.5.13
-matio_CHECKSUM := feadb2f54ba7c9db6deba8c994e401d7a1a8e7afd0fe74487691052b8139e5cb
+matio_VERSION  := 1.5.15
+matio_CHECKSUM := 21bf4587bb7f0231dbb4fcc88728468f1764c06211d5a0415cd622036f09b1cf
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-33
-imagemagick_CHECKSUM := 1d824ccce4f1d8b126d2058f1829eb594dd727791c019ee3e2aa1471c108ff14
+imagemagick_VERSION  := 6.9.10-35
+imagemagick_CHECKSUM := 0fbde13bac477fa9f87b5f65a03d99d184167dc7b43ec434b647f024627087d5
+imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -96,6 +97,14 @@ pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
+
+# upstream version is 0.74.0
+poppler_VERSION  := 0.75.0
+poppler_CHECKSUM := 3bbaedb0fa2797cac933a0659d144303e4d09eec6892c65600da987d8707199a
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.12
@@ -160,11 +169,25 @@ pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # upstream version is 2.2.0
-harfbuzz_VERSION  := 2.3.1
-harfbuzz_CHECKSUM := f205699d5b91374008d6f8e36c59e419ae2d9a7bb8c5d9f34041b9a5abcae468
+harfbuzz_VERSION  := 2.4.0
+harfbuzz_CHECKSUM := 9035005903da74667d28bb181986e879e11da3d5986722759fa145cca781ead6
 harfbuzz_SUBDIR   := harfbuzz-$(harfbuzz_VERSION)
 harfbuzz_FILE     := harfbuzz-$(harfbuzz_VERSION).tar.bz2
 harfbuzz_URL      := https://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz_FILE)
+	
+# upstream version is 2.9.1
+freetype_VERSION  := 2.10.0
+freetype_CHECKSUM := fccc62928c65192fff6c98847233b28eb7ce05f12d2fea3f6cc90e8b4e5fbe06
+freetype_SUBDIR   := freetype-$(freetype_VERSION)
+freetype_FILE     := freetype-$(freetype_VERSION).tar.bz2
+freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
+
+# upstream version is 2.9.1
+freetype-bootstrap_VERSION   := $(freetype_VERSION)
+freetype-bootstrap_CHECKSUM  := $(freetype_CHECKSUM)
+freetype-bootstrap_SUBDIR    := $(freetype_SUBDIR)
+freetype-bootstrap_FILE      := $(freetype_FILE)
+freetype-bootstrap_URL       := $(freetype_URL)
 
 # Override libjpeg-turbo patch with our own
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libjpeg-turbo-[0-9]*.patch)))

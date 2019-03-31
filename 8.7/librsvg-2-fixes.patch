@@ -217,18 +217,19 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Federico Mena Quintero <federico@gnome.org>
-Date: Thu, 21 Feb 2019 18:08:00 -0600
-Subject: [PATCH 4/4] wip: Test the part of rsvg_handle_new_from_file() that
- decides between files and URLs
-
-This does not quite work yet; the tests fail on Linux, and I'm not
-sure they are correct on Windows.
+Date: Wed, 13 Mar 2019 20:02:49 -0600
+Subject: [PATCH 4/4] Make rsvg_rust_handle_new_from_file() work on Windows
+ and the latest glib
 
 This commit introduces a PathOrUrl enum, which gets created out of
 a *const libc::c_char.  The idea is that it will figure out whether
 the string that comes from C represents a path or a URL, so the code
 can decide whether to call gio::File::new_for_path() or
 gio::File::new_for_uri().
+
+Thanks to Kleis Auke Wolthuizen for actually making this work :)
+
+Fixes https://gitlab.gnome.org/GNOME/librsvg/issues/426
 
 diff --git a/rsvg_internals/src/handle.rs b/rsvg_internals/src/handle.rs
 index 1111111..2222222 100644
@@ -261,7 +262,7 @@ index 1111111..2222222 100644
  
      rsvg_handle_rust_new_from_gfile_sync(file.to_glib_none().0, 0, ptr::null_mut(), error)
  }
-@@ -1124,3 +1122,111 @@ pub unsafe extern "C" fn rsvg_handle_rust_new_from_data(
+@@ -1124,3 +1122,94 @@ pub unsafe extern "C" fn rsvg_handle_rust_new_from_data(
      gobject_sys::g_object_unref(raw_stream as *mut _);
      ret
  }
@@ -280,8 +281,6 @@ index 1111111..2222222 100644
 +
 +impl PathOrUrl {
 +    unsafe fn new(s: *const libc::c_char) -> Result<PathOrUrl, LoadingError> {
-+        // We do this with the glib C function like in the original implementation
-+
 +        let cstr = CStr::from_ptr(s);
 +
 +        Ok(cstr
@@ -296,21 +295,6 @@ index 1111111..2222222 100644
 +                }
 +            })
 +            .unwrap_or_else(|_| PathOrUrl::Path(PathBuf::from_glib_none(s))))
-+        // let scheme = glib_sys::g_uri_parse_scheme(s);
-+        //
-+        // if scheme.is_null() {
-+        // Ok(PathOrUrl::Path(PathBuf::from_glib_none(s)))
-+        // } else {
-+        // glib_sys::g_free(scheme as *mut _);
-+        //
-+        // let cstr = CStr::from_ptr(s);
-+        //
-+        // cstr.to_str()
-+        // .map_err(|_| ())
-+        // .and_then(|utf8| Url::parse(utf8).map_err(|_| ()))
-+        // .map(|url| PathOrUrl::Url(url))
-+        // .map_err(|_| LoadingError::BadUrl)
-+        // }
 +    }
 +}
 +
