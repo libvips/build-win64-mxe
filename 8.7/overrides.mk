@@ -174,20 +174,6 @@ harfbuzz_CHECKSUM := 9035005903da74667d28bb181986e879e11da3d5986722759fa145cca78
 harfbuzz_SUBDIR   := harfbuzz-$(harfbuzz_VERSION)
 harfbuzz_FILE     := harfbuzz-$(harfbuzz_VERSION).tar.bz2
 harfbuzz_URL      := https://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz_FILE)
-	
-# upstream version is 2.9.1
-freetype_VERSION  := 2.10.0
-freetype_CHECKSUM := fccc62928c65192fff6c98847233b28eb7ce05f12d2fea3f6cc90e8b4e5fbe06
-freetype_SUBDIR   := freetype-$(freetype_VERSION)
-freetype_FILE     := freetype-$(freetype_VERSION).tar.bz2
-freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
-
-# upstream version is 2.9.1
-freetype-bootstrap_VERSION   := $(freetype_VERSION)
-freetype-bootstrap_CHECKSUM  := $(freetype_CHECKSUM)
-freetype-bootstrap_SUBDIR    := $(freetype_SUBDIR)
-freetype-bootstrap_FILE      := $(freetype_FILE)
-freetype-bootstrap_URL       := $(freetype_URL)
 
 # Override libjpeg-turbo patch with our own
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libjpeg-turbo-[0-9]*.patch)))
@@ -239,17 +225,34 @@ cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
 
 ## Override build scripts
 
-# icu will pull in standard linux headers, which we don't want
+# icu will pull in standard linux headers, which we don't want,
+# build with CMake.
 define harfbuzz_BUILD
     # mman-win32 is only a partial implementation
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --with-icu=no \
-        ac_cv_header_sys_mman_h=no \
-        CXXFLAGS='$(CXXFLAGS) -std=c++11' \
-        LIBS='-lstdc++'
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
+        -DHB_HAVE_GLIB=ON \
+        -DHB_HAVE_FREETYPE=ON \
+        -DHB_HAVE_ICU=OFF \
+        -DHAVE_SYS_MMAN_H=OFF \
+        -DHB_BUILD_UTILS=OFF \
+        -DHB_BUILD_TESTS=OFF
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+
+    # create pkg-config file, see:
+    # https://github.com/harfbuzz/harfbuzz/issues/896
+    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/pkgconfig'
+    (echo 'prefix=$(PREFIX)/$(TARGET)'; \
+     echo 'exec_prefix=$${prefix}'; \
+     echo 'libdir=$${exec_prefix}/lib'; \
+     echo 'includedir=$${prefix}/include'; \
+     echo ''; \
+     echo 'Name: $(PKG)'; \
+     echo 'Version: $($(PKG)_VERSION)'; \
+     echo 'Description: HarfBuzz text shaping library'; \
+     echo 'Libs: -L$${libdir} -lharfbuzz'; \
+     echo 'Cflags: -I$${includedir}/harfbuzz';) \
+     > '$(PREFIX)/$(TARGET)/lib/pkgconfig/$(PKG).pc'
 endef
 
 # exclude bz2 and gdk-pixbuf
@@ -356,7 +359,7 @@ define librsvg_BUILD
         --disable-gtk-doc \
         --disable-introspection \
         --disable-tools \
-        LIBS="-lws2_32 -luserenv" \
+        LIBS="-lws2_32 -luserenv -lintl" \
         RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' \
@@ -533,7 +536,7 @@ define glib_BUILD
             $(MAKE_SHARED_FROM_STATIC) --libdir '$(PREFIX)/$(TARGET)/lib' \
             --libprefix 'lib' --libsuffix '-0' --objext '.obj' \
             '$(BUILD_DIR)/$(LIB)/lib$(LIB)-2.0.a' \
-            `$(TARGET)-pkg-config --libs-only-l $(LIB)-2.0` -lintl && \
+            `$(TARGET)-pkg-config --libs-only-l $(LIB)-2.0` && \
             ln -sf '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0-0.dll.a' \
                    '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0.a';))
 endef
