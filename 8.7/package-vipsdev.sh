@@ -28,71 +28,21 @@ fi
 rm -rf $repackage_dir
 mkdir -p $repackage_dir/bin
 
-# Copy libvips-cpp-42.dll by default
-target_dll="libvips-cpp-42.dll"
-
-zip_suffix=""
+zip_suffix="-exe"
 
 if [ "$type" = "static" ]; then
-  # Static build? Copy libvips-42.dll
-  target_dll="libvips-42.dll"
-
-  zip_suffix="-static"
+  zip_suffix="-static-exe"
 fi
 
-echo "Copying libvips and dependencies"
+echo "Copying vips executables"
 
-# Copy libvips and dependencies with pe-util
-$mxe_prefix/$build_os/bin/peldd \
-  $mxe_prefix/$target.$deps/bin/$target_dll \
-  --clear-path \
-  --path $mxe_prefix/$target.$deps/bin \
-  -a \
-  -w USERENV.dll \
-  -w USP10.dll \
-  -w DNSAPI.dll \
-  -w IPHLPAPI.DLL \
-  -w MSIMG32.DLL | xargs cp -t $repackage_dir/bin
+# We still need to copy the vips executables
+cp $mxe_prefix/$target.$deps/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
 
-echo "Copying install area $mxe_prefix/$target.$deps/"
+echo "Strip unneeded symbols"
 
-# Follow symlinks when copying /share and /etc
-cp -Lr $mxe_prefix/$target.$deps/{share,etc} $repackage_dir
-
-# Copy everything from /lib and /include, then delete the symlinks
-cp -r $mxe_prefix/$target.$deps/{lib,include} $repackage_dir
-find $repackage_dir/{lib,include} -type l -exec rm -f {} \;
-
-echo "Generating import files"
-./gendeflibs.sh $target.$deps
-
-echo "Cleaning unnecessary files / directories"
-
-# TODO Do we need to keep /share/doc and /share/gtk-doc?
-rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml}
-
-rm -rf $repackage_dir/include/cairo
-
-rm -rf $repackage_dir/lib/{*cairo*,*gdk*,ldscripts}
-find $repackage_dir/lib -name "*.la" -exec rm -f {} \;
-
-# We only support GB and de locales
-find $repackage_dir/share/locale -mindepth 1 -maxdepth 1 -type d ! -name "en_GB" ! -name "de" -exec rm -rf {} \;
-
-# Remove those .gitkeep files
-rm $repackage_dir/{include/.gitkeep,lib/.gitkeep,share/.gitkeep}
-
-if [ "$type" = "shared" ]; then
-  echo "Copying vips executables"
-
-  # We still need to copy the vips executables
-  cp $mxe_prefix/$target.$deps/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
-
-  echo "Strip unneeded symbols"
-
-  # Remove all symbols that are not needed
-  strip --strip-unneeded $repackage_dir/bin/*.exe
-fi
+# Remove all symbols that are not needed
+strip --strip-unneeded $repackage_dir/bin/*.exe
 
 echo "Copying packaging files"
 

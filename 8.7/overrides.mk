@@ -529,16 +529,6 @@ define glib_BUILD
         '$(BUILD_DIR)'
 
     ninja -C '$(BUILD_DIR)' install
-
-    # We need `libgobject-2.0-0.dll` and `libglib-2.0-0.dll` for the language bindings
-    $(if $(BUILD_STATIC), \
-        $(foreach LIB, glib gobject, \
-            $(MAKE_SHARED_FROM_STATIC) --libdir '$(PREFIX)/$(TARGET)/lib' \
-            --libprefix 'lib' --libsuffix '-0' --objext '.obj' \
-            '$(BUILD_DIR)/$(LIB)/lib$(LIB)-2.0.a' \
-            `$(TARGET)-pkg-config --libs-only-l $(LIB)-2.0` && \
-            ln -sf '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0-0.dll.a' \
-                   '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0.a';))
 endef
 
 # build with CMake.
