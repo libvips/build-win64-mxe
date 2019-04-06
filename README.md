@@ -75,7 +75,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.450     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.8.12    | BSD-like                         |
-| [imagemagick]   | 6.9.10-35 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.10-37 | [ImageMagick License] (GPL-like) |
 | [matio]         | 1.5.15    | BSD 2-Clause                     |
 | [nifticlib]     | 2.0.0     | Public domain                    |
 | [openexr]       | 2.3.0     | BSD 3-Clause                     |

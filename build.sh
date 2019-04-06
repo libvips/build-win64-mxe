@@ -5,7 +5,7 @@ if [ $# -lt 1 ]; then
   echo "Build libvips for Windows in a Docker container"
   echo "VERSION is the name of a versioned subdirectory, e.g. 8.7"
   echo "DEPS is the group of dependencies to build libvips with,"
-  echo "    defaults to 'all'"
+  echo "    defaults to 'web'"
   echo "ARCH is the architecture name to build libvips with,"
   echo "    defaults to 'x86_64'"
   echo "TYPE specifies the type of binary to be created,"
@@ -19,7 +19,7 @@ if [ x$(whoami) == x"root" ]; then
 fi
 
 version="$1"
-deps="${2:-all}"
+deps="${2:-web}"
 arch="${3:-x86_64}"
 type="${4:-shared}"
 
@@ -40,7 +40,7 @@ fi
 # the Rust toolchain because librsvg needs it.
 docker pull rust:stretch
 
-# Create a machine image with all the required build tools pre-installed
+# Create a machine image with all the required build tools pre-installed.
 docker build --build-arg ARCH=$arch -t libvips-build-win-mxe container
 
 # Run build scripts inside container

@@ -1,7 +1,8 @@
 # Rust toolchain is needed for librsvg
 FROM rust:stretch
 
-ARG ARCH
+ARG ARCH=x86_64
+ARG MESON_PATCH=https://raw.githubusercontent.com/libvips/build-win64-mxe/master/8.7/meson-3939.patch
 
 RUN \
     apt-get update \
@@ -22,6 +23,11 @@ RUN \
 # Install Ninja and Meson
 RUN \
     pip3 install ninja meson
+
+# TODO: Remove if https://github.com/mesonbuild/meson/pull/3939 is merged
+RUN \
+	cd `python3 -c "import site; print(site.getsitepackages()[0])"` \
+	&& curl $MESON_PATCH | git apply -v
 
 # the versioned build dir is mounted at /data, so this runs the build script
 # in that

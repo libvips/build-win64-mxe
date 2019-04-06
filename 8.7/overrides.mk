@@ -15,6 +15,9 @@ CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -Os -ffast-math -ftree-vectoriz
 LDFLAGS='-L$(PREFIX)/$(TARGET)/mingw/lib' \
 RCFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include'
 
+# Override GCC patches with our own patches
+gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/gcc-[0-9]*.patch)))
+
 # Point native system header dir to /mingw/include and
 # compile without some optimizations / stripping
 gcc_CONFIGURE_OPTS=--with-native-system-header-dir='/mingw/include' \
@@ -74,8 +77,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-35
-imagemagick_CHECKSUM := 0fbde13bac477fa9f87b5f65a03d99d184167dc7b43ec434b647f024627087d5
+imagemagick_VERSION  := 6.9.10-37
+imagemagick_CHECKSUM := 8a63f03535012213fe9ba3612b49ca81698de505e4fb56e70a2f4f661bad05fc
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
@@ -168,13 +171,6 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 2.2.0
-harfbuzz_VERSION  := 2.4.0
-harfbuzz_CHECKSUM := 9035005903da74667d28bb181986e879e11da3d5986722759fa145cca781ead6
-harfbuzz_SUBDIR   := harfbuzz-$(harfbuzz_VERSION)
-harfbuzz_FILE     := harfbuzz-$(harfbuzz_VERSION).tar.bz2
-harfbuzz_URL      := https://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz_FILE)
-
 # Override libjpeg-turbo patch with our own
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libjpeg-turbo-[0-9]*.patch)))
 
@@ -195,6 +191,7 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 # lcms:
 #  Removed: jpeg, tiff
 # TIFF:
+#  Removed: libwebp
 #  Replaced: jpeg with libjpeg-turbo
 # ImageMagick:
 #  Removed: bzip2, ffmpeg, freetype, jasper, liblqr-1, libltdl, libpng, openexr, pthreads, tiff
@@ -216,7 +213,7 @@ freetype-bootstrap_DEPS := $(filter-out bzip2 ,$(freetype-bootstrap_DEPS))
 glib_DEPS               := cc gettext libffi zlib
 gdk-pixbuf_DEPS         := cc glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
-tiff_DEPS               := $(subst jpeg,libjpeg-turbo,$(tiff_DEPS))
+tiff_DEPS               := cc libjpeg-turbo xz zlib
 imagemagick_DEPS        := cc lcms fftw tiff libjpeg-turbo freetype
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
