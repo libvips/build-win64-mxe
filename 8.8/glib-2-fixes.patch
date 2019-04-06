@@ -104,7 +104,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 2 Feb 2019 15:00:00 +0200
-Subject: [PATCH 3/3] Add missing -liconv to linker
+Subject: [PATCH 3/3] Add missing -liconv and -lintl to linker
 
 
 diff --git a/meson.build b/meson.build
@@ -120,3 +120,37 @@ index 1111111..2222222 100644
    glib_conf.set('USE_LIBICONV_NATIVE', true)
  else
    found_iconv = false
+@@ -1778,17 +1778,24 @@ endif
+ # proxy-libintl subproject.
+ # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
+ # implementations. This could be extended if issues are found in some platforms.
+-if cc.has_function('ngettext')
+-  libintl = []
+-  have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset')
++# On Windows, just always use libintl.
++if host_system == 'windows'
++  libintl = [cc.find_library('intl')]
++  have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset',
++                                                 dependencies : libintl)
+ else
+-  libintl = cc.find_library('intl', required : false)
+-  if not libintl.found()
+-    libintl = subproject('proxy-libintl').get_variable('intl_dep')
+-    have_bind_textdomain_codeset = true  # proxy-libintl supports it
++  if cc.has_function('ngettext')
++    libintl = []
++    have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset')
+   else
+-    have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset',
+-                                                   dependencies : libintl)
++    libintl = cc.find_library('intl', required : false)
++    if not libintl.found()
++      libintl = subproject('proxy-libintl').get_variable('intl_dep')
++      have_bind_textdomain_codeset = true  # proxy-libintl supports it
++    else
++      have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset',
++                                                     dependencies : libintl)
++    endif
+   endif
+ endif
+ 

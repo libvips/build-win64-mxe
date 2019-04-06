@@ -15,6 +15,9 @@ CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -Os -ffast-math -ftree-vectoriz
 LDFLAGS='-L$(PREFIX)/$(TARGET)/mingw/lib' \
 RCFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include'
 
+# Override GCC patches with our own patches
+gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/gcc-[0-9]*.patch)))
+
 # Point native system header dir to /mingw/include and
 # compile without some optimizations / stripping
 gcc_CONFIGURE_OPTS=--with-native-system-header-dir='/mingw/include' \
@@ -66,16 +69,17 @@ libxml2_URL      := http://xmlsoft.org/sources/$(libxml2_FILE)
 libxml2_URL_2    := ftp://xmlsoft.org/libxml2/$(libxml2_FILE)
 
 # upstream version is 1.5.2
-matio_VERSION  := 1.5.13
-matio_CHECKSUM := feadb2f54ba7c9db6deba8c994e401d7a1a8e7afd0fe74487691052b8139e5cb
+matio_VERSION  := 1.5.15
+matio_CHECKSUM := 21bf4587bb7f0231dbb4fcc88728468f1764c06211d5a0415cd622036f09b1cf
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-33
-imagemagick_CHECKSUM := 1d824ccce4f1d8b126d2058f1829eb594dd727791c019ee3e2aa1471c108ff14
+imagemagick_VERSION  := 6.9.10-37
+imagemagick_CHECKSUM := 8a63f03535012213fe9ba3612b49ca81698de505e4fb56e70a2f4f661bad05fc
+imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
@@ -96,6 +100,14 @@ pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
+
+# upstream version is 0.74.0
+poppler_VERSION  := 0.75.0
+poppler_CHECKSUM := 3bbaedb0fa2797cac933a0659d144303e4d09eec6892c65600da987d8707199a
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.12
@@ -159,13 +171,6 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 2.2.0
-harfbuzz_VERSION  := 2.3.1
-harfbuzz_CHECKSUM := f205699d5b91374008d6f8e36c59e419ae2d9a7bb8c5d9f34041b9a5abcae468
-harfbuzz_SUBDIR   := harfbuzz-$(harfbuzz_VERSION)
-harfbuzz_FILE     := harfbuzz-$(harfbuzz_VERSION).tar.bz2
-harfbuzz_URL      := https://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz_FILE)
-
 # Override libjpeg-turbo patch with our own
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libjpeg-turbo-[0-9]*.patch)))
 
@@ -186,6 +191,7 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 # lcms:
 #  Removed: jpeg, tiff
 # TIFF:
+#  Removed: libwebp
 #  Replaced: jpeg with libjpeg-turbo
 # ImageMagick:
 #  Removed: bzip2, ffmpeg, freetype, jasper, liblqr-1, libltdl, libpng, openexr, pthreads, tiff
@@ -207,7 +213,7 @@ freetype-bootstrap_DEPS := $(filter-out bzip2 ,$(freetype-bootstrap_DEPS))
 glib_DEPS               := cc gettext libffi zlib
 gdk-pixbuf_DEPS         := cc glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
-tiff_DEPS               := $(subst jpeg,libjpeg-turbo,$(tiff_DEPS))
+tiff_DEPS               := cc libjpeg-turbo xz zlib
 imagemagick_DEPS        := cc lcms fftw tiff libjpeg-turbo freetype
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
@@ -216,17 +222,34 @@ cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
 
 ## Override build scripts
 
-# icu will pull in standard linux headers, which we don't want
+# icu will pull in standard linux headers, which we don't want,
+# build with CMake.
 define harfbuzz_BUILD
     # mman-win32 is only a partial implementation
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --with-icu=no \
-        ac_cv_header_sys_mman_h=no \
-        CXXFLAGS='$(CXXFLAGS) -std=c++11' \
-        LIBS='-lstdc++'
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
+        -DHB_HAVE_GLIB=ON \
+        -DHB_HAVE_FREETYPE=ON \
+        -DHB_HAVE_ICU=OFF \
+        -DHAVE_SYS_MMAN_H=OFF \
+        -DHB_BUILD_UTILS=OFF \
+        -DHB_BUILD_TESTS=OFF
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+
+    # create pkg-config file, see:
+    # https://github.com/harfbuzz/harfbuzz/issues/896
+    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/pkgconfig'
+    (echo 'prefix=$(PREFIX)/$(TARGET)'; \
+     echo 'exec_prefix=$${prefix}'; \
+     echo 'libdir=$${exec_prefix}/lib'; \
+     echo 'includedir=$${prefix}/include'; \
+     echo ''; \
+     echo 'Name: $(PKG)'; \
+     echo 'Version: $($(PKG)_VERSION)'; \
+     echo 'Description: HarfBuzz text shaping library'; \
+     echo 'Libs: -L$${libdir} -lharfbuzz'; \
+     echo 'Cflags: -I$${includedir}/harfbuzz';) \
+     > '$(PREFIX)/$(TARGET)/lib/pkgconfig/$(PKG).pc'
 endef
 
 # exclude bz2 and gdk-pixbuf
@@ -334,7 +357,7 @@ define librsvg_BUILD
         --disable-gtk-doc \
         --disable-introspection \
         --disable-tools \
-        LIBS="-lws2_32 -luserenv" \
+        LIBS="-lws2_32 -luserenv -lintl" \
         RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' \
@@ -511,7 +534,7 @@ define glib_BUILD
             $(MAKE_SHARED_FROM_STATIC) --libdir '$(PREFIX)/$(TARGET)/lib' \
             --libprefix 'lib' --libsuffix '-0' --objext '.obj' \
             '$(BUILD_DIR)/$(LIB)/lib$(LIB)-2.0.a' \
-            `$(TARGET)-pkg-config --libs-only-l $(LIB)-2.0` -lintl && \
+            `$(TARGET)-pkg-config --libs-only-l $(LIB)-2.0` && \
             ln -sf '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0-0.dll.a' \
                    '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0.a';))
 endef

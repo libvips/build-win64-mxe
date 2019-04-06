@@ -4,7 +4,7 @@ if [ $# -lt 1 ]; then
   echo "Usage: $0 [DEPS] [TARGET]"
   echo "Package libvips in mxe/usr/TARGET/"
   echo "DEPS is the group of dependencies to build libvips with,"
-  echo "    defaults to 'all'"
+  echo "    defaults to 'web'"
   echo "TARGET is the binary target, defaults to x86_64-w64-mingw32.shared"
 
   exit 1
@@ -12,7 +12,7 @@ fi
 
 . variables.sh
 
-deps="${1:-all}"
+deps="${1:-web}"
 target="${2:-x86_64-w64-mingw32.shared}"
 arch=${target%%-*}
 type="${target#*.}"
