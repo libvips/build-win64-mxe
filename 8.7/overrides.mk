@@ -77,8 +77,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-37
-imagemagick_CHECKSUM := 8a63f03535012213fe9ba3612b49ca81698de505e4fb56e70a2f4f661bad05fc
+imagemagick_VERSION  := 6.9.10-39
+imagemagick_CHECKSUM := b155c2e98721e7312f7b59ee0204df31efcb337cb626187f3096a35150de194c
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
@@ -110,8 +110,8 @@ poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
 poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.6.2
-libcroco_VERSION  := 0.6.12
-libcroco_CHECKSUM := ddc4b5546c9fb4280a5017e2707fbd4839034ed1aba5b7d4372212f34f84f860
+libcroco_VERSION  := 0.6.13
+libcroco_CHECKSUM := 767ec234ae7aa684695b3a735548224888132e063f92db585759b422570621d4
 libcroco_SUBDIR   := libcroco-$(libcroco_VERSION)
 libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
@@ -165,8 +165,8 @@ cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfits
 # upstream version is 0.33.6
 # Note: Can't build statically with the Meson build system,
 # it will always output a shared library.
-pixman_VERSION  := 0.38.0
-pixman_CHECKSUM := a7592bef0156d7c27545487a52245669b00cf7e70054505381cff2136d890ca8
+pixman_VERSION  := 0.38.2
+pixman_CHECKSUM := b662de085ca74417b11eb9b67fcd7825a649a7ef0115ccb60db6429f52bfef89
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
