@@ -96,7 +96,7 @@ fi
 
 echo "Copying packaging files"
 
-cp $mxe_dir/vips-packaging/{COPYING,ChangeLog,README.md,AUTHORS} $repackage_dir
+cp $mxe_dir/vips-packaging/{AUTHORS,ChangeLog,COPYING,README.md,versions.json} $repackage_dir
 
 echo "Creating $zipfile"
 

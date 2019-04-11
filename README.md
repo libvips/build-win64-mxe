@@ -16,7 +16,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [glib]          | 2.60.0    | LGPLv3                          |
 | [harfbuzz]      | 2.4.0     | MIT Licence                     |
 | [lcms]          | 2.9       | MIT Licence                     |
-| [libcroco]      | 0.6.12    | LGPLv3                          |
+| [libcroco]      | 0.6.13    | LGPLv3                          |
 | [libexif]       | 0.6.21    | LGPLv3                          |
 | [libffi]        | 3.2.1     | MIT Licence                     |
 | [libgsf]        | 1.14.45   | LGPLv3                          |
@@ -30,7 +30,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libxml2]       | 2.9.9     | MIT Licence                     |
 | [orc]           | 0.4.28    | BSD 2-Clause                    |
 | [pango]         | 1.43.0    | LGPLv3                          |
-| [pixman]        | 0.38.0    | MIT Licence                     |
+| [pixman]        | 0.38.2    | MIT Licence                     |
 | [zlib]          | 1.2.11    | [zlib Licence]                  |
 
 [cairo]: https://cairographics.org/
@@ -75,7 +75,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.450     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.8.12    | BSD-like                         |
-| [imagemagick]   | 6.9.10-37 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.10-39 | [ImageMagick License] (GPL-like) |
 | [libde265]      | 1.0.3     | LGPLv3                           |
 | [libheif]       | 1.4.0     | LGPLv3                           |
 | [matio]         | 1.5.15    | BSD 2-Clause                     |
