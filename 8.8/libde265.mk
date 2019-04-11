@@ -10,6 +10,8 @@ $(PKG)_DEPS     := cc
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
+        -DCMAKE_C_FLAGS="-msse4.1" \
+        -DCMAKE_CXX_FLAGS="-msse4.1" \
         -DDISABLE_SSE=OFF
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
