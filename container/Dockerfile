@@ -1,5 +1,6 @@
 # Rust toolchain is needed for librsvg
-FROM rust:stretch
+# TODO: 1.34.0 fails due to https://github.com/rust-lang/rust/issues/58277
+FROM rust:1.33.0-stretch
 
 ARG ARCH=x86_64
 ARG MESON_PATCH=https://raw.githubusercontent.com/libvips/build-win64-mxe/master/8.7/meson-3939.patch
