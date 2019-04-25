@@ -58,10 +58,10 @@ index 1111111..2222222 100644
  BOOL WINAPI
  DllMain (HINSTANCE hinstDLL,
           DWORD     fdwReason,
-@@ -286,7 +296,6 @@ DllMain (HINSTANCE hinstDLL,
-     {
+@@ -287,7 +297,6 @@ DllMain (HINSTANCE hinstDLL,
      case DLL_PROCESS_ATTACH:
        glib_dll = hinstDLL;
+       g_crash_handler_win32_init ();
 -      g_clock_win32_init ();
  #ifdef THREADS_WIN32
        g_thread_win32_init ();
@@ -90,7 +90,7 @@ diff --git a/gio/tests/meson.build b/gio/tests/meson.build
 index 1111111..2222222 100644
 --- a/gio/tests/meson.build
 +++ b/gio/tests/meson.build
-@@ -453,7 +453,8 @@ if installed_tests_enabled
+@@ -459,7 +459,8 @@ if installed_tests_enabled
    install_data('static-link.py', install_dir : installed_tests_execdir)
  endif
  
@@ -111,16 +111,16 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1682,7 +1682,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
- 
- # On Windows, just always use the built-in implementation
- if host_system == 'windows'
--  libiconv = []
-+  libiconv = [cc.find_library('iconv')]
-   glib_conf.set('USE_LIBICONV_NATIVE', true)
- else
-   found_iconv = false
-@@ -1778,17 +1778,24 @@ endif
+@@ -1694,7 +1694,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
+ # available in the actual runtime environment. On Windows, we always use
+ # the built-in implementation
+ iconv_opt = get_option('iconv')
+-if host_system == 'windows'
++if host_system == 'windows' and not meson.is_cross_build()
+   libiconv = []
+   # We have a #include "win_iconv.c" in gconvert.c on Windows, so we don't need
+   # any external library for it
+@@ -1783,17 +1783,24 @@ endif
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.
