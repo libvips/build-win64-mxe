@@ -5,9 +5,8 @@ $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 8.7.4
 $(PKG)_CHECKSUM := ce7518a8f31b1d29a09b3d7c88e9852a5a2dcb3ee1501524ab477e433383f205
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases/download,v
-$(PKG)_SUBDIR   := $(subst -all,,$(PKG))-$($(PKG)_VERSION)
-$(PKG)_FILE     := $(subst -all,,$(PKG))-$($(PKG)_VERSION).tar.gz
+$(PKG)_GH_CONF  := libvips/libvips/releases,v
+$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
                    libgsf libjpeg-turbo tiff openslide lcms libexif \
                    imagemagick libpng openexr cfitsio nifticlib orc

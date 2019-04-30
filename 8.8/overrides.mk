@@ -77,8 +77,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-39
-imagemagick_CHECKSUM := b155c2e98721e7312f7b59ee0204df31efcb337cb626187f3096a35150de194c
+imagemagick_VERSION  := 6.9.10-42
+imagemagick_CHECKSUM := f2fd506ea053f1a03658dd470b376d7f91e5c1b224568540671d0a661ae6822a
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
@@ -102,8 +102,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 0.74.0
-poppler_VERSION  := 0.75.0
-poppler_CHECKSUM := 3bbaedb0fa2797cac933a0659d144303e4d09eec6892c65600da987d8707199a
+poppler_VERSION  := 0.76.0
+poppler_CHECKSUM := 370f5fcfe2bbf0c76fc394d338cd72ed7f2044b67f4eb4b115eb074ccfc70d63
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -117,8 +117,8 @@ libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.60.0
-glib_CHECKSUM := 20865d8b96840d89d9340fc485b4b1131c1bb24d16a258a22d642c3bb1b44353
+glib_VERSION  := 2.61.0
+glib_CHECKSUM := e6f794768e67060f58166234bca5dcdae4a9961f70076a5937c73cb578f2f3e7
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -165,8 +165,8 @@ cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfits
 # upstream version is 0.33.6
 # Note: Can't build statically with the Meson build system,
 # it will always output a shared library.
-pixman_VERSION  := 0.38.2
-pixman_CHECKSUM := b662de085ca74417b11eb9b67fcd7825a649a7ef0115ccb60db6429f52bfef89
+pixman_VERSION  := 0.38.4
+pixman_CHECKSUM := da66d6fd6e40aee70f7bd02e4f8f76fc3f006ec879d346bae6a723025cfbdde7
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
@@ -522,7 +522,7 @@ define glib_BUILD
         --includedir='include' \
         -Dforce_posix_threads=true \
         -Dinternal_pcre=true \
-        -Diconv='native' \
+        -Diconv='external' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
