@@ -49,7 +49,7 @@ endef
 
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
-    cd '$(SOURCE_DIR)' && ./autogen.sh \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
         --without-fftw \
@@ -68,11 +68,11 @@ define $(PKG)_BUILD
         --without-imagequant \
         --disable-introspection
 
-    $(MAKE) -C '$(SOURCE_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(SOURCE_DIR)' -j 1 install
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 
     $(if $(BUILD_STATIC), \
         $(MAKE_SHARED_FROM_STATIC) --libprefix 'lib' --libsuffix '-42' \
-        '$(SOURCE_DIR)/libvips/.libs/libvips.a' \
+        '$(BUILD_DIR)/libvips/.libs/libvips.a' \
         `$(TARGET)-pkg-config --libs-only-l vips` -luserenv -ldnsapi -liphlpapi -lcairo-gobject -lgif)
 endef

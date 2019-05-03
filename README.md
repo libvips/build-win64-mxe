@@ -75,7 +75,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.450     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.8.12    | BSD-like                         |
-| [imagemagick]   | 6.9.10-42 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.10-43 | [ImageMagick License] (GPL-like) |
 | [libde265]      | 1.0.3     | LGPLv3                           |
 | [libheif]       | 1.4.0     | LGPLv3                           |
 | [matio]         | 1.5.15    | BSD 2-Clause                     |
@@ -83,7 +83,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 2.3.0     | BSD 3-Clause                     |
 | [openjpeg]      | 2.3.1     | BSD 2-Clause                     |
 | [openslide]     | 3.4.1     | LGPLv3                           |
-| [poppler]       | 0.76.0    | GPLv2                            |
+| [poppler]       | 0.76.1    | GPLv2                            |
 | [sqlite]        | 3.28.0    | Public domain                    |
 | [x265]          | 2.4       | GPLv2                            |
 

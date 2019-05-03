@@ -64,13 +64,13 @@ endef
 
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
-    cd '$(SOURCE_DIR)' && ./autogen.sh \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
         --without-pdfium \
         --without-imagequant \
         --disable-introspection
 
-    $(MAKE) -C '$(SOURCE_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(SOURCE_DIR)' -j 1 install
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
