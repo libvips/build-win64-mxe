@@ -77,13 +77,12 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-43
-imagemagick_CHECKSUM := bb6a8e2ef433d8e647e31ec10ba3ed79fa1194c611ece600fc32f75bce3d6a24
+imagemagick_VERSION  := 6.9.10-44
+imagemagick_CHECKSUM := 4661f0f583000d57253b1a94c26e4f35ceaf7aa3a226192e5bbb14c1f32f421b
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/imagemagick-[0-9]*.patch)))
-imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
-imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
-imagemagick_URL      := https://www.imagemagick.org/download/releases/$(imagemagick_FILE)
-imagemagick_URL_2    := https://ftp.nluug.nl/ImageMagick/$(imagemagick_FILE)
+imagemagick_SUBDIR   := ImageMagick6-$(imagemagick_VERSION)
+imagemagick_FILE     := $(imagemagick_VERSION).tar.gz
+imagemagick_URL      := https://github.com/ImageMagick/ImageMagick6/archive/$(imagemagick_FILE)
 
 # upstream version is 2.40.5
 librsvg_VERSION  := 2.45.5
@@ -125,8 +124,8 @@ glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 1.14.30
-libgsf_VERSION  := 1.14.45
-libgsf_CHECKSUM := 5cbc2c0f1dc44d202fa0c6e3a51e9f17b0c2deb8711ba650432bfde3180b69fa
+libgsf_VERSION  := 1.14.46
+libgsf_CHECKSUM := ea36959b1421fc8e72caa222f30ec3234d0ed95990e2bf28943a85f33eadad2d
 libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libgsf-[0-9]*.patch)))
 libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz

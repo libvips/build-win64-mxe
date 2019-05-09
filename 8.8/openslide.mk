@@ -5,7 +5,7 @@ $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 3.4.1
 $(PKG)_CHECKSUM := fed08fab8a9b1ded95a34e196652291127ebe392c11f9bc13d26e760295a102d
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := openslide/openslide/releases/latest,v
+$(PKG)_GH_CONF  := openslide/openslide/releases,v
 $(PKG)_DEPS     := cc zlib cairo gdk-pixbuf libjpeg-turbo tiff openjpeg sqlite
 
 define $(PKG)_BUILD

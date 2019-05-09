@@ -19,13 +19,13 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libcroco]      | 0.6.13    | LGPLv3                          |
 | [libexif]       | 0.6.21    | LGPLv3                          |
 | [libffi]        | 3.2.1     | MIT Licence                     |
-| [libgsf]        | 1.14.45   | LGPLv3                          |
-| [libiconv]      | 1.15      | LGPLv3                          |
+| [libgsf]        | 1.14.46   | LGPLv3                          |
+| [libiconv]      | 1.16      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.2     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
 | [librsvg]       | 2.45.5    | LGPLv3                          |
 | [libtiff]       | 4.0.10    | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.8.0-rc1 | LGPLv3                          |
+| [libvips]       | 8.8.0-rc2 | LGPLv3                          |
 | [libwebp]       | 1.0.2     | New BSD License                 |
 | [libxml2]       | 2.9.9     | MIT Licence                     |
 | [orc]           | 0.4.29    | BSD 2-Clause                    |
@@ -75,7 +75,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.450     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.8.12    | BSD-like                         |
-| [imagemagick]   | 6.9.10-43 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.10-44 | [ImageMagick License] (GPL-like) |
 | [libde265]      | 1.0.3     | LGPLv3                           |
 | [libheif]       | 1.4.0     | LGPLv3                           |
 | [matio]         | 1.5.15    | BSD 2-Clause                     |
