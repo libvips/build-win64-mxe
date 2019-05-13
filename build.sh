@@ -23,13 +23,20 @@ deps="${2:-web}"
 arch="${3:-x86_64}"
 type="${4:-shared}"
 
+# POSIX threads are only necessary when building 
+# Poppler, OpenJPEG and libheif.
+if [ "$deps" = "web" ]; then
+  threads="win32"
+else
+  threads="posix"
+fi
+
 if [ "$type" = "static" ] && [ "$deps" == "all" ]; then
   echo "WARNING: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
   exit 1
 fi
 
-# Note: Since January 2019 posix threads is used by default.
-target="$arch-w64-mingw32.$type"
+target="$arch-w64-mingw32.$type.$threads"
 
 if ! type docker > /dev/null; then
   echo "Please install docker"

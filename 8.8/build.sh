@@ -9,14 +9,14 @@ if [ $# -lt 1 ]; then
   echo "DEPS is the group of dependencies to build libvips with,"
   echo "    defaults to 'web'"
   echo "TARGET is the binary target,"
-  echo "    defaults to 'x86_64-w64-mingw32.shared'"
+  echo "    defaults to 'x86_64-w64-mingw32.shared.win32'"
   exit 1
 fi
 
 . variables.sh
 
 deps="${1:-web}"
-target="${2:-x86_64-w64-mingw32.shared}"
+target="${2:-x86_64-w64-mingw32.shared.win32}"
 
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.

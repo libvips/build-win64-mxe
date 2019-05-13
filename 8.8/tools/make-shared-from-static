@@ -2,8 +2,7 @@
 
 # Taken from:
 # https://github.com/mxe/mxe/blob/master/tools/make-shared-from-static
-# Adapted to support the `-s -Os -ffast-math -ftree-vectorize -ffunction-sections -fPIC -D_FORTIFY_SOURCE=2 -static-libgcc`
-# CFLAGS and `-Wl,--gc-sections -Wl,--strip-all -Wl,--as-needed` LDFLAGS
+# Adapted to support custom CFLAGS and LDFLAGS
 
 set -e
 
@@ -24,8 +23,6 @@ libprefix=
 libsuffix=
 LIBS=
 objext='.o'
-
-custom_link_args="-s -Os -ffast-math -ftree-vectorize -ffunction-sections -fPIC -D_FORTIFY_SOURCE=2 -static-libgcc -Wl,--gc-sections -Wl,--strip-all -Wl,--as-needed"
 
 topdir=$(pwd)
 tmpdir=$topdir/make-shared-from-static.$$
@@ -214,8 +211,8 @@ mkdir $tmpdir
       eval "$cmd"
       link_args="-Wl,-def:$export_symbols $libobjs"
     else
-      link_args="$custom_link_args -Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--enable-auto-image-base *$objext"
-	fi
+      link_args="$CFLAGS $LDFLAGS -Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--enable-auto-image-base *$objext"
+    fi
     set -x
     $LD -shared $link_args -Wl,--out-implib="$implibfile" -o "$outfile" $LIBDIR_ARGS $LIBS
   else

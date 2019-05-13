@@ -5,7 +5,7 @@ if [ $# -lt 1 ]; then
   echo "Package libvips in mxe/usr/TARGET/"
   echo "DEPS is the group of dependencies to build libvips with,"
   echo "    defaults to 'web'"
-  echo "TARGET is the binary target, defaults to x86_64-w64-mingw32.shared"
+  echo "TARGET is the binary target, defaults to x86_64-w64-mingw32.shared.win32"
 
   exit 1
 fi
@@ -13,9 +13,10 @@ fi
 . variables.sh
 
 deps="${1:-web}"
-target="${2:-x86_64-w64-mingw32.shared}"
+target="${2:-x86_64-w64-mingw32.shared.win32}"
 arch=${target%%-*}
-type="${target#*.}"
+type_threads="${target#*.}" # for e.g. shared.win32 or static.posix
+type="${type_threads%%.*}" # for e.g. shared or static
 build_os=`$mxe_dir/ext/config.guess`
 
 if [ "$arch" = "i686" ]; then

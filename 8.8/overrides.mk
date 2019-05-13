@@ -9,9 +9,9 @@ mingw-w64-headers_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw'
 # and winpthreads somewhere else
 common_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw' \
 --with-sysroot='$(PREFIX)/$(TARGET)/mingw' \
-CPPFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -D_FORTIFY_SOURCE=2' \
-CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -Os -ffast-math -ftree-vectorize -static-libgcc' \
-CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -Os -ffast-math -ftree-vectorize -static-libgcc -static-libstdc++' \
+CPPFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include' \
+CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -Ofast' \
+CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -Ofast' \
 LDFLAGS='-L$(PREFIX)/$(TARGET)/mingw/lib' \
 RCFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include'
 
@@ -21,9 +21,8 @@ gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/
 # Point native system header dir to /mingw/include and
 # compile without some optimizations / stripping
 gcc_CONFIGURE_OPTS=--with-native-system-header-dir='/mingw/include' \
-CPPFLAGS='-D_FORTIFY_SOURCE=2' \
-CFLAGS='-s -Os -ffast-math -ftree-vectorize -static-libgcc' \
-CXXFLAGS='-s -Os -ffast-math -ftree-vectorize -static-libgcc -static-libstdc++' \
+CFLAGS='-s -Ofast' \
+CXXFLAGS='-s -Ofast' \
 LDFLAGS=''
 
 # The trick here is to symlink all files from /mingw/{bin,lib,include}/
@@ -346,11 +345,7 @@ endef
 # compile with the Rust toolchain 
 define librsvg_BUILD
     cd '$(SOURCE_DIR)' && autoreconf -fi -I'$(PREFIX)/$(TARGET)/share/aclocal'
-    cd '$(BUILD_DIR)' && RUSTUP_HOME='/usr/local/rustup' \
-    RUSTFLAGS='-C panic=abort' \
-    CARGO_HOME='/usr/local/cargo' \
-    PATH='/usr/local/cargo/bin:$(PATH)' \
-    $(SOURCE_DIR)/configure \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-gtk-doc \
@@ -359,12 +354,7 @@ define librsvg_BUILD
         LIBS="-lws2_32 -luserenv -lintl" \
         RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu
 
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' \
-        RUSTUP_HOME='/usr/local/rustup' \
-        RUSTFLAGS='-C panic=abort' \
-        CARGO_HOME='/usr/local/cargo' \
-        PATH='/usr/local/cargo/bin:$(PATH)'
-
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
 endef
 
@@ -505,7 +495,7 @@ endef
 
 # build with the Meson build system
 # compile with the internal PCRE library and
-# posix threads
+# posix threads (if necessary)
 define glib_BUILD
     # other packages expect glib-tools in $(TARGET)/bin
     rm -f  '$(PREFIX)/$(TARGET)/bin/glib-*'
@@ -514,28 +504,21 @@ define glib_BUILD
     ln -sf '$(PREFIX)/$(BUILD)/bin/glib-compile-resources' '$(PREFIX)/$(TARGET)/bin/'
 
     # cross build
+    # build as shared library, since we need `libgobject-2.0-0.dll`
+    # and `libglib-2.0-0.dll` for the language bindings.
     '$(TARGET)-meson' \
+        --default-library=shared \
         --libdir='lib' \
         --bindir='bin' \
         --libexecdir='bin' \
         --includedir='include' \
-        -Dforce_posix_threads=true \
+        -Dforce_posix_threads=$(if $(findstring posix,$(MXE_GCC_THREADS)),true,false) \
         -Dinternal_pcre=true \
         -Diconv='external' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
     ninja -C '$(BUILD_DIR)' install
-
-    # We need `libgobject-2.0-0.dll` and `libglib-2.0-0.dll` for the language bindings
-    $(if $(BUILD_STATIC), \
-        $(foreach LIB, glib gobject, \
-            $(MAKE_SHARED_FROM_STATIC) --libdir '$(PREFIX)/$(TARGET)/lib' \
-            --libprefix 'lib' --libsuffix '-0' --objext '.obj' \
-            '$(BUILD_DIR)/$(LIB)/lib$(LIB)-2.0.a' \
-            `$(TARGET)-pkg-config --libs-only-l $(LIB)-2.0` && \
-            ln -sf '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0-0.dll.a' \
-                   '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0.a';))
 endef
 
 # build with CMake.
