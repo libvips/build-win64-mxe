@@ -2,10 +2,10 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.8.0-rc2
-$(PKG)_CHECKSUM := 04d3028b4f6621c80a26abdbc686822d57f82401736734b236a776b9f0b5dfcc
-$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,-rc2.tar.gz
+$(PKG)_VERSION  := 8.8.0-rc3
+$(PKG)_CHECKSUM := 8e78b451adfe59288bded74c9ec6b8c5eb0574ecbba7a0352de4f34266e021b0
+$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,-rc3.tar.gz
 $(PKG)_SUBDIR   := vips-$(firstword $(subst -, ,$($(PKG)_VERSION)))
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
@@ -50,8 +50,16 @@ endef
 
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
+
+    # Always build as shared library, we need
+    # libvips-42.dll for the language bindings.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
+        --host='$(TARGET)' \
+        --build='$(BUILD)' \
+        --prefix='$(PREFIX)/$(TARGET)' \
+        --disable-static \
+        --enable-shared \
+        $(MXE_DISABLE_DOC_OPTS) \
         --enable-debug=no \
         --without-fftw \
         --without-magick \
@@ -74,6 +82,6 @@ define $(PKG)_BUILD
 
     $(if $(BUILD_STATIC), \
         $(MAKE_SHARED_FROM_STATIC) --libprefix 'lib' --libsuffix '-42' \
-        '$(BUILD_DIR)/libvips/.libs/libvips.a' \
-        `$(TARGET)-pkg-config --libs-only-l vips` -luserenv -ldnsapi -liphlpapi -lcairo-gobject -lgif)
+        '$(PREFIX)/$(TARGET)/lib/libvips.a' \
+        `$(TARGET)-pkg-config --libs-only-l vips` -luserenv -lcairo-gobject -lgif)
 endef

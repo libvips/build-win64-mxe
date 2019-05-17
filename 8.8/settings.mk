@@ -3,12 +3,20 @@
 JOBS := 4
 
 # Special flags for compiler.
-export CPPFLAGS := -D_FORTIFY_SOURCE=2
-export CFLAGS   := -s -Os -ffast-math -ftree-vectorize -ffunction-sections \
-                   -fPIC $(CPPFLAGS)
-export CXXFLAGS := -s -Os -ffast-math -ftree-vectorize -ffunction-sections \
-                   -fPIC $(CPPFLAGS)
+export CFLAGS   := -s -O3 -ffast-math -fdata-sections -ffunction-sections \
+                   -fPIC
+export CXXFLAGS := -s -O3 -ffast-math -fdata-sections -ffunction-sections \
+                   -fPIC
 export LDFLAGS  := -Wl,--gc-sections -Wl,--strip-all -Wl,--as-needed
+
+# Environment variables needed by Rust.
+#export RUSTUP_HOME := /home/kleisauke/.rustup
+#export CARGO_HOME  := /home/kleisauke/.cargo
+#export PATH        := /home/kleisauke/.cargo/bin:$(PATH)
+export RUSTUP_HOME := /usr/local/rustup
+export RUSTFLAGS   := -C panic=abort
+export CARGO_HOME  := /usr/local/cargo
+export PATH        := /usr/local/cargo/bin:$(PATH)
 
 # We don't need debugging symbols.
 # For e.g. this commit:
@@ -17,8 +25,8 @@ export LDFLAGS  := -Wl,--gc-sections -Wl,--strip-all -Wl,--as-needed
 STRIP_LIB := $(true)
 
 # This variable controls which plugins are in use.
-# Build with GCC 8.3 and use the meson-wrapper.
+# Build with GCC 9.1 and use the meson-wrapper.
 override MXE_PLUGIN_DIRS := \
-    plugins/gcc8 \
+    plugins/gcc9 \
     plugins/meson-wrapper \
     $(MXE_PLUGIN_DIRS)

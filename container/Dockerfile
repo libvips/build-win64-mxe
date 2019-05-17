@@ -3,7 +3,7 @@
 FROM rust:1.33.0-stretch
 
 ARG ARCH=x86_64
-ARG MESON_PATCH=https://raw.githubusercontent.com/libvips/build-win64-mxe/master/8.7/meson-3939.patch
+ARG MESON_PATCH=https://raw.githubusercontent.com/libvips/build-win64-mxe/master/8.8/meson-3939.patch
 
 RUN \
     apt-get update \

@@ -23,13 +23,17 @@ deps="${2:-web}"
 arch="${3:-x86_64}"
 type="${4:-shared}"
 
+# Use native Win32 threading functions because 
+# POSIX threads functionality is significantly  
+# slower than the native Win32 implementation.
+threads="win32"
+
 if [ "$type" = "static" ] && [ "$deps" == "all" ]; then
   echo "WARNING: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
   exit 1
 fi
 
-# Note: Since January 2019 posix threads is used by default.
-target="$arch-w64-mingw32.$type"
+target="$arch-w64-mingw32.$type.$threads"
 
 if ! type docker > /dev/null; then
   echo "Please install docker"

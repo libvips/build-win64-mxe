@@ -20,8 +20,8 @@ glib-compile-resources = '@PREFIX@/@TARGET@/bin/glib-compile-resources'
 
 [properties]
 needs_exe_wrapper = true
-c_args = ['-s', '-Os', '-ffast-math', '-ftree-vectorize', '-ffunction-sections', '-fPIC', '-D_FORTIFY_SOURCE=2', '-static-libgcc']
-cpp_args = ['-s', '-Os', '-ffast-math', '-ftree-vectorize', '-ffunction-sections', '-fPIC', '-D_FORTIFY_SOURCE=2', '-static-libgcc', '-static-libstdc++']
+c_args = ['-s', '-O3', '-ffast-math', '-fdata-sections', '-ffunction-sections', '-fPIC']
+cpp_args = ['-s', '-O3', '-ffast-math', '-fdata-sections', '-ffunction-sections', '-fPIC']
 c_link_args = ['-Wl,--gc-sections', '-Wl,--strip-all', '-Wl,--as-needed']
 cpp_link_args = ['-Wl,--gc-sections', '-Wl,--strip-all', '-Wl,--as-needed']
 

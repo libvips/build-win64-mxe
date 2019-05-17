@@ -4,7 +4,7 @@ $(PKG)_DESCR    := Open h.265 video codec implementation.
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 1.0.3
 $(PKG)_CHECKSUM := e4206185a7c67d3b797d6537df8dcaa6e5fd5a5f93bd14e65a755c33cd645f7a
-$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/$(PKG)-[0-9]*.patch)))
+$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := strukturag/libde265/releases,v
 $(PKG)_DEPS     := cc
 

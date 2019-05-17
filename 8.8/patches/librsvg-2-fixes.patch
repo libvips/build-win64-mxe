@@ -1,0 +1,277 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "fix@me" <fix@me>
+Date: Mon, 27 Sep 2010 12:00:52 +0200
+Subject: [PATCH 1/4] fix .pc requirements
+
+
+diff --git a/librsvg.pc.in b/librsvg.pc.in
+index 1111111..2222222 100644
+--- a/librsvg.pc.in
++++ b/librsvg.pc.in
+@@ -9,7 +9,7 @@ css_supported=true
+ Name: librsvg
+ Description: library that renders svg files
+ Version: @VERSION@
+-Requires: glib-2.0 gio-2.0 gdk-pixbuf-2.0 cairo
++Requires: glib-2.0 gio-2.0 gdk-pixbuf-2.0 cairo libgsf-1 pangocairo libcroco-0.6
+ Requires.private:
+ Libs: -L${libdir} -lrsvg-@RSVG_API_MAJOR_VERSION@ -lm
+ Cflags: -I${includedir}/librsvg-@RSVG_API_VERSION@
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 27 Jan 2019 14:00:00 +0200
+Subject: [PATCH 2/4] Fix Windows build and static linking
+
+Partially from:
+https://aur.archlinux.org/cgit/aur.git/tree/makefile-fix.patch?h=mingw-w64-librsvg
+
+diff --git a/Makefile.am b/Makefile.am
+index 1111111..2222222 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -4,6 +4,7 @@ NULL =
+ BUILT_SOURCES =
+ 
+ lib_LTLIBRARIES = librsvg-@RSVG_API_MAJOR_VERSION@.la
++noinst_LTLIBRARIES = librsvg_internals.la
+ 
+ bin_PROGRAMS = rsvg-convert
+ if HAVE_GTK_3
+@@ -25,7 +26,7 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_SOURCES =	\
+ 	librsvg/rsvg.h				\
+ 	$(NULL)
+ 
+-RUST_SRC =							\
++librsvg_internals_la_SOURCES =	\
+ 	Cargo.toml						\
+ 	rsvg_internals/Cargo.toml				\
+ 	rsvg_internals/build.rs					\
+@@ -150,6 +151,10 @@ cargo_verbose_0 =
+ cargo_verbose_1 = --verbose
+ 
+ RUST_LIB=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/librsvg_internals.a
++RUST_LIB_WIN=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/rsvg_internals.lib
++RUST_LIB_TARGET=@abs_top_builddir@/.libs/librsvg_internals.a
++RUST_LT_LIB=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/librsvg_internals.la
++RUST_LT_TARGET=@abs_top_builddir@/librsvg_internals.la
+ CARGO_TARGET_DIR=@abs_top_builddir@/target
+ 
+ check-local:
+@@ -173,12 +178,19 @@ dist-hook:
+ 	mkdir .cargo &&								\
+ 	cp cargo-vendor-config .cargo/config)
+ 
+-$(RUST_LIB): $(RUST_SRC)
++librsvg_internals.la: $(librsvg_internals_la_SOURCES)
+ 	+cd $(top_srcdir)/rsvg_internals &&					\
+ 	PKG_CONFIG_ALLOW_CROSS=1						\
+ 	PKG_CONFIG='$(PKG_CONFIG)'						\
+ 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR)					\
+-	$(CARGO) --locked build $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS) --features "c-library"
++	$(CARGO) --locked build $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS) --features "c-library" \
++	&& mkdir -p `dirname $(RUST_LIB_TARGET)`	\
++	&& if [[ -e $(RUST_LIB_WIN) ]] ; then 		\
++		cp $(RUST_LIB_WIN) $(RUST_LIB_TARGET);	\
++	else										\
++		cp $(RUST_LIB) $(RUST_LIB_TARGET);		\
++	fi											\
++	&& cp $(RUST_LT_LIB) $(RUST_LT_TARGET)
+ 
+ librsvg_@RSVG_API_MAJOR_VERSION@_la_CPPFLAGS = \
+ 	-I$(top_srcdir) 			\
+@@ -204,7 +216,7 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_LDFLAGS = \
+ 	$(AM_LDFLAGS)
+ 
+ librsvg_@RSVG_API_MAJOR_VERSION@_la_LIBADD = \
+-	$(RUST_LIB)		\
++	librsvg_internals.la \
+ 	$(LIBRSVG_LIBS) 	\
+ 	$(LIBM)			\
+ 	$(DLOPEN_LIBS)
+@@ -272,7 +284,7 @@ dist_doc_DATA =				\
+ 	code-of-conduct.md
+ 
+ EXTRA_DIST =				\
+-	$(RUST_SRC)			\
++	$(librsvg_internals_la_SOURCES)		\
+ 	$(RUST_EXTRA)			\
+ 	$(LIBRSVG_CRATE_SOURCES)	\
+ 	librsvg.doap			\
+
+diff --git a/rsvg_internals/build.rs b/rsvg_internals/build.rs
+index 1111111..2222222 100644
+--- a/rsvg_internals/build.rs
++++ b/rsvg_internals/build.rs
+@@ -2,12 +2,16 @@ use phf_codegen;
+ 
+ use std::env;
+ use std::fs::File;
++use std::fs;
+ use std::io::{BufWriter, Write};
++use std::os::unix::fs::symlink;
+ use std::path::Path;
++use std::path::PathBuf;
+ 
+ fn main() {
+     generate_phf_of_svg_attributes();
+     generate_srgb_tables();
++    generate_convenience_lib("librsvg_internals").unwrap();
+ }
+ 
+ /// Creates a perfect hash function (PHF) to map SVG attribute names to enum values.
+@@ -254,3 +258,60 @@ fn generate_srgb_tables() {
+     print_table(&mut file, "LINEARIZE", &linearize_table);
+     print_table(&mut file, "UNLINEARIZE", &unlinearize_table);
+ }
++
++/// Generate libtool archive file ${lib}.la
++/// From https://docs.rs/libtool/0.1.1/libtool/
++/// Upstream doesn't handle some of the directory structure we use in librsvg,
++/// use a few extra environment variables to properly determine the target paths.
++pub fn generate_convenience_lib(lib: &str) -> std::io::Result<()> {
++    let self_version = env!("CARGO_PKG_VERSION");
++    let profile = env::var("PROFILE").unwrap();
++    let target_arch = env::var("TARGET").unwrap();
++    let target_dir_env = env::var("CARGO_TARGET_DIR").unwrap();
++
++    /* Check if the output directory will include the arch */
++    let target_dir = if PathBuf::from(format!("{}/{}",
++                                target_dir_env, target_arch)).exists() {
++        format!("{}/{}/{}", target_dir_env, target_arch, profile)
++    } else {
++        format!("{}/{}", target_dir_env, profile)
++    };
++
++    /* Location of original static library */
++    let old_lib_path = PathBuf::from(format!("{}/{}.a",
++                                            target_dir, lib));
++    /* Paths for new .la file and symlinks */
++    let libs_dir = format!("{}/.libs", target_dir);
++    let libs_path = PathBuf::from(&libs_dir);
++    let la_path = PathBuf::from(format!("{}/{}.la",
++                                        target_dir, lib));
++    let new_lib_path = PathBuf::from(format!("{}/{}.a", libs_dir, lib));
++
++    match fs::create_dir_all(&libs_path) {
++        Ok(()) => println!("libs_path created"),
++        _ => panic!("Failed to create libs_path"),
++    }
++
++    if la_path.exists() {
++        fs::remove_file(&la_path)?;
++    }
++
++    /* PathBuf.exists() traverses symlinks so just try and remove it */
++    match fs::remove_file(&new_lib_path) {
++        Ok(_v) => {},
++        Err(e) => println!("Error removing symlink: {:?}", e),
++    }
++
++    let mut file = File::create(&la_path)?;
++    writeln!(file, "# {}.la - a libtool library file", lib)?;
++    writeln!(file, "# Generated by libtool-rust {}", self_version)?;
++    writeln!(file, "dlname=''")?;
++    writeln!(file, "library_names=''")?;
++    writeln!(file, "old_library='{}.a'", lib)?;
++    writeln!(file, "inherited_linker_flags=' '")?;
++    writeln!(file, "installed=no")?;
++    writeln!(file, "shouldnotlink=no")?;
++
++    symlink(&old_lib_path, &new_lib_path)?;
++    Ok(())
++}
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 27 Jan 2019 15:00:00 +0200
+Subject: [PATCH 3/4] Revert "Include Rust debuginfo in release builds"
+
+This reverts commit 8215d7f1f581f0aaa317cccc3e974c61d1a6ad84.
+
+diff --git a/Cargo.toml b/Cargo.toml
+index 1111111..2222222 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -5,7 +5,6 @@ members = [
+ 
+ [profile.release]
+ lto = true
+-debug = true
+ 
+ [profile.bench]
+ lto = true
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 17 May 2019 13:00:00 +0200
+Subject: [PATCH 4/4] Disable Cairo script features
+
+Our Cairo was build with `--disable-script`.
+
+diff --git a/vendor/cairo-rs/.cargo-checksum.json b/vendor/cairo-rs/.cargo-checksum.json
+index 1111111..2222222 100644
+--- a/vendor/cairo-rs/.cargo-checksum.json
++++ b/vendor/cairo-rs/.cargo-checksum.json
+@@ -1 +1 @@
+-{"files":{"COPYRIGHT":"55660186953937b12521629aaba95d9bf1c12b0f08f76a6fb6cf8328b5f45c88","Cargo.toml":"759889f3cf99717924dd42e42b3acc8801dedc88e4d8e9e977a19a3c2985382b","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","README.md":"15fea90119a1a25ccb73fb98b1c145badeb5c94d7cf37a9831dea6b211399b78","appveyor.yml":"611f6f7d6fcb07f967400e8af7cbdc6ae0e1230850d2e1361c690bfe3f72fe9b","build.rs":"90d7e8f2f0907fc91c29597d9451fd17924c0343c3caadfc4c5f8e1e7450486f","src/constants.rs":"9cc02390e8521dd5669674f3eb25a214ef5d79a1ecc8205225a761675afc834f","src/context.rs":"4f255211e82974e6a010eacd42f43800de2eb34df674fd3b01c38833ecf2a383","src/device.rs":"53e5b5bebec0c74dc488549fa30cb0f0c32623143e6034c58b49c3b13ae45fd4","src/enums.rs":"a14e00248313862a270449e7039c19d8d510e281faa819a881f7419f229c8598","src/error.rs":"6d8a0a4dfcf3f894c44b37b63116daa86bec6eef2a4d95c0a542c2d490a80880","src/font/font_face.rs":"f05591eca9517ff8162a2bf6049e3b90892213b0e5e44c333403380bf2269ef1","src/font/font_options.rs":"83ca8ea6a1de35321bc8036c893590adf4d7e570fcc5542aa21befeebf82ca98","src/font/mod.rs":"9ec8bc66f800b02ce9c35531fada6716759f51a1d888cad093d9b8f5599de7ca","src/font/scaled_font.rs":"8da1ad3e34db772eb0f2d5a73f24bf77cd25238fffc8b9b3621f3a48eb1f6021","src/image_surface.rs":"3d0567f090984b7ae1cf217f6d9b5b4615939678abf2a197c2e179726266f77b","src/image_surface_png.rs":"a0627d837d708b185c900d9af39919e1bdab9e8281f7eba86313ccf513030c24","src/lib.rs":"bc0fd3b1c64ee9e01f6174787888e6ce51ccb940214bb66dd1260eec04e022b7","src/matrices.rs":"3adfc2693a527cef053e1647ea81831a394aba0ed3d3b60d55c0f2fabf9023c6","src/paths.rs":"b2c81c6d137850124ed579a9681d62907ba3c773f456a6923d638d240f8f32e2","src/patterns.rs":"6730093c9634658201c94627a4faaabe400e52bf659c12abab30752ef2760705","src/pdf.rs":"d4acc23ea1b4060cccab71adf5e79c0089dd23f349c0bae5a4d3aa7b4bd6f161","src/prelude.rs":"bde86958c0c659217073c6d5f0c3e77aa5c728ee3250c13547ad5de6f47e537f","src/ps.rs":"a1677814e1e38c9e455d999f88f80e1622bb428977b9f851c7c56b2623e978f7","src/quartz_surface.rs":"b891a9c04b1e41a698dd67d71d3609c78f1ce67b4d331b417ccd682118cc19fd","src/recording_surface.rs":"1addcc10ace1d18b6ffd7a4c9db6dd51b5b854eda22346a724383fe5173bed76","src/rectangle.rs":"50da997b59bdae8c43a05e0e43eaa5178c5311777ae1df2e63ae09ee7f162c34","src/rectangle_int.rs":"14e6c31a0594d7337b764a6dc37fc90830bf44de20511a23dc0834c5dc29fe7c","src/region.rs":"dfadb1745787c857bcb5662707534234f413b23137ced3204a08bea9504151b0","src/support.rs":"3d28002441da86236c46556f2e92fcfed2278b2ea61742a9233acf2541062787","src/surface.rs":"c99d605a9e10f0c5aecd8a3fe3d6e3d90c27d034309bd02c7fea2001621ce0ae","src/svg.rs":"8315eb86e3d0e0276b087346fa166f0d297d3b81de2f8c83c79907c9a865a19e","src/utils.rs":"65896dfa414ac911db160144513863dac4a584aee7d7136fc6c8a60c8a883c03","src/win32_surface.rs":"e6c64590a2143753eba3ab016402f10225ff379716a8a7dc1dec46f01276995f","src/xcb.rs":"6f14ceee6b35e56ef39df59b90f14cee1637adbf83540836b9d4d81596769a47"},"package":"9e09d8a818b2ccc8983f04d95a9350c3cf8d24cc456cedca3b88fa3a81fdc0e2"}
+\ No newline at end of file
++{"files":{"COPYRIGHT":"55660186953937b12521629aaba95d9bf1c12b0f08f76a6fb6cf8328b5f45c88","Cargo.toml":"759889f3cf99717924dd42e42b3acc8801dedc88e4d8e9e977a19a3c2985382b","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","README.md":"15fea90119a1a25ccb73fb98b1c145badeb5c94d7cf37a9831dea6b211399b78","appveyor.yml":"611f6f7d6fcb07f967400e8af7cbdc6ae0e1230850d2e1361c690bfe3f72fe9b","build.rs":"90d7e8f2f0907fc91c29597d9451fd17924c0343c3caadfc4c5f8e1e7450486f","src/constants.rs":"9cc02390e8521dd5669674f3eb25a214ef5d79a1ecc8205225a761675afc834f","src/context.rs":"4f255211e82974e6a010eacd42f43800de2eb34df674fd3b01c38833ecf2a383","src/device.rs":"9091e4e10ac39c60a74c8b2b56f8ebed210a6666da935e954b14385f80d796af","src/enums.rs":"a14e00248313862a270449e7039c19d8d510e281faa819a881f7419f229c8598","src/error.rs":"6d8a0a4dfcf3f894c44b37b63116daa86bec6eef2a4d95c0a542c2d490a80880","src/font/font_face.rs":"f05591eca9517ff8162a2bf6049e3b90892213b0e5e44c333403380bf2269ef1","src/font/font_options.rs":"83ca8ea6a1de35321bc8036c893590adf4d7e570fcc5542aa21befeebf82ca98","src/font/mod.rs":"9ec8bc66f800b02ce9c35531fada6716759f51a1d888cad093d9b8f5599de7ca","src/font/scaled_font.rs":"8da1ad3e34db772eb0f2d5a73f24bf77cd25238fffc8b9b3621f3a48eb1f6021","src/image_surface.rs":"3d0567f090984b7ae1cf217f6d9b5b4615939678abf2a197c2e179726266f77b","src/image_surface_png.rs":"a0627d837d708b185c900d9af39919e1bdab9e8281f7eba86313ccf513030c24","src/lib.rs":"bc0fd3b1c64ee9e01f6174787888e6ce51ccb940214bb66dd1260eec04e022b7","src/matrices.rs":"3adfc2693a527cef053e1647ea81831a394aba0ed3d3b60d55c0f2fabf9023c6","src/paths.rs":"b2c81c6d137850124ed579a9681d62907ba3c773f456a6923d638d240f8f32e2","src/patterns.rs":"6730093c9634658201c94627a4faaabe400e52bf659c12abab30752ef2760705","src/pdf.rs":"d4acc23ea1b4060cccab71adf5e79c0089dd23f349c0bae5a4d3aa7b4bd6f161","src/prelude.rs":"bde86958c0c659217073c6d5f0c3e77aa5c728ee3250c13547ad5de6f47e537f","src/ps.rs":"a1677814e1e38c9e455d999f88f80e1622bb428977b9f851c7c56b2623e978f7","src/quartz_surface.rs":"b891a9c04b1e41a698dd67d71d3609c78f1ce67b4d331b417ccd682118cc19fd","src/recording_surface.rs":"1addcc10ace1d18b6ffd7a4c9db6dd51b5b854eda22346a724383fe5173bed76","src/rectangle.rs":"50da997b59bdae8c43a05e0e43eaa5178c5311777ae1df2e63ae09ee7f162c34","src/rectangle_int.rs":"14e6c31a0594d7337b764a6dc37fc90830bf44de20511a23dc0834c5dc29fe7c","src/region.rs":"dfadb1745787c857bcb5662707534234f413b23137ced3204a08bea9504151b0","src/support.rs":"3d28002441da86236c46556f2e92fcfed2278b2ea61742a9233acf2541062787","src/surface.rs":"c99d605a9e10f0c5aecd8a3fe3d6e3d90c27d034309bd02c7fea2001621ce0ae","src/svg.rs":"8315eb86e3d0e0276b087346fa166f0d297d3b81de2f8c83c79907c9a865a19e","src/utils.rs":"65896dfa414ac911db160144513863dac4a584aee7d7136fc6c8a60c8a883c03","src/win32_surface.rs":"e6c64590a2143753eba3ab016402f10225ff379716a8a7dc1dec46f01276995f","src/xcb.rs":"6f14ceee6b35e56ef39df59b90f14cee1637adbf83540836b9d4d81596769a47"},"package":"9e09d8a818b2ccc8983f04d95a9350c3cf8d24cc456cedca3b88fa3a81fdc0e2"}
+\ No newline at end of file
+diff --git a/vendor/cairo-rs/src/device.rs b/vendor/cairo-rs/src/device.rs
+index 1111111..2222222 100644
+--- a/vendor/cairo-rs/src/device.rs
++++ b/vendor/cairo-rs/src/device.rs
+@@ -42,7 +42,7 @@ impl Device {
+         self.0
+     }
+ 
+-    pub fn create<P: AsRef<Path>>(filename: P) -> Option<Device> {
++    /*pub fn create<P: AsRef<Path>>(filename: P) -> Option<Device> {
+         unsafe {
+             let filename = filename.as_ref().to_string_lossy().into_owned();
+             let filename = CString::new(filename).unwrap();
+@@ -102,7 +102,7 @@ impl Device {
+             let comment = CString::new(comment).unwrap();
+             ffi::cairo_script_write_comment(self.to_raw_none(), comment.as_ptr(), len as i32)
+         }
+-    }
++    }*/
+ 
+     pub fn status(&self) -> Status {
+         unsafe {
+diff --git a/vendor/cairo-sys-rs/.cargo-checksum.json b/vendor/cairo-sys-rs/.cargo-checksum.json
+index 1111111..2222222 100644
+--- a/vendor/cairo-sys-rs/.cargo-checksum.json
++++ b/vendor/cairo-sys-rs/.cargo-checksum.json
+@@ -1 +1 @@
+-{"files":{"Cargo.toml":"831d539706a8ae2d803e69335b348c9c977fb0d2462cf7c31355f91fd67128b8","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","build.rs":"6396dd70c35848cbc0db79db4ecb2130344169f2e1426b0305265223f19862fa","src/gobject.rs":"21f7f8bda1c9d585cac6309e050eef442f6e08a77bce0c3119fe4e630b856f24","src/lib.rs":"f4e835e1d8153a33aa522e2507f83ed4bdd07543da49ebbc8f8f569ff20c8ffd"},"package":"b3fa13914fdc013387afa771f554f2f71d6ae931f4e5be9246c337d60c3dc484"}
+\ No newline at end of file
++{"files":{"Cargo.toml":"831d539706a8ae2d803e69335b348c9c977fb0d2462cf7c31355f91fd67128b8","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","build.rs":"6396dd70c35848cbc0db79db4ecb2130344169f2e1426b0305265223f19862fa","src/gobject.rs":"21f7f8bda1c9d585cac6309e050eef442f6e08a77bce0c3119fe4e630b856f24","src/lib.rs":"9ce0b5b450fc3c54333798e20430f4d96ff0dde8978b26c571df1c9db1606266"},"package":"b3fa13914fdc013387afa771f554f2f71d6ae931f4e5be9246c337d60c3dc484"}
+\ No newline at end of file
+diff --git a/vendor/cairo-sys-rs/src/lib.rs b/vendor/cairo-sys-rs/src/lib.rs
+index 1111111..2222222 100644
+--- a/vendor/cairo-sys-rs/src/lib.rs
++++ b/vendor/cairo-sys-rs/src/lib.rs
+@@ -846,7 +846,7 @@ extern "C" {
+     pub fn cairo_quartz_surface_get_cg_context(surface: *mut cairo_surface_t) -> CGContextRef;
+ 
+     // CAIRO SCRIPT
+-    pub fn cairo_script_create(filename: *const c_char) -> *mut cairo_device_t;
++    /*pub fn cairo_script_create(filename: *const c_char) -> *mut cairo_device_t;
+     pub fn cairo_script_create_for_stream(write_func: cairo_write_func_t, closure: *mut c_void) -> cairo_status_t;
+     pub fn cairo_script_from_recording_surface(script: *mut cairo_device_t, surface: *mut cairo_surface_t) -> cairo_status_t;
+     pub fn cairo_script_get_mode(script: *mut cairo_device_t) -> cairo_script_mode_t;
+@@ -854,7 +854,7 @@ extern "C" {
+     pub fn cairo_script_surface_create(script: *mut cairo_device_t, content: cairo_content_t,
+                                        width: c_double, height: c_double) -> *mut cairo_surface_t;
+     pub fn cairo_script_surface_create_for_target(script: *mut cairo_device_t, target: *mut cairo_surface_t) -> *mut cairo_surface_t;
+-    pub fn cairo_script_write_comment(script: *mut cairo_device_t, comment: *const c_char, len: c_int);
++    pub fn cairo_script_write_comment(script: *mut cairo_device_t, comment: *const c_char, len: c_int);*/
+     pub fn cairo_device_destroy(device: *mut cairo_device_t);
+     pub fn cairo_device_status(device: *mut cairo_device_t) -> cairo_status_t;
+     pub fn cairo_device_finish(device: *mut cairo_device_t);

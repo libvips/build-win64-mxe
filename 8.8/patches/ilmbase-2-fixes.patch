@@ -3,7 +3,7 @@ This file is part of MXE. See LICENSE.md for licensing information.
 Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <info@kleisauke.nl>
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 16 Aug 2018 17:00:00 +0200
 Subject: [PATCH 1/2] Remove build process for eLut.h and toFloat.h
 
@@ -36,7 +36,7 @@ index 1111111..2222222 100644
    PROPERTIES HEADER_FILE_ONLY TRUE)
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <info@kleisauke.nl>
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 16 Aug 2018 18:00:00 +0200
 Subject: [PATCH 2/2] Install pc file on MinGW
 

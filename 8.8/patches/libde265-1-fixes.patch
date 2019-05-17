@@ -39,7 +39,7 @@ index 1111111..2222222 100644
    "${PROJECT_SOURCE_DIR}/libde265/de265-version.h.in"
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <info@kleisauke.nl>
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 14 Mar 2019 14:00:00 +0200
 Subject: [PATCH 2/2] Fix build errors + add install targets
 

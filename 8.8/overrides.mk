@@ -9,21 +9,20 @@ mingw-w64-headers_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw'
 # and winpthreads somewhere else
 common_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw' \
 --with-sysroot='$(PREFIX)/$(TARGET)/mingw' \
-CPPFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -D_FORTIFY_SOURCE=2' \
-CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -Os -ffast-math -ftree-vectorize -static-libgcc' \
-CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -Os -ffast-math -ftree-vectorize -static-libgcc -static-libstdc++' \
+CPPFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include' \
+CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -O3 -ffast-math' \
+CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -O3 -ffast-math' \
 LDFLAGS='-L$(PREFIX)/$(TARGET)/mingw/lib' \
 RCFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include'
 
 # Override GCC patches with our own patches
-gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/gcc-[0-9]*.patch)))
+gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gcc-[0-9]*.patch)))
 
 # Point native system header dir to /mingw/include and
 # compile without some optimizations / stripping
 gcc_CONFIGURE_OPTS=--with-native-system-header-dir='/mingw/include' \
-CPPFLAGS='-D_FORTIFY_SOURCE=2' \
-CFLAGS='-s -Os -ffast-math -ftree-vectorize -static-libgcc' \
-CXXFLAGS='-s -Os -ffast-math -ftree-vectorize -static-libgcc -static-libstdc++' \
+CFLAGS='-s -O3 -ffast-math' \
+CXXFLAGS='-s -O3 -ffast-math' \
 LDFLAGS=''
 
 # The trick here is to symlink all files from /mingw/{bin,lib,include}/
@@ -53,7 +52,7 @@ endef
 # upstream version is 2.32.3
 gdk-pixbuf_VERSION  := 2.38.1
 gdk-pixbuf_CHECKSUM := f19ff836ba991031610dcc53774e8ca436160f7d981867c8c3a37acfe493ab3a
-gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/gdk-pixbuf-[0-9]*.patch)))
+gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
@@ -62,7 +61,7 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 # upstream version is 2.9.4
 libxml2_VERSION  := 2.9.9
 libxml2_CHECKSUM := 94fb70890143e3c6549f265cee93ec064c80a84c42ad0f23e85ee1fd6540a871
-libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libxml2-[0-9]*.patch)))
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.gz
 libxml2_URL      := http://xmlsoft.org/sources/$(libxml2_FILE)
@@ -71,23 +70,23 @@ libxml2_URL_2    := ftp://xmlsoft.org/libxml2/$(libxml2_FILE)
 # upstream version is 1.5.2
 matio_VERSION  := 1.5.15
 matio_CHECKSUM := 21bf4587bb7f0231dbb4fcc88728468f1764c06211d5a0415cd622036f09b1cf
-matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/matio-[0-9]*.patch)))
+matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-44
-imagemagick_CHECKSUM := 4661f0f583000d57253b1a94c26e4f35ceaf7aa3a226192e5bbb14c1f32f421b
-imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/imagemagick-[0-9]*.patch)))
+imagemagick_VERSION  := 6.9.10-45
+imagemagick_CHECKSUM := 8fcf8be5a56cf7e8904fd02094dfa2fa4c80986a05c4d947db82fe273b61a5ef
+imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick6-$(imagemagick_VERSION)
 imagemagick_FILE     := $(imagemagick_VERSION).tar.gz
 imagemagick_URL      := https://github.com/ImageMagick/ImageMagick6/archive/$(imagemagick_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.45.5
-librsvg_CHECKSUM := 600872dc608fe5e01bfd8d5b3046d01b53b99121bc5ab9663531b53630843700
-librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/librsvg-[0-9]*.patch)))
+librsvg_VERSION  := 2.45.6
+librsvg_CHECKSUM := 0e6e26cb5c79cfa73c0ddab06808ace4d10c4a626b81c31a75ead37c6cb4df41
+librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
@@ -95,7 +94,7 @@ librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_
 # upstream version is 1.37.4
 pango_VERSION  := 1.43.0
 pango_CHECKSUM := d2c0c253a5328a0eccb00cdd66ce2c8713fabd2c9836000b6e22a8b06ba3ddd2
-pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/pango-[0-9]*.patch)))
+pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
@@ -103,7 +102,7 @@ pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERS
 # upstream version is 0.74.0
 poppler_VERSION  := 0.76.1
 poppler_CHECKSUM := e62cd4053f851eecc4a6aa2b81d739fbab1d67b3c60b31ebac7049483cc617b1
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/poppler-[0-9]*.patch)))
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
 poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
@@ -118,7 +117,7 @@ libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PK
 # upstream version is 2.50.2
 glib_VERSION  := 2.61.0
 glib_CHECKSUM := e6f794768e67060f58166234bca5dcdae4a9961f70076a5937c73cb578f2f3e7
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/glib-[0-9]*.patch)))
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
@@ -126,19 +125,19 @@ glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSIO
 # upstream version is 1.14.30
 libgsf_VERSION  := 1.14.46
 libgsf_CHECKSUM := ea36959b1421fc8e72caa222f30ec3234d0ed95990e2bf28943a85f33eadad2d
-libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libgsf-[0-9]*.patch)))
+libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libgsf-[0-9]*.patch)))
 libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
 libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)
 
 # zlib will make libzlib.dll, but we want libz.dll so we must 
 # patch CMakeLists.txt
-zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/zlib-[0-9]*.patch)))
+zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
 # upstream version is 2.2.0
 openexr_VERSION  := 2.3.0
 openexr_CHECKSUM := 8243b7de12b52239fe9235a6aeb4e35ead2247833e4fbc41541774b222717933
-openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/openexr-[0-9]*.patch)))
+openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 # See: https://github.com/openexr/openexr/issues/333
@@ -147,7 +146,7 @@ openexr_URL      := https://github.com/openexr/openexr/archive/v$(openexr_VERSIO
 # upstream version is 2.2.0
 ilmbase_VERSION  := 2.3.0
 ilmbase_CHECKSUM := 456978d1a978a5f823c7c675f3f36b0ae14dba36638aeaa3c4b0e784f12a3862
-ilmbase_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/ilmbase-[0-9]*.patch)))
+ilmbase_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/ilmbase-[0-9]*.patch)))
 ilmbase_SUBDIR   := ilmbase-$(ilmbase_VERSION)
 ilmbase_FILE     := ilmbase-$(ilmbase_VERSION).tar.gz
 ilmbase_URL      := https://github.com/openexr/openexr/releases/download/v$(ilmbase_VERSION)/$(ilmbase_FILE)
@@ -155,7 +154,7 @@ ilmbase_URL      := https://github.com/openexr/openexr/releases/download/v$(ilmb
 # upstream version is 3410
 cfitsio_VERSION  := 3450
 cfitsio_CHECKSUM := bf6012dbe668ecb22c399c4b7b2814557ee282c74a7d5dc704eb17c30d9fb92e
-cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/cfitsio-[0-9]*.patch)))
+cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio
 cfitsio_FILE     := cfitsio$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
@@ -171,7 +170,7 @@ pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # Override libjpeg-turbo patch with our own
-libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/libjpeg-turbo-[0-9]*.patch)))
+libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 
 ## Override sub-dependencies
 # HarfBuzz:
@@ -193,13 +192,13 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 #  Removed: libwebp
 #  Replaced: jpeg with libjpeg-turbo
 # ImageMagick:
-#  Removed: bzip2, ffmpeg, freetype, jasper, liblqr-1, libltdl, libpng, openexr, pthreads, tiff
+#  Removed: bzip2, ffmpeg, freetype, jasper, liblqr-1, libltdl, libpng, openexr, tiff
 #  Replaced: jpeg with libjpeg-turbo
 # Pango:
 #  Added: fribidi
 # Poppler:
 #  Removed: curl, qtbase, libwebp
-#  Added: libjpeg-turbo, lcms
+#  Added: mingw-std-threads, libjpeg-turbo, lcms
 # libwebp:
 #  Added: gettext, giflib, libjpeg-turbo, tiff, libpng
 # Cairo:
@@ -213,9 +212,9 @@ glib_DEPS               := cc gettext libffi zlib
 gdk-pixbuf_DEPS         := cc glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
 tiff_DEPS               := cc libjpeg-turbo xz zlib
-imagemagick_DEPS        := cc lcms fftw tiff libjpeg-turbo freetype
+imagemagick_DEPS        := cc lcms fftw tiff libjpeg-turbo freetype pthreads
 pango_DEPS              := $(pango_DEPS) fribidi
-poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
+poppler_DEPS            := cc mingw-std-threads cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 libwebp_DEPS            := $(libwebp_DEPS) gettext giflib libjpeg-turbo tiff libpng
 cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
 
@@ -346,11 +345,7 @@ endef
 # compile with the Rust toolchain 
 define librsvg_BUILD
     cd '$(SOURCE_DIR)' && autoreconf -fi -I'$(PREFIX)/$(TARGET)/share/aclocal'
-    cd '$(BUILD_DIR)' && RUSTUP_HOME='/usr/local/rustup' \
-    RUSTFLAGS='-C panic=abort' \
-    CARGO_HOME='/usr/local/cargo' \
-    PATH='/usr/local/cargo/bin:$(PATH)' \
-    $(SOURCE_DIR)/configure \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-gtk-doc \
@@ -359,12 +354,7 @@ define librsvg_BUILD
         LIBS="-lws2_32 -luserenv -lintl" \
         RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu
 
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' \
-        RUSTUP_HOME='/usr/local/rustup' \
-        RUSTFLAGS='-C panic=abort' \
-        CARGO_HOME='/usr/local/cargo' \
-        PATH='/usr/local/cargo/bin:$(PATH)'
-
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
 endef
 
@@ -390,6 +380,7 @@ define poppler_BUILD
         -DBUILD_QT5_TESTS=OFF \
         -DBUILD_CPP_TESTS=OFF \
         -DENABLE_GTK_DOC=OFF \
+        -DCMAKE_CXX_FLAGS="-I$(PREFIX)/$(TARGET)/include/mingw-std-threads" \
         '$(SOURCE_DIR)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
@@ -504,8 +495,7 @@ define libxml2_BUILD
 endef
 
 # build with the Meson build system
-# compile with the internal PCRE library and
-# posix threads
+# compile with the internal PCRE library
 define glib_BUILD
     # other packages expect glib-tools in $(TARGET)/bin
     rm -f  '$(PREFIX)/$(TARGET)/bin/glib-*'
@@ -513,29 +503,25 @@ define glib_BUILD
     ln -sf '$(PREFIX)/$(BUILD)/bin/glib-compile-schemas'   '$(PREFIX)/$(TARGET)/bin/'
     ln -sf '$(PREFIX)/$(BUILD)/bin/glib-compile-resources' '$(PREFIX)/$(TARGET)/bin/'
 
+    $(if $(BUILD_STATIC), \
+        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(glib_PATCHES))))/glib-static.patch)
+
     # cross build
+    # build as shared library, since we need `libgobject-2.0-0.dll`
+    # and `libglib-2.0-0.dll` for the language bindings.
     '$(TARGET)-meson' \
+        --default-library=shared \
         --libdir='lib' \
         --bindir='bin' \
         --libexecdir='bin' \
         --includedir='include' \
-        -Dforce_posix_threads=true \
+        -Dforce_posix_threads=false \
         -Dinternal_pcre=true \
         -Diconv='external' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
     ninja -C '$(BUILD_DIR)' install
-
-    # We need `libgobject-2.0-0.dll` and `libglib-2.0-0.dll` for the language bindings
-    $(if $(BUILD_STATIC), \
-        $(foreach LIB, glib gobject, \
-            $(MAKE_SHARED_FROM_STATIC) --libdir '$(PREFIX)/$(TARGET)/lib' \
-            --libprefix 'lib' --libsuffix '-0' --objext '.obj' \
-            '$(BUILD_DIR)/$(LIB)/lib$(LIB)-2.0.a' \
-            `$(TARGET)-pkg-config --libs-only-l $(LIB)-2.0` && \
-            ln -sf '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0-0.dll.a' \
-                   '$(PREFIX)/$(TARGET)/lib/lib$(LIB)-2.0.a';))
 endef
 
 # build with CMake.
