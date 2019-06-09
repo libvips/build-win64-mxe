@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jeroen Ooms <jeroenooms@gmail.com>
 Date: Tue, 2 Aug 2016 16:05:31 +0200
-Subject: [PATCH 1/1] Remove DllMain from static glib2 libraries
+Subject: [PATCH 1/2] Remove DllMain from static glib2 libraries
 
 
 diff --git a/gdk-pixbuf/gdk-pixbuf-io.c b/gdk-pixbuf/gdk-pixbuf-io.c
@@ -39,3 +39,23 @@ index 1111111..2222222 100644
      gchar *exe_path, *bin_dir;
  
      exe_path = g_file_read_link ("/proc/self/exe", NULL);
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Lovell Fuller <github@lovell.info>
+Date: Wed, 5 Jun 2019 20:49:17 +0100
+Subject: [PATCH 2/2] Ensure gdk-pixbuf can find libjpeg-turbo when cross-compiling
+
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -308,7 +308,7 @@ endif
+ # Don't check and build the jpeg loader if native_windows_loaders is true
+ if get_option('jpeg') and not native_windows_loaders
+   if cc.has_header('jpeglib.h')
+-    jpeg_dep = cc.find_library('jpeg', required: false)
++    jpeg_dep = dependency('libjpeg', required: false)
+     if cc.get_id() == 'msvc' and not jpeg_dep.found()
+       # The IJG JPEG library builds the .lib file as libjpeg.lib in its MSVC build system,
+       # so look for it as well when jpeg.lib cannot be found

@@ -13,8 +13,8 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [gdk-pixbuf]    | 2.38.1    | LGPLv3                          |
 | [gettext]       | 0.19.8.1  | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
-| [glib]          | 2.61.0    | LGPLv3                          |
-| [harfbuzz]      | 2.4.0     | MIT Licence                     |
+| [glib]          | 2.61.1    | LGPLv3                          |
+| [harfbuzz]      | 2.5.1     | MIT Licence                     |
 | [lcms]          | 2.9       | MIT Licence                     |
 | [libcroco]      | 0.6.13    | LGPLv3                          |
 | [libexif]       | 0.6.21    | LGPLv3                          |
@@ -25,7 +25,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
 | [librsvg]       | 2.45.6    | LGPLv3                          |
 | [libtiff]       | 4.0.10    | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.8.0-rc3 | LGPLv3                          |
+| [libvips]       | 8.8.0     | LGPLv3                          |
 | [libwebp]       | 1.0.2     | New BSD License                 |
 | [libxml2]       | 2.9.9     | MIT Licence                     |
 | [orc]           | 0.4.29    | BSD 2-Clause                    |
@@ -75,7 +75,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.450     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.8.12    | BSD-like                         |
-| [imagemagick]   | 6.9.10-45 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.10-48 | [ImageMagick License] (GPL-like) |
 | [libde265]      | 1.0.3     | LGPLv3                           |
 | [libheif]       | 1.4.0     | LGPLv3                           |
 | [matio]         | 1.5.15    | BSD 2-Clause                     |
@@ -85,7 +85,7 @@ Same as libvips-web + these extra dependencies:
 | [openslide]     | 3.4.1     | LGPLv3                           |
 | [poppler]       | 0.76.1    | GPLv2                            |
 | [sqlite]        | 3.28.0    | Public domain                    |
-| [x265]          | 2.4       | GPLv2                            |
+| [x265]          | 3.0       | GPLv2                            |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [hdf5]: https://www.hdfgroup.org/solutions/hdf5/
@@ -102,3 +102,21 @@ Same as libvips-web + these extra dependencies:
 [poppler]: https://poppler.freedesktop.org/
 [sqlite]: https://www.sqlite.org/
 [x265]: http://x265.org/
+
+## MozJPEG
+MozJPEG is a libjpeg-turbo fork that provides increased compression for JPEG images
+(at the expense of compression performance). The above variants can optionally be built
+with MozJPEG instead of libjpeg-turbo. This can be turned on with the `--with-mozjpeg`
+argument. For example:
+
+```bash
+./build.sh 8.8 --with-mozjpeg
+```
+
+| Dependency      | Version   | Used under the terms of          |
+|-----------------|-----------|----------------------------------|
+| [mozjpeg]       | 68564c0¹  | [zlib License, IJG License]      |
+
+¹ MozJPEG is built from master to maintain binary compatibility with libjpeg-turbo.
+
+[mozjpeg]: https://github.com/mozilla/mozjpeg

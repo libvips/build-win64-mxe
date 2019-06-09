@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: "fix@me" <fix@me>
 Date: Mon, 27 Sep 2010 12:00:52 +0200
-Subject: [PATCH 1/4] fix .pc requirements
+Subject: [PATCH 1/5] fix .pc requirements
 
 
 diff --git a/librsvg.pc.in b/librsvg.pc.in
@@ -25,10 +25,24 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 27 Jan 2019 14:00:00 +0200
-Subject: [PATCH 2/4] Fix Windows build and static linking
+Subject: [PATCH 2/5] Fix Windows build and static linking
 
 Partially from:
 https://aur.archlinux.org/cgit/aur.git/tree/makefile-fix.patch?h=mingw-w64-librsvg
+
+diff --git a/configure.ac b/configure.ac
+index 1111111..2222222 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -110,6 +110,8 @@ AS_IF(test x$RUSTC = xno,
+     AC_MSG_ERROR([rustc is required.  Please install the Rust toolchain from https://www.rust-lang.org/])
+ )
+ 
++AC_CHECK_PROGS(AR, ar)
++
+ dnl Minimum version of rustc that we support
+ dnl If you change this, please update COMPILING.md
+ MINIMUM_RUST_MAJOR=1
 
 diff --git a/Makefile.am b/Makefile.am
 index 1111111..2222222 100644
@@ -62,7 +76,7 @@ index 1111111..2222222 100644
  CARGO_TARGET_DIR=@abs_top_builddir@/target
  
  check-local:
-@@ -173,12 +178,19 @@ dist-hook:
+@@ -173,12 +177,20 @@ dist-hook:
  	mkdir .cargo &&								\
  	cp cargo-vendor-config .cargo/config)
  
@@ -80,7 +94,8 @@ index 1111111..2222222 100644
 +	else										\
 +		cp $(RUST_LIB) $(RUST_LIB_TARGET);		\
 +	fi											\
-+	&& cp $(RUST_LT_LIB) $(RUST_LT_TARGET)
++	&& cp $(RUST_LT_LIB) $(RUST_LT_TARGET)      \
++	&& $(AR) d $(RUST_LIB_TARGET) clzsi2.o # HACK: https://github.com/rust-lang/rust/issues/58277
  
  librsvg_@RSVG_API_MAJOR_VERSION@_la_CPPFLAGS = \
  	-I$(top_srcdir) 			\
@@ -189,7 +204,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 27 Jan 2019 15:00:00 +0200
-Subject: [PATCH 3/4] Revert "Include Rust debuginfo in release builds"
+Subject: [PATCH 3/5] Revert "Include Rust debuginfo in release builds"
 
 This reverts commit 8215d7f1f581f0aaa317cccc3e974c61d1a6ad84.
 
@@ -209,9 +224,11 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 17 May 2019 13:00:00 +0200
-Subject: [PATCH 4/4] Disable Cairo script features
+Subject: [PATCH 4/5] Disable Cairo script features
 
 Our Cairo was build with `--disable-script`.
+
+Reported here: https://github.com/gtk-rs/cairo/issues/259
 
 diff --git a/vendor/cairo-rs/.cargo-checksum.json b/vendor/cairo-rs/.cargo-checksum.json
 index 1111111..2222222 100644
@@ -275,3 +292,36 @@ index 1111111..2222222 100644
      pub fn cairo_device_destroy(device: *mut cairo_device_t);
      pub fn cairo_device_status(device: *mut cairo_device_t) -> cairo_status_t;
      pub fn cairo_device_finish(device: *mut cairo_device_t);
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 17 May 2019 21:00:00 +0200
+Subject: [PATCH 5/5] Fix complication with rust 1.31.1
+
+Reported here: https://gitlab.gnome.org/GNOME/librsvg/issues/460
+
+diff --git a/rsvg_internals/src/svg.rs b/rsvg_internals/src/svg.rs
+index 1111111..2222222 100644
+--- a/rsvg_internals/src/svg.rs
++++ b/rsvg_internals/src/svg.rs
+@@ -81,7 +81,6 @@ impl Svg {
+     }
+ 
+     pub fn lookup_image(&self, href: &str) -> Result<SharedImageSurface, LoadingError> {
+-        dbg!(&self.load_options.base_url);
+         self.images.borrow_mut().lookup(&self.load_options, href)
+     }
+ 
+diff --git a/rsvg_internals/src/properties.rs b/rsvg_internals/src/properties.rs
+index 1111111..2222222 100644
+--- a/rsvg_internals/src/properties.rs
++++ b/rsvg_internals/src/properties.rs
+@@ -399,7 +399,7 @@ macro_rules! compute_value {
+ impl SpecifiedValues {
+     #[cfg_attr(rustfmt, rustfmt_skip)]
+     pub fn set_parsed_property(&mut self, prop: &ParsedProperty) {
+-        use ParsedProperty::*;
++        use crate::properties::ParsedProperty::*;
+ 
+         use crate::properties as p;
+ 

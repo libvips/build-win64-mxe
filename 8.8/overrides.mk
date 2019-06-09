@@ -57,16 +57,6 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
-# no longer needed by libvips, but some of the deps need it
-# upstream version is 2.9.4
-libxml2_VERSION  := 2.9.9
-libxml2_CHECKSUM := 94fb70890143e3c6549f265cee93ec064c80a84c42ad0f23e85ee1fd6540a871
-libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
-libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
-libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.gz
-libxml2_URL      := http://xmlsoft.org/sources/$(libxml2_FILE)
-libxml2_URL_2    := ftp://xmlsoft.org/libxml2/$(libxml2_FILE)
-
 # upstream version is 1.5.2
 matio_VERSION  := 1.5.15
 matio_CHECKSUM := 21bf4587bb7f0231dbb4fcc88728468f1764c06211d5a0415cd622036f09b1cf
@@ -76,12 +66,21 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-45
-imagemagick_CHECKSUM := 8fcf8be5a56cf7e8904fd02094dfa2fa4c80986a05c4d947db82fe273b61a5ef
+imagemagick_VERSION  := 6.9.10-48
+imagemagick_CHECKSUM := a010b894d4685f8a0a51e0b3c8097a16654b12509b4aee448e25a3edb5ac616d
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick6-$(imagemagick_VERSION)
 imagemagick_FILE     := $(imagemagick_VERSION).tar.gz
 imagemagick_URL      := https://github.com/ImageMagick/ImageMagick6/archive/$(imagemagick_FILE)
+
+# upstream version is 2.4
+x265_VERSION  := 3.0
+x265_CHECKSUM := c5b9fc260cabbc4a81561a448f4ce9cad7218272b4011feabc3a6b751b2f0662
+x265_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
+x265_SUBDIR   := x265_$(x265_VERSION)
+x265_FILE     := x265_$(x265_VERSION).tar.gz
+x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
+x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
 librsvg_VERSION  := 2.45.6
@@ -99,13 +98,8 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 0.74.0
-poppler_VERSION  := 0.76.1
-poppler_CHECKSUM := e62cd4053f851eecc4a6aa2b81d739fbab1d67b3c60b31ebac7049483cc617b1
+# Use the mutex helper from mingw-std-threads
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.13
@@ -115,8 +109,8 @@ libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.61.0
-glib_CHECKSUM := e6f794768e67060f58166234bca5dcdae4a9961f70076a5937c73cb578f2f3e7
+glib_VERSION  := 2.61.1
+glib_CHECKSUM := f8d827955f0d8e197ff5c2105dd6ac4f6b63d15cd021eb1de66534c92a762161
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -159,6 +153,13 @@ cfitsio_SUBDIR   := cfitsio
 cfitsio_FILE     := cfitsio$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
+
+# upstream version is 2.4.0
+harfbuzz_VERSION  := 2.5.1
+harfbuzz_CHECKSUM := 6d4834579abd5f7ab3861c085b4c55129f78b27fe47961fd96769d3704f6719e
+harfbuzz_SUBDIR   := harfbuzz-$(harfbuzz_VERSION)
+harfbuzz_FILE     := harfbuzz-$(harfbuzz_VERSION).tar.xz
+harfbuzz_URL      := https://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz_FILE)
 
 # upstream version is 0.33.6
 # Note: Can't build statically with the Meson build system,
@@ -203,6 +204,8 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 #  Added: gettext, giflib, libjpeg-turbo, tiff, libpng
 # Cairo:
 #  Removed: lzo zlib
+# x265:
+#  Replaced: yasm with $(BUILD)~nasm
 
 harfbuzz_DEPS           := $(filter-out icu4c,$(harfbuzz_DEPS))
 libgsf_DEPS             := $(filter-out bzip2 ,$(libgsf_DEPS))
@@ -217,6 +220,7 @@ pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc mingw-std-threads cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 libwebp_DEPS            := $(libwebp_DEPS) gettext giflib libjpeg-turbo tiff libpng
 cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
+x265_DEPS               := cc $(BUILD)~nasm
 
 ## Override build scripts
 
@@ -344,15 +348,16 @@ endef
 
 # compile with the Rust toolchain 
 define librsvg_BUILD
-    cd '$(SOURCE_DIR)' && autoreconf -fi -I'$(PREFIX)/$(TARGET)/share/aclocal'
+    cd '$(SOURCE_DIR)' && autoreconf -fi
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-gtk-doc \
         --disable-introspection \
         --disable-tools \
-        LIBS="-lws2_32 -luserenv -lintl" \
-        RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu
+        LIBS='-lws2_32 -luserenv' \
+        RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu \
+        AR='$(TARGET)-ar'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
@@ -620,4 +625,61 @@ define cfitsio_BUILD_SHARED
         -W -Wall -Werror -ansi \
         '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-cfitsio.exe' \
         `'$(TARGET)-pkg-config' cfitsio --cflags --libs`
+endef
+
+# `-DENABLE_DYNAMIC_HDR10=ON` -> `-DENABLE_HDR10_PLUS=ON`
+# x265 requires nasm 2.13 or newer (instead than yasm) after release 2.6.
+define x265_BUILD
+    cd '$(BUILD_DIR)' && mkdir -p 10bit 12bit
+
+    # 12 bit
+    cd '$(BUILD_DIR)/12bit' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
+        -DHIGH_BIT_DEPTH=ON \
+        -DEXPORT_C_API=OFF \
+        -DENABLE_SHARED=OFF \
+        -DENABLE_ASSEMBLY=$(if $(findstring x86_64,$(TARGET)),ON,OFF) \
+        -DENABLE_CLI=OFF \
+        -DWINXP_SUPPORT=ON \
+        -DENABLE_HDR10_PLUS=ON \
+        -DMAIN12=ON
+    $(MAKE) -C '$(BUILD_DIR)/12bit' -j '$(JOBS)'
+    cp '$(BUILD_DIR)/12bit/libx265.a' '$(BUILD_DIR)/libx265_main12.a'
+
+    # 10 bit
+    cd '$(BUILD_DIR)/10bit' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
+        -DHIGH_BIT_DEPTH=ON \
+        -DEXPORT_C_API=OFF \
+        -DENABLE_SHARED=OFF \
+        -DENABLE_ASSEMBLY=$(if $(findstring x86_64,$(TARGET)),ON,OFF) \
+        -DENABLE_CLI=OFF \
+        -DWINXP_SUPPORT=ON \
+        -DENABLE_HDR10_PLUS=ON
+    $(MAKE) -C '$(BUILD_DIR)/10bit' -j '$(JOBS)'
+    cp '$(BUILD_DIR)/10bit/libx265.a' '$(BUILD_DIR)/libx265_main10.a'
+
+    # 8bit
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
+        -DHIGH_BIT_DEPTH=OFF \
+        -DEXPORT_C_API=ON \
+        -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
+        -DENABLE_ASSEMBLY=$(if $(findstring x86_64,$(TARGET)),ON,OFF) \
+        -DENABLE_CLI=OFF \
+        -DWINXP_SUPPORT=ON \
+        -DENABLE_HDR10_PLUS=ON \
+        -DEXTRA_LIB='x265_main10.a;x265_main12.a' \
+        -DEXTRA_LINK_FLAGS=-L'$(BUILD_DIR)' \
+        -DLINKED_10BIT=ON \
+        -DLINKED_12BIT=ON
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+    $(if $(BUILD_SHARED),rm -f '$(PREFIX)/$(TARGET)/lib/libx265.a',\
+        $(INSTALL) '$(BUILD_DIR)/libx265_main12.a' '$(PREFIX)/$(TARGET)/lib/libx265_main12.a' && \
+        $(INSTALL) '$(BUILD_DIR)/libx265_main10.a' '$(PREFIX)/$(TARGET)/lib/libx265_main10.a' && \
+        $(SED) -i 's|-lx265|-lx265 -lx265_main10 -lx265_main12|' '$(PREFIX)/$(TARGET)/lib/pkgconfig/x265.pc')
+
+    '$(TARGET)-gcc' \
+        -W -Wall -Werror \
+        '$(TOP_DIR)/src/$(PKG)-test.c' \
+        -o '$(PREFIX)/$(TARGET)/bin/test-$(PKG).exe' \
+        `$(TARGET)-pkg-config --cflags --libs $(PKG)`
 endef

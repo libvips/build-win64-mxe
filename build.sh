@@ -3,7 +3,7 @@
 if [ $# -lt 1 ]; then
   echo "Usage: $0 VERSION [DEPS] [ARCH] [TYPE]"
   echo "Build libvips for Windows in a Docker container"
-  echo "VERSION is the name of a versioned subdirectory, e.g. 8.7"
+  echo "VERSION is the name of a versioned subdirectory, e.g. 8.8"
   echo "DEPS is the group of dependencies to build libvips with,"
   echo "    defaults to 'web'"
   echo "ARCH is the architecture name to build libvips with,"
@@ -22,6 +22,12 @@ version="$1"
 deps="${2:-web}"
 arch="${3:-x86_64}"
 type="${4:-shared}"
+
+if [[ "$*" == *--with-mozjpeg* ]]; then
+  with_mozjpeg=true
+else
+  with_mozjpeg=false
+fi
 
 # Use native Win32 threading functions because 
 # POSIX threads functionality is significantly  
@@ -48,16 +54,23 @@ docker pull rust:stretch
 docker build --build-arg ARCH=$arch -t libvips-build-win-mxe container
 
 # Run build scripts inside container
-docker run --rm -t -u $(id -u):$(id -g) -v $PWD/$version:/data \
-  libvips-build-win-mxe $deps $target
+# - inheriting the current uid and gid
+# - versioned subdirectory mounted at /data
+docker run --rm -t \
+  -u $(id -u):$(id -g) \
+  -v $PWD/$version:/data \
+  -e "MOZJPEG=$with_mozjpeg" \
+  libvips-build-win-mxe \
+  $deps \
+  $target
 
 # test outside the container ... saves us having to install wine inside docker
 if [ -x "$(command -v wine)" ]; then
   echo -n "testing build ... "
   wine $version/vips-dev-$version/bin/vips.exe --help > /dev/null
   if [ "$?" -ne "0" ]; then
-    echo WARNING: vips.exe failed to run
+    echo "WARNING: vips.exe failed to run"
   else
-    echo ok
+    echo "OK"
   fi
 fi

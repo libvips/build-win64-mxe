@@ -19,4 +19,4 @@
   - [ ] Should we also add libvips-web?
   - [ ] Not sure about `librsvg`, because v2.42.0+ requires the Rust toolchain.
 - [ ] Try to test the binaries with the Python test suite on Wine.
-- [ ] Remove `meson-3939.patch` if [PR #3939](https://github.com/mesonbuild/meson/pull/3939) is merged.
+- [ ] Remove `meson-3939.patch` when [PR #3939](https://github.com/mesonbuild/meson/pull/3939) is merged.

@@ -21,7 +21,7 @@ target="${2:-x86_64-w64-mingw32.shared.win32}"
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="246228254d0100952ec82063ea357fdfd590b587"
+revision="949b0b95b7db3d6d8ba56c6a054a2bd0a9a448c1"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -57,11 +57,20 @@ mkdir -p $mxe_prefix/$target.$deps/mingw/{bin,include,lib}
 # Build pe-util, handy for copying DLL dependencies.
 make pe-util MXE_TARGETS=`$mxe_dir/ext/config.guess`
 
+# This variable controls which plugins are in use.
+# Build with GCC 9.1 and use the meson-wrapper.
+plugins="plugins/gcc9 plugins/meson-wrapper $work_dir"
+
+if [ "$MOZJPEG" = "true" ]; then
+  echo "MozJPEG plugin enabled"
+  plugins+=" $work_dir/plugins/mozjpeg"
+fi
+
 # Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc), 
 # gendef (a tool for generating def files from DLLs)
 # and libvips (+ dependencies).
 make meson-wrapper gendef vips-$deps \
-  MXE_PLUGIN_DIRS=$work_dir \
+  MXE_PLUGIN_DIRS="$plugins" \
   MXE_TARGETS=$target.$deps
 
 cd $work_dir

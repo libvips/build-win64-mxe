@@ -41,6 +41,10 @@ if [ "$type" = "static" ]; then
   zip_suffix="-static"
 fi
 
+if [ "$MOZJPEG" = "true" ]; then
+  zip_suffix+="-mozjpeg"
+fi
+
 echo "Copying libvips and dependencies"
 
 # Copy libvips and dependencies with pe-util
@@ -101,6 +105,6 @@ cp $mxe_dir/vips-packaging/{AUTHORS,ChangeLog,COPYING,README.md,versions.json} $
 
 echo "Creating $zipfile"
 
-zipfile=$vips_package-dev-w$arch-$deps-$vips_version.$vips_micro_version$zip_suffix.zip
+zipfile=$vips_package-dev-w$arch-$deps-$vips_version.$vips_patch_version$zip_suffix.zip
 rm -f $zipfile
 zip -r -qq $zipfile $repackage_dir

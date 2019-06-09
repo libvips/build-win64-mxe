@@ -23,10 +23,3 @@ export PATH        := /usr/local/cargo/bin:$(PATH)
 # https://github.com/GNOME/librsvg/commit/8215d7f1f581f0aaa317cccc3e974c61d1a6ad84
 # adds ~26 MB to the librsvg DLL if we don't install-strip it.
 STRIP_LIB := $(true)
-
-# This variable controls which plugins are in use.
-# Build with GCC 9.1 and use the meson-wrapper.
-override MXE_PLUGIN_DIRS := \
-    plugins/gcc9 \
-    plugins/meson-wrapper \
-    $(MXE_PLUGIN_DIRS)
