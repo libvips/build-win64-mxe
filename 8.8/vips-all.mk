@@ -54,7 +54,7 @@ define $(PKG)_PRE_CONFIGURE
      echo '  "sqlite": "$(sqlite_VERSION)",'; \
      echo '  "svg": "$(librsvg_VERSION)",'; \
      echo '  "tiff": "$(tiff_VERSION)",'; \
-     echo '  "vips": "$(vips-web_VERSION)",'; \
+     echo '  "vips": "$(vips-all_VERSION)",'; \
      echo '  "webp": "$(libwebp_VERSION)",'; \
      echo '  "x265": "$(x265_VERSION)",'; \
      echo '  "xml": "$(libxml2_VERSION)",'; \

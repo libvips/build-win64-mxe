@@ -66,8 +66,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-48
-imagemagick_CHECKSUM := a010b894d4685f8a0a51e0b3c8097a16654b12509b4aee448e25a3edb5ac616d
+imagemagick_VERSION  := 6.9.10-49
+imagemagick_CHECKSUM := 0620f98bb0893c1052b32173b0303f94b4b64dc345eedf8568f259a0d5ceb295
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick6-$(imagemagick_VERSION)
 imagemagick_FILE     := $(imagemagick_VERSION).tar.gz
@@ -155,8 +155,8 @@ cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsi
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
 # upstream version is 2.4.0
-harfbuzz_VERSION  := 2.5.1
-harfbuzz_CHECKSUM := 6d4834579abd5f7ab3861c085b4c55129f78b27fe47961fd96769d3704f6719e
+harfbuzz_VERSION  := 2.5.2
+harfbuzz_CHECKSUM := 7c8fcf9a2bbe3df5ed9650060d89f9b7cfd40ec5729671447ace8b0505527e8b
 harfbuzz_SUBDIR   := harfbuzz-$(harfbuzz_VERSION)
 harfbuzz_FILE     := harfbuzz-$(harfbuzz_VERSION).tar.xz
 harfbuzz_URL      := https://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz_FILE)
@@ -169,6 +169,13 @@ pixman_CHECKSUM := da66d6fd6e40aee70f7bd02e4f8f76fc3f006ec879d346bae6a723025cfbd
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
+
+# upstream version is 2.13.1
+fontconfig_VERSION  := 2.13.91
+fontconfig_CHECKSUM := 0130cff91dabe4909b0ea246accf8fa69af8de2771772f1c9ec11a5834e1e501
+fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
+fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
+fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
 
 # Override libjpeg-turbo patch with our own
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))

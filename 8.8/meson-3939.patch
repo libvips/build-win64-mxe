@@ -34,7 +34,7 @@ diff --git a/mesonbuild/backend/ninjabackend.py b/mesonbuild/backend/ninjabacken
 index 1111111..2222222 100644
 --- a/mesonbuild/backend/ninjabackend.py
 +++ b/mesonbuild/backend/ninjabackend.py
-@@ -2412,7 +2412,7 @@ def generate_link(self, target, outfile, outname, obj_list, linker, extra_args=[
+@@ -2498,7 +2498,7 @@ https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47485'''))
              # line where the static library is used.
              dependencies = []
          else:
@@ -47,20 +47,20 @@ diff --git a/mesonbuild/backend/vs2010backend.py b/mesonbuild/backend/vs2010back
 index 1111111..2222222 100644
 --- a/mesonbuild/backend/vs2010backend.py
 +++ b/mesonbuild/backend/vs2010backend.py
-@@ -1032,7 +1032,7 @@ def gen_vcxproj(self, target, ofname, guid):
+@@ -1113,7 +1113,7 @@ class Vs2010Backend(backends.Backend):
          (additional_libpaths, additional_links, extra_link_args) = self.split_link_args(extra_link_args.to_native())
  
          # Add more libraries to be linked if needed
 -        for t in target.get_dependencies():
 +        for t in target.get_dependencies(link_whole=True):
-             lobj = self.build.targets[t.get_id()]
-             linkname = os.path.join(down, self.get_target_filename_for_linking(lobj))
-             if t in target.link_whole_targets:
+             if isinstance(t, build.CustomTargetIndex):
+                 # We don't need the actual project here, just the library name
+                 lobj = t
 diff --git a/mesonbuild/build.py b/mesonbuild/build.py
 index 1111111..2222222 100644
 --- a/mesonbuild/build.py
 +++ b/mesonbuild/build.py
-@@ -856,22 +856,43 @@ def get_outputs(self):
+@@ -959,22 +959,43 @@ This will become a hard error in a future Meson release.''')
      def get_extra_args(self, language):
          return self.extra_args.get(language, [])
  
@@ -113,10 +113,10 @@ index 1111111..2222222 100644
          return transitive_deps
  
      def get_source_subdir(self):
-@@ -958,7 +979,17 @@ def link(self, target):
-                 raise InvalidArguments(msg)
-             if self.is_cross != t.is_cross:
-                 raise InvalidArguments('Tried to mix cross built and native libraries in target {!r}'.format(self.name))
+@@ -1067,7 +1088,17 @@ You probably should put it in link_with instead.''')
+                     raise InvalidArguments(msg + ' This is not possible in a cross build.')
+                 else:
+                     mlog.warning(msg + ' This will fail in cross build.')
 -            self.link_targets.append(t)
 +            # When linking to a static library that's not installed, we
 +            # transparently add that target's objects to ourselves.
@@ -132,10 +132,10 @@ index 1111111..2222222 100644
  
      def link_whole(self, target):
          for t in listify(target, unholder=True):
-@@ -970,7 +1001,15 @@ def link_whole(self, target):
-                 raise InvalidArguments(msg)
-             if self.is_cross != t.is_cross:
-                 raise InvalidArguments('Tried to mix cross built and native libraries in target {!r}'.format(self.name))
+@@ -1088,7 +1119,15 @@ You probably should put it in link_with instead.''')
+                     raise InvalidArguments(msg + ' This is not possible in a cross build.')
+                 else:
+                     mlog.warning(msg + ' This will fail in cross build.')
 -            self.link_whole_targets.append(t)
 +            # When we're a static library and we link_whole: to another static
 +            # library, we need to add that target's objects to ourselves.

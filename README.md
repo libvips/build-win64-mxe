@@ -6,15 +6,15 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | Dependency      | Version   | Used under the terms of         |
 |-----------------|-----------|---------------------------------|
 | [cairo]         | 1.16.0    | Mozilla Public License 2.0      |
-| [expat]         | 2.2.6     | MIT Licence                     |
-| [fontconfig]    | 2.13.1    | [fontconfig Licence] (BSD-like) |
+| [expat]         | 2.2.7     | MIT Licence                     |
+| [fontconfig]    | 2.13.91   | [fontconfig Licence] (BSD-like) |
 | [freetype]      | 2.10.0    | [freetype Licence] (BSD-like)   |
 | [fribidi]       | 1.0.5     | LGPLv3                          |
 | [gdk-pixbuf]    | 2.38.1    | LGPLv3                          |
 | [gettext]       | 0.19.8.1  | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
 | [glib]          | 2.61.1    | LGPLv3                          |
-| [harfbuzz]      | 2.5.1     | MIT Licence                     |
+| [harfbuzz]      | 2.5.2     | MIT Licence                     |
 | [lcms]          | 2.9       | MIT Licence                     |
 | [libcroco]      | 0.6.13    | LGPLv3                          |
 | [libexif]       | 0.6.21    | LGPLv3                          |
@@ -75,7 +75,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.450     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.8.12    | BSD-like                         |
-| [imagemagick]   | 6.9.10-48 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.10-49 | [ImageMagick License] (GPL-like) |
 | [libde265]      | 1.0.3     | LGPLv3                           |
 | [libheif]       | 1.4.0     | LGPLv3                           |
 | [matio]         | 1.5.15    | BSD 2-Clause                     |
@@ -83,7 +83,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 2.3.0     | BSD 3-Clause                     |
 | [openjpeg]      | 2.3.1     | BSD 2-Clause                     |
 | [openslide]     | 3.4.1     | LGPLv3                           |
-| [poppler]       | 0.76.1    | GPLv2                            |
+| [poppler]       | 0.77.0    | GPLv2                            |
 | [sqlite]        | 3.28.0    | Public domain                    |
 | [x265]          | 3.0       | GPLv2                            |
 
