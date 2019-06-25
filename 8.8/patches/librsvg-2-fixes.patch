@@ -27,22 +27,6 @@ From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 27 Jan 2019 14:00:00 +0200
 Subject: [PATCH 2/5] Fix Windows build and static linking
 
-Partially from:
-https://aur.archlinux.org/cgit/aur.git/tree/makefile-fix.patch?h=mingw-w64-librsvg
-
-diff --git a/configure.ac b/configure.ac
-index 1111111..2222222 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -110,6 +110,8 @@ AS_IF(test x$RUSTC = xno,
-     AC_MSG_ERROR([rustc is required.  Please install the Rust toolchain from https://www.rust-lang.org/])
- )
- 
-+AC_CHECK_PROGS(AR, ar)
-+
- dnl Minimum version of rustc that we support
- dnl If you change this, please update COMPILING.md
- MINIMUM_RUST_MAJOR=1
 
 diff --git a/Makefile.am b/Makefile.am
 index 1111111..2222222 100644
@@ -61,22 +45,40 @@ index 1111111..2222222 100644
  	$(NULL)
  
 -RUST_SRC =							\
-+librsvg_internals_la_SOURCES =	\
++librsvg_internals_la_SOURCES =		\
  	Cargo.toml						\
  	rsvg_internals/Cargo.toml				\
  	rsvg_internals/build.rs					\
-@@ -150,6 +151,10 @@ cargo_verbose_0 =
+@@ -149,16 +150,25 @@ cargo_verbose_ = $(cargo_verbose_$(AM_DEFAULT_VERBOSITY))
+ cargo_verbose_0 =
  cargo_verbose_1 = --verbose
  
- RUST_LIB=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/librsvg_internals.a
-+RUST_LIB_WIN=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/rsvg_internals.lib
-+RUST_LIB_TARGET=@abs_top_builddir@/.libs/librsvg_internals.a
-+RUST_LT_LIB=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/librsvg_internals.la
-+RUST_LT_TARGET=@abs_top_builddir@/librsvg_internals.la
+-RUST_LIB=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/librsvg_internals.a
++RUST_LIB=@abs_top_builddir@/.libs/librsvg_internals.a
  CARGO_TARGET_DIR=@abs_top_builddir@/target
  
++LIBRSVG_BUILD_DIR=@abs_top_builddir@
++LIBRSVG_TARGET_DIR=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@
++
  check-local:
-@@ -173,12 +177,20 @@ dist-hook:
+ 	cd $(srcdir) && \
+-	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) $(CARGO) --locked test $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS)
++	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR)	\
++	LIBRSVG_BUILD_DIR=$(LIBRSVG_BUILD_DIR)	\
++	LIBRSVG_TARGET_DIR=$(LIBRSVG_TARGET_DIR)	\
++	$(CARGO) --locked test $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS)
+ 
+ clean-local:
+ 	cd $(top_srcdir) && \
+-	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) $(CARGO) clean
++	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR)	\
++	LIBRSVG_BUILD_DIR=$(LIBRSVG_BUILD_DIR)	\
++	LIBRSVG_TARGET_DIR=$(LIBRSVG_TARGET_DIR)	\
++	$(CARGO) clean
+ 
+ distcheck-hook:
+ 	if test -z "${DESTDIR}";						\
+@@ -173,12 +183,15 @@ dist-hook:
  	mkdir .cargo &&								\
  	cp cargo-vendor-config .cargo/config)
  
@@ -87,19 +89,14 @@ index 1111111..2222222 100644
  	PKG_CONFIG='$(PKG_CONFIG)'						\
  	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR)					\
 -	$(CARGO) --locked build $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS) --features "c-library"
++	LIBRSVG_BUILD_DIR=$(LIBRSVG_BUILD_DIR)					\
++	LIBRSVG_TARGET_DIR=$(LIBRSVG_TARGET_DIR)					\
 +	$(CARGO) --locked build $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS) --features "c-library" \
-+	&& mkdir -p `dirname $(RUST_LIB_TARGET)`	\
-+	&& if [[ -e $(RUST_LIB_WIN) ]] ; then 		\
-+		cp $(RUST_LIB_WIN) $(RUST_LIB_TARGET);	\
-+	else										\
-+		cp $(RUST_LIB) $(RUST_LIB_TARGET);		\
-+	fi											\
-+	&& cp $(RUST_LT_LIB) $(RUST_LT_TARGET)      \
-+	&& $(AR) d $(RUST_LIB_TARGET) clzsi2.o # HACK: https://github.com/rust-lang/rust/issues/58277
++	&& $(AR) d $(RUST_LIB) clzsi2.o # HACK: https://github.com/rust-lang/rust/issues/58277
  
  librsvg_@RSVG_API_MAJOR_VERSION@_la_CPPFLAGS = \
  	-I$(top_srcdir) 			\
-@@ -204,7 +216,7 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_LDFLAGS = \
+@@ -204,7 +217,7 @@ librsvg_@RSVG_API_MAJOR_VERSION@_la_LDFLAGS = \
  	$(AM_LDFLAGS)
  
  librsvg_@RSVG_API_MAJOR_VERSION@_la_LIBADD = \
@@ -108,7 +105,7 @@ index 1111111..2222222 100644
  	$(LIBRSVG_LIBS) 	\
  	$(LIBM)			\
  	$(DLOPEN_LIBS)
-@@ -272,7 +284,7 @@ dist_doc_DATA =				\
+@@ -272,7 +285,7 @@ dist_doc_DATA =				\
  	code-of-conduct.md
  
  EXTRA_DIST =				\
@@ -117,7 +114,18 @@ index 1111111..2222222 100644
  	$(RUST_EXTRA)			\
  	$(LIBRSVG_CRATE_SOURCES)	\
  	librsvg.doap			\
-
+diff --git a/configure.ac b/configure.ac
+index 1111111..2222222 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -109,6 +109,7 @@ AC_CHECK_PROGS(RUSTC, [rustc], [no])
+ AS_IF(test x$RUSTC = xno,
+     AC_MSG_ERROR([rustc is required.  Please install the Rust toolchain from https://www.rust-lang.org/])
+ )
++AC_CHECK_PROGS(AR, ar)
+ 
+ dnl Minimum version of rustc that we support
+ dnl If you change this, please update COMPILING.md
 diff --git a/rsvg_internals/build.rs b/rsvg_internals/build.rs
 index 1111111..2222222 100644
 --- a/rsvg_internals/build.rs
@@ -135,42 +143,25 @@ index 1111111..2222222 100644
  fn main() {
      generate_phf_of_svg_attributes();
      generate_srgb_tables();
-+    generate_convenience_lib("librsvg_internals").unwrap();
++    generate_convenience_lib().unwrap();
  }
  
  /// Creates a perfect hash function (PHF) to map SVG attribute names to enum values.
-@@ -254,3 +258,60 @@ fn generate_srgb_tables() {
+@@ -254,3 +258,47 @@ fn generate_srgb_tables() {
      print_table(&mut file, "LINEARIZE", &linearize_table);
      print_table(&mut file, "UNLINEARIZE", &unlinearize_table);
  }
 +
-+/// Generate libtool archive file ${lib}.la
-+/// From https://docs.rs/libtool/0.1.1/libtool/
-+/// Upstream doesn't handle some of the directory structure we use in librsvg,
-+/// use a few extra environment variables to properly determine the target paths.
-+pub fn generate_convenience_lib(lib: &str) -> std::io::Result<()> {
-+    let self_version = env!("CARGO_PKG_VERSION");
-+    let profile = env::var("PROFILE").unwrap();
-+    let target_arch = env::var("TARGET").unwrap();
-+    let target_dir_env = env::var("CARGO_TARGET_DIR").unwrap();
-+
-+    /* Check if the output directory will include the arch */
-+    let target_dir = if PathBuf::from(format!("{}/{}",
-+                                target_dir_env, target_arch)).exists() {
-+        format!("{}/{}/{}", target_dir_env, target_arch, profile)
-+    } else {
-+        format!("{}/{}", target_dir_env, profile)
-+    };
-+
-+    /* Location of original static library */
-+    let old_lib_path = PathBuf::from(format!("{}/{}.a",
-+                                            target_dir, lib));
-+    /* Paths for new .la file and symlinks */
-+    let libs_dir = format!("{}/.libs", target_dir);
++/// Generate libtool archive file librsvg_internals.la
++/// From: https://docs.rs/libtool/0.1.1/libtool/
++pub fn generate_convenience_lib() -> std::io::Result<()> {
++    let build_dir = env::var("LIBRSVG_BUILD_DIR").unwrap();
++    let target_dir = env::var("LIBRSVG_TARGET_DIR").unwrap();
++    let libs_dir = format!("{}/.libs", build_dir);
 +    let libs_path = PathBuf::from(&libs_dir);
-+    let la_path = PathBuf::from(format!("{}/{}.la",
-+                                        target_dir, lib));
-+    let new_lib_path = PathBuf::from(format!("{}/{}.a", libs_dir, lib));
++    let la_path = PathBuf::from(format!("{}/librsvg_internals.la", build_dir));
++    let mut old_lib_path = PathBuf::from(format!("{}/librsvg_internals.a", target_dir));
++    let new_lib_path = PathBuf::from(format!("{}/librsvg_internals.a", libs_dir));
 +
 +    match fs::create_dir_all(&libs_path) {
 +        Ok(()) => println!("libs_path created"),
@@ -181,22 +172,26 @@ index 1111111..2222222 100644
 +        fs::remove_file(&la_path)?;
 +    }
 +
++    /* https://github.com/rust-lang/rust/issues/43749 */
++    if !old_lib_path.exists() {
++        old_lib_path = PathBuf::from(format!("{}/rsvg_internals.lib", target_dir));
++    }
++
 +    /* PathBuf.exists() traverses symlinks so just try and remove it */
 +    match fs::remove_file(&new_lib_path) {
 +        Ok(_v) => {},
 +        Err(e) => println!("Error removing symlink: {:?}", e),
 +    }
 +
-+    let mut file = File::create(&la_path)?;
-+    writeln!(file, "# {}.la - a libtool library file", lib)?;
-+    writeln!(file, "# Generated by libtool-rust {}", self_version)?;
++    let mut file = File::create(&la_path).unwrap();
++    writeln!(file, "# librsvg_internals.la - a libtool library file")?;
++    writeln!(file, "# Generated by libtool-rust")?;
 +    writeln!(file, "dlname=''")?;
 +    writeln!(file, "library_names=''")?;
-+    writeln!(file, "old_library='{}.a'", lib)?;
++    writeln!(file, "old_library='librsvg_internals.a'")?;
 +    writeln!(file, "inherited_linker_flags=' '")?;
 +    writeln!(file, "installed=no")?;
 +    writeln!(file, "shouldnotlink=no")?;
-+
 +    symlink(&old_lib_path, &new_lib_path)?;
 +    Ok(())
 +}

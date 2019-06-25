@@ -69,11 +69,11 @@ fi
 # Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc), 
 # gendef (a tool for generating def files from DLLs)
 # and libvips (+ dependencies).
-make meson-wrapper gendef vips-$deps \
+make meson-wrapper librsvg \
   MXE_PLUGIN_DIRS="$plugins" \
   MXE_TARGETS=$target.$deps
 
 cd $work_dir
 
 # Packaging
-. $work_dir/package-vipsdev.sh $deps $target
+# . $work_dir/package-vipsdev.sh $deps $target
