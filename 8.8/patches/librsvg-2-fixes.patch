@@ -147,7 +147,7 @@ index 1111111..2222222 100644
  }
  
  /// Creates a perfect hash function (PHF) to map SVG attribute names to enum values.
-@@ -254,3 +258,47 @@ fn generate_srgb_tables() {
+@@ -254,3 +258,49 @@ fn generate_srgb_tables() {
      print_table(&mut file, "LINEARIZE", &linearize_table);
      print_table(&mut file, "UNLINEARIZE", &unlinearize_table);
  }
@@ -155,12 +155,19 @@ index 1111111..2222222 100644
 +/// Generate libtool archive file librsvg_internals.la
 +/// From: https://docs.rs/libtool/0.1.1/libtool/
 +pub fn generate_convenience_lib() -> std::io::Result<()> {
-+    let build_dir = env::var("LIBRSVG_BUILD_DIR").unwrap();
-+    let target_dir = env::var("LIBRSVG_TARGET_DIR").unwrap();
++    let target = env::var("TARGET").expect("TARGET was not set");
++    let build_dir = env::var("LIBRSVG_BUILD_DIR").expect("LIBRSVG_BUILD_DIR was not set");
++    let target_dir = env::var("LIBRSVG_TARGET_DIR").expect("LIBRSVG_TARGET_DIR was not set");
 +    let libs_dir = format!("{}/.libs", build_dir);
 +    let libs_path = PathBuf::from(&libs_dir);
 +    let la_path = PathBuf::from(format!("{}/librsvg_internals.la", build_dir));
-+    let mut old_lib_path = PathBuf::from(format!("{}/librsvg_internals.a", target_dir));
++    let rust_lib = if target.contains("windows") {
++        /* https://github.com/rust-lang/rust/issues/43749 */
++        "rsvg_internals.lib"
++    } else {
++        "librsvg_internals.a"
++    };
++    let old_lib_path = PathBuf::from(format!("{}/{}", target_dir, rust_lib));
 +    let new_lib_path = PathBuf::from(format!("{}/librsvg_internals.a", libs_dir));
 +
 +    match fs::create_dir_all(&libs_path) {
@@ -170,11 +177,6 @@ index 1111111..2222222 100644
 +
 +    if la_path.exists() {
 +        fs::remove_file(&la_path)?;
-+    }
-+
-+    /* https://github.com/rust-lang/rust/issues/43749 */
-+    if !old_lib_path.exists() {
-+        old_lib_path = PathBuf::from(format!("{}/rsvg_internals.lib", target_dir));
 +    }
 +
 +    /* PathBuf.exists() traverses symlinks so just try and remove it */
@@ -189,7 +191,7 @@ index 1111111..2222222 100644
 +    writeln!(file, "dlname=''")?;
 +    writeln!(file, "library_names=''")?;
 +    writeln!(file, "old_library='librsvg_internals.a'")?;
-+    writeln!(file, "inherited_linker_flags=' '")?;
++    writeln!(file, "inherited_linker_flags=''")?;
 +    writeln!(file, "installed=no")?;
 +    writeln!(file, "shouldnotlink=no")?;
 +    symlink(&old_lib_path, &new_lib_path)?;
