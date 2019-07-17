@@ -58,16 +58,16 @@ gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
 # upstream version is 1.5.2
-matio_VERSION  := 1.5.15
-matio_CHECKSUM := 21bf4587bb7f0231dbb4fcc88728468f1764c06211d5a0415cd622036f09b1cf
+matio_VERSION  := 1.5.16
+matio_CHECKSUM := 47ba3d5d269d5709b8d9a7385c88c8b5fb5ff875ef781a1ced4892b5b03c4f44
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-49
-imagemagick_CHECKSUM := 0620f98bb0893c1052b32173b0303f94b4b64dc345eedf8568f259a0d5ceb295
+imagemagick_VERSION  := 6.9.10-53
+imagemagick_CHECKSUM := 2cf76ebb162f07a065f34b9340e5fbf242faa842e36de7958d04aa2f626e5bff
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick6-$(imagemagick_VERSION)
 imagemagick_FILE     := $(imagemagick_VERSION).tar.gz
@@ -83,8 +83,8 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.45.6
-librsvg_CHECKSUM := 0e6e26cb5c79cfa73c0ddab06808ace4d10c4a626b81c31a75ead37c6cb4df41
+librsvg_VERSION  := 2.45.7
+librsvg_CHECKSUM := d4399eb76eb4e955fd36a5e536e4cb965ccfafbbc72e3b43495e08ac2a61f993
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -98,8 +98,14 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
+# upstream version is 0.78.0
 # Use the mutex helper from mingw-std-threads
+poppler_VERSION  := 0.79.0
+poppler_CHECKSUM := f985a4608fe592d2546d9d37d4182e502ff6b4c42f8db4be0a021a1c369528c8
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.13
@@ -107,6 +113,14 @@ libcroco_CHECKSUM := 767ec234ae7aa684695b3a735548224888132e063f92db585759b422570
 libcroco_SUBDIR   := libcroco-$(libcroco_VERSION)
 libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
+
+# upstream version is 1.0.2
+libwebp_VERSION  := 1.0.3
+libwebp_CHECKSUM := e20a07865c8697bba00aebccc6f54912d6bc333bb4d604e6b07491c1a226b34f
+libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
+libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
+libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
+libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
 glib_VERSION  := 2.61.1
@@ -123,6 +137,13 @@ libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
 libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)
+
+# upstream version is 1.16.0
+cairo_VERSION  := 1.17.2
+cairo_CHECKSUM := 6b70d4655e2a47a22b101c666f4b29ba746eda4aa8a0f7255b32b2e9408801df
+cairo_SUBDIR   := cairo-$(cairo_VERSION)
+cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
+cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 
 # zlib will make libzlib.dll, but we want libz.dll so we must 
 # patch CMakeLists.txt
@@ -155,8 +176,8 @@ cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsi
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
 # upstream version is 2.4.0
-harfbuzz_VERSION  := 2.5.2
-harfbuzz_CHECKSUM := 7c8fcf9a2bbe3df5ed9650060d89f9b7cfd40ec5729671447ace8b0505527e8b
+harfbuzz_VERSION  := 2.5.3
+harfbuzz_CHECKSUM := fed00dc797b7ba3ca943225f0a854baaed4c1640fff8a31d455cd3b5caec855c
 harfbuzz_SUBDIR   := harfbuzz-$(harfbuzz_VERSION)
 harfbuzz_FILE     := harfbuzz-$(harfbuzz_VERSION).tar.xz
 harfbuzz_URL      := https://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz_FILE)

@@ -25,3 +25,342 @@ index 1111111..2222222 100644
  		snprintf (val, maxlen, _("%.02f EV"), d);
  		d = 1. / pow (2, d);
  		if (d < 1)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Marcus Meissner <marcus@jet.franken.de>
+Date: Tue, 25 Jul 2017 23:38:56 +0200
+Subject: [PATCH 2/7] On saving makernotes, make sure the makernote container tags
+ has a type with 1 byte components.
+
+Fixes (at least):
+	https://sourceforge.net/p/libexif/bugs/130
+	https://sourceforge.net/p/libexif/bugs/129
+
+diff --git a/libexif/exif-data.c b/libexif/exif-data.c
+index 1111111..2222222 100644
+--- a/libexif/exif-data.c
++++ b/libexif/exif-data.c
+@@ -255,6 +255,12 @@ exif_data_save_data_entry (ExifData *data, ExifEntry *e,
+ 			exif_mnote_data_set_offset (data->priv->md, *ds - 6);
+ 			exif_mnote_data_save (data->priv->md, &e->data, &e->size);
+ 			e->components = e->size;
++			if (exif_format_get_size (e->format) != 1) {
++				/* e->format is taken from input code,
++				 * but we need to make sure it is a 1 byte
++				 * entity due to the multiplication below. */
++				e->format = EXIF_FORMAT_UNDEFINED;
++			}
+ 		}
+ 	}
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Marcus Meissner <marcus@jet.franken.de>
+Date: Tue, 25 Jul 2017 23:44:44 +0200
+Subject: [PATCH 3/7] fixes some (not all) buffer overreads during decoding pentax
+ makernote entries.
+
+This should fix:
+https://sourceforge.net/p/libexif/bugs/125/ CVE-2016-6328
+
+diff --git a/libexif/pentax/mnote-pentax-entry.c b/libexif/pentax/mnote-pentax-entry.c
+index 1111111..2222222 100644
+--- a/libexif/pentax/mnote-pentax-entry.c
++++ b/libexif/pentax/mnote-pentax-entry.c
+@@ -425,24 +425,34 @@ mnote_pentax_entry_get_value (MnotePentaxEntry *entry,
+ 		case EXIF_FORMAT_SHORT:
+ 		  {
+ 			const unsigned char *data = entry->data;
+-		  	size_t k, len = strlen(val);
++		  	size_t k, len = strlen(val), sizeleft;
++
++			sizeleft = entry->size;
+ 		  	for(k=0; k<entry->components; k++) {
++				if (sizeleft < 2)
++					break;
+ 				vs = exif_get_short (data, entry->order);
+ 				snprintf (val+len, maxlen-len, "%i ", vs);
+ 				len = strlen(val);
+ 				data += 2;
++				sizeleft -= 2;
+ 			}
+ 		  }
+ 		  break;
+ 		case EXIF_FORMAT_LONG:
+ 		  {
+ 			const unsigned char *data = entry->data;
+-		  	size_t k, len = strlen(val);
++		  	size_t k, len = strlen(val), sizeleft;
++
++			sizeleft = entry->size;
+ 		  	for(k=0; k<entry->components; k++) {
++				if (sizeleft < 4)
++					break;
+ 				vl = exif_get_long (data, entry->order);
+ 				snprintf (val+len, maxlen-len, "%li", (long int) vl);
+ 				len = strlen(val);
+ 				data += 4;
++				sizeleft -= 4;
+ 			}
+ 		  }
+ 		  break;
+@@ -455,5 +465,5 @@ mnote_pentax_entry_get_value (MnotePentaxEntry *entry,
+ 		break;
+ 	}
+ 
+-	return (val);
++	return val;
+ }
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Dan Fandrich <dan@coneharvesters.com>
+Date: Fri, 20 Apr 2018 18:05:19 +0200
+Subject: [PATCH 4/7] Reduce maximum recursion depth in exif_data_load_data_content
+
+This only needs to be a small, single digit integer for normal files,
+and reducing the maximum closer to this reduces the time and space
+needed to detect pathological cases.
+
+diff --git a/libexif/exif-data.c b/libexif/exif-data.c
+index 1111111..2222222 100644
+--- a/libexif/exif-data.c
++++ b/libexif/exif-data.c
+@@ -378,7 +378,7 @@ exif_data_load_data_content (ExifData *data, ExifIfd ifd,
+ 	if ((((int)ifd) < 0) || ( ((int)ifd) >= EXIF_IFD_COUNT))
+ 	  return;
+ 
+-	if (recursion_depth > 30) {
++	if (recursion_depth > 12) {
+ 		exif_log (data->priv->log, EXIF_LOG_CODE_CORRUPT_DATA, "ExifData",
+ 			  "Deep recursion detected!");
+ 		return;
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Dan Fandrich <dan@coneharvesters.com>
+Date: Fri, 12 Oct 2018 16:01:45 +0200
+Subject: [PATCH 5/7] Improve deep recursion detection in
+ exif_data_load_data_content.
+
+The existing detection was still vulnerable to pathological cases
+causing DoS by wasting CPU. The new algorithm takes the number of tags
+into account to make it harder to abuse by cases using shallow recursion
+but with a very large number of tags.  This improves on commit 5d28011c
+which wasn't sufficient to counter this kind of case.
+
+The limitation in the previous fix was discovered by Laurent Delosieres,
+Secunia Research at Flexera (Secunia Advisory SA84652) and is assigned
+the identifier CVE-2018-20030.
+
+diff --git a/libexif/exif-data.c b/libexif/exif-data.c
+index 1111111..2222222 100644
+--- a/libexif/exif-data.c
++++ b/libexif/exif-data.c
+@@ -35,6 +35,7 @@
+ #include <libexif/olympus/exif-mnote-data-olympus.h>
+ #include <libexif/pentax/exif-mnote-data-pentax.h>
+ 
++#include <math.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
+@@ -350,6 +351,20 @@ if (data->ifd[(i)]->count) {				\
+ 	break;						\
+ }
+ 
++/*! Calculate the recursion cost added by one level of IFD loading.
++ *
++ * The work performed is related to the cost in the exponential relation
++ *   work=1.1**cost
++ */
++static unsigned int
++level_cost(unsigned int n)
++{
++    static const double log_1_1 = 0.09531017980432493;
++
++	/* Adding 0.1 protects against the case where n==1 */
++	return ceil(log(n + 0.1)/log_1_1);
++}
++
+ /*! Load data for an IFD.
+  *
+  * \param[in,out] data #ExifData
+@@ -357,13 +372,13 @@ if (data->ifd[(i)]->count) {				\
+  * \param[in] d pointer to buffer containing raw IFD data
+  * \param[in] ds size of raw data in buffer at \c d
+  * \param[in] offset offset into buffer at \c d at which IFD starts
+- * \param[in] recursion_depth number of times this function has been
+- * recursively called without returning
++ * \param[in] recursion_cost factor indicating how expensive this recursive
++ * call could be
+  */
+ static void
+ exif_data_load_data_content (ExifData *data, ExifIfd ifd,
+ 			     const unsigned char *d,
+-			     unsigned int ds, unsigned int offset, unsigned int recursion_depth)
++			     unsigned int ds, unsigned int offset, unsigned int recursion_cost)
+ {
+ 	ExifLong o, thumbnail_offset = 0, thumbnail_length = 0;
+ 	ExifShort n;
+@@ -378,9 +393,20 @@ exif_data_load_data_content (ExifData *data, ExifIfd ifd,
+ 	if ((((int)ifd) < 0) || ( ((int)ifd) >= EXIF_IFD_COUNT))
+ 	  return;
+ 
+-	if (recursion_depth > 12) {
++	if (recursion_cost > 170) {
++		/*
++		 * recursion_cost is a logarithmic-scale indicator of how expensive this
++		 * recursive call might end up being. It is an indicator of the depth of
++		 * recursion as well as the potential for worst-case future recursive
++		 * calls. Since it's difficult to tell ahead of time how often recursion
++		 * will occur, this assumes the worst by assuming every tag could end up
++		 * causing recursion.
++		 * The value of 170 was chosen to limit typical EXIF structures to a
++		 * recursive depth of about 6, but pathological ones (those with very
++		 * many tags) to only 2.
++		 */
+ 		exif_log (data->priv->log, EXIF_LOG_CODE_CORRUPT_DATA, "ExifData",
+-			  "Deep recursion detected!");
++			  "Deep/expensive recursion detected!");
+ 		return;
+ 	}
+ 
+@@ -422,15 +448,18 @@ exif_data_load_data_content (ExifData *data, ExifIfd ifd,
+ 			switch (tag) {
+ 			case EXIF_TAG_EXIF_IFD_POINTER:
+ 				CHECK_REC (EXIF_IFD_EXIF);
+-				exif_data_load_data_content (data, EXIF_IFD_EXIF, d, ds, o, recursion_depth + 1);
++				exif_data_load_data_content (data, EXIF_IFD_EXIF, d, ds, o,
++					recursion_cost + level_cost(n));
+ 				break;
+ 			case EXIF_TAG_GPS_INFO_IFD_POINTER:
+ 				CHECK_REC (EXIF_IFD_GPS);
+-				exif_data_load_data_content (data, EXIF_IFD_GPS, d, ds, o, recursion_depth + 1);
++				exif_data_load_data_content (data, EXIF_IFD_GPS, d, ds, o,
++					recursion_cost + level_cost(n));
+ 				break;
+ 			case EXIF_TAG_INTEROPERABILITY_IFD_POINTER:
+ 				CHECK_REC (EXIF_IFD_INTEROPERABILITY);
+-				exif_data_load_data_content (data, EXIF_IFD_INTEROPERABILITY, d, ds, o, recursion_depth + 1);
++				exif_data_load_data_content (data, EXIF_IFD_INTEROPERABILITY, d, ds, o,
++					recursion_cost + level_cost(n));
+ 				break;
+ 			case EXIF_TAG_JPEG_INTERCHANGE_FORMAT:
+ 				thumbnail_offset = o;
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Marcus Meissner <marcus@jet.franken.de>
+Date: Sat, 15 Jun 2019 18:40:48 +0200
+Subject: [PATCH 6/7] fixed a buffer overread (OSS-Fuzz)
+ https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=8884
+
+diff --git a/libexif/olympus/exif-mnote-data-olympus.c b/libexif/olympus/exif-mnote-data-olympus.c
+index 1111111..2222222 100644
+--- a/libexif/olympus/exif-mnote-data-olympus.c
++++ b/libexif/olympus/exif-mnote-data-olympus.c
+@@ -344,7 +344,7 @@ exif_mnote_data_olympus_load (ExifMnoteData *en,
+ 
+ 	case nikonV2:
+ 		o2 += 6;
+-		if (o2 >= buf_size) return;
++		if (o2 + 8 >= buf_size) return;
+ 		exif_log (en->log, EXIF_LOG_CODE_DEBUG, "ExifMnoteDataOlympus",
+ 			"Parsing Nikon maker note v2 (0x%02x, %02x, %02x, "
+ 			"%02x, %02x, %02x, %02x, %02x)...",
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Dan Fandrich <dan@coneharvesters.com>
+Date: Mon, 18 Jun 2018 12:41:15 +0200
+Subject: [PATCH 7/7] Avoid OOB read on short buffer in various Olympus-like
+ MakerNotes.
+
+A sanity check on entry to the block ensures a minimum buffer size, so a few
+other checks were redundant and could actually be removed. This improves
+on commit a0c04d9c.
+Fixes https://sourceforge.net/p/libexif/bugs/132/ found by the Google
+Autofuzz project.  Patch from Google.
+
+diff --git a/libexif/olympus/exif-mnote-data-olympus.c b/libexif/olympus/exif-mnote-data-olympus.c
+index 1111111..2222222 100644
+--- a/libexif/olympus/exif-mnote-data-olympus.c
++++ b/libexif/olympus/exif-mnote-data-olympus.c
+@@ -286,7 +286,6 @@ exif_mnote_data_olympus_load (ExifMnoteData *en,
+ 		else if (buf[o2 + 6 + 1] == 1)
+ 			n->order = EXIF_BYTE_ORDER_MOTOROLA;
+ 		o2 += 8;
+-		if (o2 + 2 > buf_size) return;
+ 		c = exif_get_short (buf + o2, n->order);
+ 		if ((!(c & 0xFF)) && (c > 0x500)) {
+ 			if (n->order == EXIF_BYTE_ORDER_INTEL) {
+@@ -301,9 +300,10 @@ exif_mnote_data_olympus_load (ExifMnoteData *en,
+ 		/* Olympus S760, S770 */
+ 		datao = o2;
+ 		o2 += 8;
++		if ((o2 + 4 < o2) || (o2 + 4 < 4) || (o2 + 4 > buf_size)) return;
+ 		exif_log (en->log, EXIF_LOG_CODE_DEBUG, "ExifMnoteDataOlympus",
+ 			"Parsing Olympus maker note v2 (0x%02x, %02x, %02x, %02x)...",
+-			buf[o2], buf[o2 + 1], buf[o2 + 2], buf[o2 + 3]);
++			buf[o2 + 0], buf[o2 + 1], buf[o2 + 2], buf[o2 + 3]);
+ 
+ 		if ((buf[o2] == 'I') && (buf[o2 + 1] == 'I'))
+ 			n->order = EXIF_BYTE_ORDER_INTEL;
+@@ -316,12 +316,10 @@ exif_mnote_data_olympus_load (ExifMnoteData *en,
+ 
+ 	case nikonV1:
+ 		o2 += 6;
+-		if (o2 >= buf_size) return;
+ 		exif_log (en->log, EXIF_LOG_CODE_DEBUG, "ExifMnoteDataOlympus",
+ 			"Parsing Nikon maker note v1 (0x%02x, %02x, %02x, "
+-			"%02x, %02x, %02x, %02x, %02x)...",
+-			buf[o2 + 0], buf[o2 + 1], buf[o2 + 2], buf[o2 + 3], 
+-			buf[o2 + 4], buf[o2 + 5], buf[o2 + 6], buf[o2 + 7]);
++			"%02x)...",
++			buf[o2 + 0], buf[o2 + 1], buf[o2 + 2], buf[o2 + 3]);
+ 
+ 		/* Skip version number */
+ 		o2 += 1;
+@@ -331,7 +329,6 @@ exif_mnote_data_olympus_load (ExifMnoteData *en,
+ 
+ 		base = MNOTE_NIKON1_TAG_BASE;
+ 		/* Fix endianness, if needed */
+-		if (o2 + 2 > buf_size) return;
+ 		c = exif_get_short (buf + o2, n->order);
+ 		if ((!(c & 0xFF)) && (c > 0x500)) {
+ 			if (n->order == EXIF_BYTE_ORDER_INTEL) {
+@@ -344,11 +341,11 @@ exif_mnote_data_olympus_load (ExifMnoteData *en,
+ 
+ 	case nikonV2:
+ 		o2 += 6;
+-		if (o2 + 8 >= buf_size) return;
++		if ((o2 + 12 < o2) || (o2 + 12 < 12) || (o2 + 12 > buf_size)) return;
+ 		exif_log (en->log, EXIF_LOG_CODE_DEBUG, "ExifMnoteDataOlympus",
+ 			"Parsing Nikon maker note v2 (0x%02x, %02x, %02x, "
+ 			"%02x, %02x, %02x, %02x, %02x)...",
+-			buf[o2 + 0], buf[o2 + 1], buf[o2 + 2], buf[o2 + 3], 
++			buf[o2 + 0], buf[o2 + 1], buf[o2 + 2], buf[o2 + 3],
+ 			buf[o2 + 4], buf[o2 + 5], buf[o2 + 6], buf[o2 + 7]);
+ 
+ 		/* Skip version number */
+@@ -365,7 +362,6 @@ exif_mnote_data_olympus_load (ExifMnoteData *en,
+ 		 * gets calculated.
+ 		 */
+ 		datao = o2;
+-		if (o2 >= buf_size) return;
+ 		if (!strncmp ((char *)&buf[o2], "II", 2))
+ 			n->order = EXIF_BYTE_ORDER_INTEL;
+ 		else if (!strncmp ((char *)&buf[o2], "MM", 2))
+@@ -383,7 +379,6 @@ exif_mnote_data_olympus_load (ExifMnoteData *en,
+ 		o2 += 2;
+ 
+ 		/* Go to where the number of entries is. */
+-		if (o2 + 4 > buf_size) return;
+ 		o2 = datao + exif_get_long (buf + o2, n->order);
+ 		break;
+ 
+@@ -396,7 +391,7 @@ exif_mnote_data_olympus_load (ExifMnoteData *en,
+ 		/* 00 1b is # of entries in Motorola order - the rest should also be in MM order */
+ 		n->order = EXIF_BYTE_ORDER_MOTOROLA;
+ 		break;
+-	
++
+ 	default:
+ 		exif_log (en->log, EXIF_LOG_CODE_DEBUG, "ExifMnoteDataOlympus",
+ 			"Unknown Olympus variant %i.", n->version);
