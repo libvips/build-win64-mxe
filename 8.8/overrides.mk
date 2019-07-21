@@ -98,14 +98,8 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 0.78.0
 # Use the mutex helper from mingw-std-threads
-poppler_VERSION  := 0.79.0
-poppler_CHECKSUM := f985a4608fe592d2546d9d37d4182e502ff6b4c42f8db4be0a021a1c369528c8
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.13
@@ -113,14 +107,6 @@ libcroco_CHECKSUM := 767ec234ae7aa684695b3a735548224888132e063f92db585759b422570
 libcroco_SUBDIR   := libcroco-$(libcroco_VERSION)
 libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
-
-# upstream version is 1.0.2
-libwebp_VERSION  := 1.0.3
-libwebp_CHECKSUM := e20a07865c8697bba00aebccc6f54912d6bc333bb4d604e6b07491c1a226b34f
-libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
-libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
-libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
-libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
 glib_VERSION  := 2.61.1
@@ -360,6 +346,22 @@ define libjpeg-turbo_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
+# build without `-fno-asynchronous-unwind-tables`, see:
+# https://github.com/mxe/mxe/commit/b42cd62e9a4a4e583be4970ebdced357d02d5a71#r34386467
+define libpng_BUILD
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS)
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+
+    ln -sf '$(PREFIX)/$(TARGET)/bin/libpng-config' '$(PREFIX)/bin/$(TARGET)-libpng-config'
+
+    '$(TARGET)-gcc' \
+        -W -Wall -Werror -std=c99 -pedantic \
+        '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-libpng.exe' \
+        `'$(PREFIX)/$(TARGET)/bin/libpng-config' --static --cflags --libs`
+endef
+
 # disable GObject introspection
 # build with the Meson build system
 define pango_BUILD
@@ -403,7 +405,7 @@ define poppler_BUILD
         -DENABLE_LIBOPENJPEG='openjpeg2' \
         -DENABLE_DCTDECODER='libjpeg' \
         -DFONT_CONFIGURATION=win32 \
-        -DENABLE_XPDF_HEADERS=OFF \
+        -DENABLE_UNSTABLE_API_ABI_HEADERS=OFF \
         -DENABLE_SPLASH=OFF \
         -DENABLE_CPP=OFF \
         -DBUILD_GTK_TESTS=OFF \

@@ -2,12 +2,10 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.8.1
-$(PKG)_CHECKSUM := a0ee255a2a1ebfea5b2dff2a780824d7157a78c010d7ddd531279aacefbf2539
+$(PKG)_VERSION  := 4f2f4b4
+$(PKG)_CHECKSUM := 271806ecc505ac34e0de81ee7367762b4901f4b1d3688dc997be4b6cf65c79c9
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
+$(PKG)_GH_CONF  := libvips/libvips/branches/loader-minimise-experiment
 $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
                    libgsf libjpeg-turbo tiff openslide lcms libexif libheif \
                    imagemagick libpng openexr cfitsio nifticlib orc
@@ -65,13 +63,13 @@ endef
 
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+    cd '$(SOURCE_DIR)' && ./autogen.sh \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
         --without-pdfium \
         --without-imagequant \
         --disable-introspection
 
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+    $(MAKE) -C '$(SOURCE_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(SOURCE_DIR)' -j 1 install
 endef

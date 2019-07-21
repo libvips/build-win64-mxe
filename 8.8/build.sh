@@ -21,7 +21,7 @@ target="${2:-x86_64-w64-mingw32.shared.win32}"
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="ebd730a60f0be990878d862332544cc8d5d93ace"
+revision="299e297b076f698143c5673a5e0d8f92054074e2"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
