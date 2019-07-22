@@ -23,7 +23,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libiconv]      | 1.16      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.2     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
-| [librsvg]       | 2.45.7    | LGPLv3                          |
+| [librsvg]       | 2.45.8    | LGPLv3                          |
 | [libtiff]       | 4.0.10    | [libtiff License] (BSD-like)    |
 | [libvips]       | 8.8.1     | LGPLv3                          |
 | [libwebp]       | 1.0.3     | New BSD License                 |

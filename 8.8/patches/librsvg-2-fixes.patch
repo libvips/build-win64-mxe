@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: "fix@me" <fix@me>
 Date: Mon, 27 Sep 2010 12:00:52 +0200
-Subject: [PATCH 1/4] fix .pc requirements
+Subject: [PATCH 1/3] fix .pc requirements
 
 
 diff --git a/librsvg.pc.in b/librsvg.pc.in
@@ -25,7 +25,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 27 Jan 2019 15:00:00 +0200
-Subject: [PATCH 2/4] Revert "Include Rust debuginfo in release builds"
+Subject: [PATCH 2/3] Revert "Include Rust debuginfo in release builds"
 
 This reverts commit 8215d7f1f581f0aaa317cccc3e974c61d1a6ad84.
 
@@ -45,7 +45,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 17 May 2019 13:00:00 +0200
-Subject: [PATCH 3/4] Disable Cairo script features
+Subject: [PATCH 3/3] Disable Cairo script features
 
 Our Cairo was build with `--disable-script`.
 
@@ -56,15 +56,15 @@ index 1111111..2222222 100644
 --- a/vendor/cairo-rs/.cargo-checksum.json
 +++ b/vendor/cairo-rs/.cargo-checksum.json
 @@ -1 +1 @@
--{"files":{"COPYRIGHT":"55660186953937b12521629aaba95d9bf1c12b0f08f76a6fb6cf8328b5f45c88","Cargo.toml":"759889f3cf99717924dd42e42b3acc8801dedc88e4d8e9e977a19a3c2985382b","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","README.md":"15fea90119a1a25ccb73fb98b1c145badeb5c94d7cf37a9831dea6b211399b78","appveyor.yml":"611f6f7d6fcb07f967400e8af7cbdc6ae0e1230850d2e1361c690bfe3f72fe9b","build.rs":"90d7e8f2f0907fc91c29597d9451fd17924c0343c3caadfc4c5f8e1e7450486f","src/constants.rs":"9cc02390e8521dd5669674f3eb25a214ef5d79a1ecc8205225a761675afc834f","src/context.rs":"4f255211e82974e6a010eacd42f43800de2eb34df674fd3b01c38833ecf2a383","src/device.rs":"53e5b5bebec0c74dc488549fa30cb0f0c32623143e6034c58b49c3b13ae45fd4","src/enums.rs":"a14e00248313862a270449e7039c19d8d510e281faa819a881f7419f229c8598","src/error.rs":"6d8a0a4dfcf3f894c44b37b63116daa86bec6eef2a4d95c0a542c2d490a80880","src/font/font_face.rs":"f05591eca9517ff8162a2bf6049e3b90892213b0e5e44c333403380bf2269ef1","src/font/font_options.rs":"83ca8ea6a1de35321bc8036c893590adf4d7e570fcc5542aa21befeebf82ca98","src/font/mod.rs":"9ec8bc66f800b02ce9c35531fada6716759f51a1d888cad093d9b8f5599de7ca","src/font/scaled_font.rs":"8da1ad3e34db772eb0f2d5a73f24bf77cd25238fffc8b9b3621f3a48eb1f6021","src/image_surface.rs":"3d0567f090984b7ae1cf217f6d9b5b4615939678abf2a197c2e179726266f77b","src/image_surface_png.rs":"a0627d837d708b185c900d9af39919e1bdab9e8281f7eba86313ccf513030c24","src/lib.rs":"bc0fd3b1c64ee9e01f6174787888e6ce51ccb940214bb66dd1260eec04e022b7","src/matrices.rs":"3adfc2693a527cef053e1647ea81831a394aba0ed3d3b60d55c0f2fabf9023c6","src/paths.rs":"b2c81c6d137850124ed579a9681d62907ba3c773f456a6923d638d240f8f32e2","src/patterns.rs":"6730093c9634658201c94627a4faaabe400e52bf659c12abab30752ef2760705","src/pdf.rs":"d4acc23ea1b4060cccab71adf5e79c0089dd23f349c0bae5a4d3aa7b4bd6f161","src/prelude.rs":"bde86958c0c659217073c6d5f0c3e77aa5c728ee3250c13547ad5de6f47e537f","src/ps.rs":"a1677814e1e38c9e455d999f88f80e1622bb428977b9f851c7c56b2623e978f7","src/quartz_surface.rs":"b891a9c04b1e41a698dd67d71d3609c78f1ce67b4d331b417ccd682118cc19fd","src/recording_surface.rs":"1addcc10ace1d18b6ffd7a4c9db6dd51b5b854eda22346a724383fe5173bed76","src/rectangle.rs":"50da997b59bdae8c43a05e0e43eaa5178c5311777ae1df2e63ae09ee7f162c34","src/rectangle_int.rs":"14e6c31a0594d7337b764a6dc37fc90830bf44de20511a23dc0834c5dc29fe7c","src/region.rs":"dfadb1745787c857bcb5662707534234f413b23137ced3204a08bea9504151b0","src/support.rs":"3d28002441da86236c46556f2e92fcfed2278b2ea61742a9233acf2541062787","src/surface.rs":"c99d605a9e10f0c5aecd8a3fe3d6e3d90c27d034309bd02c7fea2001621ce0ae","src/svg.rs":"8315eb86e3d0e0276b087346fa166f0d297d3b81de2f8c83c79907c9a865a19e","src/utils.rs":"65896dfa414ac911db160144513863dac4a584aee7d7136fc6c8a60c8a883c03","src/win32_surface.rs":"e6c64590a2143753eba3ab016402f10225ff379716a8a7dc1dec46f01276995f","src/xcb.rs":"6f14ceee6b35e56ef39df59b90f14cee1637adbf83540836b9d4d81596769a47"},"package":"9e09d8a818b2ccc8983f04d95a9350c3cf8d24cc456cedca3b88fa3a81fdc0e2"}
+-{"files":{"COPYRIGHT":"55660186953937b12521629aaba95d9bf1c12b0f08f76a6fb6cf8328b5f45c88","Cargo.toml":"4073f53d2812b1d1749ad3c3330c1015856deff94696a5f6abb8036ef3e3aba3","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","README.md":"15fea90119a1a25ccb73fb98b1c145badeb5c94d7cf37a9831dea6b211399b78","appveyor.yml":"611f6f7d6fcb07f967400e8af7cbdc6ae0e1230850d2e1361c690bfe3f72fe9b","build.rs":"90d7e8f2f0907fc91c29597d9451fd17924c0343c3caadfc4c5f8e1e7450486f","src/constants.rs":"9cc02390e8521dd5669674f3eb25a214ef5d79a1ecc8205225a761675afc834f","src/context.rs":"c7d1de22dcca7fbeb634b8e16d93eb65afd27ca589c5e8f5ac287154df88221a","src/device.rs":"7dcebf0f9f6a7875e02572cabbae6b23f657049c6bccba5bfac3678c2ba0c060","src/enums.rs":"bb81f1e996ade2142b49cea04ede49fb137c25b6c5a39d85c540d933ced15620","src/error.rs":"af0f1c14db14113d6de4e77675209fcc54f0948d609793023c947dff3abdc6fc","src/font/font_face.rs":"d8325fcbc44cca560e1fff845f8045d67d771216bf64460f1c470e48f6bb20d5","src/font/font_options.rs":"458f8b3a957470d896b42ea44452b17a537f50c9e0bb7d5d7750aee568889e69","src/font/mod.rs":"1162214bdb4ddfe8439493c544af625859ec039fae232fdb3a7a503175f1b5c8","src/font/scaled_font.rs":"6bf7a686cb1da9f36611a3ebd7d69aba4ac1b24cfefd47bdcafbe6985337e6ab","src/image_surface.rs":"b14cbc55744b29348889c68330068d144509060df36d2fc3799d66753ab3b968","src/image_surface_png.rs":"4861750904aef44d6e235a189fea41da12e39e39e8a7fd0260c30df5b207ca47","src/lib.rs":"b1af9215aa006b8260763837d47e3e973e3ce3326368ec882f0eaf45a2e7c71a","src/matrices.rs":"465a8c8441d2cea12e8e1f3acf2f2cb76f6d052c73930fce583620211e7f22bb","src/paths.rs":"82ea99fd9307c3822608a1b3caf8ea7f8b7bd16800c0c42b175c3a1eca030b1c","src/patterns.rs":"c14232716b22ebb07222ef27c6b8adc2c4b5c33e066f1998b972565da2db4dfe","src/pdf.rs":"75a8a0bf6c4aa6be7435369c911c25f45c7696ab43dfe79bb001ce91bfc0901d","src/ps.rs":"88b9b2af77498b745d52e89cf0191dddf75e2b7c2dbe35bdba767a068cfae31a","src/quartz_surface.rs":"9aee0d95150565511b9d1bb327f0dca02a6a3cce3810470f964662d328a46f39","src/recording_surface.rs":"74f636a03093c0f57f3cae03fbe4618e3dcfa086075d1b562d2d7a35872b99b1","src/rectangle.rs":"62b3a3945dd8def735ea2b7f4b6621e3acc28a51d5c6c54b3f7102093daaa941","src/rectangle_int.rs":"ad5a6f601947cbb380ccd74306f131fefa2ff3987d24b053ebea301e1689f2f0","src/region.rs":"d2abfd89aa927483781067a98d8f7de75ba4d27428be2b54e63799056308ca08","src/stream.rs":"29c89a22f53c32a279afe601f400427088d54055b93f6cd9d024838bd278dd8e","src/surface.rs":"f8fe8e93f4e92ae35b5cf7b8fc1cefb2aabe954cc88b20d9ec0dfe283cef8696","src/svg.rs":"5efafb1f5f45de3f26bcf61db7733f77034e1ac77e8f33af91c13fbde509e5f8","src/user_data.rs":"0faba6f4902d20e5d7ace43267450c283707ebdaad3eefd29f061cd3a0e83cf8","src/utils.rs":"36f895fd12187bf9a5d9e8f8ed55d05df53977863f87742e14f199b03bb19d88","src/win32_surface.rs":"b3212d1af19a66777282709d436249d5e50a0e988b3bf5af7b16196b42c6ba06","src/xcb.rs":"ea849a8d4a01f2dcd367cceb55d575b2a1f025cd7d3eaf1f402f727acac6dc32"},"package":"e05db47de3b0f09a222fa4bba2eab957d920d4243962a86b2d77ab401e4a359c"}
 \ No newline at end of file
-+{"files":{"COPYRIGHT":"55660186953937b12521629aaba95d9bf1c12b0f08f76a6fb6cf8328b5f45c88","Cargo.toml":"759889f3cf99717924dd42e42b3acc8801dedc88e4d8e9e977a19a3c2985382b","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","README.md":"15fea90119a1a25ccb73fb98b1c145badeb5c94d7cf37a9831dea6b211399b78","appveyor.yml":"611f6f7d6fcb07f967400e8af7cbdc6ae0e1230850d2e1361c690bfe3f72fe9b","build.rs":"90d7e8f2f0907fc91c29597d9451fd17924c0343c3caadfc4c5f8e1e7450486f","src/constants.rs":"9cc02390e8521dd5669674f3eb25a214ef5d79a1ecc8205225a761675afc834f","src/context.rs":"4f255211e82974e6a010eacd42f43800de2eb34df674fd3b01c38833ecf2a383","src/device.rs":"9091e4e10ac39c60a74c8b2b56f8ebed210a6666da935e954b14385f80d796af","src/enums.rs":"a14e00248313862a270449e7039c19d8d510e281faa819a881f7419f229c8598","src/error.rs":"6d8a0a4dfcf3f894c44b37b63116daa86bec6eef2a4d95c0a542c2d490a80880","src/font/font_face.rs":"f05591eca9517ff8162a2bf6049e3b90892213b0e5e44c333403380bf2269ef1","src/font/font_options.rs":"83ca8ea6a1de35321bc8036c893590adf4d7e570fcc5542aa21befeebf82ca98","src/font/mod.rs":"9ec8bc66f800b02ce9c35531fada6716759f51a1d888cad093d9b8f5599de7ca","src/font/scaled_font.rs":"8da1ad3e34db772eb0f2d5a73f24bf77cd25238fffc8b9b3621f3a48eb1f6021","src/image_surface.rs":"3d0567f090984b7ae1cf217f6d9b5b4615939678abf2a197c2e179726266f77b","src/image_surface_png.rs":"a0627d837d708b185c900d9af39919e1bdab9e8281f7eba86313ccf513030c24","src/lib.rs":"bc0fd3b1c64ee9e01f6174787888e6ce51ccb940214bb66dd1260eec04e022b7","src/matrices.rs":"3adfc2693a527cef053e1647ea81831a394aba0ed3d3b60d55c0f2fabf9023c6","src/paths.rs":"b2c81c6d137850124ed579a9681d62907ba3c773f456a6923d638d240f8f32e2","src/patterns.rs":"6730093c9634658201c94627a4faaabe400e52bf659c12abab30752ef2760705","src/pdf.rs":"d4acc23ea1b4060cccab71adf5e79c0089dd23f349c0bae5a4d3aa7b4bd6f161","src/prelude.rs":"bde86958c0c659217073c6d5f0c3e77aa5c728ee3250c13547ad5de6f47e537f","src/ps.rs":"a1677814e1e38c9e455d999f88f80e1622bb428977b9f851c7c56b2623e978f7","src/quartz_surface.rs":"b891a9c04b1e41a698dd67d71d3609c78f1ce67b4d331b417ccd682118cc19fd","src/recording_surface.rs":"1addcc10ace1d18b6ffd7a4c9db6dd51b5b854eda22346a724383fe5173bed76","src/rectangle.rs":"50da997b59bdae8c43a05e0e43eaa5178c5311777ae1df2e63ae09ee7f162c34","src/rectangle_int.rs":"14e6c31a0594d7337b764a6dc37fc90830bf44de20511a23dc0834c5dc29fe7c","src/region.rs":"dfadb1745787c857bcb5662707534234f413b23137ced3204a08bea9504151b0","src/support.rs":"3d28002441da86236c46556f2e92fcfed2278b2ea61742a9233acf2541062787","src/surface.rs":"c99d605a9e10f0c5aecd8a3fe3d6e3d90c27d034309bd02c7fea2001621ce0ae","src/svg.rs":"8315eb86e3d0e0276b087346fa166f0d297d3b81de2f8c83c79907c9a865a19e","src/utils.rs":"65896dfa414ac911db160144513863dac4a584aee7d7136fc6c8a60c8a883c03","src/win32_surface.rs":"e6c64590a2143753eba3ab016402f10225ff379716a8a7dc1dec46f01276995f","src/xcb.rs":"6f14ceee6b35e56ef39df59b90f14cee1637adbf83540836b9d4d81596769a47"},"package":"9e09d8a818b2ccc8983f04d95a9350c3cf8d24cc456cedca3b88fa3a81fdc0e2"}
++{"files":{"COPYRIGHT":"55660186953937b12521629aaba95d9bf1c12b0f08f76a6fb6cf8328b5f45c88","Cargo.toml":"4073f53d2812b1d1749ad3c3330c1015856deff94696a5f6abb8036ef3e3aba3","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","README.md":"15fea90119a1a25ccb73fb98b1c145badeb5c94d7cf37a9831dea6b211399b78","appveyor.yml":"611f6f7d6fcb07f967400e8af7cbdc6ae0e1230850d2e1361c690bfe3f72fe9b","build.rs":"90d7e8f2f0907fc91c29597d9451fd17924c0343c3caadfc4c5f8e1e7450486f","src/constants.rs":"9cc02390e8521dd5669674f3eb25a214ef5d79a1ecc8205225a761675afc834f","src/context.rs":"c7d1de22dcca7fbeb634b8e16d93eb65afd27ca589c5e8f5ac287154df88221a","src/device.rs":"f12b17e5939e38c55f3effc9dca34619639588b662eee2f9fd1580c020226557","src/enums.rs":"bb81f1e996ade2142b49cea04ede49fb137c25b6c5a39d85c540d933ced15620","src/error.rs":"af0f1c14db14113d6de4e77675209fcc54f0948d609793023c947dff3abdc6fc","src/font/font_face.rs":"d8325fcbc44cca560e1fff845f8045d67d771216bf64460f1c470e48f6bb20d5","src/font/font_options.rs":"458f8b3a957470d896b42ea44452b17a537f50c9e0bb7d5d7750aee568889e69","src/font/mod.rs":"1162214bdb4ddfe8439493c544af625859ec039fae232fdb3a7a503175f1b5c8","src/font/scaled_font.rs":"6bf7a686cb1da9f36611a3ebd7d69aba4ac1b24cfefd47bdcafbe6985337e6ab","src/image_surface.rs":"b14cbc55744b29348889c68330068d144509060df36d2fc3799d66753ab3b968","src/image_surface_png.rs":"4861750904aef44d6e235a189fea41da12e39e39e8a7fd0260c30df5b207ca47","src/lib.rs":"b1af9215aa006b8260763837d47e3e973e3ce3326368ec882f0eaf45a2e7c71a","src/matrices.rs":"465a8c8441d2cea12e8e1f3acf2f2cb76f6d052c73930fce583620211e7f22bb","src/paths.rs":"82ea99fd9307c3822608a1b3caf8ea7f8b7bd16800c0c42b175c3a1eca030b1c","src/patterns.rs":"c14232716b22ebb07222ef27c6b8adc2c4b5c33e066f1998b972565da2db4dfe","src/pdf.rs":"75a8a0bf6c4aa6be7435369c911c25f45c7696ab43dfe79bb001ce91bfc0901d","src/ps.rs":"88b9b2af77498b745d52e89cf0191dddf75e2b7c2dbe35bdba767a068cfae31a","src/quartz_surface.rs":"9aee0d95150565511b9d1bb327f0dca02a6a3cce3810470f964662d328a46f39","src/recording_surface.rs":"74f636a03093c0f57f3cae03fbe4618e3dcfa086075d1b562d2d7a35872b99b1","src/rectangle.rs":"62b3a3945dd8def735ea2b7f4b6621e3acc28a51d5c6c54b3f7102093daaa941","src/rectangle_int.rs":"ad5a6f601947cbb380ccd74306f131fefa2ff3987d24b053ebea301e1689f2f0","src/region.rs":"d2abfd89aa927483781067a98d8f7de75ba4d27428be2b54e63799056308ca08","src/stream.rs":"29c89a22f53c32a279afe601f400427088d54055b93f6cd9d024838bd278dd8e","src/surface.rs":"f8fe8e93f4e92ae35b5cf7b8fc1cefb2aabe954cc88b20d9ec0dfe283cef8696","src/svg.rs":"5efafb1f5f45de3f26bcf61db7733f77034e1ac77e8f33af91c13fbde509e5f8","src/user_data.rs":"0faba6f4902d20e5d7ace43267450c283707ebdaad3eefd29f061cd3a0e83cf8","src/utils.rs":"36f895fd12187bf9a5d9e8f8ed55d05df53977863f87742e14f199b03bb19d88","src/win32_surface.rs":"b3212d1af19a66777282709d436249d5e50a0e988b3bf5af7b16196b42c6ba06","src/xcb.rs":"ea849a8d4a01f2dcd367cceb55d575b2a1f025cd7d3eaf1f402f727acac6dc32"},"package":"e05db47de3b0f09a222fa4bba2eab957d920d4243962a86b2d77ab401e4a359c"}
 \ No newline at end of file
 diff --git a/vendor/cairo-rs/src/device.rs b/vendor/cairo-rs/src/device.rs
 index 1111111..2222222 100644
 --- a/vendor/cairo-rs/src/device.rs
 +++ b/vendor/cairo-rs/src/device.rs
-@@ -42,7 +42,7 @@ impl Device {
+@@ -37,7 +37,7 @@ impl Device {
          self.0
      }
  
@@ -73,7 +73,7 @@ index 1111111..2222222 100644
          unsafe {
              let filename = filename.as_ref().to_string_lossy().into_owned();
              let filename = CString::new(filename).unwrap();
-@@ -102,7 +102,7 @@ impl Device {
+@@ -99,7 +99,7 @@ impl Device {
              let comment = CString::new(comment).unwrap();
              ffi::cairo_script_write_comment(self.to_raw_none(), comment.as_ptr(), len as i32)
          }
@@ -81,21 +81,21 @@ index 1111111..2222222 100644
 +    }*/
  
      pub fn status(&self) -> Status {
-         unsafe {
+         unsafe { Status::from(ffi::cairo_device_status(self.to_raw_none())) }
 diff --git a/vendor/cairo-sys-rs/.cargo-checksum.json b/vendor/cairo-sys-rs/.cargo-checksum.json
 index 1111111..2222222 100644
 --- a/vendor/cairo-sys-rs/.cargo-checksum.json
 +++ b/vendor/cairo-sys-rs/.cargo-checksum.json
 @@ -1 +1 @@
--{"files":{"Cargo.toml":"831d539706a8ae2d803e69335b348c9c977fb0d2462cf7c31355f91fd67128b8","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","build.rs":"6396dd70c35848cbc0db79db4ecb2130344169f2e1426b0305265223f19862fa","src/gobject.rs":"21f7f8bda1c9d585cac6309e050eef442f6e08a77bce0c3119fe4e630b856f24","src/lib.rs":"f4e835e1d8153a33aa522e2507f83ed4bdd07543da49ebbc8f8f569ff20c8ffd"},"package":"b3fa13914fdc013387afa771f554f2f71d6ae931f4e5be9246c337d60c3dc484"}
+-{"files":{"Cargo.toml":"9330d2577b282d7c0c8958cf986814ede269816469b06953fde377966e68817c","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","build.rs":"6396dd70c35848cbc0db79db4ecb2130344169f2e1426b0305265223f19862fa","src/gobject.rs":"21f7f8bda1c9d585cac6309e050eef442f6e08a77bce0c3119fe4e630b856f24","src/lib.rs":"5ec57deed4502ae6ebb22ea28f7e5287709e8b6fd2e0dfa161137e31ac1f4994"},"package":"90a1ec04603a78c111886a385edcec396dbfbc57ea26b9e74aeea6a1fe55dcca"}
 \ No newline at end of file
-+{"files":{"Cargo.toml":"831d539706a8ae2d803e69335b348c9c977fb0d2462cf7c31355f91fd67128b8","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","build.rs":"6396dd70c35848cbc0db79db4ecb2130344169f2e1426b0305265223f19862fa","src/gobject.rs":"21f7f8bda1c9d585cac6309e050eef442f6e08a77bce0c3119fe4e630b856f24","src/lib.rs":"9ce0b5b450fc3c54333798e20430f4d96ff0dde8978b26c571df1c9db1606266"},"package":"b3fa13914fdc013387afa771f554f2f71d6ae931f4e5be9246c337d60c3dc484"}
++{"files":{"Cargo.toml":"9330d2577b282d7c0c8958cf986814ede269816469b06953fde377966e68817c","LICENSE":"cab4b590b1ecd9203034206ad4a6be920dca88d5ae5214f85ff13bd5f8c33bcf","build.rs":"6396dd70c35848cbc0db79db4ecb2130344169f2e1426b0305265223f19862fa","src/gobject.rs":"21f7f8bda1c9d585cac6309e050eef442f6e08a77bce0c3119fe4e630b856f24","src/lib.rs":"75293b58ce47550383e58737841267d3595b9a74f788eae4a1e0b13c155c8da8"},"package":"90a1ec04603a78c111886a385edcec396dbfbc57ea26b9e74aeea6a1fe55dcca"}
 \ No newline at end of file
 diff --git a/vendor/cairo-sys-rs/src/lib.rs b/vendor/cairo-sys-rs/src/lib.rs
 index 1111111..2222222 100644
 --- a/vendor/cairo-sys-rs/src/lib.rs
 +++ b/vendor/cairo-sys-rs/src/lib.rs
-@@ -846,7 +846,7 @@ extern "C" {
+@@ -833,7 +833,7 @@ extern "C" {
      pub fn cairo_quartz_surface_get_cg_context(surface: *mut cairo_surface_t) -> CGContextRef;
  
      // CAIRO SCRIPT
@@ -104,7 +104,7 @@ index 1111111..2222222 100644
      pub fn cairo_script_create_for_stream(write_func: cairo_write_func_t, closure: *mut c_void) -> cairo_status_t;
      pub fn cairo_script_from_recording_surface(script: *mut cairo_device_t, surface: *mut cairo_surface_t) -> cairo_status_t;
      pub fn cairo_script_get_mode(script: *mut cairo_device_t) -> cairo_script_mode_t;
-@@ -854,7 +854,7 @@ extern "C" {
+@@ -841,7 +841,7 @@ extern "C" {
      pub fn cairo_script_surface_create(script: *mut cairo_device_t, content: cairo_content_t,
                                         width: c_double, height: c_double) -> *mut cairo_surface_t;
      pub fn cairo_script_surface_create_for_target(script: *mut cairo_device_t, target: *mut cairo_surface_t) -> *mut cairo_surface_t;
@@ -113,86 +113,3 @@ index 1111111..2222222 100644
      pub fn cairo_device_destroy(device: *mut cairo_device_t);
      pub fn cairo_device_status(device: *mut cairo_device_t) -> cairo_status_t;
      pub fn cairo_device_finish(device: *mut cairo_device_t);
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Tue, 16 Jul 2019 09:00:00 +0200
-Subject: [PATCH 4/4] Ensure that the __clzsi2 symbol is present
-
-e310e36 solved static linking and the MinGW-w64 builds but included a
-workaround for Rust 1.34 and 1.35 that didn't work for Rust 1.36.
-
-The main problem with Rust 1.34 and 1.35 is that it included its own version
-of the `__clzsi2` intrinsic instead of the C version. This caused duplicate
-symbols during linking and required a workaround by removing the duplicated
-symbol, see:
-https://github.com/rust-lang/rust/issues/58277
-
-Fortunately, this is solved within rustc 1.36, see:
-https://github.com/rust-lang-nursery/compiler-builtins/commit/752e35a11f2e7eb29df84668bef0945e75cf3eb5
-
-The workaround, however, did not ensure that `__clzsi2` intrinsic is only
-removed when it is duplicated (it could also remove the optimized C version).
-
-This commit ensures that the `__clzsi2` intrinsic is present only once. Note
-that the entire workaround can be removed when the minimum Rust version is
-bumped to 1.36.
-
-Closes: https://gitlab.gnome.org/GNOME/librsvg/issues/485
-
-diff --git a/Makefile.am b/Makefile.am
-index 1111111..2222222 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -136,11 +136,11 @@ cargo_verbose_ = $(cargo_verbose_$(AM_DEFAULT_VERBOSITY))
- cargo_verbose_0 =
- cargo_verbose_1 = --verbose
- 
--RUST_LIB=@abs_top_builddir@/.libs/librsvg_internals.a
--CARGO_TARGET_DIR=@abs_top_builddir@/target
--
- LIBRSVG_BUILD_DIR=@abs_top_builddir@
--LIBRSVG_TARGET_DIR=@abs_top_builddir@/target/@RUST_TARGET_SUBDIR@
-+CARGO_TARGET_DIR=$(LIBRSVG_BUILD_DIR)/target
-+LIBRSVG_TARGET_DIR=$(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)
-+
-+RUST_LIB=$(LIBRSVG_BUILD_DIR)/.libs/librsvg_internals.a
- 
- check-local:
- 	cd $(srcdir) && \
-@@ -177,7 +177,9 @@ librsvg_internals.la: $(librsvg_internals_la_SOURCES)
- 	LIBRSVG_BUILD_DIR=$(LIBRSVG_BUILD_DIR)					\
- 	LIBRSVG_TARGET_DIR=$(LIBRSVG_TARGET_DIR)					\
- 	$(CARGO) --locked build $(CARGO_VERBOSE) $(CARGO_TARGET_ARGS) $(CARGO_RELEASE_ARGS) --features "c-library" \
--	&& $(AR) d $(RUST_LIB) clzsi2.o # HACK: https://github.com/rust-lang/rust/issues/58277
-+	&& if [[ $$($(NM) -g $(RUST_LIB) | grep "T __clzsi2" -c) -gt 1 ]] ; then \
-+		$(AR) d $(RUST_LIB) clzsi2.o;					\
-+	fi
- 
- librsvg_@RSVG_API_MAJOR_VERSION@_la_CPPFLAGS = \
- 	-I$(top_srcdir) 			\
-diff --git a/configure.ac b/configure.ac
-index 1111111..2222222 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -109,6 +109,7 @@ AS_IF(test x$RUSTC = xno,
-     AC_MSG_ERROR([rustc is required.  Please install the Rust toolchain from https://www.rust-lang.org/])
- )
- AC_CHECK_PROGS(AR, ar)
-+AC_CHECK_PROGS(NM, nm)
- 
- dnl Minimum version of rustc that we support
- dnl If you change this, please update COMPILING.md
-diff --git a/rsvg_internals/build.rs b/rsvg_internals/build.rs
-index 1111111..2222222 100644
---- a/rsvg_internals/build.rs
-+++ b/rsvg_internals/build.rs
-@@ -7,7 +7,7 @@ use std::path::Path;
- use std::os::unix::fs::symlink;
- 
- #[cfg(all(windows, not(target_env = "msvc")))]
--use std::os::windows::fs::symlink_file;
-+use std::os::windows::fs::symlink_file as symlink;
- 
- #[cfg(not(target_env = "msvc"))]
- use std::fs;
