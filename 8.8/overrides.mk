@@ -378,7 +378,6 @@ endef
 
 # compile with the Rust toolchain 
 define librsvg_BUILD
-    cd '$(SOURCE_DIR)' && autoreconf -fi
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
@@ -387,7 +386,8 @@ define librsvg_BUILD
         --disable-tools \
         LIBS='-lws2_32 -luserenv' \
         RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu \
-        AR='$(TARGET)-ar'
+        AR='$(TARGET)-ar' \
+        NM='$(TARGET)-nm'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
