@@ -3,144 +3,709 @@ This file is part of MXE. See LICENSE.md for licensing information.
 Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: John Cupitt <jcupitt@gmail.com>
-Date: Tue, 9 Jul 2019 16:58:30 +0100
-Subject: [PATCH 1/2] better early shutdown behaviour in shrinkv
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 28 Jul 2019 13:45:00 +0200
+Subject: [PATCH] Squashed commit of the following:
 
-read the tail of the input to force early shutdown in seq readers
+commit 42f0094b63652951ad54dcb16a497498cbbe159a
+Author: John Cupitt <jcupitt@gmail.com>
+Date:   Sun Jul 28 11:34:40 2019 +0100
 
-does reducev need something similar?
+    put close-on-last-line back for jpg/tif/png
 
-see https://github.com/kleisauke/net-vips/issues/12
+    consider something like:
 
-diff --git a/libvips/conversion/sequential.c b/libvips/conversion/sequential.c
+    $ vips arrayjoin "$(echo *.jpg)" x.tif --across 10 --vips-progress
+
+    close on minimise won't close until the whole pipeline finishes, so
+    we'll need to keep every input file open
+
+    close on last line will shut down inputs as we are done with them, so we
+    save a lot of file descriptors
+
+    this patch puts close-on-last-line back for jpg/tif/png
+
+commit 13d85964363d3eac7881743a724b8cc92289cda2
+Author: John Cupitt <jcupitt@gmail.com>
+Date:   Thu Jul 25 11:34:50 2019 +0100
+
+    remove old close-early comment from openexr load
+
+    no longer relevant in the world of minimise
+
+commit a2d380060f46895bbf48d169f5eebc8cc9b2aca3
+Author: John Cupitt <jcupitt@gmail.com>
+Date:   Thu Jul 25 11:31:21 2019 +0100
+
+    pdfload / pdfiumload use minimise to close early
+
+    see https://github.com/libvips/libvips/issues/1370#issuecomment-514949292
+
+commit 54a4dbd394175ca8a61e4fe605d36234a950ecc7
+Author: John Cupitt <jcupitt@gmail.com>
+Date:   Wed Jul 24 18:17:54 2019 +0100
+
+    better early close for gif header read
+
+commit 532471d4a419ab3af56eaf985cbc4b9004b919cf
+Author: John Cupitt <jcupitt@gmail.com>
+Date:   Wed Jul 24 18:00:37 2019 +0100
+
+    close heif early for header read err
+
+    we were only closing early if there was an error during pixel read
+
+commit 7422ed593fba217c7aeb0c6e2c980d5cc47ff21a
+Author: John Cupitt <jcupitt@gmail.com>
+Date:   Wed Jul 24 17:43:14 2019 +0100
+
+    fix early close for corrupt gifs
+
+    we were not closing early on a read error during gif scan
+
+    see https://github.com/libvips/libvips/issues/1370#issuecomment-514172899
+
+commit d914a8ddf7c75e06b15bc004bd4325fe9762baa6
+Author: John Cupitt <jcupitt@gmail.com>
+Date:   Tue Jul 23 12:06:35 2019 +0100
+
+    oops logic mixup
+
+    Kleis pointed out a suprious return in png load minimise.
+
+    see https://github.com/libvips/libvips/issues/1370#issuecomment-513706480
+
+commit c42abe2c9256eea769190b14be145d57a386a979
+Author: John Cupitt <jcupitt@gmail.com>
+Date:   Sun Jul 21 12:29:25 2019 +0100
+
+    add gif, heif, rad, webp early close
+
+commit 9a3870e92022b8d36ddec6b34b8ab8f30c2c29dd
+Author: John Cupitt <jcupitt@gmail.com>
+Date:   Sat Jul 20 16:31:30 2019 +0100
+
+    experiment with a different early-close strategy
+
+    We close loaders early in order to save file handles, and on Windows to
+    make sure that files can be deleted as soon as possible.
+
+    Currently loaders do this by watching the Y coordinate of requests and
+    freeing the fd when the final line of the file is fetched. This is messy
+    and does not always work, since there are cases when the final line is
+    not fetched.
+
+    Instead, this patch gets loaders to listen for "minimise" on their
+    output and close on that. This signal is emitted on all upstream images
+    whenever a threadpool finishes a scan of an image and is usually used to
+    trim caches after computation.
+
+    See https://github.com/libvips/libvips/issues/1370
+
+diff --git a/libvips/foreign/gifload.c b/libvips/foreign/gifload.c
 index 1111111..2222222 100644
---- a/libvips/conversion/sequential.c
-+++ b/libvips/conversion/sequential.c
-@@ -171,7 +171,8 @@ vips_sequential_generate( VipsRegion *or,
- 		return( -1 );
- 	}
- 
--	sequential->y_pos = VIPS_MAX( sequential->y_pos, VIPS_RECT_BOTTOM( r ) );
-+	sequential->y_pos = 
-+		VIPS_MAX( sequential->y_pos, VIPS_RECT_BOTTOM( r ) );
- 
- 	g_mutex_unlock( sequential->lock );
- 
-diff --git a/libvips/resample/shrinkv.c b/libvips/resample/shrinkv.c
-index 1111111..2222222 100644
---- a/libvips/resample/shrinkv.c
-+++ b/libvips/resample/shrinkv.c
-@@ -45,6 +45,8 @@
-  * 	- rename yshrink -> vshrink for greater consistency 
-  * 7/3/17
-  * 	- add a seq line cache
-+ * 9/7/19
-+ * 	- read the tail of the input to force early shutdown in seq readers
+--- a/libvips/foreign/gifload.c
++++ b/libvips/foreign/gifload.c
+@@ -22,6 +22,9 @@
+  * 	- init pages to 0 before load
+  * 14/2/19
+  * 	- rework as a sequential loader ... simpler, much lower mem use
++ * 24/7/19
++ * 	- close early on minimise 
++ * 	- close early on error
   */
  
  /*
-@@ -99,6 +101,7 @@ typedef struct _VipsShrinkv {
+@@ -584,13 +587,13 @@ vips_foreign_load_gif_set_header( VipsForeignLoadGif *gif, VipsImage *image )
+ }
  
- 	int vshrink;
- 	size_t sizeof_line_buffer;
-+	gboolean sequential;
+ /* Attempt to quickly scan a GIF and discover what we need for our header. We
+- * need to scan the whole file to get n_pages, transparency and colour. 
++ * need to scan the whole file to get n_pages, transparency and colour.
+  */
+ static int
+ vips_foreign_load_gif_header( VipsForeignLoad *load )
+ {
+ 	VipsObjectClass *class = VIPS_OBJECT_GET_CLASS( load );
+-	VipsForeignLoadGifClass *gif_class = 
++	VipsForeignLoadGifClass *gif_class =
+ 		(VipsForeignLoadGifClass *) VIPS_OBJECT_GET_CLASS( load );
+ 	VipsForeignLoadGif *gif = (VipsForeignLoadGif *) load;
  
- } VipsShrinkv;
+@@ -614,8 +617,6 @@ vips_foreign_load_gif_header( VipsForeignLoad *load )
+ 				return( -1 ); 
+ 			}
  
-@@ -315,6 +318,37 @@ vips_shrinkv_gen( VipsRegion *or, void *vseq,
+-			/* Read in the image record.
+-			 */
+ 			if( vips_foreign_load_gif_scan_image_record( gif ) )
+ 				return( -1 );
  
- 	VIPS_COUNT_PIXELS( or, "vips_shrinkv_gen" ); 
+@@ -624,7 +625,7 @@ vips_foreign_load_gif_header( VipsForeignLoad *load )
+ 			break;
  
-+	/* If we are in seq mode and we've just generated the last line of 
-+	 * the output, make sure we read all of the input.
-+	 *
-+	 * This will trigger the early shutdown logic in things like the 
-+	 * tiff loader.
-+	 */
-+	if( shrink->sequential &&
-+		r->top + r->height >= or->im->Ysize ) {
-+		/* First unused scanline.
-+		 */
-+		int first = or->im->Ysize * shrink->vshrink;
-+		int unused = ir->im->Ysize - first;
-+
-+		g_assert( unused >= 0 );
-+
-+		for( y = 0; y < unused; y++ ) { 
-+			VipsRect s;
-+
-+			s.left = r->left;
-+			s.top = first + y;
-+			s.width = r->width;
-+			s.height = 1;
-+#ifdef DEBUG
-+			printf( "shrink_gen: requesting tail %d\n", s.top ); 
-+#endif /*DEBUG*/
-+
-+			if( vips_region_prepare( ir, &s ) )
-+				return( -1 );
-+		}
-+	}
-+
+ 		case EXTENSION_RECORD_TYPE:
+-			/* We will need to fetch the extensions to check for
++			/* We need to fetch the extensions to check for
+ 			 * cmaps and transparency.
+ 			 */
+ 			if( vips_foreign_load_gif_scan_extension( gif ) )
+@@ -986,6 +987,12 @@ vips_foreign_load_gif_generate( VipsRegion *or,
  	return( 0 );
  }
  
-@@ -349,12 +383,12 @@ vips_shrinkv_build( VipsObject *object )
- 		return( -1 );
- 	in = t[0];
- 
--	/* We need new pixels along the bottom so that we don't have small chunks
--	 * to average along the bottom edge.
-+	/* Make the height a multiple of the shrink factor so we don't need to
-+	 * average half pixels.
- 	 */
- 	if( vips_embed( in, &t[1], 
- 		0, 0, 
--		in->Xsize, in->Ysize + shrink->vshrink, 
-+		in->Xsize, VIPS_ROUND_UP( in->Ysize, shrink->vshrink ), 
- 		"extend", VIPS_EXTEND_COPY,
- 		NULL ) )
- 		return( -1 );
-@@ -415,6 +449,8 @@ vips_shrinkv_build( VipsObject *object )
- 	if( vips_image_get_typeof( in, VIPS_META_SEQUENTIAL ) ) { 
- 		g_info( "shrinkv sequential line cache" ); 
- 
-+		shrink->sequential = TRUE;
++static void
++vips_foreign_load_gif_minimise( VipsObject *object, VipsForeignLoadGif *gif )
++{
++	vips_foreign_load_gif_close( gif );
++}
 +
- 		if( vips_sequential( in, &t[3], 
- 			"tile_height", 10,
- 			NULL ) )
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: John Cupitt <jcupitt@gmail.com>
-Date: Wed, 10 Jul 2019 17:43:17 +0100
-Subject: [PATCH 2/2] tiny improvement
-
-
-diff --git a/libvips/resample/shrinkv.c b/libvips/resample/shrinkv.c
-index 1111111..2222222 100644
---- a/libvips/resample/shrinkv.c
-+++ b/libvips/resample/shrinkv.c
-@@ -268,6 +268,7 @@ vips_shrinkv_gen( VipsRegion *or, void *vseq,
+ static int
+ vips_foreign_load_gif_load( VipsForeignLoad *load )
  {
- 	VipsShrinkvSequence *seq = (VipsShrinkvSequence *) vseq;
- 	VipsShrinkv *shrink = (VipsShrinkv *) b;
-+	VipsResample *resample = VIPS_RESAMPLE( shrink );
- 	VipsRegion *ir = seq->ir;
+@@ -1029,6 +1036,11 @@ vips_foreign_load_gif_load( VipsForeignLoad *load )
+ 	if( vips_foreign_load_gif_set_header( gif, t[0] ) )
+ 		return( -1 );
+ 
++	/* Close input immediately at end of read.
++	 */
++	g_signal_connect( t[0], "minimise", 
++		G_CALLBACK( vips_foreign_load_gif_minimise ), gif ); 
++
+ 	/* Strips 8 pixels high to avoid too many tiny regions.
+ 	 */
+ 	if( vips_image_generate( t[0], 
+@@ -1165,6 +1177,26 @@ vips_giflib_file_read( GifFileType *file, GifByteType *buffer, int n )
+ 	return( (int) fread( (void *) buffer, 1, n, fp ) );
+ }
+ 
++static int
++vips_foreign_load_gif_file_header( VipsForeignLoad *load )
++{
++	VipsForeignLoadGifFile *file = (VipsForeignLoadGifFile *) load;
++
++	if( VIPS_FOREIGN_LOAD_CLASS( 
++		vips_foreign_load_gif_file_parent_class )->header( load ) ) {
++		/* Close early if header read fails in our base class.
++		 */
++		VIPS_FREEF( fclose, file->fp );
++		return( -1 );
++	}
++
++	return( 0 );
++}
++
++/* We have to have _open() as a vfunc since our base class needs to be able to
++ * make two scans of the gif (scan for header, then scan for pixels), so we 
++ * must be able to close and reopen (or rewind).
++ */
+ static int
+ vips_foreign_load_gif_file_open( VipsForeignLoadGif *gif )
+ {
+@@ -1214,6 +1246,7 @@ vips_foreign_load_gif_file_class_init(
+ 	foreign_class->suffs = vips_foreign_gif_suffs;
+ 
+ 	load_class->is_a = vips_foreign_load_gif_is_a;
++	load_class->header = vips_foreign_load_gif_file_header;
+ 
+ 	gif_class->open = vips_foreign_load_gif_file_open;
+ 
+diff --git a/libvips/foreign/heifload.c b/libvips/foreign/heifload.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/heifload.c
++++ b/libvips/foreign/heifload.c
+@@ -2,6 +2,9 @@
+  *
+  * 19/1/19
+  * 	- from niftiload.c
++ * 24/7/19
++ * 	- close early on minimise 
++ * 	- close early on error
+  */
+ 
+ /*
+@@ -129,13 +132,20 @@ G_DEFINE_ABSTRACT_TYPE( VipsForeignLoadHeif, vips_foreign_load_heif,
+ 	VIPS_TYPE_FOREIGN_LOAD );
+ 
+ static void
+-vips_foreign_load_heif_dispose( GObject *gobject )
++vips_foreign_load_heif_close( VipsForeignLoadHeif *heif )
+ {
+-	VipsForeignLoadHeif *heif = (VipsForeignLoadHeif *) gobject;
+-
+ 	VIPS_FREEF( heif_image_release, heif->img );
++	heif->data = NULL;
+ 	VIPS_FREEF( heif_image_handle_release, heif->handle );
+ 	VIPS_FREEF( heif_context_free, heif->ctx );
++}
++
++static void
++vips_foreign_load_heif_dispose( GObject *gobject )
++{
++	VipsForeignLoadHeif *heif = (VipsForeignLoadHeif *) gobject;
++
++	vips_foreign_load_heif_close( heif );
+ 	VIPS_FREE( heif->id );
+ 
+ 	G_OBJECT_CLASS( vips_foreign_load_heif_parent_class )->
+@@ -685,6 +695,12 @@ vips_foreign_load_heif_generate( VipsRegion *or,
+ 	return( 0 );
+ }
+ 
++static void
++vips_foreign_load_heif_minimise( VipsObject *object, VipsForeignLoadHeif *heif )
++{
++	vips_foreign_load_heif_close( heif );
++}
++
+ static int
+ vips_foreign_load_heif_load( VipsForeignLoad *load )
+ {
+@@ -700,6 +716,12 @@ vips_foreign_load_heif_load( VipsForeignLoad *load )
+ 	t[0] = vips_image_new();
+ 	if( vips_foreign_load_heif_set_header( heif, t[0] ) )
+ 		return( -1 );
++
++	/* Close input immediately at end of read.
++	 */
++	g_signal_connect( t[0], "minimise", 
++		G_CALLBACK( vips_foreign_load_heif_minimise ), heif ); 
++
+ 	if( vips_image_generate( t[0],
+ 		NULL, vips_foreign_load_heif_generate, NULL, heif, NULL ) ||
+ 		vips_sequential( t[0], &t[1], NULL ) ||
+@@ -799,13 +821,20 @@ vips_foreign_load_heif_file_header( VipsForeignLoad *load )
+ 
+ 	error = heif_context_read_from_file( heif->ctx, file->filename, NULL );
+ 	if( error.code ) {
++		/* Make sure we close the fd as soon as we can on error.
++		 */
++		vips_foreign_load_heif_close( heif ); 
+ 		vips__heif_error( &error );
+ 		return( -1 );
+ 	}
+ 
+ 	if( VIPS_FOREIGN_LOAD_CLASS( 
+-		vips_foreign_load_heif_file_parent_class )->header( load ) )
++		vips_foreign_load_heif_file_parent_class )->header( load ) ) {
++		/* Close early if our base class fails to read.
++		 */
++		vips_foreign_load_heif_close( heif ); 
+ 		return( -1 );
++	}
+ 
+ 	VIPS_SETSTR( load->out->filename, file->filename );
+ 
+diff --git a/libvips/foreign/jpeg2vips.c b/libvips/foreign/jpeg2vips.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/jpeg2vips.c
++++ b/libvips/foreign/jpeg2vips.c
+@@ -100,6 +100,8 @@
+  * 	- strict round down on shrink-on-load
+  * 16/8/18
+  * 	- shut down the input file as soon as we can [kleisauke]
++ * 20/7/19
++ * 	- close input on minimise rather than Y read position
+  */
+ 
+ /*
+@@ -190,8 +192,7 @@ typedef struct _ReadJpeg {
+ 	int output_height;
+ } ReadJpeg;
+ 
+-/* This can be called many times. It's called directly at the end of image
+- * read.
++/* This can be called many times. 
+  */
+ static void
+ readjpeg_close_input( ReadJpeg *jpeg )
+@@ -237,6 +238,12 @@ readjpeg_close_cb( VipsObject *object, ReadJpeg *jpeg )
+ 	(void) readjpeg_free( jpeg );
+ }
+ 
++static void
++readjpeg_minimise_cb( VipsObject *object, ReadJpeg *jpeg )
++{
++	readjpeg_close_input( jpeg );
++}
++
+ static ReadJpeg *
+ readjpeg_new( VipsImage *out, int shrink, gboolean fail, gboolean autorotate )
+ {
+@@ -270,6 +277,8 @@ readjpeg_new( VipsImage *out, int shrink, gboolean fail, gboolean autorotate )
+ 
+ 	g_signal_connect( out, "close", 
+ 		G_CALLBACK( readjpeg_close_cb ), jpeg ); 
++	g_signal_connect( out, "minimise", 
++		G_CALLBACK( readjpeg_minimise_cb ), jpeg ); 
+ 
+ 	return( jpeg );
+ }
+@@ -290,20 +299,17 @@ readjpeg_file( ReadJpeg *jpeg, const char *filename )
+ static const char *
+ find_chroma_subsample( struct jpeg_decompress_struct *cinfo )
+ {
+-	gboolean has_subsample;
+-
+ 	/* libjpeg only uses 4:4:4 and 4:2:0, confusingly. 
+ 	 *
+ 	 * http://poynton.ca/PDFs/Chroma_subsampling_notation.pdf
+ 	 */
+-	has_subsample = cinfo->max_h_samp_factor > 1 ||
++	gboolean has_subsample = cinfo->max_h_samp_factor > 1 ||
+ 		cinfo->max_v_samp_factor > 1;
+-	if( cinfo->num_components > 3 )
+-		/* A cmyk image.
+-		 */
+-		return( has_subsample ? "4:2:0:4" : "4:4:4:4" );
+-	else
+-		return( has_subsample ? "4:2:0" : "4:4:4" );
++	gboolean is_cmyk = cinfo->num_components > 3;
++
++	return( is_cmyk ? 
++		(has_subsample ? "4:2:0:4" : "4:4:4:4" ) :
++		(has_subsample ? "4:2:0" : "4:4:4") );
+ }
+ 
+ static int
+@@ -718,7 +724,7 @@ read_jpeg_generate( VipsRegion *or,
+ 		jpeg->y_pos += 1; 
+ 	}
+ 
+-	/* Shut down the input file as soon as we can. 
++	/* Shut down the input file.
+ 	 */
+ 	if( jpeg->y_pos >= or->im->Ysize ) 
+ 		readjpeg_close_input( jpeg );
+diff --git a/libvips/foreign/openexr2vips.c b/libvips/foreign/openexr2vips.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/openexr2vips.c
++++ b/libvips/foreign/openexr2vips.c
+@@ -348,11 +348,6 @@ vips__openexr_generate( VipsRegion *out,
+ 			}
+ 		}
+ 
+-	/* We can't shut down the input file early for tile read, even if we
+-	 * know load is in sequential mode, since we are not inside a
+-	 * vips_sequential() and requests are not guaranteed to be in order.
+-	 */
+-
+ 	return( 0 );
+ }
+ 
+diff --git a/libvips/foreign/pdfiumload.c b/libvips/foreign/pdfiumload.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/pdfiumload.c
++++ b/libvips/foreign/pdfiumload.c
+@@ -380,6 +380,15 @@ vips_foreign_load_pdf_header( VipsForeignLoad *load )
+ 	return( 0 );
+ }
+ 
++static void
++vips_foreign_load_pdf_minimise( VipsObject *object, VipsForeignLoadPdf *pdf )
++{
++	/* In seq mode, we can shut down the input at the end of computation.
++	 */
++	if( VIPS_FOREIGN_LOAD( pdf )->access == VIPS_ACCESS_SEQUENTIAL )
++		vips_foreign_load_pdf_close( pdf ); 
++}
++
+ static int
+ vips_foreign_load_pdf_generate( VipsRegion *or, 
+ 	void *seq, void *a, void *b, gboolean *stop )
+@@ -436,13 +445,6 @@ vips_foreign_load_pdf_generate( VipsRegion *or,
+ 		i += 1;
+ 	}
+ 
+-	/* In seq mode, we can shut down the input when we render the last
+-	 * row.
+-	 */
+-	if( top >= or->im->Ysize &&
+-		load->access == VIPS_ACCESS_SEQUENTIAL )
+-		vips_foreign_load_pdf_close( pdf ); 
+-
+ 	/* PDFium writes BRGA, we must swap.
+ 	 *
+ 	 * FIXME ... this is a bit slow.
+@@ -476,6 +478,11 @@ vips_foreign_load_pdf_load( VipsForeignLoad *load )
+ 	 */
+ 	t[0] = vips_image_new(); 
+ 
++	/* Close input immediately at end of read.
++	 */
++	g_signal_connect( t[0], "minimise", 
++		G_CALLBACK( vips_foreign_load_pdf_minimise ), pdf ); 
++
+ 	vips_foreign_load_pdf_set_image( pdf, t[0] ); 
+ 	if( vips_image_generate( t[0], 
+ 		NULL, vips_foreign_load_pdf_generate, NULL, pdf, NULL ) )
+diff --git a/libvips/foreign/pdfload.c b/libvips/foreign/pdfload.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/pdfload.c
++++ b/libvips/foreign/pdfload.c
+@@ -334,12 +334,20 @@ vips_foreign_load_pdf_header( VipsForeignLoad *load )
+ 	return( 0 );
+ }
+ 
++static void
++vips_foreign_load_pdf_minimise( VipsObject *object, VipsForeignLoadPdf *pdf )
++{
++	/* In seq mode, we can shut down the input at the end of computation.
++	 */
++	if( VIPS_FOREIGN_LOAD( pdf )->access == VIPS_ACCESS_SEQUENTIAL )
++		vips_foreign_load_pdf_close( pdf ); 
++}
++
+ static int
+ vips_foreign_load_pdf_generate( VipsRegion *or, 
+ 	void *seq, void *a, void *b, gboolean *stop )
+ {
+ 	VipsForeignLoadPdf *pdf = (VipsForeignLoadPdf *) a;
+-	VipsForeignLoad *load = (VipsForeignLoad *) pdf;
  	VipsRect *r = &or->valid;
  
-@@ -326,10 +327,11 @@ vips_shrinkv_gen( VipsRegion *or, void *vseq,
+ 	int top;
+@@ -398,13 +406,6 @@ vips_foreign_load_pdf_generate( VipsRegion *or,
+ 		i += 1;
+ 	}
+ 
+-	/* In seq mode, we can shut down the input when we render the last
+-	 * row.
+-	 */
+-	if( top >= or->im->Ysize &&
+-		load->access == VIPS_ACCESS_SEQUENTIAL )
+-		vips_foreign_load_pdf_close( pdf ); 
+-
+ 	/* Cairo makes pre-multipled BRGA, we must byteswap and unpremultiply.
  	 */
- 	if( shrink->sequential &&
- 		r->top + r->height >= or->im->Ysize ) {
--		/* First unused scanline.
-+		/* First unused scanline. resample->in->Ysize because we want
-+		 * the height before the embed.
- 		 */
- 		int first = or->im->Ysize * shrink->vshrink;
--		int unused = ir->im->Ysize - first;
-+		int unused = resample->in->Ysize - first;
+ 	for( y = 0; y < r->height; y++ ) 
+@@ -430,6 +431,11 @@ vips_foreign_load_pdf_load( VipsForeignLoad *load )
+ 	 */
+ 	t[0] = vips_image_new(); 
  
- 		g_assert( unused >= 0 );
++	/* Close input immediately at end of read.
++	 */
++	g_signal_connect( t[0], "minimise", 
++		G_CALLBACK( vips_foreign_load_pdf_minimise ), pdf ); 
++
+ 	vips_foreign_load_pdf_set_image( pdf, t[0] ); 
+ 	if( vips_image_generate( t[0], 
+ 		NULL, vips_foreign_load_pdf_generate, NULL, pdf, NULL ) )
+diff --git a/libvips/foreign/radiance.c b/libvips/foreign/radiance.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/radiance.c
++++ b/libvips/foreign/radiance.c
+@@ -984,12 +984,17 @@ vips__rad_israd( const char *filename )
+ 	return( result == 1 );
+ }
  
++static void
++read_minimise( VipsObject *object, Read *read )
++{
++	VIPS_FREEF( buffer_free, read->buffer );
++	VIPS_FREEF( fclose, read->fin );
++}
++
+ static void
+ read_destroy( VipsObject *object, Read *read )
+ {
+ 	VIPS_FREE( read->filename );
+-	VIPS_FREEF( fclose, read->fin );
+-	VIPS_FREEF( buffer_free, read->buffer );
+ }
+ 
+ static Read *
+@@ -1019,6 +1024,8 @@ read_new( const char *filename, VipsImage *out )
+ 	read->prims[3][1] = CIE_y_w;
+ 	read->buffer = NULL;
+ 
++	g_signal_connect( out, "minimise", 
++		G_CALLBACK( read_minimise ), read );
+ 	g_signal_connect( out, "close", 
+ 		G_CALLBACK( read_destroy ), read );
+ 
+diff --git a/libvips/foreign/tiff2vips.c b/libvips/foreign/tiff2vips.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/tiff2vips.c
++++ b/libvips/foreign/tiff2vips.c
+@@ -189,6 +189,8 @@
+  * 7/6/19
+  * 	- istiff reads the first directory rather than just testing the magic
+  * 	  number, so it ignores more TIFF-like, but not TIFF images
++ * 20/7/19
++ * 	- use "minimise" for early shutdown, rather than read Y position
+  */
+ 
+ /*
+@@ -494,6 +496,20 @@ rtiff_close_cb( VipsObject *object, Rtiff *rtiff )
+ 	rtiff_free( rtiff ); 
+ }
+ 
++static void
++rtiff_minimise_cb( VipsObject *object, Rtiff *rtiff )
++{
++#ifdef DEBUG
++	printf( "rtiff_minimise_cb: %p minimise\n", rtiff );
++#endif /*DEBUG*/
++
++	/* Close early for non-tiled TIFFs. Tiled TIFFs are read randomly, so
++	 * the end of a loop doesn't mean the tiff won't be used again.
++	 */
++	if( !rtiff->header.tiled )
++		rtiff_free( rtiff ); 
++}
++
+ static Rtiff *
+ rtiff_new( VipsImage *out, int page, int n, gboolean autorotate )
+ {
+@@ -520,6 +536,9 @@ rtiff_new( VipsImage *out, int page, int n, gboolean autorotate )
+ 	g_signal_connect( out, "close", 
+ 		G_CALLBACK( rtiff_close_cb ), rtiff ); 
+ 
++	g_signal_connect( out, "minimise", 
++		G_CALLBACK( rtiff_minimise_cb ), rtiff ); 
++
+ 	if( rtiff->page < 0 || rtiff->page > 1000000 ) {
+ 		vips_error( "tiff2vips", _( "bad page number %d" ),
+ 			rtiff->page );
+@@ -1603,11 +1622,6 @@ rtiff_fill_region( VipsRegion *out,
+ 
+ 	VIPS_GATE_STOP( "rtiff_fill_region: work" ); 
+ 
+-	/* We can't shut down the input file early for tile read, even if we
+-	 * know load is in sequential mode, since we are not inside a
+-	 * vips_sequential() and requests are not guaranteed to be in order.
+-	 */
+-
+ 	return( 0 );
+ }
+ 
+@@ -1949,11 +1963,11 @@ rtiff_stripwise_generate( VipsRegion *or,
+ 		rtiff->y_pos += hit.height;
+ 	}
+ 
+-	/* Shut down the input file as soon as we can. 
++	/* Shut down the input file as soon as we can.
+ 	 */
+ 	if( rtiff->y_pos >= or->im->Ysize ) {
+ #ifdef DEBUG
+-		printf( "rtiff_stripwise_generate: early shutdown\n" ); 
++		printf( "rtiff_stripwise_generate: early shutdown\n" );
+ #endif /*DEBUG*/
+ 		rtiff_free( rtiff );
+ 	}
+diff --git a/libvips/foreign/vipspng.c b/libvips/foreign/vipspng.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/vipspng.c
++++ b/libvips/foreign/vipspng.c
+@@ -196,6 +196,22 @@ read_close_cb( VipsImage *out, Read *read )
+ 	read_destroy( read ); 
+ }
+ 
++static void
++read_minimise_cb( VipsImage *out, Read *read )
++{
++	/* Catch errors from png_read_end(). This can fail on a truncated
++	 * file. 
++	 */
++	if( read->pPng ) {
++		/* Catch and ignore error returns from png_read_end().
++		 */
++		if( !setjmp( png_jmpbuf( read->pPng ) ) ) 
++			png_read_end( read->pPng, NULL ); 
++	}
++
++	read_destroy( read );
++}
++
+ static Read *
+ read_new( VipsImage *out, gboolean fail )
+ {
+@@ -218,6 +234,8 @@ read_new( VipsImage *out, gboolean fail )
+ 
+ 	g_signal_connect( out, "close", 
+ 		G_CALLBACK( read_close_cb ), read ); 
++	g_signal_connect( out, "minimise", 
++		G_CALLBACK( read_minimise_cb ), read ); 
+ 
+ 	if( !(read->pPng = png_create_read_struct( 
+ 		PNG_LIBPNG_VER_STRING, NULL,
+@@ -636,22 +654,21 @@ png2vips_generate( VipsRegion *or,
+ 	}
+ 
+ 	/* Catch errors from png_read_end(). This can fail on a truncated
+-	 * file. 
++	 * file.
+ 	 */
+ 	if( setjmp( png_jmpbuf( read->pPng ) ) ) {
+ 		if( read->fail ) {
+-			vips_error( "vipspng", "%s", _( "libpng read error" ) ); 
++			vips_error( "vipspng", "%s", _( "libpng read error" ) );
+ 			return( -1 );
+ 		}
+ 
+ 		return( 0 );
+ 	}
+ 
+-	/* We need to shut down the reader immediately at the end of read or
+-	 * we won't detach ready for the next image.
++	/* Early close to free the fd as soon as we can.
+ 	 */
+ 	if( read->y_pos >= read->out->Ysize ) {
+-		png_read_end( read->pPng, NULL ); 
++		png_read_end( read->pPng, NULL );
+ 		read_destroy( read );
+ 	}
+ 
+diff --git a/libvips/foreign/webp2vips.c b/libvips/foreign/webp2vips.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/webp2vips.c
++++ b/libvips/foreign/webp2vips.c
+@@ -338,8 +338,8 @@ vips__iswebp( const char *filename )
+ 	return( 0 );
+ }
+ 
+-static int
+-read_free( Read *read )
++static void
++read_minimise( Read *read )
+ {
+ 	WebPDemuxReleaseIterator( &read->iter );
+ 	VIPS_UNREF( read->frame );
+@@ -355,6 +355,13 @@ read_free( Read *read )
+ 	}
+ 
+ 	VIPS_FREEF( vips_tracked_close, read->fd ); 
++}
++
++static int
++read_free( Read *read )
++{
++	read_minimise( read );
++
+ 	VIPS_FREE( read->filename );
+ 	VIPS_FREE( read );
+ 
+@@ -751,6 +758,12 @@ read_webp_generate( VipsRegion *or,
+ 	return( 0 );
+ }
+ 
++static void
++read_minimise_cb( VipsObject *object, Read *read )
++{
++	read_minimise( read );
++}
++
+ static int
+ read_image( Read *read, VipsImage *out )
+ {
+@@ -761,6 +774,9 @@ read_image( Read *read, VipsImage *out )
+ 	if( read_header( read, t[0] ) )
+ 		return( -1 );
+ 
++	g_signal_connect( t[0], "minimise", 
++		G_CALLBACK( read_minimise_cb ), read );
++
+ 	if( vips_image_generate( t[0], 
+ 		NULL, read_webp_generate, NULL, read, NULL ) ||
+ 		vips_sequential( t[0], &t[1], NULL ) ||

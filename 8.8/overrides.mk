@@ -58,24 +58,24 @@ gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
 # upstream version is 1.5.2
-matio_VERSION  := 1.5.16
-matio_CHECKSUM := 47ba3d5d269d5709b8d9a7385c88c8b5fb5ff875ef781a1ced4892b5b03c4f44
+matio_VERSION  := 1.5.17
+matio_CHECKSUM := 5e455527d370ab297c4abe5a2ab4d599c93ac7c1a0c85d841cc5c22f8221c400
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-53
-imagemagick_CHECKSUM := 2cf76ebb162f07a065f34b9340e5fbf242faa842e36de7958d04aa2f626e5bff
+imagemagick_VERSION  := 6.9.10-56
+imagemagick_CHECKSUM := a80f448ea2d0abe52a9a91ae0ce29c90569f7aafd6143a2fe4cfe4a0c7893dbc
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick6-$(imagemagick_VERSION)
 imagemagick_FILE     := $(imagemagick_VERSION).tar.gz
 imagemagick_URL      := https://github.com/ImageMagick/ImageMagick6/archive/$(imagemagick_FILE)
 
 # upstream version is 2.4
-x265_VERSION  := 3.0
-x265_CHECKSUM := c5b9fc260cabbc4a81561a448f4ce9cad7218272b4011feabc3a6b751b2f0662
+x265_VERSION  := 3.1.1
+x265_CHECKSUM := 827900c7cc0a0105b8a96460fab7cd22b97afa7b2835b5cb979c44bddaa3c8d0
 x265_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
 x265_SUBDIR   := x265_$(x265_VERSION)
 x265_FILE     := x265_$(x265_VERSION).tar.gz
@@ -83,8 +83,8 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.45.7
-librsvg_CHECKSUM := d4399eb76eb4e955fd36a5e536e4cb965ccfafbbc72e3b43495e08ac2a61f993
+librsvg_VERSION  := 2.45.8
+librsvg_CHECKSUM := 3fa09b8e4d3f2d397c6dd26f1078795203f05f609672d31c11e8bae1e5a152f1
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -98,14 +98,8 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 0.78.0
 # Use the mutex helper from mingw-std-threads
-poppler_VERSION  := 0.79.0
-poppler_CHECKSUM := f985a4608fe592d2546d9d37d4182e502ff6b4c42f8db4be0a021a1c369528c8
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.13
@@ -113,14 +107,6 @@ libcroco_CHECKSUM := 767ec234ae7aa684695b3a735548224888132e063f92db585759b422570
 libcroco_SUBDIR   := libcroco-$(libcroco_VERSION)
 libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
-
-# upstream version is 1.0.2
-libwebp_VERSION  := 1.0.3
-libwebp_CHECKSUM := e20a07865c8697bba00aebccc6f54912d6bc333bb4d604e6b07491c1a226b34f
-libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
-libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
-libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
-libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
 glib_VERSION  := 2.61.1
@@ -360,6 +346,22 @@ define libjpeg-turbo_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
+# build without `-fno-asynchronous-unwind-tables`, see:
+# https://github.com/mxe/mxe/commit/b42cd62e9a4a4e583be4970ebdced357d02d5a71#r34386467
+define libpng_BUILD
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS)
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+
+    ln -sf '$(PREFIX)/$(TARGET)/bin/libpng-config' '$(PREFIX)/bin/$(TARGET)-libpng-config'
+
+    '$(TARGET)-gcc' \
+        -W -Wall -Werror -std=c99 -pedantic \
+        '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-libpng.exe' \
+        `'$(PREFIX)/$(TARGET)/bin/libpng-config' --static --cflags --libs`
+endef
+
 # disable GObject introspection
 # build with the Meson build system
 define pango_BUILD
@@ -376,7 +378,6 @@ endef
 
 # compile with the Rust toolchain 
 define librsvg_BUILD
-    cd '$(SOURCE_DIR)' && autoreconf -fi
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
@@ -385,7 +386,8 @@ define librsvg_BUILD
         --disable-tools \
         LIBS='-lws2_32 -luserenv' \
         RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu \
-        AR='$(TARGET)-ar'
+        AR='$(TARGET)-ar' \
+        NM='$(TARGET)-nm'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
@@ -403,7 +405,7 @@ define poppler_BUILD
         -DENABLE_LIBOPENJPEG='openjpeg2' \
         -DENABLE_DCTDECODER='libjpeg' \
         -DFONT_CONFIGURATION=win32 \
-        -DENABLE_XPDF_HEADERS=OFF \
+        -DENABLE_UNSTABLE_API_ABI_HEADERS=OFF \
         -DENABLE_SPLASH=OFF \
         -DENABLE_CPP=OFF \
         -DBUILD_GTK_TESTS=OFF \
