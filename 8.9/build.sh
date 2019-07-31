@@ -66,6 +66,11 @@ if [ "$MOZJPEG" = "true" ]; then
   plugins+=" $work_dir/plugins/mozjpeg"
 fi
 
+if [ "$ZLIB_NG" = "true" ]; then
+  echo "zlib-ng plugin enabled"
+  plugins+=" $work_dir/plugins/zlib-ng"
+fi
+
 # Avoid shipping the gettext DLL (libintl-8.dll),
 # use a statically build dummy implementation instead.
 # This intentionally disables the i18n features of (GNU)

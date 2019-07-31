@@ -46,6 +46,10 @@ if [ "$MOZJPEG" = "true" ]; then
   zip_suffix+="-mozjpeg"
 fi
 
+if [ "$ZLIB_NG" = "false" ]; then
+  zip_suffix+="-zlib-vanilla"
+fi
+
 if [ "$LLVM" = "true" ] && [[ "$arch" != "arm"* ]]; then
   zip_suffix+="-llvm"
 fi

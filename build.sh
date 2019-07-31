@@ -29,6 +29,12 @@ else
   with_mozjpeg=false
 fi
 
+if [[ "$*" == *--without-zlib-ng* ]]; then
+  with_zlib_ng=false
+else
+  with_zlib_ng=true
+fi
+
 if [[ "$*" == *--with-llvm* ]]; then
   # This indicates that we don't need to force C++03
   # compilication for some packages, we can safely use
@@ -78,6 +84,7 @@ docker run --rm -t \
   -v $PWD/$version:/data \
   -e "MOZJPEG=$with_mozjpeg" \
   -e "LLVM=$with_llvm" \
+  -e "ZLIB_NG=$with_zlib_ng" \
   libvips-build-win-mxe \
   $deps \
   $target
