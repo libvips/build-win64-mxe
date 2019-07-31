@@ -31,7 +31,10 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [orc]           | 0.4.29    | BSD 2-Clause                    |
 | [pango]         | 1.43.0    | LGPLv3                          |
 | [pixman]        | 0.38.4    | MIT Licence                     |
-| [zlib]          | 1.2.11    | [zlib Licence]                  |
+| [zlib-ng]       | f06c71f¹  | [zlib-ng Licence]               |
+
+¹ zlib-ng is built from the develop branch because there's no release available (yet), see:
+https://github.com/zlib-ng/zlib-ng/issues/64
 
 [cairo]: https://cairographics.org/
 [expat]: https://github.com/libexpat/libexpat
@@ -64,8 +67,8 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 [orc]: https://github.com/GStreamer/orc
 [pango]: https://www.pango.org/
 [pixman]: http://www.pixman.org/
-[zlib]: https://zlib.net/
-[zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h
+[zlib-ng]: https://github.com/zlib-ng/zlib-ng
+[zlib-ng Licence]: https://github.com/zlib-ng/zlib-ng/blob/develop/LICENSE.md
 
 ## libvips-all dependencies
 Same as libvips-web + these extra dependencies:
@@ -115,8 +118,26 @@ argument. For example:
 
 | Dependency      | Version   | Used under the terms of          |
 |-----------------|-----------|----------------------------------|
-| [mozjpeg]       | 68564c0¹  | [zlib License, IJG License]      |
+| [mozjpeg]       | 68564c0²  | [zlib License, IJG License]      |
 
-¹ MozJPEG is built from master to maintain binary compatibility with libjpeg-turbo.
+² MozJPEG is built from master to maintain binary compatibility with libjpeg-turbo.
 
 [mozjpeg]: https://github.com/mozilla/mozjpeg
+
+## zlib
+By default [zlib-ng] is built. This is a zlib replacement with optimizations for 
+"next generation" systems. If you prefer to use the original zlib, use the 
+`--without-zlib-ng` argument when building:
+
+```bash
+./build.sh 8.8 --without-zlib-ng
+```
+
+In that case, the following version of zlib is built:
+
+| Dependency      | Version   | Used under the terms of         |
+|-----------------|-----------|---------------------------------|
+| [zlib]          | 1.2.11    | [zlib Licence]                  |
+
+[zlib]: https://zlib.net/
+[zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h

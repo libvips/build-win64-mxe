@@ -66,6 +66,11 @@ if [ "$MOZJPEG" = "true" ]; then
   plugins+=" $work_dir/plugins/mozjpeg"
 fi
 
+if [ "$ZLIB_NG" = "true" ]; then
+  echo "zlib-ng plugin enabled"
+  plugins+=" $work_dir/plugins/zlib-ng"
+fi
+
 # Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc), 
 # gendef (a tool for generating def files from DLLs)
 # and libvips (+ dependencies).

@@ -29,6 +29,12 @@ else
   with_mozjpeg=false
 fi
 
+if [[ "$*" == *--without-zlib-ng* ]]; then
+  with_zlib_ng=false
+else
+  with_zlib_ng=true
+fi
+
 # Use native Win32 threading functions because 
 # POSIX threads functionality is significantly  
 # slower than the native Win32 implementation.
@@ -60,6 +66,7 @@ docker run --rm -t \
   -u $(id -u):$(id -g) \
   -v $PWD/$version:/data \
   -e "MOZJPEG=$with_mozjpeg" \
+  -e "ZLIB_NG=$with_zlib_ng" \
   libvips-build-win-mxe \
   $deps \
   $target

@@ -217,7 +217,7 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 # libwebp:
 #  Added: gettext, giflib, libjpeg-turbo, tiff, libpng
 # Cairo:
-#  Removed: lzo zlib
+#  Removed: lzo
 # x265:
 #  Replaced: yasm with $(BUILD)~nasm
 
@@ -233,7 +233,7 @@ imagemagick_DEPS        := cc lcms fftw tiff libjpeg-turbo freetype pthreads
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc mingw-std-threads cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 libwebp_DEPS            := $(libwebp_DEPS) gettext giflib libjpeg-turbo tiff libpng
-cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
+cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman zlib
 x265_DEPS               := cc $(BUILD)~nasm
 
 ## Override build scripts
@@ -422,26 +422,19 @@ define poppler_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
-# the zlib configure is a bit basic, so use cmake for shared
-# builds
-define zlib_BUILD_SHARED
-    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' '$(SOURCE_DIR)'
+# the zlib configure is a bit basic, so we'll use cmake
+define zlib_BUILD
+    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DSKIP_BUILD_EXAMPLES=ON \
+        -DINSTALL_PKGCONFIG_DIR='$(PREFIX)/$(TARGET)/lib/pkgconfig' \
+        '$(SOURCE_DIR)'
+
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+endef
 
-    # create pkg-config file
-    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/pkgconfig'
-    (echo 'prefix=$(PREFIX)/$(TARGET)'; \
-     echo 'exec_prefix=$${prefix}'; \
-     echo 'libdir=$${exec_prefix}/lib'; \
-     echo 'includedir=$${prefix}/include'; \
-     echo ''; \
-     echo 'Name: $(PKG)'; \
-     echo 'Version: $($(PKG)_VERSION)'; \
-     echo 'Description: $(PKG) compression library'; \
-     echo 'Libs: -L$${libdir} -lz'; \
-     echo 'Cflags: -I$${includedir}';) \
-     > '$(PREFIX)/$(TARGET)/lib/pkgconfig/$(PKG).pc'
+define zlib_BUILD_SHARED
+    $($(PKG)_BUILD)
 endef
 
 # disable the C++ API for now, we don't use it anyway
