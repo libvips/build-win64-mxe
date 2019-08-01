@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 2 June 2018 14:20:00 +0200
-Subject: [PATCH 1/1] Windows fixes
+Subject: [PATCH 1/3] Windows fixes
 
 - Fix compile errors with labeled statements named `OUT`.
 - The `host_os` and `build_os` variables may contain the
@@ -67,7 +67,7 @@ index 1111111..2222222 100644
 -else
 -  CFLAG_MS_FORMAT=""
 -fi
-+# The CFLAG_NO_PSEUDO_MODIFIERS variable prevents Windows.h from 
++# The CFLAG_NO_PSEUDO_MODIFIERS variable prevents Windows.h from
 +# defining IN or OUT.
 +case "$host_os" in
 +  mingw32*)
@@ -89,3 +89,164 @@ index 1111111..2222222 100644
  
  AC_SUBST(FEATURE_FLAGS)
  
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Benjamin Gilbert <bgilbert@cs.cmu.edu>
+Date: Mon, 7 Sep 2015 22:28:22 -0400
+Subject: [PATCH 2/3] On Windows, assume filenames are in UTF-8, not the system
+ codepage
+
+On Windows, fopen() expects filenames in the system codepage, and thus
+can't handle arbitrary characters.  Assume filenames are in UTF-8,
+convert to UTF-16, and pass to _wfopen().
+
+http://lists.andrew.cmu.edu/pipermail/openslide-users/2015-September/001098.html
+
+diff --git a/configure.ac b/configure.ac
+index 1111111..2222222 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -183,6 +183,9 @@ AS_CASE([$host_os],
+ # Fallback: racily use fcntl()
+ AC_CHECK_FUNCS([fcntl])
+ 
++# Windows _wfopen()
++AC_CHECK_FUNCS([_wfopen])
++
+ # The test driver has special support for testing Windows builds from Cygwin
+ AC_MSG_CHECKING([whether to cross-test from Cygwin])
+ case ${host_os}+${build_os} in
+diff --git a/src/openslide-util.c b/src/openslide-util.c
+index 1111111..2222222 100644
+--- a/src/openslide-util.c
++++ b/src/openslide-util.c
+@@ -2,6 +2,7 @@
+  *  OpenSlide, a library for reading whole slide image files
+  *
+  *  Copyright (c) 2007-2015 Carnegie Mellon University
++ *  Copyright (c) 2015 Benjamin Gilbert
+  *  All rights reserved.
+  *
+  *  OpenSlide is free software: you can redistribute it and/or modify
+@@ -161,14 +162,46 @@ GKeyFile *_openslide_read_key_file(const char *filename, int32_t max_size,
+ }
+ 
+ #undef fopen
++static FILE *do_fopen(const char *path, const char *mode, GError **err) {
++  FILE *f;
++
++#ifdef HAVE__WFOPEN
++  wchar_t *path16 = (wchar_t *) g_convert(path, -1, "UTF-16", "UTF-8",
++                                          NULL, NULL, err);
++  if (path16 == NULL) {
++    g_prefix_error(err, "Couldn't open %s: ", path);
++    return NULL;
++  }
++  wchar_t *mode16 = (wchar_t *) g_convert(mode, -1, "UTF-16", "UTF-8",
++                                          NULL, NULL, err);
++  if (mode16 == NULL) {
++    g_prefix_error(err, "Bad file mode %s: ", mode);
++    g_free(path16);
++    return NULL;
++  }
++  f = _wfopen(path16, mode16);
++  if (f == NULL) {
++    _openslide_io_error(err, "Couldn't open %s", path);
++  }
++  g_free(mode16);
++  g_free(path16);
++#else
++  f = fopen(path, mode);
++  if (f == NULL) {
++    _openslide_io_error(err, "Couldn't open %s", path);
++  }
++#endif
++
++  return f;
++}
++#define fopen _OPENSLIDE_POISON(_openslide_fopen)
++
+ FILE *_openslide_fopen(const char *path, const char *mode, GError **err)
+ {
+   char *m = g_strconcat(mode, FOPEN_CLOEXEC_FLAG, NULL);
+-  FILE *f = fopen(path, m);
++  FILE *f = do_fopen(path, m, err);
+   g_free(m);
+-
+   if (f == NULL) {
+-    _openslide_io_error(err, "Couldn't open %s", path);
+     return NULL;
+   }
+ 
+@@ -197,7 +230,6 @@ FILE *_openslide_fopen(const char *path, const char *mode, GError **err)
+ 
+   return f;
+ }
+-#define fopen _OPENSLIDE_POISON(_openslide_fopen)
+ 
+ #undef g_ascii_strtod
+ double _openslide_parse_double(const char *value) {
+diff --git a/src/openslide.h b/src/openslide.h
+index 1111111..2222222 100644
+--- a/src/openslide.h
++++ b/src/openslide.h
+@@ -62,7 +62,7 @@ typedef struct _openslide openslide_t;
+  * Otherwise, return NULL.  Calling openslide_open() on this file will also
+  * return NULL.
+  *
+- * @param filename The filename to check.
++ * @param filename The filename to check.  On Windows, this must be in UTF-8.
+  * @return An identification of the format vendor for this file, or NULL.
+  * @since 3.4.0
+  */
+@@ -78,7 +78,7 @@ const char *openslide_detect_vendor(const char *filename);
+  * request.  Instead, it should maintain a cache of OpenSlide objects and
+  * reuse them when possible.
+  *
+- * @param filename The filename to open.
++ * @param filename The filename to open.  On Windows, this must be in UTF-8.
+  * @return
+  *         On success, a new OpenSlide object.
+  *         If the file is not recognized by OpenSlide, NULL.
+@@ -463,7 +463,7 @@ const char *openslide_get_version(void);
+  * openslide_open(), but it could also erroneously return @p true in some
+  * cases where openslide_open() would fail.
+  *
+- * @param filename The filename to check.
++ * @param filename The filename to check.  On Windows, this must be in UTF-8.
+  * @return If openslide_open() will succeed.
+  * @deprecated Use openslide_detect_vendor() to efficiently check whether
+  *             a slide file is recognized by OpenSlide, or just call
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Benjamin Gilbert <bgilbert@cs.cmu.edu>
+Date: Sun, 15 May 2016 23:37:33 -0500
+Subject: [PATCH 3/3] Use g_utf8_to_utf16() to compute Windows file paths
+
+On glib 2.47.6 through at least 2.48.1, g_convert() adds a BOM to the
+beginning of the returned string, causing _wfopen() to fail.  Switch to
+g_utf8_to_utf16(), which should also be more efficient.
+
+Fixes #176.
+
+diff --git a/src/openslide-util.c b/src/openslide-util.c
+index 1111111..2222222 100644
+--- a/src/openslide-util.c
++++ b/src/openslide-util.c
+@@ -166,14 +166,12 @@ static FILE *do_fopen(const char *path, const char *mode, GError **err) {
+   FILE *f;
+ 
+ #ifdef HAVE__WFOPEN
+-  wchar_t *path16 = (wchar_t *) g_convert(path, -1, "UTF-16", "UTF-8",
+-                                          NULL, NULL, err);
++  wchar_t *path16 = (wchar_t *) g_utf8_to_utf16(path, -1, NULL, NULL, err);
+   if (path16 == NULL) {
+     g_prefix_error(err, "Couldn't open %s: ", path);
+     return NULL;
+   }
+-  wchar_t *mode16 = (wchar_t *) g_convert(mode, -1, "UTF-16", "UTF-8",
+-                                          NULL, NULL, err);
++  wchar_t *mode16 = (wchar_t *) g_utf8_to_utf16(mode, -1, NULL, NULL, err);
+   if (mode16 == NULL) {
+     g_prefix_error(err, "Bad file mode %s: ", mode);
+     g_free(path16);
