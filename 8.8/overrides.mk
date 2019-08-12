@@ -66,16 +66,16 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-56
-imagemagick_CHECKSUM := a80f448ea2d0abe52a9a91ae0ce29c90569f7aafd6143a2fe4cfe4a0c7893dbc
+imagemagick_VERSION  := 6.9.10-59
+imagemagick_CHECKSUM := eb4e312e2d576c61f0bf4b43eea9cc77820e0ecacb8a0264e5eb708dfa101493
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick6-$(imagemagick_VERSION)
 imagemagick_FILE     := $(imagemagick_VERSION).tar.gz
 imagemagick_URL      := https://github.com/ImageMagick/ImageMagick6/archive/$(imagemagick_FILE)
 
 # upstream version is 2.4
-x265_VERSION  := 3.1.1
-x265_CHECKSUM := 827900c7cc0a0105b8a96460fab7cd22b97afa7b2835b5cb979c44bddaa3c8d0
+x265_VERSION  := 3.1.2
+x265_CHECKSUM := 6f785f1c9a42e00a56402da88463bb861c49d9af108be53eb3ef10295f2a59aa
 x265_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
 x265_SUBDIR   := x265_$(x265_VERSION)
 x265_FILE     := x265_$(x265_VERSION).tar.gz
@@ -83,16 +83,16 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.45.8
-librsvg_CHECKSUM := 3fa09b8e4d3f2d397c6dd26f1078795203f05f609672d31c11e8bae1e5a152f1
+librsvg_VERSION  := 2.45.90
+librsvg_CHECKSUM := a7a9be634c452d0d9ecb3e2266d277e88c254957de62c579fd878f12afd38552
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.43.0
-pango_CHECKSUM := d2c0c253a5328a0eccb00cdd66ce2c8713fabd2c9836000b6e22a8b06ba3ddd2
+pango_VERSION  := 1.44.3
+pango_CHECKSUM := 290bb100ca5c7025ec3f97332eaf783b76ba1f444110f06ac5ee3285e3e5aece
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -109,8 +109,8 @@ libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.61.1
-glib_CHECKSUM := f8d827955f0d8e197ff5c2105dd6ac4f6b63d15cd021eb1de66534c92a762161
+glib_VERSION  := 2.61.2
+glib_CHECKSUM := 99c6bcfb8600562d519222a429e2dc0af469b2006b8080a9a1f438456071c0b5
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -178,8 +178,8 @@ pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # upstream version is 2.13.1
-fontconfig_VERSION  := 2.13.91
-fontconfig_CHECKSUM := 0130cff91dabe4909b0ea246accf8fa69af8de2771772f1c9ec11a5834e1e501
+fontconfig_VERSION  := 2.13.92
+fontconfig_CHECKSUM := 506e61283878c1726550bc94f2af26168f1e9f2106eac77eaaf0b2cdfad66e4e
 fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
@@ -369,7 +369,7 @@ define pango_BUILD
         --libdir='lib' \
         --libexecdir='bin' \
         --includedir='include' \
-        -Dgir=false \
+        -Dintrospection=false \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
