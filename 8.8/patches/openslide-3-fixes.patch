@@ -4,8 +4,154 @@ Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Gilbert <bgilbert@cs.cmu.edu>
+Date: Tue, 1 Sep 2015 21:05:25 -0400
+Subject: [PATCH 1/5] jp2k: Allow OpenJPEG 2.x to read buffer in multiple chunks
+
+Preparation for next commit.
+
+[Starting with this commit, my contributions are copyright Benjamin Gilbert.]
+
+diff --git a/src/openslide-decode-jp2k.c b/src/openslide-decode-jp2k.c
+index 1111111..2222222 100644
+--- a/src/openslide-decode-jp2k.c
++++ b/src/openslide-decode-jp2k.c
+@@ -3,6 +3,7 @@
+  *
+  *  Copyright (c) 2007-2015 Carnegie Mellon University
+  *  Copyright (c) 2011 Google, Inc.
++ *  Copyright (c) 2015 Benjamin Gilbert
+  *  All rights reserved.
+  *
+  *  OpenSlide is free software: you can redistribute it and/or modify
+@@ -29,8 +30,9 @@
+ #include <openjpeg.h>
+ 
+ struct read_callback_params {
+-  void *data;
+-  int32_t datalen;
++  uint8_t *data;
++  int32_t offset;
++  int32_t length;
+ };
+ 
+ static inline void write_pixel_ycbcr(uint32_t *dest, uint8_t Y,
+@@ -184,12 +186,12 @@ static void error_callback(const char *msg, void *data) {
+ static OPJ_SIZE_T read_callback(void *buf, OPJ_SIZE_T count, void *data) {
+   struct read_callback_params *params = data;
+ 
+-  if (params->datalen != (int32_t) count) {
+-    params->datalen = 0;
++  count = MIN(count, (OPJ_SIZE_T) (params->length - params->offset));
++  if (!count) {
+     return (OPJ_SIZE_T) -1;
+   }
+-  memcpy(buf, params->data, count);
+-  params->datalen = 0;
++  memcpy(buf, params->data + params->offset, count);
++  params->offset += count;
+   return count;
+ }
+ 
+@@ -211,7 +213,7 @@ bool _openslide_jp2k_decode_buffer(uint32_t *dest,
+   opj_stream_t *stream = opj_stream_create(datalen, true);
+   struct read_callback_params read_params = {
+     .data = data,
+-    .datalen = datalen,
++    .length = datalen,
+   };
+   opj_stream_set_user_data(stream, &read_params, NULL);
+   opj_stream_set_user_data_length(stream, datalen);
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Benjamin Gilbert <bgilbert@cs.cmu.edu>
+Date: Tue, 1 Sep 2015 21:43:01 -0400
+Subject: [PATCH 2/5] jp2k: Support seeking within memory buffer for OpenJPEG 2.x
+
+With current OpenJPEG master, streams must be seekable to prevent
+opj_decode() from failing with the message
+"opj_j2k_apply_nb_tile_parts_correction error".
+
+https://lists.andrew.cmu.edu/pipermail/openslide-users/2015-August/001086.html
+
+diff --git a/src/openslide-decode-jp2k.c b/src/openslide-decode-jp2k.c
+index 1111111..2222222 100644
+--- a/src/openslide-decode-jp2k.c
++++ b/src/openslide-decode-jp2k.c
+@@ -29,7 +29,7 @@
+ 
+ #include <openjpeg.h>
+ 
+-struct read_callback_params {
++struct buffer_state {
+   uint8_t *data;
+   int32_t offset;
+   int32_t length;
+@@ -184,17 +184,38 @@ static void error_callback(const char *msg, void *data) {
+ #ifdef HAVE_OPENJPEG2
+ 
+ static OPJ_SIZE_T read_callback(void *buf, OPJ_SIZE_T count, void *data) {
+-  struct read_callback_params *params = data;
++  struct buffer_state *state = data;
+ 
+-  count = MIN(count, (OPJ_SIZE_T) (params->length - params->offset));
++  count = MIN(count, (OPJ_SIZE_T) (state->length - state->offset));
+   if (!count) {
+     return (OPJ_SIZE_T) -1;
+   }
+-  memcpy(buf, params->data + params->offset, count);
+-  params->offset += count;
++  memcpy(buf, state->data + state->offset, count);
++  state->offset += count;
+   return count;
+ }
+ 
++static OPJ_OFF_T skip_callback(OPJ_OFF_T count, void *data) {
++  struct buffer_state *state = data;
++
++  int32_t orig_offset = state->offset;
++  state->offset = CLAMP(state->offset + count, 0, state->length);
++  if (count && state->offset == orig_offset) {
++    return -1;
++  }
++  return state->offset - orig_offset;
++}
++
++static OPJ_BOOL seek_callback(OPJ_OFF_T offset, void *data) {
++  struct buffer_state *state = data;
++
++  if (offset < 0 || offset > state->length) {
++    return OPJ_FALSE;
++  }
++  state->offset = offset;
++  return OPJ_TRUE;
++}
++
+ bool _openslide_jp2k_decode_buffer(uint32_t *dest,
+                                    int32_t w, int32_t h,
+                                    void *data, int32_t datalen,
+@@ -211,13 +232,15 @@ bool _openslide_jp2k_decode_buffer(uint32_t *dest,
+   // avoid tracking stream offset (and implementing skip callback) by having
+   // OpenJPEG read the whole buffer at once
+   opj_stream_t *stream = opj_stream_create(datalen, true);
+-  struct read_callback_params read_params = {
++  struct buffer_state state = {
+     .data = data,
+     .length = datalen,
+   };
+-  opj_stream_set_user_data(stream, &read_params, NULL);
++  opj_stream_set_user_data(stream, &state, NULL);
+   opj_stream_set_user_data_length(stream, datalen);
+   opj_stream_set_read_function(stream, read_callback);
++  opj_stream_set_skip_function(stream, skip_callback);
++  opj_stream_set_seek_function(stream, seek_callback);
+ 
+   // init codec
+   opj_codec_t *codec = opj_create_decompress(OPJ_CODEC_J2K);
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Benjamin Gilbert <bgilbert@cs.cmu.edu>
 Date: Mon, 7 Sep 2015 22:28:22 -0400
-Subject: [PATCH 1/3] On Windows, assume filenames are in UTF-8, not the system
+Subject: [PATCH 3/5] On Windows, assume filenames are in UTF-8, not the system
  codepage
 
 On Windows, fopen() expects filenames in the system codepage, and thus
@@ -133,7 +279,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Gilbert <bgilbert@cs.cmu.edu>
 Date: Sun, 15 May 2016 23:37:33 -0500
-Subject: [PATCH 2/3] Use g_utf8_to_utf16() to compute Windows file paths
+Subject: [PATCH 4/5] Use g_utf8_to_utf16() to compute Windows file paths
 
 On glib 2.47.6 through at least 2.48.1, g_convert() adds a BOM to the
 beginning of the returned string, causing _wfopen() to fail.  Switch to
@@ -166,7 +312,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 2 June 2018 14:20:00 +0200
-Subject: [PATCH 3/3] Windows fixes
+Subject: [PATCH 5/5] Windows fixes
 
 - Fix compile errors with labeled statements named `OUT`.
 - The `host_os` and `build_os` variables may contain the

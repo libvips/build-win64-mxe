@@ -50,8 +50,8 @@ endef
 ## Update dependencies
 
 # upstream version is 2.32.3
-gdk-pixbuf_VERSION  := 2.38.1
-gdk-pixbuf_CHECKSUM := f19ff836ba991031610dcc53774e8ca436160f7d981867c8c3a37acfe493ab3a
+gdk-pixbuf_VERSION  := 2.39.2
+gdk-pixbuf_CHECKSUM := 63e59387b5c5504f3bf07530bac0b69542e55936e09283400d32529b2b32e1ca
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -66,8 +66,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-59
-imagemagick_CHECKSUM := eb4e312e2d576c61f0bf4b43eea9cc77820e0ecacb8a0264e5eb708dfa101493
+imagemagick_VERSION  := 6.9.10-61
+imagemagick_CHECKSUM := c931b81e99e6a1e72a0bfd2a6eba741f5b3cbe73b22add9008ef8ba86284fb48
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick6-$(imagemagick_VERSION)
 imagemagick_FILE     := $(imagemagick_VERSION).tar.gz
@@ -83,16 +83,16 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.45.90
-librsvg_CHECKSUM := a7a9be634c452d0d9ecb3e2266d277e88c254957de62c579fd878f12afd38552
+librsvg_VERSION  := 2.45.91
+librsvg_CHECKSUM := a4ed8abb741942e7fcf61abb2ce98420092ddad163ddc1a390149059170de29e
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.44.3
-pango_CHECKSUM := 290bb100ca5c7025ec3f97332eaf783b76ba1f444110f06ac5ee3285e3e5aece
+pango_VERSION  := 1.44.5
+pango_CHECKSUM := 8527dfcbeedb4390149b6f94620c0fa64e26046ab85042c2a7556438847d7fc1
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -161,18 +161,17 @@ cfitsio_FILE     := cfitsio$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
-# upstream version is 2.4.0
-harfbuzz_VERSION  := 2.5.3
-harfbuzz_CHECKSUM := fed00dc797b7ba3ca943225f0a854baaed4c1640fff8a31d455cd3b5caec855c
+# upstream version is 2.6.0
+harfbuzz_VERSION  := 2.6.1
+harfbuzz_CHECKSUM := c651fb3faaa338aeb280726837c2384064cdc17ef40539228d88a1260960844f
 harfbuzz_SUBDIR   := harfbuzz-$(harfbuzz_VERSION)
 harfbuzz_FILE     := harfbuzz-$(harfbuzz_VERSION).tar.xz
 harfbuzz_URL      := https://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz_FILE)
 
 # upstream version is 0.33.6
-# Note: Can't build statically with the Meson build system,
-# it will always output a shared library.
 pixman_VERSION  := 0.38.4
 pixman_CHECKSUM := da66d6fd6e40aee70f7bd02e4f8f76fc3f006ec879d346bae6a723025cfbdde7
+pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pixman-[0-9]*.patch)))
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
@@ -302,6 +301,20 @@ define gdk-pixbuf_BUILD
     ninja -C '$(BUILD_DIR)' install
 endef
 
+# build pixman with the Meson build system
+define pixman_BUILD
+    '$(TARGET)-meson' \
+        --libdir='lib' \
+        --bindir='bin' \
+        --libexecdir='bin' \
+        --includedir='include' \
+        -Dgtk=disabled \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+    ninja -C '$(BUILD_DIR)' install
+endef
+
 # exclude jpeg, tiff dependencies
 define lcms_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
@@ -344,22 +357,6 @@ define libjpeg-turbo_BUILD
         -DCMAKE_ASM_NASM_COMPILER=$(TARGET)-yasm
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-endef
-
-# build without `-fno-asynchronous-unwind-tables`, see:
-# https://github.com/mxe/mxe/commit/b42cd62e9a4a4e583be4970ebdced357d02d5a71#r34386467
-define libpng_BUILD
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS)
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-
-    ln -sf '$(PREFIX)/$(TARGET)/bin/libpng-config' '$(PREFIX)/bin/$(TARGET)-libpng-config'
-
-    '$(TARGET)-gcc' \
-        -W -Wall -Werror -std=c99 -pedantic \
-        '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-libpng.exe' \
-        `'$(PREFIX)/$(TARGET)/bin/libpng-config' --static --cflags --libs`
 endef
 
 # disable GObject introspection

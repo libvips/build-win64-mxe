@@ -21,7 +21,7 @@ target="${2:-x86_64-w64-mingw32.shared.win32}"
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="299e297b076f698143c5673a5e0d8f92054074e2"
+revision="1b81e99cf78df3b0f89173d6f1bc71159cf190ca"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -58,7 +58,7 @@ mkdir -p $mxe_prefix/$target.$deps/mingw/{bin,include,lib}
 make pe-util MXE_TARGETS=`$mxe_dir/ext/config.guess`
 
 # This variable controls which plugins are in use.
-# Build with GCC 9.1 and use the meson-wrapper.
+# Build with GCC 9.2 and use the meson-wrapper.
 plugins="plugins/gcc9 plugins/meson-wrapper $work_dir"
 
 if [ "$MOZJPEG" = "true" ]; then

@@ -10,11 +10,11 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [fontconfig]    | 2.13.92   | [fontconfig Licence] (BSD-like) |
 | [freetype]      | 2.10.1    | [freetype Licence] (BSD-like)   |
 | [fribidi]       | 1.0.5     | LGPLv3                          |
-| [gdk-pixbuf]    | 2.38.1    | LGPLv3                          |
+| [gdk-pixbuf]    | 2.39.2    | LGPLv3                          |
 | [gettext]       | 0.20.1    | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
 | [glib]          | 2.61.2    | LGPLv3                          |
-| [harfbuzz]      | 2.5.3     | MIT Licence                     |
+| [harfbuzz]      | 2.6.1     | MIT Licence                     |
 | [lcms]          | 2.9       | MIT Licence                     |
 | [libcroco]      | 0.6.13    | LGPLv3                          |
 | [libexif]       | 0.6.21    | LGPLv3                          |
@@ -23,13 +23,13 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libiconv]      | 1.16      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.2     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
-| [librsvg]       | 2.45.90   | LGPLv3                          |
+| [librsvg]       | 2.45.91   | LGPLv3                          |
 | [libtiff]       | 4.0.10    | [libtiff License] (BSD-like)    |
 | [libvips]       | 8.8.1     | LGPLv3                          |
 | [libwebp]       | 1.0.3     | New BSD License                 |
 | [libxml2]       | 2.9.9     | MIT Licence                     |
 | [orc]           | 0.4.29    | BSD 2-Clause                    |
-| [pango]         | 1.44.3    | LGPLv3                          |
+| [pango]         | 1.44.5    | LGPLv3                          |
 | [pixman]        | 0.38.4    | MIT Licence                     |
 | [zlib]          | 1.2.11    | [zlib Licence]                  |
 
@@ -75,9 +75,9 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.450     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.8.12    | BSD-like                         |
-| [imagemagick]   | 6.9.10-59 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.10-61 | [ImageMagick License] (GPL-like) |
 | [libde265]      | 1.0.3     | LGPLv3                           |
-| [libheif]       | 1.4.0     | LGPLv3                           |
+| [libheif]       | 1.5.0     | LGPLv3                           |
 | [matio]         | 1.5.17    | BSD 2-Clause                     |
 | [nifticlib]     | 2.0.0     | Public domain                    |
 | [openexr]       | 2.3.0     | BSD 3-Clause                     |
