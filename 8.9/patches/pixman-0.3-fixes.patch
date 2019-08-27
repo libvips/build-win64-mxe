@@ -1,0 +1,165 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Basile Clement <basile-pixman@clement.pm>
+Date: Tue, 9 Apr 2019 23:16:13 +0200
+Subject: [PATCH 1/4] Fix bilinear filter computation in wide pipeline
+
+The recently introduced wide pipeline for filters has a typo which
+causes it to improperly compute bilinear interpolation positions,
+causing various glitches when enabled.
+
+This patch uses the proper computation for bilinear interpolation in the
+wide pipeline.  It also makes related `if` statements conformant to the
+CODING_STYLE:
+
+* If a substatement spans multiple lines, then there must be braces
+  around it.
+
+* If one substatement of an if statement has braces, then the other
+  must too.
+
+Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+
+diff --git a/pixman/pixman-bits-image.c b/pixman/pixman-bits-image.c
+index 1111111..2222222 100644
+--- a/pixman/pixman-bits-image.c
++++ b/pixman/pixman-bits-image.c
+@@ -432,29 +432,38 @@ bits_image_fetch_pixel_filtered (bits_image_t  *image,
+ 
+     case PIXMAN_FILTER_CONVOLUTION:
+ 	if (wide)
++	{
+ 	    bits_image_fetch_pixel_convolution (image, x, y,
+ 						get_pixel, out,
+ 						accum_float,
+ 						reduce_float);
++	}
+ 	else
++	{
+ 	    bits_image_fetch_pixel_convolution (image, x, y,
+ 						get_pixel, out,
+ 						accum_32, reduce_32);
++	}
+ 	break;
+ 
+     case PIXMAN_FILTER_SEPARABLE_CONVOLUTION:
+ 	if (wide)
++	{
+ 	    bits_image_fetch_pixel_separable_convolution (image, x, y,
+ 							  get_pixel, out,
+ 							  accum_float,
+ 							  reduce_float);
++	}
+ 	else
++	{
+ 	    bits_image_fetch_pixel_separable_convolution (image, x, y,
+ 							  get_pixel, out,
+ 							  accum_32, reduce_32);
++	}
+         break;
+ 
+     default:
++	assert (0);
+         break;
+     }
+ }
+diff --git a/pixman/pixman-inlines.h b/pixman/pixman-inlines.h
+index 1111111..2222222 100644
+--- a/pixman/pixman-inlines.h
++++ b/pixman/pixman-inlines.h
+@@ -231,7 +231,7 @@ bilinear_interpolation_float (argb_t tl, argb_t tr,
+     argb_t r;
+ 
+     distxy = distx * disty;
+-    distxiy = distx - (1.f - distxy);
++    distxiy = distx * (1.f - disty);
+     distixy = (1.f - distx) * disty;
+     distixiy = (1.f - distx) * (1.f - disty);
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Christoph Reiter <reiter.christoph@gmail.com>
+Date: Sat, 11 May 2019 10:17:36 +0200
+Subject: [PATCH 2/4] meson: define SIZEOF_LONG  and use -Wundef
+
+meson builds defaulted to SIZEOF_LONG=0 in various places
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -36,6 +36,7 @@ add_project_arguments(
+     '-Wdeclaration-after-statement',
+     '-fno-strict-aliasing',
+     '-fvisibility=hidden',
++    '-Wundef',
+   ]),
+   language : ['c']
+ )
+@@ -445,6 +446,8 @@ if host_machine.endian() == 'big'
+   config.set('WORDS_BIGENDIAN', 1)
+ endif
+ 
++config.set('SIZEOF_LONG', cc.sizeof('long'))
++
+ # Required to make pixman-private.h
+ config.set('PACKAGE', 'foo')
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Christoph Reiter <reiter.christoph@gmail.com>
+Date: Sat, 11 May 2019 11:18:35 +0200
+Subject: [PATCH 3/4] meson: allow building a static library
+
+So that passing "-Ddefault_library=both" also creates a static lib.
+
+Note that Libs.private in the .pc file will still be wrong because of
+https://github.com/mesonbuild/meson/issues/3934 (it contains things like
+-lpixman-mmx)
+
+diff --git a/pixman/meson.build b/pixman/meson.build
+index 1111111..2222222 100644
+--- a/pixman/meson.build
++++ b/pixman/meson.build
+@@ -97,7 +97,7 @@ pixman_files = files(
+   'pixman-utils.c',
+ )
+ 
+-libpixman = shared_library(
++libpixman = library(
+   'pixman-1',
+   [pixman_files, config_h, version_h],
+   link_with : [pixman_simd_libs],
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Christoph Reiter <reiter.christoph@gmail.com>
+Date: Sat, 11 May 2019 10:23:08 +0200
+Subject: [PATCH 4/4] meson: fix TLS support under mingw
+
+GCC on Windows complains that "__declspec(thread)" doesn't work, but still
+compiles it, so the meson check doesn't work. The warning printed by gcc:
+"warning: 'thread' attribute directive ignored [-Wattributes]"
+
+Pass -Werror=attributes to make the check fail instead.
+
+This fixes the test suite (minus gtk tests) on Windows with mingw.
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -408,8 +408,12 @@ foreach h : ['sys/mman.h', 'fenv.h', 'unistd.h']
+   endif
+ endforeach
+ 
++# gcc on Windows only warns that __declspec(thread) isn't supported,
++# passing -Werror=attributes makes it fail.
+ if (host_machine.system() == 'windows' and
+-    cc.compiles('int __declspec(thread) foo;', name : 'TLS via __declspec(thread)'))
++    cc.compiles('int __declspec(thread) foo;',
++                args : cc.get_supported_arguments(['-Werror=attributes']),
++                name : 'TLS via __declspec(thread)'))
+   config.set('TLS', '__declspec(thread)')
+ elif cc.compiles('int __thread foo;', name : 'TLS via __thread')
+   config.set('TLS', '__thread')
