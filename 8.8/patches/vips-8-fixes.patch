@@ -4,10 +4,25 @@ Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sun, 28 Jul 2019 13:45:00 +0200
-Subject: [PATCH 1/1] Squashed commit of the following:
+Date: Sun, 1 Sep 2019 14:30:00 +0200
+Subject: [PATCH 1/2] Squashed commit of the following:
 
-commit 42f0094b63652951ad54dcb16a497498cbbe159a
+commit a1ed6c7f6c53d10b6b934d6b7a25dfadcfebd66f
+Author: John Cupitt <jcupitt@gmail.com>
+Date:   Sun Sep 1 12:54:47 2019 +0100
+
+    improve GIF edarly close again
+
+    We were trying to keep the FILE open for gifload between header and
+    load, but this meant some corrupt GIFs could keep the file open longer
+    than they should.
+
+    Instead, make close into a vfunc and always close between header and
+    load.
+
+    see https://github.com/libvips/libvips/issues/1370#issuecomment-526829415
+
+commit 5ef14db544b3e20195dd5a213f086f3013180d23
 Author: John Cupitt <jcupitt@gmail.com>
 Date:   Sun Jul 28 11:34:40 2019 +0100
 
@@ -25,7 +40,7 @@ Date:   Sun Jul 28 11:34:40 2019 +0100
 
     this patch puts close-on-last-line back for jpg/tif/png
 
-commit 13d85964363d3eac7881743a724b8cc92289cda2
+commit 67f3cc13ecc6f299fa88044f685c0331441d0344
 Author: John Cupitt <jcupitt@gmail.com>
 Date:   Thu Jul 25 11:34:50 2019 +0100
 
@@ -33,7 +48,7 @@ Date:   Thu Jul 25 11:34:50 2019 +0100
 
     no longer relevant in the world of minimise
 
-commit a2d380060f46895bbf48d169f5eebc8cc9b2aca3
+commit 53e0bc66984576da844e4bc4586a5afa9ad92c8c
 Author: John Cupitt <jcupitt@gmail.com>
 Date:   Thu Jul 25 11:31:21 2019 +0100
 
@@ -41,13 +56,13 @@ Date:   Thu Jul 25 11:31:21 2019 +0100
 
     see https://github.com/libvips/libvips/issues/1370#issuecomment-514949292
 
-commit 54a4dbd394175ca8a61e4fe605d36234a950ecc7
+commit 9373d63d6edd908da1da4039ce1a1caa592a7dce
 Author: John Cupitt <jcupitt@gmail.com>
 Date:   Wed Jul 24 18:17:54 2019 +0100
 
     better early close for gif header read
 
-commit 532471d4a419ab3af56eaf985cbc4b9004b919cf
+commit 265cb8dffd279ffa35985296842d4dfa077096b0
 Author: John Cupitt <jcupitt@gmail.com>
 Date:   Wed Jul 24 18:00:37 2019 +0100
 
@@ -55,7 +70,7 @@ Date:   Wed Jul 24 18:00:37 2019 +0100
 
     we were only closing early if there was an error during pixel read
 
-commit 7422ed593fba217c7aeb0c6e2c980d5cc47ff21a
+commit e11811a316baff56b2ed2091aafe686f70709a0c
 Author: John Cupitt <jcupitt@gmail.com>
 Date:   Wed Jul 24 17:43:14 2019 +0100
 
@@ -65,7 +80,7 @@ Date:   Wed Jul 24 17:43:14 2019 +0100
 
     see https://github.com/libvips/libvips/issues/1370#issuecomment-514172899
 
-commit d914a8ddf7c75e06b15bc004bd4325fe9762baa6
+commit 28090d614ff202f7bc229dd1384e99c00b69c5ad
 Author: John Cupitt <jcupitt@gmail.com>
 Date:   Tue Jul 23 12:06:35 2019 +0100
 
@@ -75,13 +90,13 @@ Date:   Tue Jul 23 12:06:35 2019 +0100
 
     see https://github.com/libvips/libvips/issues/1370#issuecomment-513706480
 
-commit c42abe2c9256eea769190b14be145d57a386a979
+commit 4f2f4b4577c246243da1aff4c6b02363c5289bee
 Author: John Cupitt <jcupitt@gmail.com>
 Date:   Sun Jul 21 12:29:25 2019 +0100
 
     add gif, heif, rad, webp early close
 
-commit 9a3870e92022b8d36ddec6b34b8ab8f30c2c29dd
+commit 2c654060f95d95f5c5eeb493701ec5aafe539ee3
 Author: John Cupitt <jcupitt@gmail.com>
 Date:   Sat Jul 20 16:31:30 2019 +0100
 
@@ -106,42 +121,98 @@ diff --git a/libvips/foreign/gifload.c b/libvips/foreign/gifload.c
 index 1111111..2222222 100644
 --- a/libvips/foreign/gifload.c
 +++ b/libvips/foreign/gifload.c
-@@ -22,6 +22,9 @@
+@@ -22,9 +22,16 @@
   * 	- init pages to 0 before load
   * 14/2/19
   * 	- rework as a sequential loader ... simpler, much lower mem use
 + * 24/7/19
 + * 	- close early on minimise 
 + * 	- close early on error
+  * 23/8/18
+  * 	- allow GIF read errors during header scan
+  * 	- better feof() handling
++ * 27/8/19
++ * 	- check image and frame bounds, since giflib does not
++ * 1/9/19
++ * 	- improve early close again
   */
  
  /*
-@@ -584,13 +587,13 @@ vips_foreign_load_gif_set_header( VipsForeignLoadGif *gif, VipsImage *image )
+@@ -202,6 +209,10 @@ typedef struct _VipsForeignLoadGifClass {
+ 	/* Close and reopen gif->file.
+ 	 */
+ 	int (*open)( VipsForeignLoadGif *gif );
++
++	/* Close any underlying file resource.
++	 */
++	void (*close)( VipsForeignLoadGif *gif );
+ } VipsForeignLoadGifClass;
+ 
+ G_DEFINE_ABSTRACT_TYPE( VipsForeignLoadGif, vips_foreign_load_gif, 
+@@ -296,37 +307,19 @@ vips_foreign_load_gif_error( VipsForeignLoadGif *gif )
+ 		vips_foreign_load_gif_error_vips( gif, error ); 
  }
  
- /* Attempt to quickly scan a GIF and discover what we need for our header. We
-- * need to scan the whole file to get n_pages, transparency and colour. 
-+ * need to scan the whole file to get n_pages, transparency and colour.
+-static void
+-vips_foreign_load_gif_close( VipsForeignLoadGif *gif )
+-{
+-#ifdef HAVE_GIFLIB_5
+-	if( gif->file ) {
+-		int error; 
+-
+-		if( DGifCloseFile( gif->file, &error ) == GIF_ERROR ) 
+-			vips_foreign_load_gif_error_vips( gif, error );
+-		gif->file = NULL;
+-	}
+-#else 
+-	if( gif->file ) {
+-		if( DGifCloseFile( gif->file ) == GIF_ERROR ) 
+-			vips_foreign_load_gif_error_vips( gif, GifLastError() ); 
+-		gif->file = NULL;
+-	}
+-#endif
+-}
+-
+ static void
+ vips_foreign_load_gif_dispose( GObject *gobject )
+ {
+ 	VipsForeignLoadGif *gif = (VipsForeignLoadGif *) gobject;
++	VipsForeignLoadGifClass *class =
++		(VipsForeignLoadGifClass *) VIPS_OBJECT_GET_CLASS( gif );
+ 
+-	vips_foreign_load_gif_close( gif ); 
++	class->close( gif );
+ 
+ 	VIPS_UNREF( gif->frame ); 
+ 	VIPS_UNREF( gif->previous ); 
+ 	VIPS_FREE( gif->comment ); 
+-	VIPS_FREE( gif->line ) 
++	VIPS_FREE( gif->line );
+ 
+ 	G_OBJECT_CLASS( vips_foreign_load_gif_parent_class )->
+ 		dispose( gobject );
+@@ -596,18 +589,12 @@ vips_foreign_load_gif_set_header( VipsForeignLoadGif *gif, VipsImage *image )
+  * Don't flag errors during header scan. Many GIFs do not follow spec.
   */
  static int
- vips_foreign_load_gif_header( VipsForeignLoad *load )
+-vips_foreign_load_gif_header( VipsForeignLoad *load )
++vips_foreign_load_gif_scan( VipsForeignLoadGif *gif )
  {
- 	VipsObjectClass *class = VIPS_OBJECT_GET_CLASS( load );
+-	VipsObjectClass *class = VIPS_OBJECT_GET_CLASS( load );
 -	VipsForeignLoadGifClass *gif_class = 
-+	VipsForeignLoadGifClass *gif_class =
- 		(VipsForeignLoadGifClass *) VIPS_OBJECT_GET_CLASS( load );
- 	VipsForeignLoadGif *gif = (VipsForeignLoadGif *) load;
+-		(VipsForeignLoadGifClass *) VIPS_OBJECT_GET_CLASS( load );
+-	VipsForeignLoadGif *gif = (VipsForeignLoadGif *) load;
++	VipsObjectClass *class = VIPS_OBJECT_GET_CLASS( gif );
  
-@@ -614,8 +617,6 @@ vips_foreign_load_gif_header( VipsForeignLoad *load )
- 				return( -1 ); 
- 			}
+ 	GifRecordType record;
  
--			/* Read in the image record.
--			 */
- 			if( vips_foreign_load_gif_scan_image_record( gif ) )
- 				return( -1 );
+-	if( gif_class->open( gif ) )
+-		return( -1 );
+-
+ 	gif->n_pages = 0;
  
-@@ -624,7 +625,7 @@ vips_foreign_load_gif_header( VipsForeignLoad *load )
+ 	do {
+@@ -623,7 +610,7 @@ vips_foreign_load_gif_header( VipsForeignLoad *load )
  			break;
  
  		case EXTENSION_RECORD_TYPE:
@@ -149,21 +220,71 @@ index 1111111..2222222 100644
 +			/* We need to fetch the extensions to check for
  			 * cmaps and transparency.
  			 */
- 			if( vips_foreign_load_gif_scan_extension( gif ) )
-@@ -986,6 +987,12 @@ vips_foreign_load_gif_generate( VipsRegion *or,
+ 			(void) vips_foreign_load_gif_scan_extension( gif );
+@@ -652,11 +639,34 @@ vips_foreign_load_gif_header( VipsForeignLoad *load )
+ 		return( -1 ); 
+ 	}
+ 
+-	/* And set the output vips header from what we've learned.
+-	 */
+-	if( vips_foreign_load_gif_set_header( gif, load->out ) )
++	return( 0 );
++}
++
++/* Scan the GIF and set the libvips header. We always close after scan, even
++ * on an error.
++ */
++static int
++vips_foreign_load_gif_header( VipsForeignLoad *load )
++{
++	VipsForeignLoadGifClass *class =
++		(VipsForeignLoadGifClass *) VIPS_OBJECT_GET_CLASS( load );
++	VipsForeignLoadGif *gif = (VipsForeignLoadGif *) load;
++
++	if( class->open( gif ) )
+ 		return( -1 );
+ 
++	if( vips_foreign_load_gif_scan( gif ) ) {
++		class->close( gif );
++		return( -1 );
++	}
++
++	if( vips_foreign_load_gif_set_header( gif, load->out ) ) {
++		class->close( gif );
++		return( -1 );
++	}
++
++	class->close( gif );
++
+ 	return( 0 );
+ }
+ 
+@@ -1005,6 +1015,15 @@ vips_foreign_load_gif_generate( VipsRegion *or,
  	return( 0 );
  }
  
 +static void
 +vips_foreign_load_gif_minimise( VipsObject *object, VipsForeignLoadGif *gif )
 +{
-+	vips_foreign_load_gif_close( gif );
++	VipsForeignLoadGifClass *class =
++		(VipsForeignLoadGifClass *) VIPS_OBJECT_GET_CLASS( gif );
++
++	class->close( gif );
 +}
 +
  static int
  vips_foreign_load_gif_load( VipsForeignLoad *load )
  {
-@@ -1029,6 +1036,11 @@ vips_foreign_load_gif_load( VipsForeignLoad *load )
+@@ -1014,8 +1033,6 @@ vips_foreign_load_gif_load( VipsForeignLoad *load )
+ 	VipsImage **t = (VipsImage **) 
+ 		vips_object_local_array( VIPS_OBJECT( load ), 4 );
+ 
+-	/* Rewind.
+-	 */
+ 	if( class->open( gif ) )
+ 		return( -1 );
+ 
+@@ -1048,6 +1065,11 @@ vips_foreign_load_gif_load( VipsForeignLoad *load )
  	if( vips_foreign_load_gif_set_header( gif, t[0] ) )
  		return( -1 );
  
@@ -175,20 +296,75 @@ index 1111111..2222222 100644
  	/* Strips 8 pixels high to avoid too many tiny regions.
  	 */
  	if( vips_image_generate( t[0], 
-@@ -1165,6 +1177,26 @@ vips_giflib_file_read( GifFileType *file, GifByteType *buffer, int n )
- 	return( (int) fread( (void *) buffer, 1, n, fp ) );
+@@ -1105,6 +1127,26 @@ vips_foreign_load_gif_open( VipsForeignLoadGif *gif )
+ 	return( 0 );
+ }
+ 
++static void
++vips_foreign_load_gif_close( VipsForeignLoadGif *gif )
++{
++#ifdef HAVE_GIFLIB_5
++	if( gif->file ) {
++		int error;
++
++		if( DGifCloseFile( gif->file, &error ) == GIF_ERROR )
++			vips_foreign_load_gif_error_vips( gif, error );
++		gif->file = NULL;
++	}
++#else
++	if( gif->file ) {
++		if( DGifCloseFile( gif->file ) == GIF_ERROR )
++			vips_foreign_load_gif_error_vips( gif, GifLastError() );
++		gif->file = NULL;
++	}
++#endif
++}
++
+ static void
+ vips_foreign_load_gif_class_init( VipsForeignLoadGifClass *class )
+ {
+@@ -1118,6 +1160,7 @@ vips_foreign_load_gif_class_init( VipsForeignLoadGifClass *class )
+ 	gobject_class->get_property = vips_object_get_property;
+ 
+ 	gif_class->open = vips_foreign_load_gif_open;
++	gif_class->close = vips_foreign_load_gif_close;
+ 	load_class->header = vips_foreign_load_gif_header;
+ 	load_class->load = vips_foreign_load_gif_load;
+ 
+@@ -1173,17 +1216,6 @@ typedef VipsForeignLoadGifClass VipsForeignLoadGifFileClass;
+ G_DEFINE_TYPE( VipsForeignLoadGifFile, vips_foreign_load_gif_file, 
+ 	vips_foreign_load_gif_get_type() );
+ 
+-static void
+-vips_foreign_load_gif_file_dispose( GObject *gobject )
+-{
+-	VipsForeignLoadGifFile *file = (VipsForeignLoadGifFile *) gobject;
+-
+-	VIPS_FREEF( fclose, file->fp ); 
+-
+-	G_OBJECT_CLASS( vips_foreign_load_gif_file_parent_class )->
+-		dispose( gobject );
+-}
+-
+ /* Our input function for file open. We can't use DGifOpenFileName(), since
+  * that just calls open() and won't work with unicode on win32. We can't use
+  * DGifOpenFileHandle() since that's an fd from open() and you can't pass those
+@@ -1201,29 +1233,61 @@ vips_giflib_file_read( GifFileType *gfile, GifByteType *buffer, int n )
+ 	return( (int) fread( (void *) buffer, 1, n, file->fp ) );
  }
  
 +static int
 +vips_foreign_load_gif_file_header( VipsForeignLoad *load )
 +{
-+	VipsForeignLoadGifFile *file = (VipsForeignLoadGifFile *) load;
++	VipsForeignLoadGif *gif = (VipsForeignLoadGif *) load;
++	VipsForeignLoadGifClass *class =
++		(VipsForeignLoadGifClass *) VIPS_OBJECT_GET_CLASS( load );
 +
 +	if( VIPS_FOREIGN_LOAD_CLASS( 
 +		vips_foreign_load_gif_file_parent_class )->header( load ) ) {
 +		/* Close early if header read fails in our base class.
 +		 */
-+		VIPS_FREEF( fclose, file->fp );
++		class->close( gif );
 +		return( -1 );
 +	}
 +
@@ -197,34 +373,100 @@ index 1111111..2222222 100644
 +
 +/* We have to have _open() as a vfunc since our base class needs to be able to
 + * make two scans of the gif (scan for header, then scan for pixels), so we 
-+ * must be able to close and reopen (or rewind).
++ * must be able to close and reopen.
 + */
  static int
  vips_foreign_load_gif_file_open( VipsForeignLoadGif *gif )
  {
-@@ -1214,6 +1246,7 @@ vips_foreign_load_gif_file_class_init(
+ 	VipsForeignLoad *load = (VipsForeignLoad *) gif;
+ 	VipsForeignLoadGifFile *file = (VipsForeignLoadGifFile *) gif;
++	VipsForeignLoadGifClass *class =
++		(VipsForeignLoadGifClass *) VIPS_OBJECT_GET_CLASS( load );
+ 
+-	if( !file->fp ) {
+-		if( !(file->fp = 
+-			vips__file_open_read( file->filename, NULL, FALSE )) ) 
+-			return( -1 ); 
++	class->close( gif );
+ 
+-		VIPS_SETSTR( load->out->filename, file->filename );
+-	}
+-	else 
+-		rewind( file->fp );
++	if( !(file->fp =
++		vips__file_open_read( file->filename, NULL, FALSE )) )
++		return( -1 );
++
++	VIPS_SETSTR( load->out->filename, file->filename );
+ 
+-	vips_foreign_load_gif_close( gif );
+ 	gif->read_func = vips_giflib_file_read;
+ 
+ 	return( VIPS_FOREIGN_LOAD_GIF_CLASS( 
+ 		vips_foreign_load_gif_file_parent_class )->open( gif ) );
+ }
+ 
++static void
++vips_foreign_load_gif_file_close( VipsForeignLoadGif *gif )
++{
++	VipsForeignLoadGifFile *file = (VipsForeignLoadGifFile *) gif;
++
++	VIPS_FOREIGN_LOAD_GIF_CLASS(
++		vips_foreign_load_gif_file_parent_class )->close( gif );
++
++	VIPS_FREEF( fclose, file->fp );
++}
++
+ static const char *vips_foreign_gif_suffs[] = {
+ 	".gif",
+ 	NULL
+@@ -1239,7 +1303,6 @@ vips_foreign_load_gif_file_class_init(
+ 	VipsForeignLoadClass *load_class = (VipsForeignLoadClass *) class;
+ 	VipsForeignLoadGifClass *gif_class = (VipsForeignLoadGifClass *) class;
+ 
+-	gobject_class->dispose = vips_foreign_load_gif_file_dispose;
+ 	gobject_class->set_property = vips_object_set_property;
+ 	gobject_class->get_property = vips_object_get_property;
+ 
+@@ -1249,8 +1312,10 @@ vips_foreign_load_gif_file_class_init(
  	foreign_class->suffs = vips_foreign_gif_suffs;
  
  	load_class->is_a = vips_foreign_load_gif_is_a;
 +	load_class->header = vips_foreign_load_gif_file_header;
  
  	gif_class->open = vips_foreign_load_gif_file_open;
++	gif_class->close = vips_foreign_load_gif_file_close;
  
+ 	VIPS_ARG_STRING( class, "filename", 1, 
+ 		_( "Filename" ),
+@@ -1310,8 +1375,11 @@ static int
+ vips_foreign_load_gif_buffer_open( VipsForeignLoadGif *gif )
+ {
+ 	VipsForeignLoadGifBuffer *buffer = (VipsForeignLoadGifBuffer *) gif;
++	VipsForeignLoadGifClass *class =
++		(VipsForeignLoadGifClass *) VIPS_OBJECT_GET_CLASS( gif );
++
++	class->close( gif );
+ 
+-	vips_foreign_load_gif_close( gif );
+ 	buffer->p = buffer->buf->data;
+ 	buffer->bytes_to_go = buffer->buf->length;
+ 	gif->read_func = vips_giflib_buffer_read;;
 diff --git a/libvips/foreign/heifload.c b/libvips/foreign/heifload.c
 index 1111111..2222222 100644
 --- a/libvips/foreign/heifload.c
 +++ b/libvips/foreign/heifload.c
-@@ -2,6 +2,9 @@
-  *
-  * 19/1/19
+@@ -4,6 +4,9 @@
   * 	- from niftiload.c
+  * 24/7/19 [zhoux2016]
+  * 	- always fetch metadata from the main image (thumbs don't have it)
 + * 24/7/19
 + * 	- close early on minimise 
 + * 	- close early on error
   */
  
  /*
-@@ -129,13 +132,20 @@ G_DEFINE_ABSTRACT_TYPE( VipsForeignLoadHeif, vips_foreign_load_heif,
+@@ -131,13 +134,20 @@ G_DEFINE_ABSTRACT_TYPE( VipsForeignLoadHeif, vips_foreign_load_heif,
  	VIPS_TYPE_FOREIGN_LOAD );
  
  static void
@@ -248,7 +490,7 @@ index 1111111..2222222 100644
  	VIPS_FREE( heif->id );
  
  	G_OBJECT_CLASS( vips_foreign_load_heif_parent_class )->
-@@ -685,6 +695,12 @@ vips_foreign_load_heif_generate( VipsRegion *or,
+@@ -706,6 +716,12 @@ vips_foreign_load_heif_generate( VipsRegion *or,
  	return( 0 );
  }
  
@@ -261,7 +503,7 @@ index 1111111..2222222 100644
  static int
  vips_foreign_load_heif_load( VipsForeignLoad *load )
  {
-@@ -700,6 +716,12 @@ vips_foreign_load_heif_load( VipsForeignLoad *load )
+@@ -721,6 +737,12 @@ vips_foreign_load_heif_load( VipsForeignLoad *load )
  	t[0] = vips_image_new();
  	if( vips_foreign_load_heif_set_header( heif, t[0] ) )
  		return( -1 );
@@ -274,7 +516,7 @@ index 1111111..2222222 100644
  	if( vips_image_generate( t[0],
  		NULL, vips_foreign_load_heif_generate, NULL, heif, NULL ) ||
  		vips_sequential( t[0], &t[1], NULL ) ||
-@@ -799,13 +821,20 @@ vips_foreign_load_heif_file_header( VipsForeignLoad *load )
+@@ -820,13 +842,20 @@ vips_foreign_load_heif_file_header( VipsForeignLoad *load )
  
  	error = heif_context_read_from_file( heif->ctx, file->filename, NULL );
  	if( error.code ) {
@@ -368,7 +610,7 @@ index 1111111..2222222 100644
  }
  
  static int
-@@ -718,7 +724,7 @@ read_jpeg_generate( VipsRegion *or,
+@@ -721,7 +727,7 @@ read_jpeg_generate( VipsRegion *or,
  		jpeg->y_pos += 1; 
  	}
  
@@ -397,7 +639,7 @@ diff --git a/libvips/foreign/pdfiumload.c b/libvips/foreign/pdfiumload.c
 index 1111111..2222222 100644
 --- a/libvips/foreign/pdfiumload.c
 +++ b/libvips/foreign/pdfiumload.c
-@@ -380,6 +380,15 @@ vips_foreign_load_pdf_header( VipsForeignLoad *load )
+@@ -395,6 +395,15 @@ vips_foreign_load_pdf_header( VipsForeignLoad *load )
  	return( 0 );
  }
  
@@ -413,7 +655,7 @@ index 1111111..2222222 100644
  static int
  vips_foreign_load_pdf_generate( VipsRegion *or, 
  	void *seq, void *a, void *b, gboolean *stop )
-@@ -436,13 +445,6 @@ vips_foreign_load_pdf_generate( VipsRegion *or,
+@@ -455,13 +464,6 @@ vips_foreign_load_pdf_generate( VipsRegion *or,
  		i += 1;
  	}
  
@@ -427,7 +669,7 @@ index 1111111..2222222 100644
  	/* PDFium writes BRGA, we must swap.
  	 *
  	 * FIXME ... this is a bit slow.
-@@ -476,6 +478,11 @@ vips_foreign_load_pdf_load( VipsForeignLoad *load )
+@@ -495,6 +497,11 @@ vips_foreign_load_pdf_load( VipsForeignLoad *load )
  	 */
  	t[0] = vips_image_new(); 
  
@@ -709,3 +951,143 @@ index 1111111..2222222 100644
  	if( vips_image_generate( t[0], 
  		NULL, read_webp_generate, NULL, read, NULL ) ||
  		vips_sequential( t[0], &t[1], NULL ) ||
+diff --git a/libvips/resample/shrinkv.c b/libvips/resample/shrinkv.c
+index 1111111..2222222 100644
+--- a/libvips/resample/shrinkv.c
++++ b/libvips/resample/shrinkv.c
+@@ -45,8 +45,6 @@
+  * 	- rename yshrink -> vshrink for greater consistency 
+  * 7/3/17
+  * 	- add a seq line cache
+- * 9/7/19
+- * 	- read the tail of the input to force early shutdown in seq readers
+  */
+ 
+ /*
+@@ -101,7 +99,6 @@ typedef struct _VipsShrinkv {
+ 
+ 	int vshrink;
+ 	size_t sizeof_line_buffer;
+-	gboolean sequential;
+ 
+ } VipsShrinkv;
+ 
+@@ -268,7 +265,6 @@ vips_shrinkv_gen( VipsRegion *or, void *vseq,
+ {
+ 	VipsShrinkvSequence *seq = (VipsShrinkvSequence *) vseq;
+ 	VipsShrinkv *shrink = (VipsShrinkv *) b;
+-	VipsResample *resample = VIPS_RESAMPLE( shrink );
+ 	VipsRegion *ir = seq->ir;
+ 	VipsRect *r = &or->valid;
+ 
+@@ -319,38 +315,6 @@ vips_shrinkv_gen( VipsRegion *or, void *vseq,
+ 
+ 	VIPS_COUNT_PIXELS( or, "vips_shrinkv_gen" ); 
+ 
+-	/* If we are in seq mode and we've just generated the last line of 
+-	 * the output, make sure we read all of the input.
+-	 *
+-	 * This will trigger the early shutdown logic in things like the 
+-	 * tiff loader.
+-	 */
+-	if( shrink->sequential &&
+-		r->top + r->height >= or->im->Ysize ) {
+-		/* First unused scanline. resample->in->Ysize because we want
+-		 * the height before the embed.
+-		 *
+-		 * Because we round to nearest, unused can be negative.
+-		 */
+-		int first = or->im->Ysize * shrink->vshrink;
+-		int unused = resample->in->Ysize - first;
+-
+-		for( y = 0; y < unused; y++ ) { 
+-			VipsRect s;
+-
+-			s.left = r->left;
+-			s.top = first + y;
+-			s.width = r->width;
+-			s.height = 1;
+-#ifdef DEBUG
+-			printf( "shrink_gen: requesting tail %d\n", s.top ); 
+-#endif /*DEBUG*/
+-
+-			if( vips_region_prepare( ir, &s ) )
+-				return( -1 );
+-		}
+-	}
+-
+ 	return( 0 );
+ }
+ 
+@@ -451,8 +415,6 @@ vips_shrinkv_build( VipsObject *object )
+ 	if( vips_image_get_typeof( in, VIPS_META_SEQUENTIAL ) ) { 
+ 		g_info( "shrinkv sequential line cache" ); 
+ 
+-		shrink->sequential = TRUE;
+-
+ 		if( vips_sequential( in, &t[3], 
+ 			"tile_height", 10,
+ 			NULL ) )
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: John Cupitt <jcupitt@gmail.com>
+Date: Sat, 31 Aug 2019 11:29:36 +0100
+Subject: [PATCH 2/2] revert sharpen restoring the input colourspace
+
+icc_export can make _RGB images, so the input can be outside the set of
+supported colourspace transforms.
+
+See https://github.com/libvips/libvips/commit/46212e92b1f943e6852e807db1ee6e5ca66b6ccf#r34904985
+
+diff --git a/libvips/convolution/sharpen.c b/libvips/convolution/sharpen.c
+index 1111111..2222222 100644
+--- a/libvips/convolution/sharpen.c
++++ b/libvips/convolution/sharpen.c
+@@ -41,7 +41,6 @@
+  * 	- move to defaults suitable for screen output
+  * 28/8/19
+  * 	- fix sigma 0.5 case (thanks 2h4dl)
+- * 	- restore input colourspace
+  */
+ 
+ /*
+@@ -178,7 +177,6 @@ vips_sharpen_build( VipsObject *object )
+ 
+ 	VipsImage *in;
+ 	int i;
+-	VipsInterpretation old_interpretation;
+ 
+ 	VIPS_GATE_START( "vips_sharpen_build: build" ); 
+ 
+@@ -194,7 +192,6 @@ vips_sharpen_build( VipsObject *object )
+ 
+ 	in = sharpen->in; 
+ 
+-	old_interpretation = in->Type;
+ 	if( vips_colourspace( in, &t[0], VIPS_INTERPRETATION_LABS, NULL ) )
+ 		return( -1 );
+ 	in = t[0];
+@@ -274,9 +271,6 @@ vips_sharpen_build( VipsObject *object )
+ 			NULL ) )
+ 		return( -1 );
+ 
+-	/* Set demand hints. FATSTRIP is good for us, as THINSTRIP will cause
+-	 * too many recalculations on overlaps.
+-	 */
+ 	t[5] = vips_image_new();
+ 	if( vips_image_pipeline_array( t[5], 
+ 		VIPS_DEMAND_STYLE_FATSTRIP, args ) )
+@@ -289,11 +283,10 @@ vips_sharpen_build( VipsObject *object )
+ 
+ 	g_object_set( object, "out", vips_image_new(), NULL ); 
+ 
+-	/* Reattach the rest, back to the start colourspace.
++	/* Reattach the rest.
+ 	 */
+ 	if( vips_bandjoin2( t[5], t[3], &t[6], NULL ) ||
+-		vips_colourspace( t[6], &t[7], old_interpretation, NULL ) ||
+-		vips_image_write( t[7], sharpen->out ) )
++		vips_image_write( t[6], sharpen->out ) )
+ 		return( -1 );
+ 
+ 	VIPS_GATE_STOP( "vips_sharpen_build: build" ); 

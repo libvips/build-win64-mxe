@@ -66,8 +66,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-61
-imagemagick_CHECKSUM := c931b81e99e6a1e72a0bfd2a6eba741f5b3cbe73b22add9008ef8ba86284fb48
+imagemagick_VERSION  := 6.9.10-63
+imagemagick_CHECKSUM := a8a97852ade66d1732574d2cbe4dd7e47a448d7b34ed553f4d2f0c9b29edf51c
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick6-$(imagemagick_VERSION)
 imagemagick_FILE     := $(imagemagick_VERSION).tar.gz
@@ -98,8 +98,14 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
+# upstream version is 0.79.0
 # Use the mutex helper from mingw-std-threads
+poppler_VERSION  := 0.80.0
+poppler_CHECKSUM := 4d3ca6b79bc13b8e24092e34f83ef5f387f3bb0bbd7359a6c078e09c696d104f
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.13
