@@ -83,16 +83,16 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.45.91
-librsvg_CHECKSUM := a4ed8abb741942e7fcf61abb2ce98420092ddad163ddc1a390149059170de29e
+librsvg_VERSION  := 2.45.92
+librsvg_CHECKSUM := 77b358ed5cfe1b18f36797f764195be714f04d10454d9a4a4863a73c7b3f41d5
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.44.5
-pango_CHECKSUM := 8527dfcbeedb4390149b6f94620c0fa64e26046ab85042c2a7556438847d7fc1
+pango_VERSION  := 1.44.6
+pango_CHECKSUM := 3e1e41ba838737e200611ff001e3b304c2ca4cdbba63d200a20db0b0ddc0f86c
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -115,8 +115,8 @@ libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.61.2
-glib_CHECKSUM := 99c6bcfb8600562d519222a429e2dc0af469b2006b8080a9a1f438456071c0b5
+glib_VERSION  := 2.61.3
+glib_CHECKSUM := ff434ba170976438f29243252b87a403499a908b3491bb66f21655887f7fc27a
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz

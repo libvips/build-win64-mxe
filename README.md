@@ -13,7 +13,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [gdk-pixbuf]    | 2.39.2    | LGPLv3                          |
 | [gettext]       | 0.20.1    | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
-| [glib]          | 2.61.2    | LGPLv3                          |
+| [glib]          | 2.61.3    | LGPLv3                          |
 | [harfbuzz]      | 2.6.1     | MIT Licence                     |
 | [lcms]          | 2.9       | MIT Licence                     |
 | [libcroco]      | 0.6.13    | LGPLv3                          |
@@ -23,13 +23,13 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libiconv]      | 1.16      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.2     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
-| [librsvg]       | 2.45.91   | LGPLv3                          |
+| [librsvg]       | 2.45.92   | LGPLv3                          |
 | [libtiff]       | 4.0.10    | [libtiff License] (BSD-like)    |
 | [libvips]       | 8.8.2     | LGPLv3                          |
 | [libwebp]       | 1.0.3     | New BSD License                 |
 | [libxml2]       | 2.9.9     | MIT Licence                     |
 | [orc]           | 0.4.29    | BSD 2-Clause                    |
-| [pango]         | 1.44.5    | LGPLv3                          |
+| [pango]         | 1.44.6    | LGPLv3                          |
 | [pixman]        | 0.38.4    | MIT Licence                     |
 | [zlib]          | 1.2.11    | [zlib Licence]                  |
 
