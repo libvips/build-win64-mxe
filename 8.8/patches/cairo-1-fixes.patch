@@ -1,0 +1,29 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Bryce Harrington <bryce@bryceharrington.org>
+Date: Sun, 3 Mar 2019 00:01:34 -0800
+Subject: [PATCH 1/1] Revert "clip-boxes:  Drop too-early return"
+
+This reverts commit cb871c6c692af68d8e0bf9e26472af45435f8a2c.
+
+The original code is badly, but removing the early return leads to
+crashes.  This code will need a lot more attention to get right, for now
+at least go back to the original behavior.
+
+Fixes: https://gitlab.freedesktop.org/cairo/cairo/issues/358#note_125270
+
+diff --git a/src/cairo-clip-boxes.c b/src/cairo-clip-boxes.c
+index 1111111..2222222 100644
+--- a/src/cairo-clip-boxes.c
++++ b/src/cairo-clip-boxes.c
+@@ -524,6 +524,7 @@ _cairo_clip_reduce_to_boxes (cairo_clip_t *clip)
+     cairo_clip_path_t *clip_path;
+     cairo_status_t status;
+ 
++	return clip;
+     if (clip->path == NULL)
+ 	return clip;
+ 

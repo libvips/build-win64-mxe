@@ -5,97 +5,275 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 16 Aug 2018 17:00:00 +0200
-Subject: [PATCH 1/2] Remove build process for eLut.h and toFloat.h
+Subject: [PATCH 1/4] Remove build process for eLut.h and toFloat.h
 
 We build these code generators manually.
 
-diff --git a/Half/CMakeLists.txt b/Half/CMakeLists.txt
+diff --git a/IlmBase/Half/CMakeLists.txt b/IlmBase/Half/CMakeLists.txt
 index 1111111..2222222 100644
---- a/Half/CMakeLists.txt
-+++ b/Half/CMakeLists.txt
-@@ -1,20 +1,11 @@
- # yue.nicholas@gmail.com
+--- a/IlmBase/Half/CMakeLists.txt
++++ b/IlmBase/Half/CMakeLists.txt
+@@ -4,19 +4,9 @@
+ add_executable(eLut eLut.cpp)
+ target_compile_features(eLut PUBLIC cxx_std_${OPENEXR_CXX_STANDARD})
  
- ADD_EXECUTABLE ( eLut eLut.cpp )
--ADD_CUSTOM_COMMAND(
--  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
--  COMMAND $<TARGET_FILE:eLut> ARGS > ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
--  DEPENDS eLut)
- SET_SOURCE_FILES_PROPERTIES(
-   ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
-   PROPERTIES HEADER_FILE_ONLY TRUE)
- 
- ADD_EXECUTABLE ( toFloat toFloat.cpp )
--ADD_CUSTOM_COMMAND(
--  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
--  COMMAND $<TARGET_FILE:toFloat> ARGS > ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
--  DEPENDS toFloat)
 -
- SET_SOURCE_FILES_PROPERTIES(
-   ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
-   PROPERTIES HEADER_FILE_ONLY TRUE)
+ add_executable(toFloat toFloat.cpp)
+ target_compile_features(toFloat PUBLIC cxx_std_${OPENEXR_CXX_STANDARD})
+ 
+-add_custom_command(
+-  OUTPUT
+-    ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
+-    ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
+-  COMMAND $<TARGET_FILE:toFloat> ARGS > ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
+-  COMMAND $<TARGET_FILE:eLut> ARGS > ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
+-  DEPENDS eLut toFloat
+-)
+-
+ ### Now define the real library
+ 
+ ilmbase_define_library(Half
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Marius Bakke <mbakke@fastmail.com>
+Date: Tue, 24 Sep 2019 17:11:54 +0200
+Subject: [PATCH 2/4] Use absolute directory names in pkg-config files for CMake
+ builds.
+
+From: https://github.com/openexr/openexr/pull/568
+
+diff --git a/IlmBase/config/CMakeLists.txt b/IlmBase/config/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/IlmBase/config/CMakeLists.txt
++++ b/IlmBase/config/CMakeLists.txt
+@@ -71,9 +71,9 @@ if(ILMBASE_INSTALL_PKG_CONFIG)
+   # use a helper function to avoid variable pollution, but pretty simple
+   function(ilmbase_pkg_config_help pcinfile)
+     set(prefix ${CMAKE_INSTALL_PREFIX})
+-    set(exec_prefix ${CMAKE_INSTALL_BINDIR})
+-    set(libdir ${CMAKE_INSTALL_LIBDIR})
+-    set(includedir ${CMAKE_INSTALL_INCLUDEDIR})
++    set(exec_prefix ${CMAKE_INSTALL_FULL_BINDIR})
++    set(libdir ${CMAKE_INSTALL_FULL_LIBDIR})
++    set(includedir ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+     set(LIB_SUFFIX_DASH ${ILMBASE_LIB_SUFFIX})
+     if(TARGET Threads::Threads)
+       # hrm, can't use properties as they end up as generator expressions
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Thu, 16 Aug 2018 18:00:00 +0200
-Subject: [PATCH 2/2] Install pc file on MinGW
+Date: Tue, 1 Oct 2019 13:00:00 +0200
+Subject: [PATCH 3/4] Make libraries private within the pkg-config file
 
+Assuming that IlmBase is built statically, this ensures that the
+libraries are not exposed during linking.
 
-diff --git a/CMakeLists.txt b/CMakeLists.txt
+diff --git a/IlmBase/IlmBase.pc.in b/IlmBase/IlmBase.pc.in
 index 1111111..2222222 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -149,15 +149,6 @@ CONFIGURE_FILE ( ${ILMBASE_TMP_CONFIG} ${CMAKE_CURRENT_BINARY_DIR}/config/IlmBas
- FILE ( REMOVE ${ILMBASE_TMP_CONFIG} )
- UNSET ( ILMBASE_TMP_CONFIG )
+--- a/IlmBase/IlmBase.pc.in
++++ b/IlmBase/IlmBase.pc.in
+@@ -13,5 +13,5 @@ Description: Base math and exception libraries
+ Version: @ILMBASE_VERSION@
+ Requires:
+ Conflicts:
+-Libs: -L${libdir} -lImath${libsuffix} -lHalf${libsuffix} -lIex${libsuffix} -lIexMath${libsuffix} -lIlmThread${libsuffix} @PTHREAD_LIBS@
++Libs.private: -L${libdir} -lImath${libsuffix} -lHalf${libsuffix} -lIex${libsuffix} -lIexMath${libsuffix} -lIlmThread${libsuffix} @PTHREAD_LIBS@
+ Cflags: @PTHREAD_CFLAGS@ -I${includedir} -I${includedir}/OpenEXR
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 1 Oct 2019 14:20:00 +0200
+Subject: [PATCH 4/4] Fix build errors with MinGW
+
+
+diff --git a/IlmBase/IlmThread/IlmThread.h b/IlmBase/IlmThread/IlmThread.h
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThread.h
++++ b/IlmBase/IlmThread/IlmThread.h
+@@ -95,7 +95,7 @@
+ #include "IlmThreadNamespace.h"
  
--IF ( NOT WIN32 AND OPENEXR_BUILD_SHARED )
--  CREATE_LIBTOOL_FILE ( Half /lib )
--  CREATE_LIBTOOL_FILE ( Iex /lib )
--  CREATE_LIBTOOL_FILE ( IexMath /lib )
--  CREATE_LIBTOOL_FILE ( Imath /lib )
--  CREATE_LIBTOOL_FILE ( IlmThread /lib )
--ENDIF ()
--
--
- # Tests
- IF ( ENABLE_TESTS )
-   ADD_SUBDIRECTORY ( HalfTest )
-@@ -173,23 +164,24 @@ INSTALL ( FILES
-   include/OpenEXR
- )
+ #ifdef ILMBASE_FORCE_CXX03
+-#   if defined _WIN32 || defined _WIN64
++#   if (defined(_WIN32) || defined(_WIN64)) && !defined(__MINGW32__)
+ #       ifdef NOMINMAX
+ #          undef NOMINMAX
+ #       endif
+@@ -132,7 +132,7 @@ class Thread
+   private:
  
--IF ( NOT WIN32 )
--  FILE ( WRITE ${CMAKE_BINARY_DIR}/IlmBase.pc "prefix=${CMAKE_INSTALL_PREFIX}\n" )
--  FILE ( APPEND ${CMAKE_BINARY_DIR}/IlmBase.pc "exec_prefix=\${prefix}
-+IF ( MINGW OR NOT WIN32 )
-+  FILE ( WRITE ${CMAKE_CURRENT_BINARY_DIR}/IlmBase.pc "prefix=${CMAKE_INSTALL_PREFIX}\n" )
-+  FILE ( APPEND ${CMAKE_CURRENT_BINARY_DIR}/IlmBase.pc "exec_prefix=\${prefix}
- libdir=\${exec_prefix}/lib
- includedir=\${prefix}/include
--OpenEXR_includedir=\${prefix}/include/OpenEXR
--
-+OpenEXR_includedir=\${prefix}/include/OpenEXR\n" )
-+  IF (BUILD_ILMBASE_STATIC)
-+    FILE ( APPEND ${CMAKE_CURRENT_BINARY_DIR}/IlmBase.pc "IlmBase_suffix=${ILMBASE_LIBSUFFIX}_s\n" )
-+  ELSE ()
-+    FILE ( APPEND ${CMAKE_CURRENT_BINARY_DIR}/IlmBase.pc "IlmBase_suffix=${ILMBASE_LIBSUFFIX}\n" )
-+  ENDIF ()
-+ FILE ( APPEND ${CMAKE_CURRENT_BINARY_DIR}/IlmBase.pc "
- Name: IlmBase
- Description: Base math and exception libraries
- Version: ${ILMBASE_VERSION}
--Libs: -L\${libdir} -lImath${ILMBASE_LIBSUFFIX} -lIexMath${ILMBASE_LIBSUFFIX} -lHalf${ILMBASE_LIBSUFFIX} -lIex${ILMBASE_LIBSUFFIX} -lIlmThread${ILMBASE_LIBSUFFIX} -pthread
--Cflags: -pthread -I\${OpenEXR_includedir}
--")
+ #ifdef ILMBASE_FORCE_CXX03
+-#   if defined _WIN32 || defined _WIN64
++#   if (defined(_WIN32) || defined(_WIN64)) && !defined(__MINGW32__)
+ 	HANDLE _thread;
+ #   elif HAVE_PTHREAD
+ 	pthread_t _thread;
+diff --git a/IlmBase/IlmThread/IlmThreadMutex.h b/IlmBase/IlmThread/IlmThreadMutex.h
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadMutex.h
++++ b/IlmBase/IlmThread/IlmThreadMutex.h
+@@ -71,7 +71,7 @@
+ #include "IlmThreadNamespace.h"
  
--  INSTALL ( FILES
--    ${CMAKE_BINARY_DIR}/IlmBase.pc
--    DESTINATION
--    lib/pkgconfig
--  )
-+Libs.private: -L\${libdir} -lHalf\${IlmBase_suffix} -lIex\${IlmBase_suffix} -lIexMath\${IlmBase_suffix} -lIlmThread\${IlmBase_suffix} -lImath\${IlmBase_suffix} ${CMAKE_THREAD_LIBS_INIT}
-+Cflags: ${CMAKE_THREAD_LIBS_INIT} -I\${OpenEXR_includedir}")
+ #ifdef ILMBASE_FORCE_CXX03
+-#   if defined _WIN32 || defined _WIN64
++#   if (defined(_WIN32) || defined(_WIN64)) && !defined(__MINGW32__)
+ #      ifdef NOMINMAX
+ #         undef NOMINMAX
+ #      endif
+@@ -116,7 +116,7 @@ class ILMTHREAD_EXPORT Mutex
+     void	lock () const;
+     void	unlock () const;
+ 
+-    #if defined _WIN32 || defined _WIN64
++    #if (defined(_WIN32) || defined(_WIN64)) && !defined(__MINGW32__)
+ 	mutable CRITICAL_SECTION _mutex;
+     #elif HAVE_PTHREAD
+ 	mutable pthread_mutex_t _mutex;
+diff --git a/IlmBase/IlmThread/IlmThreadMutexWin32.cpp b/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
++++ b/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
+@@ -41,7 +41,7 @@
+ #include "IlmBaseConfig.h"
+ 
+ #ifdef ILMBASE_FORCE_CXX03
+-#    ifdef _WIN32
++#    if defined(_WIN32) && !defined(__MINGW32__)
+ 
+ #        include "IlmThreadMutex.h"
+ #        include "Iex.h"
+@@ -77,5 +77,5 @@ Mutex::unlock () const
+ 
+ ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_EXIT
+ 
+-#    endif // _WIN32
++#    endif // defined(_WIN32) && !defined(__MINGW32__)
+ #endif
+diff --git a/IlmBase/IlmThread/IlmThreadPool.cpp b/IlmBase/IlmThread/IlmThreadPool.cpp
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadPool.cpp
++++ b/IlmBase/IlmThread/IlmThreadPool.cpp
+@@ -49,7 +49,7 @@
+ # include <atomic>
+ # include <thread>
+ #else
+-# ifndef _WIN32
++# if !defined(_WIN32) || defined(__MINGW32__)
+ #  include <unistd.h>
+ # endif
+ #endif
+@@ -507,7 +507,7 @@ TaskGroup::Data::addTask ()
+     // extra lock but for c++98, to add the ability for custom thread
+     // pool we add the lock here
+     //
+-#if ILMBASE_FORCE_CXX03
++#ifdef ILMBASE_FORCE_CXX03
+     Lock lock (dtorMutex);
+ #endif
+     if (numPending++ == 0)
+@@ -860,7 +860,7 @@ unsigned
+ ThreadPool::estimateThreadCountForFileIO ()
+ {
+ #ifdef ILMBASE_FORCE_CXX03
+-#    if defined(_WIN32)
++#    if defined(_WIN32) && !defined(__MINGW32__)
+     SYSTEM_INFO sysinfo;
+     GetSystemInfo (&sysinfo);
+     return static_cast<unsigned> (sysinfo.dwNumberOfProcessors);
+diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.h b/IlmBase/IlmThread/IlmThreadSemaphore.h
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadSemaphore.h
++++ b/IlmBase/IlmThread/IlmThreadSemaphore.h
+@@ -46,7 +46,7 @@
+ #include "IlmThreadExport.h"
+ #include "IlmThreadNamespace.h"
+ 
+-#if defined _WIN32 || defined _WIN64
++#if (defined(_WIN32) || defined(_WIN64)) && !defined(__MINGW32__)
+ #   ifdef NOMINMAX
+ #      undef NOMINMAX
+ #   endif
+@@ -84,7 +84,7 @@ class ILMTHREAD_EXPORT Semaphore
+ 
+   private:
+ 
+-#if defined _WIN32 || defined _WIN64
++#if (defined(_WIN32) || defined(_WIN64)) && !defined(__MINGW32__)
+ 
+ 	mutable HANDLE _semaphore;
+ 
+@@ -105,7 +105,7 @@ class ILMTHREAD_EXPORT Semaphore
+ 	{
+ 	    unsigned int count;
+ 	    unsigned long numWaiting;
+-#   if ILMBASE_FORCE_CXX03
++#   ifdef ILMBASE_FORCE_CXX03
+ #      if HAVE_PTHREAD
+ 	    pthread_mutex_t mutex;
+ 	    pthread_cond_t nonZero;
+diff --git a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
++++ b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
+@@ -41,7 +41,7 @@
+ 
+ #include "IlmBaseConfig.h"
+ 
+-#if (!HAVE_POSIX_SEMAPHORES) && !defined (_WIN32) && ! defined (_WIN64) && ! defined (__APPLE__)
++#if (!HAVE_POSIX_SEMAPHORES) && (defined(__MINGW32__) || (!defined (_WIN32) && !defined (_WIN64) && !defined (__APPLE__)))
+ 
+ #include "IlmThreadSemaphore.h"
+ #include "Iex.h"
+@@ -49,7 +49,7 @@
+ 
+ ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_ENTER
+ 
+-#if ILMBASE_FORCE_CXX03 && HAVE_PTHREAD
++#if defined(ILMBASE_FORCE_CXX03) && HAVE_PTHREAD
+ Semaphore::Semaphore (unsigned int value)
+ {
+     if (int error = ::pthread_mutex_init (&_semaphore.mutex, 0))
+diff --git a/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp b/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
++++ b/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
+@@ -38,7 +38,7 @@
+ //
+ //-----------------------------------------------------------------------------
+ 
+-#ifdef _WIN32
++#if defined(_WIN32) && !defined(__MINGW32__)
+ 
+ #include "IlmThreadSemaphore.h"
+ #include "Iex.h"
+diff --git a/IlmBase/IlmThread/IlmThreadWin32.cpp b/IlmBase/IlmThread/IlmThreadWin32.cpp
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadWin32.cpp
++++ b/IlmBase/IlmThread/IlmThreadWin32.cpp
+@@ -42,7 +42,7 @@
+ #include "IlmBaseConfig.h"
+ 
+ #ifdef ILMBASE_FORCE_CXX03
+-#ifdef _WIN32
++#if defined(_WIN32) && !defined(__MINGW32__)
+ 
+ #include "IlmThread.h"
+ #include "Iex.h"
+diff --git a/IlmBase/config/IlmBaseConfig.h.in_cmake b/IlmBase/config/IlmBaseConfig.h.in_cmake
+index 1111111..2222222 100644
+--- a/IlmBase/config/IlmBaseConfig.h.in_cmake
++++ b/IlmBase/config/IlmBaseConfig.h.in_cmake
+@@ -21,6 +21,12 @@
+ //
+ #cmakedefine ILMBASE_HAVE_LARGE_STACK
+ 
++//
++// Define and set to 1 if the target system has c++11/14 support
++// and you want IlmBase to NOT use it's features
++//
++#cmakedefine ILMBASE_FORCE_CXX03
 +
-+  INSTALL ( FILES "${CMAKE_CURRENT_BINARY_DIR}/IlmBase.pc" DESTINATION lib/pkgconfig )
- ENDIF()
+ //////////////////////
+ //
+ // C++ namespace configuration / options

@@ -20,6 +20,10 @@ glib-compile-resources = '@PREFIX@/@TARGET@/bin/glib-compile-resources'
 
 [properties]
 needs_exe_wrapper = true
+# Turn on debugging
+# c_args = ['-g']
+# cpp_args = ['-g']
+
 c_args = ['-s', '-O3', '-ffast-math', '-fdata-sections', '-ffunction-sections', '-fPIC']
 cpp_args = ['-s', '-O3', '-ffast-math', '-fdata-sections', '-ffunction-sections', '-fPIC']
 c_link_args = ['-Wl,--gc-sections', '-Wl,--strip-all', '-Wl,--as-needed']

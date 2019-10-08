@@ -5,260 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 16 Aug 2018 17:00:00 +0200
-Subject: [PATCH 1/3] Fix build errors
-
-
-diff --git a/cmake/FindIlmBase.cmake b/cmake/FindIlmBase.cmake
-index 1111111..2222222 100644
---- a/cmake/FindIlmBase.cmake
-+++ b/cmake/FindIlmBase.cmake
-@@ -177,7 +177,7 @@ foreach(ILMBASE_LIB
-     endif()
- 
-     if (OPENEXR_${ILMBASE_LIB}_STATIC_LIBRARY)
--        add_library(IlmBase::${ILMBASE_LIB}_static SHARED IMPORTED)
-+        add_library(IlmBase::${ILMBASE_LIB}_static STATIC IMPORTED)
-         set_target_properties(IlmBase::${ILMBASE_LIB}_static PROPERTIES IMPORTED_LOCATION_RELEASE ${OPENEXR_${ILMBASE_LIB}_STATIC_LIBRARY})
-         set_target_properties(IlmBase::${ILMBASE_LIB}_static PROPERTIES IMPORTED_LOCATION_DEBUG ${OPENEXR_${ILMBASE_LIB}_STATIC_DEBUG_LIBRARY})
-         set_target_properties(IlmBase::${ILMBASE_LIB}_static PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE)
-
-diff --git a/OpenEXR/IlmImf/CMakeLists.txt b/OpenEXR/IlmImf/CMakeLists.txt
-index 1111111..2222222 100644
---- a/OpenEXR/IlmImf/CMakeLists.txt
-+++ b/OpenEXR/IlmImf/CMakeLists.txt
-@@ -2,18 +2,7 @@
- 
- SET(CMAKE_INCLUDE_CURRENT_DIR 1)
- 
--IF (WIN32)
--  SET(RUNTIME_DIR ${OPENEXR_PACKAGE_PREFIX}/bin)
--  SET(WORKING_DIR ${RUNTIME_DIR})
--ELSE ()
--  SET(RUNTIME_DIR ${OPENEXR_PACKAGE_PREFIX}/lib)
--  SET(WORKING_DIR .)
--ENDIF ()
--
- SET(BUILD_B44EXPLOGTABLE OFF)
--IF (NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h")
--  SET(BUILD_B44EXPLOGTABLE ON)
--ENDIF ()
- 
- IF (BUILD_B44EXPLOGTABLE)
-   ADD_EXECUTABLE ( b44ExpLogTable
-@@ -47,13 +36,13 @@ ELSE ()
-   message (STATUS "Skipping build of b44ExpLogTable.h")
- ENDIF()
- 
--if (NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h")
-+SET(BUILD_DWALOOKUPS OFF)
-+
-+if (BUILD_DWALOOKUPS)
-   ADD_EXECUTABLE ( dwaLookups
-     dwaLookups.cpp
-   )
- 
--  SET(BUILD_DWALOOKUPS ON)
--
-   SET_ILMBASE_INCLUDE_DIRS(dwaLookups)
- 
-   IF (WIN32)
-@@ -197,16 +186,28 @@ IF ( OPENEXR_BUILD_SHARED )
-   IF (WIN32)
-     TARGET_COMPILE_DEFINITIONS ( IlmImf PUBLIC OPENEXR_DLL )
-     TARGET_COMPILE_DEFINITIONS ( IlmImf PUBLIC _CRT_SECURE_NO_WARNINGS )
--  ENDIF ()
-+    TARGET_COMPILE_DEFINITIONS ( IlmImf PRIVATE IEX_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImf PRIVATE HALF_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImf PRIVATE IMATH_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImf PRIVATE ILMTHREAD_EXPORTS )
-+    TARGET_LINK_LIBRARIES ( IlmImf
-+      PUBLIC  IlmBase::Iex_static
-+      PUBLIC  IlmBase::Half_static
-+      PUBLIC  IlmBase::Imath_static
-+      PUBLIC  IlmBase::IlmThread_static
-+      PRIVATE ${ZLIB_LIBRARIES}
-+    )
-+  ELSE()
-+    TARGET_LINK_LIBRARIES ( IlmImf
-+      PUBLIC  IlmBase::Iex
-+      PUBLIC  IlmBase::Half
-+      PUBLIC  IlmBase::Imath
-+      PUBLIC  IlmBase::IlmThread
-+      PRIVATE ${PTHREAD_LIB}
-+      PRIVATE ${ZLIB_LIBRARIES}
-+    )
-+  ENDIF()
- 
--  TARGET_LINK_LIBRARIES ( IlmImf
--    PUBLIC  IlmBase::Iex
--    PUBLIC  IlmBase::Half
--    PUBLIC  IlmBase::Imath
--    PUBLIC  IlmBase::IlmThread
--    PRIVATE ${PTHREAD_LIB}
--    PRIVATE ${ZLIB_LIBRARIES}
--  )
-   SET_ILMBASE_INCLUDE_DIRS(IlmImf)
- 
-   SET_TARGET_PROPERTIES ( IlmImf
-@@ -256,7 +257,7 @@ IF (OPENEXR_BUILD_SHARED OR OPENEXR_BUILD_STATIC)
-   INSTALL ( TARGETS ${OPENEXR_LIB_TARGETS}
-     ARCHIVE DESTINATION lib
-     LIBRARY DESTINATION lib
--    RUNTIME DESTINATION ${RUNTIME_DIR}
-+    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-   )
- ENDIF ()
- 
-
-diff --git a/OpenEXR/IlmImfUtil/CMakeLists.txt b/OpenEXR/IlmImfUtil/CMakeLists.txt
-index 1111111..2222222 100644
---- a/OpenEXR/IlmImfUtil/CMakeLists.txt
-+++ b/OpenEXR/IlmImfUtil/CMakeLists.txt
-@@ -29,18 +29,31 @@ IF(OPENEXR_BUILD_SHARED)
-   TARGET_COMPILE_DEFINITIONS ( IlmImfUtil PRIVATE ILMIMFUTIL_EXPORTS )
-   IF (WIN32)
-     TARGET_COMPILE_DEFINITIONS ( IlmImfUtil PUBLIC OPENEXR_DLL )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImfUtil PRIVATE IEX_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImfUtil PRIVATE HALF_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImfUtil PRIVATE IMATH_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImfUtil PRIVATE ILMTHREAD_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImfUtil PRIVATE ILMIMF_EXPORTS )
-+    TARGET_LINK_LIBRARIES ( IlmImfUtil
-+      PUBLIC  IlmBase::Iex_static
-+      PUBLIC  IlmBase::Half_static
-+      PUBLIC  IlmBase::Imath_static
-+      PUBLIC  IlmBase::IlmThread_static
-+      PUBLIC  OpenEXR::IlmImf
-+      PRIVATE ${ZLIB_LIBRARIES}
-+    )
-+  ELSE()
-+    TARGET_LINK_LIBRARIES ( IlmImfUtil
-+      PUBLIC  IlmBase::Iex
-+      PUBLIC  IlmBase::Half
-+      PUBLIC  IlmBase::Imath
-+      PUBLIC  IlmBase::IlmThread
-+      PUBLIC  OpenEXR::IlmImf
-+      PRIVATE ${PTHREAD_LIB}
-+      PRIVATE ${ZLIB_LIBRARIES}
-+    )
-   ENDIF ()
- 
--  TARGET_LINK_LIBRARIES ( IlmImfUtil
--    PUBLIC  IlmBase::Iex
--    PUBLIC  IlmBase::Half
--    PUBLIC  IlmBase::Imath
--    PUBLIC  IlmBase::IlmThread
--    PUBLIC  OpenEXR::IlmImf
--    PRIVATE ${PTHREAD_LIB}
--    PRIVATE ${ZLIB_LIBRARIES}
--  )
--
-   SET_TARGET_PROPERTIES ( IlmImfUtil
-     PROPERTIES
-     VERSION ${OPENEXR_VERSION_MAJOR}.${OPENEXR_VERSION_MINOR}.${OPENEXR_VERSION_PATCH}
-@@ -70,7 +83,7 @@ IF (OPENEXR_BUILD_SHARED OR OPENEXR_BUILD_STATIC)
-     ${OPENEXR_LIB_TARGETS}
-       ARCHIVE DESTINATION lib
-       LIBRARY DESTINATION lib
--      RUNTIME DESTINATION ${RUNTIME_DIR}
-+      RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-   )
- ENDIF ()
- 
-
-diff --git a/OpenEXR/IlmImfExamples/CMakeLists.txt b/OpenEXR/IlmImfExamples/CMakeLists.txt
-index 1111111..2222222 100644
---- a/OpenEXR/IlmImfExamples/CMakeLists.txt
-+++ b/OpenEXR/IlmImfExamples/CMakeLists.txt
-@@ -13,11 +13,27 @@ ADD_EXECUTABLE ( IlmImfExamples
- 
- SET_ILMBASE_INCLUDE_DIRS( IlmImfExamples )
- 
--TARGET_LINK_LIBRARIES ( IlmImfExamples
--  OpenEXR::IlmImf${OPENEXR_TARGET_SUFFIX}
--  IlmBase::Half${OPENEXR_TARGET_SUFFIX}
--  IlmBase::Iex${OPENEXR_TARGET_SUFFIX}
--  IlmBase::Imath${OPENEXR_TARGET_SUFFIX}
--  IlmBase::IlmThread${OPENEXR_TARGET_SUFFIX}
--  ${PTHREAD_LIB} ${ZLIB_LIBRARIES}
--  )
-+IF (WIN32)
-+    TARGET_COMPILE_DEFINITIONS ( IlmImfExamples PRIVATE ILMIMF_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImfExamples PRIVATE IEX_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImfExamples PRIVATE HALF_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImfExamples PRIVATE IMATH_EXPORTS )
-+    TARGET_COMPILE_DEFINITIONS ( IlmImfExamples PRIVATE ILMTHREAD_EXPORTS )
-+    TARGET_LINK_LIBRARIES ( IlmImfExamples
-+      OpenEXR::IlmImf${OPENEXR_TARGET_SUFFIX}
-+      IlmBase::Half_static
-+      IlmBase::Iex_static
-+      IlmBase::Imath_static
-+      IlmBase::IlmThread_static
-+      ${ZLIB_LIBRARIES}
-+      )
-+ELSE()
-+    TARGET_LINK_LIBRARIES ( IlmImfExamples
-+      OpenEXR::IlmImf${OPENEXR_TARGET_SUFFIX}
-+      IlmBase::Half${OPENEXR_TARGET_SUFFIX}
-+      IlmBase::Iex${OPENEXR_TARGET_SUFFIX}
-+      IlmBase::Imath${OPENEXR_TARGET_SUFFIX}
-+      IlmBase::IlmThread${OPENEXR_TARGET_SUFFIX}
-+      ${PTHREAD_LIB} ${ZLIB_LIBRARIES}
-+      )
-+ENDIF()
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Thu, 16 Aug 2018 18:00:00 +0200
-Subject: [PATCH 2/3] Install pc file on MinGW
-
-
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 1111111..2222222 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -170,6 +170,8 @@ if ((OPENEXR_BUILD_UTILS OR OPENEXR_BUILD_TESTS OR OPENEXR_BUILD_VIEWERS) AND NO
-   endif()
- endif()
- 
-+find_package(PkgConfig QUIET)
-+
- # Set position independent code (mostly for static builds, but not a bad idea regardless)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
- 
-
-diff --git a/OpenEXR/CMakeLists.txt b/OpenEXR/CMakeLists.txt
-index 1111111..2222222 100644
---- a/OpenEXR/CMakeLists.txt
-+++ b/OpenEXR/CMakeLists.txt
-@@ -232,3 +232,22 @@ INSTALL ( FILES
-   DESTINATION
-   ${CMAKE_INSTALL_PREFIX}/share/doc/OpenEXR-${OPENEXR_VERSION}/examples
-   )
-+
-+IF ( MINGW OR NOT WIN32 )
-+  FILE ( WRITE ${CMAKE_CURRENT_BINARY_DIR}/OpenEXR.pc "prefix=${CMAKE_INSTALL_PREFIX}\n" )
-+  FILE ( APPEND ${CMAKE_CURRENT_BINARY_DIR}/OpenEXR.pc "exec_prefix=\${prefix}
-+libdir=\${exec_prefix}/lib
-+includedir=\${prefix}/include
-+OpenEXR_includedir=\${includedir}/OpenEXR
-+
-+Name: OpenEXR
-+Description: OpenEXR image library
-+Version: ${OPENEXR_VERSION}
-+
-+Cflags: -I$\{OpenEXR_includedir}
-+Libs: -L\${libdir} -lIlmImf${OPENEXR_LIBSUFFIX} -lIlmImfUtil${OPENEXR_LIBSUFFIX}
-+Requires: IlmBase
-+Libs.private: -lz")
-+
-+  INSTALL ( FILES "${CMAKE_CURRENT_BINARY_DIR}/OpenEXR.pc" DESTINATION lib/pkgconfig )
-+ENDIF()
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Thu, 16 Aug 2018 17:00:00 +0200
-Subject: [PATCH 3/3] Missing symbol on Windows due to missing IMF_EXPORT
+Subject: [PATCH 1/4] Missing symbol on Windows due to missing IMF_EXPORT
 
 
 diff --git a/OpenEXR/IlmImf/ImfCRgbaFile.h b/OpenEXR/IlmImf/ImfCRgbaFile.h
@@ -273,3 +20,147 @@ index 1111111..2222222 100644
  ImfInputFile *		ImfOpenInputFile (const char name[]);
  
  IMF_EXPORT 
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Marius Bakke <mbakke@fastmail.com>
+Date: Tue, 24 Sep 2019 17:11:54 +0200
+Subject: [PATCH 2/4] Use absolute directory names in pkg-config files for CMake
+ builds.
+
+From: https://github.com/openexr/openexr/pull/568
+
+diff --git a/OpenEXR/config/CMakeLists.txt b/OpenEXR/config/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/OpenEXR/config/CMakeLists.txt
++++ b/OpenEXR/config/CMakeLists.txt
+@@ -72,9 +72,9 @@ if(OPENEXR_INSTALL_PKG_CONFIG)
+   # use a helper function to avoid variable pollution, but pretty simple
+   function(openexr_pkg_config_help pcinfile)
+     set(prefix ${CMAKE_INSTALL_PREFIX})
+-    set(exec_prefix ${CMAKE_INSTALL_BINDIR})
+-    set(libdir ${CMAKE_INSTALL_LIBDIR})
+-    set(includedir ${CMAKE_INSTALL_INCLUDEDIR})
++    set(exec_prefix ${CMAKE_INSTALL_FULL_BINDIR})
++    set(libdir ${CMAKE_INSTALL_FULL_LIBDIR})
++    set(includedir ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+     set(LIB_SUFFIX_DASH ${OPENEXR_LIB_SUFFIX})
+     if(TARGET Threads::Threads)
+       # hrm, can't use properties as they end up as generator expr
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 1 Oct 2019 16:00:00 +0200
+Subject: [PATCH 3/4] Remove build process for b44ExpLogTable.h and dwaLookups.h
+
+We build these code generators manually.
+
+diff --git a/OpenEXR/IlmImf/CMakeLists.txt b/OpenEXR/IlmImf/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/OpenEXR/IlmImf/CMakeLists.txt
++++ b/OpenEXR/IlmImf/CMakeLists.txt
+@@ -1,37 +1,10 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright Contributors to the OpenEXR Project.
+ 
+-add_executable(b44ExpLogTable b44ExpLogTable.cpp)
+-target_link_libraries(b44ExpLogTable PRIVATE OpenEXR::Config IlmBase::Half IlmBase::IlmThread IlmBase::Iex)
+-set_target_properties(b44ExpLogTable PROPERTIES
+-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+-)
+-# TODO: Old file had logic to skip these if the file already exists
+-add_custom_command(
+-  OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
+-  COMMAND $<TARGET_FILE:b44ExpLogTable> > ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
+-  DEPENDS b44ExpLogTable
+-)
+-
+-
+-add_executable(dwaLookups dwaLookups.cpp)
+-target_link_libraries(dwaLookups PRIVATE OpenEXR::Config IlmBase::Imath IlmBase::Half IlmBase::IlmThread IlmBase::Iex)
+-set_target_properties(dwaLookups PROPERTIES
+-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+-)
+-# TODO: Old file had logic to skip these if the file already exists
+-add_custom_command(
+-  OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
+-  COMMAND $<TARGET_FILE:dwaLookups> > ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
+-  DEPENDS dwaLookups
+-)
+-
+ openexr_define_library(IlmImf
+   PRIV_EXPORT ILMIMF_EXPORTS
+   CURDIR ${CMAKE_CURRENT_SOURCE_DIR}
+   SOURCES
+-    ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
+-    ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
+     ImfAttribute.cpp
+     ImfBoxAttribute.cpp
+     ImfCRgbaFile.cpp
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 2 Oct 2019 09:40:00 +0200
+Subject: [PATCH 4/4] Fix build errors with MinGW
+
+
+diff --git a/OpenEXR/IlmImf/CMakeLists.txt b/OpenEXR/IlmImf/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/OpenEXR/IlmImf/CMakeLists.txt
++++ b/OpenEXR/IlmImf/CMakeLists.txt
+@@ -2,7 +2,12 @@
+ # Copyright Contributors to the OpenEXR Project.
+ 
+ openexr_define_library(IlmImf
+-  PRIV_EXPORT ILMIMF_EXPORTS
++  PRIV_EXPORT
++    ILMIMF_EXPORTS
++    IEX_EXPORTS
++    HALF_EXPORTS
++    IMATH_EXPORTS
++    ILMTHREAD_EXPORTS
+   CURDIR ${CMAKE_CURRENT_SOURCE_DIR}
+   SOURCES
+     ImfAttribute.cpp
+diff --git a/OpenEXR/IlmImfExamples/CMakeLists.txt b/OpenEXR/IlmImfExamples/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/OpenEXR/IlmImfExamples/CMakeLists.txt
++++ b/OpenEXR/IlmImfExamples/CMakeLists.txt
+@@ -12,6 +12,7 @@ add_executable(IlmImfExamples
+   rgbaInterfaceTiledExamples.cpp
+ )
+ target_link_libraries(IlmImfExamples OpenEXR::IlmImf)
++target_compile_definitions(IlmImfExamples PRIVATE IEX_EXPORTS HALF_EXPORTS)
+ 
+ # Examples
+ install(
+diff --git a/OpenEXR/IlmImfUtil/CMakeLists.txt b/OpenEXR/IlmImfUtil/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/OpenEXR/IlmImfUtil/CMakeLists.txt
++++ b/OpenEXR/IlmImfUtil/CMakeLists.txt
+@@ -2,7 +2,10 @@
+ # Copyright Contributors to the OpenEXR Project.
+ 
+ openexr_define_library(IlmImfUtil
+-  PRIV_EXPORT ILMIMFUTIL_EXPORTS
++  PRIV_EXPORT
++    ILMIMFUTIL_EXPORTS
++    IEX_EXPORTS
++    HALF_EXPORTS
+   CURDIR ${CMAKE_CURRENT_SOURCE_DIR}
+   SOURCES
+     ImfImageChannel.cpp
+diff --git a/OpenEXR/config/LibraryDefine.cmake b/OpenEXR/config/LibraryDefine.cmake
+index 1111111..2222222 100644
+--- a/OpenEXR/config/LibraryDefine.cmake
++++ b/OpenEXR/config/LibraryDefine.cmake
+@@ -5,8 +5,8 @@
+ # in it, so be careful copying...
+ function(OPENEXR_DEFINE_LIBRARY libname)
+   set(options)
+-  set(oneValueArgs PRIV_EXPORT CURDIR CURBINDIR)
+-  set(multiValueArgs SOURCES HEADERS DEPENDENCIES PRIVATE_DEPS)
++  set(oneValueArgs CURDIR CURBINDIR)
++  set(multiValueArgs PRIV_EXPORT SOURCES HEADERS DEPENDENCIES PRIVATE_DEPS)
+   cmake_parse_arguments(OPENEXR_CURLIB "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+ 
+   # only do the object library mechanism in a few cases:

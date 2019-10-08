@@ -2,6 +2,13 @@
 # within one package ("intra-package parallelism").
 JOBS := 4
 
+# Turn on debugging (see also mxe-crossfile.meson.in)
+# Note: Use cv2pdb to debug with WinDbg, see: https://github.com/rainers/cv2pdb
+#       for /r %i in (*.dll) do cv2pdb %i
+#
+#export CFLAGS   := -g
+#export CXXFLAGS := -g
+
 # Special flags for compiler.
 export CFLAGS   := -s -O3 -ffast-math -fdata-sections -ffunction-sections \
                    -fPIC

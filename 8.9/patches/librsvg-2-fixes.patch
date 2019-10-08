@@ -33,7 +33,7 @@ diff --git a/Cargo.toml b/Cargo.toml
 index 1111111..2222222 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -5,7 +5,6 @@ members = [
+@@ -7,7 +7,6 @@ members = [
  
  [profile.release]
  lto = true

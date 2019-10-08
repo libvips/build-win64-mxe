@@ -2,6 +2,7 @@ PKG             := orc
 $(PKG)_WEBSITE  := https://gstreamer.freedesktop.org/modules/orc.html
 $(PKG)_DESCR    := Library and set of tools for compiling and executing SIMD assembly language-like programs that operate on arrays of data.
 $(PKG)_IGNORE   :=
+# pin to 0.4.29 until 0.4.31 is available
 $(PKG)_VERSION  := 0.4.29
 $(PKG)_CHECKSUM := 4f8901f9144b5ec17dffdb33548b5f4c7f8049b0d1023be3462cdd64ec5a3ab2
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))

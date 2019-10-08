@@ -50,14 +50,16 @@ endef
 ## Update dependencies
 
 # upstream version is 2.32.3
-gdk-pixbuf_VERSION  := 2.39.2
-gdk-pixbuf_CHECKSUM := 63e59387b5c5504f3bf07530bac0b69542e55936e09283400d32529b2b32e1ca
+gdk-pixbuf_VERSION  := 2.40.0
+gdk-pixbuf_CHECKSUM := 1582595099537ca8ff3b99c6804350b4c058bb8ad67411bbaae024ee7cead4e6
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
 # upstream version is 1.5.2
+# cannot use GH_CONF:
+# matio_GH_CONF  := tbeu/matio/releases,v
 matio_VERSION  := 1.5.17
 matio_CHECKSUM := 5e455527d370ab297c4abe5a2ab4d599c93ac7c1a0c85d841cc5c22f8221c400
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
@@ -65,17 +67,15 @@ matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
-# upstream version is 6.9.0-0
-imagemagick_VERSION  := 6.9.10-63
-imagemagick_CHECKSUM := a8a97852ade66d1732574d2cbe4dd7e47a448d7b34ed553f4d2f0c9b29edf51c
+# upstream version is 7, we want ImageMagick 6
+imagemagick_VERSION  := 6.9.10-68
+imagemagick_CHECKSUM := 2caa3d8d1f65e733de30d1f537e57991ff3adb3edb5b60afa9cd0f6e0a20945f
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
-imagemagick_SUBDIR   := ImageMagick6-$(imagemagick_VERSION)
-imagemagick_FILE     := $(imagemagick_VERSION).tar.gz
-imagemagick_URL      := https://github.com/ImageMagick/ImageMagick6/archive/$(imagemagick_FILE)
+imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.4
-x265_VERSION  := 3.1.2
-x265_CHECKSUM := 6f785f1c9a42e00a56402da88463bb861c49d9af108be53eb3ef10295f2a59aa
+x265_VERSION  := 3.2
+x265_CHECKSUM := 364d79bcd56116a9e070fdeb1d9d2aaef1a786b4970163fb56ff0991a183133b
 x265_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
 x265_SUBDIR   := x265_$(x265_VERSION)
 x265_FILE     := x265_$(x265_VERSION).tar.gz
@@ -83,8 +83,8 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.45.92
-librsvg_CHECKSUM := 77b358ed5cfe1b18f36797f764195be714f04d10454d9a4a4863a73c7b3f41d5
+librsvg_VERSION  := 2.46.1
+librsvg_CHECKSUM := 2da1f2547a63a24ead121ad345011d5fd4f038ef46f74712ec82a1e85ec67643
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -98,14 +98,18 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 0.79.0
+# upstream version is 1.0.5
+# cannot use GH_CONF:
+# fribidi_GH_CONF  := fribidi/fribidi/releases,v
+fribidi_VERSION  := 1.0.7
+fribidi_CHECKSUM := 5ab5f21e9f2fc57b4b40f8ea8f14dba78a5cc46d9cf94bc5e00a58e6886a935d
+fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
+fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
+fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.bz2
+fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
+
 # Use the mutex helper from mingw-std-threads
-poppler_VERSION  := 0.80.0
-poppler_CHECKSUM := 4d3ca6b79bc13b8e24092e34f83ef5f387f3bb0bbd7359a6c078e09c696d104f
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.13
@@ -115,8 +119,8 @@ libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.61.3
-glib_CHECKSUM := ff434ba170976438f29243252b87a403499a908b3491bb66f21655887f7fc27a
+glib_VERSION  := 2.63.0
+glib_CHECKSUM := d974d7f514358ee6f69451826a215578141701075924108da311ec2c8dc01056
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -133,6 +137,7 @@ libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VE
 # upstream version is 1.16.0
 cairo_VERSION  := 1.17.2
 cairo_CHECKSUM := 6b70d4655e2a47a22b101c666f4b29ba746eda4aa8a0f7255b32b2e9408801df
+cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
 cairo_SUBDIR   := cairo-$(cairo_VERSION)
 cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
 cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
@@ -142,21 +147,24 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
 # upstream version is 2.2.0
-openexr_VERSION  := 2.3.0
-openexr_CHECKSUM := 8243b7de12b52239fe9235a6aeb4e35ead2247833e4fbc41541774b222717933
+# cannot use GH_CONF:
+# openexr_GH_CONF  := openexr/openexr/tags
+openexr_VERSION  := 2.4.0
+openexr_CHECKSUM := 4904c5ea7914a58f60a5e2fbc397be67e7a25c380d7d07c1c31a3eefff1c92f1
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
-# See: https://github.com/openexr/openexr/issues/333
 openexr_URL      := https://github.com/openexr/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 2.2.0
-ilmbase_VERSION  := 2.3.0
-ilmbase_CHECKSUM := 456978d1a978a5f823c7c675f3f36b0ae14dba36638aeaa3c4b0e784f12a3862
+# cannot use GH_CONF:
+# ilmbase_GH_CONF  := openexr/openexr/tags
+ilmbase_VERSION  := 2.4.0
+ilmbase_CHECKSUM := 4904c5ea7914a58f60a5e2fbc397be67e7a25c380d7d07c1c31a3eefff1c92f1
 ilmbase_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/ilmbase-[0-9]*.patch)))
-ilmbase_SUBDIR   := ilmbase-$(ilmbase_VERSION)
-ilmbase_FILE     := ilmbase-$(ilmbase_VERSION).tar.gz
-ilmbase_URL      := https://github.com/openexr/openexr/releases/download/v$(ilmbase_VERSION)/$(ilmbase_FILE)
+ilmbase_SUBDIR   := openexr-$(openexr_VERSION)
+ilmbase_FILE     := openexr-$(openexr_VERSION).tar.gz
+ilmbase_URL      := https://github.com/openexr/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 3410
 cfitsio_VERSION  := 3450
@@ -166,13 +174,6 @@ cfitsio_SUBDIR   := cfitsio
 cfitsio_FILE     := cfitsio$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
-
-# upstream version is 2.6.0
-harfbuzz_VERSION  := 2.6.1
-harfbuzz_CHECKSUM := c651fb3faaa338aeb280726837c2384064cdc17ef40539228d88a1260960844f
-harfbuzz_SUBDIR   := harfbuzz-$(harfbuzz_VERSION)
-harfbuzz_FILE     := harfbuzz-$(harfbuzz_VERSION).tar.xz
-harfbuzz_URL      := https://www.freedesktop.org/software/harfbuzz/release/$(harfbuzz_FILE)
 
 # upstream version is 0.33.6
 pixman_VERSION  := 0.38.4
@@ -209,18 +210,20 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 # lcms:
 #  Removed: jpeg, tiff
 # TIFF:
-#  Removed: libwebp
 #  Replaced: jpeg with libjpeg-turbo
 # ImageMagick:
-#  Removed: bzip2, ffmpeg, freetype, jasper, liblqr-1, libltdl, libpng, openexr, tiff
+#  Added: libxml2, openjpeg
+#  Removed: bzip2, ffmpeg, fftw, freetype, jasper, liblqr-1, libltdl, libpng, openexr, tiff, zlib
 #  Replaced: jpeg with libjpeg-turbo
+# IlmBase:
+#  Added: pthreads
 # Pango:
 #  Added: fribidi
 # Poppler:
 #  Removed: curl, qtbase, libwebp
 #  Added: mingw-std-threads, libjpeg-turbo, lcms
 # libwebp:
-#  Added: gettext, giflib, libjpeg-turbo, tiff, libpng
+#  Added: gettext
 # Cairo:
 #  Removed: lzo zlib
 # x265:
@@ -233,11 +236,12 @@ freetype-bootstrap_DEPS := $(filter-out bzip2 ,$(freetype-bootstrap_DEPS))
 glib_DEPS               := cc gettext libffi zlib
 gdk-pixbuf_DEPS         := cc glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
-tiff_DEPS               := cc libjpeg-turbo xz zlib
-imagemagick_DEPS        := cc lcms fftw tiff libjpeg-turbo freetype pthreads
+tiff_DEPS               := cc libjpeg-turbo libwebp xz zlib
+imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo pthreads
+ilmbase_DEPS            := cc pthreads
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc mingw-std-threads cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
-libwebp_DEPS            := $(libwebp_DEPS) gettext giflib libjpeg-turbo tiff libpng
+libwebp_DEPS            := $(libwebp_DEPS) gettext
 cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
 x265_DEPS               := cc $(BUILD)~nasm
 
@@ -247,13 +251,14 @@ x265_DEPS               := cc $(BUILD)~nasm
 # build with CMake.
 define harfbuzz_BUILD
     # mman-win32 is only a partial implementation
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DHB_HAVE_GLIB=ON \
         -DHB_HAVE_FREETYPE=ON \
         -DHB_HAVE_ICU=OFF \
         -DHAVE_SYS_MMAN_H=OFF \
         -DHB_BUILD_UTILS=OFF \
-        -DHB_BUILD_TESTS=OFF
+        -DHB_BUILD_TESTS=OFF \
+        '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 
@@ -334,21 +339,35 @@ endef
 # detection does not work when cross-compiling
 # build with jpeg-turbo and without lzma 
 define imagemagick_BUILD
+    $(eval GIT_REVISION=$(shell $(SED) -n 's/MAGICK_GIT_REVISION=\(.*\)/\1/p' $(SOURCE_DIR)/configure))
+    $(SED) -i 's|\(\[magick_git_revision\], \).*)|\1[$(GIT_REVISION)])|' $(SOURCE_DIR)/configure.ac
+
+    # need to regenerate the configure script
+    cd '$(SOURCE_DIR)' && autoreconf -fi
+
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
-        --without-x \
+        --without-fftw \
+        --without-fontconfig \
+        --without-gvc \
+        --without-heic \
+        --without-ltdl \
+        --without-lqr \
         --without-lzma \
+        --without-magick-plus-plus \
         --without-modules \
         --without-openexr \
-        --without-heic \
-        --without-gvc \
-        --without-lqr \
-        --without-magick-plus-plus \
-        --disable-largefile \
+        --without-pango \
+        --without-png \
         --without-rsvg \
-        --disable-openmp \
+        --without-tiff \
+        --without-webp \
+        --without-x \
         --without-zlib \
-        --with-freetype='$(PREFIX)/$(TARGET)/bin/freetype-config'
+        --disable-largefile \
+        --disable-opencl \
+        --disable-openmp \
+        ax_cv_check_cl_libcl=no
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
@@ -356,11 +375,12 @@ endef
 # WITH_TURBOJPEG=OFF turns off a library we don't use (we just use the 
 # libjpeg API)
 define libjpeg-turbo_BUILD
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DWITH_TURBOJPEG=OFF \
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
         -DENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
-        -DCMAKE_ASM_NASM_COMPILER=$(TARGET)-yasm
+        -DCMAKE_ASM_NASM_COMPILER=$(TARGET)-yasm \
+        '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
@@ -460,9 +480,16 @@ define tiff_BUILD
 endef
 
 # build with libjpeg-turbo
+# disable unneeded loaders
 define libwebp_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
+        --disable-gl \
+        --disable-sdl \
+        --disable-png \
+        --disable-jpeg \
+        --disable-tiff \
+        --disable-gif \
         --enable-libwebpmux \
         --enable-libwebpdemux
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
@@ -564,12 +591,8 @@ endef
 
 # build with CMake.
 define openexr_BUILD
-    # downgrade minimum required version of CMake (it's unnecessarily high).
-    find '$(SOURCE_DIR)' -name 'CMakeLists.txt' \
-        -exec $(SED) -i 's,CMAKE_MINIMUM_REQUIRED(VERSION 3.11),CMAKE_MINIMUM_REQUIRED(VERSION 3.10),g' {} \;
-
-    # Use autotools with README.md
-    ln -s '$(SOURCE_DIR)/IlmBase/README.md' '$(SOURCE_DIR)/IlmBase/README'
+    # Add missing files
+    touch '$(SOURCE_DIR)/IlmBase'/{NEWS,AUTHORS,ChangeLog,README}
 
     # Update auto-stuff, except autoheader, because if fails...
     cd '$(SOURCE_DIR)/IlmBase' && AUTOHEADER=true autoreconf -fi
@@ -586,16 +609,10 @@ define openexr_BUILD
 
     # build OpenEXR with CMake.
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
-        -DOPENEXR_BUILD_ILMBASE=OFF \
-        -DOPENEXR_BUILD_PYTHON_LIBS=OFF \
-        -DOPENEXR_BUILD_TESTS=OFF \
+        -DBUILD_TESTING=OFF \
         -DOPENEXR_BUILD_UTILS=OFF \
-        -DOPENEXR_BUILD_SHARED=$(if $(BUILD_STATIC),OFF,ON) \
-        -DOPENEXR_BUILD_STATIC=$(if $(BUILD_STATIC),ON,OFF) \
-        -DILMBASE_PACKAGE_PREFIX='$(PREFIX)/$(TARGET)' \
-        -DILMBASE_INCLUDE_DIR='$(PREFIX)/$(TARGET)/include' \
-        -DILMBASE_LIBRARIES='$(PREFIX)/$(TARGET)/lib' \
-        '$(SOURCE_DIR)'
+        -DOPENEXR_INSTALL_PKG_CONFIG=ON \
+        '$(SOURCE_DIR)/OpenEXR'
 
     # build the code generator manually
     cd '$(SOURCE_DIR)/OpenEXR/IlmImf/' && $(BUILD_CXX) -O2 \
@@ -606,7 +623,8 @@ define openexr_BUILD
         -o b44ExpLogTable
     '$(SOURCE_DIR)/OpenEXR/IlmImf/b44ExpLogTable' > '$(SOURCE_DIR)/OpenEXR/IlmImf/b44ExpLogTable.h'
     cd '$(SOURCE_DIR)/OpenEXR/IlmImf/' && $(BUILD_CXX) -O2 \
-        -I'$(SOURCE_DIR)/OpenEXR/config.windows' -I. \
+        -I. \
+        -I'$(BUILD_DIR)/config' \
         -I'$(SOURCE_DIR)/IlmBase/include/OpenEXR' \
         -L'$(SOURCE_DIR)/IlmBase/lib' \
         dwaLookups.cpp \
@@ -620,29 +638,29 @@ endef
 
 # build with CMake.
 define ilmbase_BUILD
-    # downgrade minimum required version of CMake (it's unnecessarily high).
-    find '$(SOURCE_DIR)' -name 'CMakeLists.txt' \
-        -exec $(SED) -i 's,CMAKE_MINIMUM_REQUIRED(VERSION 3.11),CMAKE_MINIMUM_REQUIRED(VERSION 3.10),g' {} \;
-    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
-        -DOPENEXR_FORCE_CXX03=ON \
-        -DENABLE_TESTS=OFF \
-        -DBUILD_ILMBASE_STATIC=ON \
-        '$(SOURCE_DIR)'
-
     # do the first build step by hand, because programs are built that
     # generate source files
-    cd '$(SOURCE_DIR)/Half' && $(BUILD_CXX) eLut.cpp -o eLut
-    '$(SOURCE_DIR)/Half/eLut' > '$(BUILD_DIR)/Half/eLut.h'
-    cd '$(SOURCE_DIR)/Half' && $(BUILD_CXX) toFloat.cpp -o toFloat
-    '$(SOURCE_DIR)/Half/toFloat' > '$(BUILD_DIR)/Half/toFloat.h'
+    mkdir -p '$(BUILD_DIR)/Half'
+    cd '$(SOURCE_DIR)/IlmBase/Half' && $(BUILD_CXX) eLut.cpp -o eLut
+    '$(SOURCE_DIR)/IlmBase/Half/eLut' > '$(BUILD_DIR)/Half/eLut.h'
+    cd '$(SOURCE_DIR)/IlmBase/Half' && $(BUILD_CXX) toFloat.cpp -o toFloat
+    '$(SOURCE_DIR)/IlmBase/Half/toFloat' > '$(BUILD_DIR)/Half/toFloat.h'
+
+    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DILMBASE_FORCE_CXX03=ON \
+        -DBUILD_TESTING=OFF \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DILMBASE_INSTALL_PKG_CONFIG=ON \
+        '$(SOURCE_DIR)/IlmBase'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
 define cfitsio_BUILD_SHARED
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
-        -DBUILD_SHARED_LIBS=ON
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DBUILD_SHARED_LIBS=ON \
+        '$(SOURCE_DIR)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install

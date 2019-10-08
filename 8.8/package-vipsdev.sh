@@ -53,11 +53,11 @@ $mxe_prefix/$build_os/bin/peldd \
   --clear-path \
   --path $mxe_prefix/$target.$deps/bin \
   -a \
-  -w USERENV.dll \
-  -w USP10.dll \
-  -w DNSAPI.dll \
-  -w IPHLPAPI.DLL \
-  -w MSIMG32.DLL | xargs cp -t $repackage_dir/bin
+  -w userenv.dll \
+  -w usp10.dll \
+  -w dnsapi.dll \
+  -w iphlpapi.DLL \
+  -w msimg32.DLL | xargs cp -t $repackage_dir/bin
 
 echo "Copying install area $mxe_prefix/$target.$deps/"
 

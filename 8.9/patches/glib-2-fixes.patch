@@ -25,7 +25,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1697,7 +1697,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
+@@ -1749,7 +1749,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
  # available in the actual runtime environment. On Windows, we always use
  # the built-in implementation
  iconv_opt = get_option('iconv')
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
    libiconv = []
    # We have a #include "win_iconv.c" in gconvert.c on Windows, so we don't need
    # any external library for it
-@@ -1786,17 +1786,24 @@ endif
+@@ -1838,17 +1838,24 @@ endif
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.
@@ -78,7 +78,7 @@ diff --git a/gio/tests/meson.build b/gio/tests/meson.build
 index 1111111..2222222 100644
 --- a/gio/tests/meson.build
 +++ b/gio/tests/meson.build
-@@ -382,7 +382,7 @@ test_extra_programs += {
+@@ -378,7 +378,7 @@ test_extra_programs += {
    },
  }
  
@@ -87,7 +87,7 @@ index 1111111..2222222 100644
    test_extra_programs += {
      # These three are manual-run tests because they need a session bus but don't bring one up themselves
      # FIXME: these build but don't seem to work!
-@@ -469,7 +469,7 @@ if installed_tests_enabled
+@@ -465,7 +465,7 @@ if installed_tests_enabled
    install_data('static-link.py', install_dir : installed_tests_execdir)
  endif
  
