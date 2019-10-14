@@ -1,0 +1,113 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 13 Oct 2019 16:15:00 +0200
+Subject: [PATCH 1/1] Add helpers to override the virtual stream functions
+
+
+diff --git a/libvips/include/vips/stream.h b/libvips/include/vips/stream.h
+index 1111111..2222222 100644
+--- a/libvips/include/vips/stream.h
++++ b/libvips/include/vips/stream.h
+@@ -152,13 +152,16 @@ typedef struct _VipsStreamInput {
+ 
+ } VipsStreamInput;
+ 
++typedef ssize_t *(*VipsStreamInputReadFn)( VipsStreamInput *, unsigned char *, size_t );
++typedef int *(*VipsStreamInputRewindFn)( VipsStreamInput * );
++
+ typedef struct _VipsStreamInputClass {
+ 	VipsStreamClass parent_class;
+ 
+ 	/* Subclasses can define these to implement other input methods.
+ 	 */
+-	ssize_t (*read)( VipsStreamInput *, unsigned char *, size_t );
+-	int (*rewind)( VipsStreamInput * );
++	VipsStreamInputReadFn read;
++	VipsStreamInputRewindFn rewind;
+ 
+ 	/* Shut down anything that can safely restarted. For example, if
+ 	 * there's a fd that supports lseek(), it can be closed, since later 
+@@ -180,6 +183,11 @@ VipsStreamInput *vips_stream_input_new_from_memory( const void *data,
+ 	size_t size );
+ VipsStreamInput *vips_stream_input_new_from_options( const char *options );
+ 
++void vips_stream_input_set_custom_reader( VipsStreamInput *stream, 
++	VipsStreamInputReadFn reader );
++void vips_stream_input_set_custom_rewinder( VipsStreamInput *stream, 
++	VipsStreamInputRewindFn rewinder );
++
+ ssize_t vips_stream_input_read( VipsStreamInput *input, 
+ 	unsigned char *data, size_t length );
+ int vips_stream_input_rewind( VipsStreamInput *input );
+@@ -221,12 +229,14 @@ typedef struct _VipsStreamOutput {
+ 
+ } VipsStreamOutput;
+ 
++typedef ssize_t *(*VipsStreamOutputWriteFn)( VipsStreamOutput *, const unsigned char *, size_t );
++
+ typedef struct _VipsStreamOutputClass {
+ 	VipsStreamClass parent_class;
+ 
+ 	/* If defined, output some bytes with this. Otherwise use write().
+ 	 */
+-	ssize_t (*write)( VipsStreamOutput *, const unsigned char *, size_t );
++	VipsStreamOutputWriteFn write;
+ 
+ 	/* A complete output image has been generated, so do any clearing up,
+ 	 * eg. copy the bytes we saved in memory to the output blob.
+@@ -240,6 +250,10 @@ GType vips_stream_output_get_type( void );
+ VipsStreamOutput *vips_stream_output_new_from_descriptor( int descriptor );
+ VipsStreamOutput *vips_stream_output_new_from_filename( const char *filename );
+ VipsStreamOutput *vips_stream_output_new_memory( void );
++
++void vips_stream_output_set_custom_writer( VipsStreamOutput *stream, 
++	VipsStreamOutputWriteFn writer );
++
+ int vips_stream_output_write( VipsStreamOutput *output,
+ 	const unsigned char *data, size_t length );
+ void vips_stream_output_finish( VipsStreamOutput *output );
+diff --git a/libvips/iofuncs/stream.c b/libvips/iofuncs/stream.c
+index 1111111..2222222 100644
+--- a/libvips/iofuncs/stream.c
++++ b/libvips/iofuncs/stream.c
+@@ -309,6 +309,24 @@ vips_stream_input_rewind_real( VipsStreamInput *input )
+ 	return( 0 );
+ }
+ 
++void
++vips_stream_input_set_custom_reader( VipsStreamInput *stream, 
++	VipsStreamInputReadFn reader )
++{
++	VipsStreamInputClass *class = VIPS_STREAM_INPUT_GET_CLASS( stream );
++
++	class->read = reader;
++}
++
++void
++vips_stream_input_set_custom_rewinder( VipsStreamInput *stream, 
++	VipsStreamInputRewindFn rewinder )
++{
++	VipsStreamInputClass *class = VIPS_STREAM_INPUT_GET_CLASS( stream );
++
++	class->rewind = rewinder;
++}
++
+ static void
+ vips_stream_input_minimise_real( VipsStreamInput *input )
+ {
+@@ -728,6 +746,15 @@ vips_stream_output_write_real( VipsStreamOutput *output,
+ 	return( len );
+ }
+ 
++void
++vips_stream_output_set_custom_writer( VipsStreamOutput *stream, 
++	VipsStreamOutputWriteFn writer )
++{
++	VipsStreamOutputClass *class = VIPS_STREAM_OUTPUT_GET_CLASS( stream );
++
++	class->write = writer;
++}
++
+ static void
+ vips_stream_output_finish_real( VipsStreamOutput *output ) 
+ {
