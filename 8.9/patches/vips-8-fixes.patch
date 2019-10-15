@@ -1,14 +1,50 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sun, 13 Oct 2019 16:15:00 +0200
-Subject: [PATCH 1/1] Add helpers to override the virtual stream functions
+Date: Tue, 15 Oct 2019 15:30:00 +0200
+Subject: [PATCH 1/2] Reset read_position within vips_stream_input_rewind
+
+Saves us from having to reset the internal read position when we are in a subclass.
+
+diff --git a/libvips/iofuncs/stream.c b/libvips/iofuncs/stream.c
+index 1111111..2222222 100644
+--- a/libvips/iofuncs/stream.c
++++ b/libvips/iofuncs/stream.c
+@@ -353,8 +353,6 @@ vips_stream_input_rewind_real( VipsStreamInput *input )
+ 		}
+ 	}
+ 
+-	input->read_position = 0;
+-
+ 	return( 0 );
+ }
+ 
+@@ -671,7 +669,13 @@ vips_stream_input_rewind( VipsStreamInput *input )
+ 
+ 	VIPS_DEBUG_MSG( "vips_stream_input_rewind:\n" );
+ 
+-	return( class->rewind( input ) );
++	if( class->rewind( input ) == 0 ) {
++		input->read_position = 0;
++
++		return( 0 );
++	}
++
++	return( -1 );
+ }
+ 
+ void
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 15 Oct 2019 15:35:00 +0200
+Subject: [PATCH 2/2] Add helpers to override the virtual stream functions
 
 
 diff --git a/libvips/include/vips/stream.h b/libvips/include/vips/stream.h
 index 1111111..2222222 100644
 --- a/libvips/include/vips/stream.h
 +++ b/libvips/include/vips/stream.h
-@@ -152,13 +152,16 @@ typedef struct _VipsStreamInput {
+@@ -160,13 +160,16 @@ typedef struct _VipsStreamInput {
  
  } VipsStreamInput;
  
@@ -27,7 +63,7 @@ index 1111111..2222222 100644
  
  	/* Shut down anything that can safely restarted. For example, if
  	 * there's a fd that supports lseek(), it can be closed, since later 
-@@ -180,6 +183,11 @@ VipsStreamInput *vips_stream_input_new_from_memory( const void *data,
+@@ -188,6 +191,11 @@ VipsStreamInput *vips_stream_input_new_from_memory( const void *data,
  	size_t size );
  VipsStreamInput *vips_stream_input_new_from_options( const char *options );
  
@@ -39,7 +75,7 @@ index 1111111..2222222 100644
  ssize_t vips_stream_input_read( VipsStreamInput *input, 
  	unsigned char *data, size_t length );
  int vips_stream_input_rewind( VipsStreamInput *input );
-@@ -221,12 +229,14 @@ typedef struct _VipsStreamOutput {
+@@ -227,12 +235,14 @@ typedef struct _VipsStreamOutput {
  
  } VipsStreamOutput;
  
@@ -55,7 +91,7 @@ index 1111111..2222222 100644
  
  	/* A complete output image has been generated, so do any clearing up,
  	 * eg. copy the bytes we saved in memory to the output blob.
-@@ -240,6 +250,10 @@ GType vips_stream_output_get_type( void );
+@@ -246,6 +256,10 @@ GType vips_stream_output_get_type( void );
  VipsStreamOutput *vips_stream_output_new_from_descriptor( int descriptor );
  VipsStreamOutput *vips_stream_output_new_from_filename( const char *filename );
  VipsStreamOutput *vips_stream_output_new_memory( void );
@@ -70,8 +106,8 @@ diff --git a/libvips/iofuncs/stream.c b/libvips/iofuncs/stream.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/stream.c
 +++ b/libvips/iofuncs/stream.c
-@@ -309,6 +309,24 @@ vips_stream_input_rewind_real( VipsStreamInput *input )
- 	return( 0 );
+@@ -367,6 +367,24 @@ vips_stream_input_minimise_real( VipsStreamInput *input )
+ 		vips_stream_close( stream );
  }
  
 +void
@@ -93,10 +129,24 @@ index 1111111..2222222 100644
 +}
 +
  static void
- vips_stream_input_minimise_real( VipsStreamInput *input )
+ vips_stream_input_class_init( VipsStreamInputClass *class )
  {
-@@ -728,6 +746,15 @@ vips_stream_output_write_real( VipsStreamOutput *output,
- 	return( len );
+@@ -393,6 +411,13 @@ vips_stream_input_class_init( VipsStreamInputClass *class )
+ 		G_STRUCT_OFFSET( VipsStreamInput, blob ),
+ 		VIPS_TYPE_BLOB );
+ 
++	VIPS_ARG_BOOL( class, "seekable", 4, 
++		_( "Seekable" ),
++		_( "stream supports seeking" ),
++		VIPS_ARGUMENT_OPTIONAL_INPUT, 
++		G_STRUCT_OFFSET( VipsStreamInput, seekable ),
++		FALSE );
++
+ }
+ 
+ static void
+@@ -830,6 +855,15 @@ vips_stream_output_finish_real( VipsStreamOutput *output )
+ 	}
  }
  
 +void
@@ -109,5 +159,5 @@ index 1111111..2222222 100644
 +}
 +
  static void
- vips_stream_output_finish_real( VipsStreamOutput *output ) 
+ vips_stream_output_class_init( VipsStreamOutputClass *class )
  {
