@@ -2,9 +2,9 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-# https://api.github.com/repos/libvips/libvips/tarball/226819b8a8e941e9d3ccaec662356915cfde4528
-$(PKG)_VERSION  := 226819b
-$(PKG)_CHECKSUM := 0f39dec01c320497f7cb8ba2f217fbbf2c2ed2fbabda72e4d8d54983854e3070
+# https://api.github.com/repos/libvips/libvips/tarball/f99f3d3f57e592ecc45963155322d1bdea986be1
+$(PKG)_VERSION  := f99f3d3
+$(PKG)_CHECKSUM := 9cdd90d149cb9d2314591088496b9230046c36cf9e1fdee1a69afd9f6c1e1d47
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libvips/libvips/branches/add-stream-object
 $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
