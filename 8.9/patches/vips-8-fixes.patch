@@ -1,272 +1,274 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Thu, 17 Oct 2019 18:30:00 +0200
-Subject: [PATCH 1/3] Add helpers to override the virtual stream functions
+Date: Tue, 29 Oct 2019 14:15:00 +0100
+Subject: [PATCH 1/4] Add helpers to override the virtual stream functions
 
 
 diff --git a/libvips/include/vips/stream.h b/libvips/include/vips/stream.h
 index 1111111..2222222 100644
 --- a/libvips/include/vips/stream.h
 +++ b/libvips/include/vips/stream.h
-@@ -161,6 +161,11 @@ typedef struct _VipsStreamInput {
+@@ -177,6 +177,9 @@ typedef struct _VipsStreami {
  
- } VipsStreamInput;
+ } VipsStreami;
  
-+typedef ssize_t (*VipsStreamInputReadFn)( VipsStreamInput *, unsigned char *, size_t );
-+typedef const void *(*VipsStreamInputMapFn)( VipsStreamInput *, size_t * );
-+typedef gint64 (*VipsStreamInputSeekFn)( VipsStreamInput *, gint64 offset, int );
-+typedef void (*VipsStreamInputMinimiseFn)( VipsStreamInput * );
++typedef ssize_t (*VipsStreamiReadFn)( VipsStreami *, void *, size_t );
++typedef gint64 (*VipsStreamiSeekFn)( VipsStreami *, gint64 offset, int );
 +
- typedef struct _VipsStreamInputClass {
+ typedef struct _VipsStreamiClass {
  	VipsStreamClass parent_class;
  
-@@ -172,7 +177,7 @@ typedef struct _VipsStreamInputClass {
+@@ -186,14 +189,14 @@ typedef struct _VipsStreamiClass {
+ 	/* Read from the stream into the supplied buffer, args exactly as
+ 	 * read(2).
+ 	 */
+-	ssize_t (*read)( VipsStreami *, void *, size_t );
++	VipsStreamiReadFn read;
+ 
+ 	/* Seek to a certain position, args exactly as lseek(2). 
  	 *
- 	 * -1 on error, 0 on EOF.
+ 	 * Unseekable streams should just return -1. VipsStreami will then
+ 	 * seek by _read()ing bytes into memory as required.
  	 */
--	ssize_t (*read)( VipsStreamInput *, unsigned char *, size_t );
-+	VipsStreamInputReadFn read;
+-	gint64 (*seek)( VipsStreami *, gint64 offset, int );
++	VipsStreamiSeekFn seek;
  
- 	/* Map the entire stream into memory, for example with mmap(). Return
- 	 * the base and size of the mapped area.
-@@ -182,11 +187,11 @@ typedef struct _VipsStreamInputClass {
- 	 *
- 	 * NULL on error.
- 	 */
--	const void *(*map)( VipsStreamInput *, size_t * );
-+	VipsStreamInputMapFn map;
+ } VipsStreamiClass;
  
- 	/* Seek to a certain position, args exactly as lseek(2).
- 	 */
--	gint64 (*seek)( VipsStreamInput *, gint64 offset, int );
-+	VipsStreamInputSeekFn seek;
+@@ -205,6 +208,11 @@ VipsStreami *vips_streami_new_from_blob( VipsBlob *blob );
+ VipsStreami *vips_streami_new_from_memory( const void *data, size_t size );
+ VipsStreami *vips_streami_new_from_options( const char *options );
  
- 	/* Shut down anything that can safely restarted. For example, if
- 	 * there's a fd that supports lseek(), it can be closed, since later 
-@@ -195,7 +200,7 @@ typedef struct _VipsStreamInputClass {
- 	 *
- 	 * Non-restartable shutdown shuld be in _finalize().
- 	 */
--	void (*minimise)( VipsStreamInput * );
-+	VipsStreamInputMinimiseFn minimise;
- 
- } VipsStreamInputClass;
- 
-@@ -208,6 +213,15 @@ VipsStreamInput *vips_stream_input_new_from_memory( const void *data,
- 	size_t size );
- VipsStreamInput *vips_stream_input_new_from_options( const char *options );
- 
-+void vips_stream_input_set_custom_read_fn( VipsStreamInput *input, 
-+	VipsStreamInputReadFn read_fn );
-+void vips_stream_input_set_custom_map_fn( VipsStreamInput *input, 
-+	VipsStreamInputMapFn map_fn );
-+void vips_stream_input_set_custom_seek_fn( VipsStreamInput *input, 
-+	VipsStreamInputSeekFn seek_fn );
-+void vips_stream_input_set_custom_minimise_fn( VipsStreamInput *input, 
-+	VipsStreamInputMinimiseFn minimise_fn );
++void vips_streami_set_custom_read_fn( VipsStreami *streami, 
++	VipsStreamiReadFn read_fn );
++void vips_streami_set_custom_seek_fn( VipsStreami *streami, 
++	VipsStreamiSeekFn seek_fn );
 +
- ssize_t vips_stream_input_read( VipsStreamInput *input, 
- 	unsigned char *data, size_t length );
- const void *vips_stream_input_map( VipsStreamInput *input, size_t *length );
-@@ -251,17 +265,20 @@ typedef struct _VipsStreamOutput {
+ void vips_streami_minimise( VipsStreami *streami );
+ int vips_streami_unminimise( VipsStreami *streami );
+ int vips_streami_decode( VipsStreami *streami );
+@@ -247,17 +255,20 @@ typedef struct _VipsStreamo {
  
- } VipsStreamOutput;
+ } VipsStreamo;
  
-+typedef ssize_t (*VipsStreamOutputWriteFn)( VipsStreamOutput *, const unsigned char *, size_t );
-+typedef void (*VipsStreamOutputFinishFn)( VipsStreamOutput * );
++typedef ssize_t (*VipsStreamoWriteFn)( VipsStreamo *, const void *, size_t  );
++typedef void (*VipsStreamoFinishFn)( VipsStreamo * );
 +
- typedef struct _VipsStreamOutputClass {
+ typedef struct _VipsStreamoClass {
  	VipsStreamClass parent_class;
  
  	/* If defined, output some bytes with this. Otherwise use write().
  	 */
--	ssize_t (*write)( VipsStreamOutput *, const unsigned char *, size_t );
-+	VipsStreamOutputWriteFn write;
+-	ssize_t (*write)( VipsStreamo *, const void *, size_t );
++	VipsStreamoWriteFn write;
  
  	/* A complete output image has been generated, so do any clearing up,
- 	 * eg. copy the bytes we saved in memory to the output blob.
+ 	 * eg. copy the bytes we saved in memory to the stream blob.
  	 */
--	void (*finish)( VipsStreamOutput * );
-+	VipsStreamOutputFinishFn finish;
+-	void (*finish)( VipsStreamo * );
++	VipsStreamoFinishFn finish;
  
- } VipsStreamOutputClass;
+ } VipsStreamoClass;
  
-@@ -270,6 +287,12 @@ GType vips_stream_output_get_type( void );
- VipsStreamOutput *vips_stream_output_new_from_descriptor( int descriptor );
- VipsStreamOutput *vips_stream_output_new_from_filename( const char *filename );
- VipsStreamOutput *vips_stream_output_new_memory( void );
+@@ -269,6 +280,11 @@ VipsStreamo *vips_streamo_new_memory( void );
+ int vips_streamo_write( VipsStreamo *streamo, const void *data, size_t length );
+ void vips_streamo_finish( VipsStreamo *streamo );
+ 
++void vips_streamo_set_custom_write_fn( VipsStreamo *streamo, 
++	VipsStreamoWriteFn write_fn );
++void vips_streamo_set_custom_finish_fn( VipsStreamo *streamo, 
++	VipsStreamoFinishFn finish_fn );
 +
-+void vips_stream_output_set_custom_write_fn( VipsStreamOutput *output, 
-+	VipsStreamOutputWriteFn write_fn );
-+void vips_stream_output_set_custom_finish_fn( VipsStreamOutput *output, 
-+	VipsStreamOutputFinishFn finish_fn );
-+
- int vips_stream_output_write( VipsStreamOutput *output,
- 	const unsigned char *data, size_t length );
- void vips_stream_output_finish( VipsStreamOutput *output );
-diff --git a/libvips/iofuncs/stream.c b/libvips/iofuncs/stream.c
+ #ifdef __cplusplus
+ }
+ #endif /*__cplusplus*/
+diff --git a/libvips/iofuncs/streami.c b/libvips/iofuncs/streami.c
 index 1111111..2222222 100644
---- a/libvips/iofuncs/stream.c
-+++ b/libvips/iofuncs/stream.c
-@@ -380,6 +380,42 @@ vips_stream_input_minimise_real( VipsStreamInput *input )
- 		vips_stream_close( stream );
+--- a/libvips/iofuncs/streami.c
++++ b/libvips/iofuncs/streami.c
+@@ -304,6 +304,24 @@ vips_streami_seek_real( VipsStreami *streami, gint64 offset, int whence )
+ 	return( new_pos );
  }
  
 +void
-+vips_stream_input_set_custom_read_fn( VipsStreamInput *input, 
-+	VipsStreamInputReadFn read_fn )
++vips_streami_set_custom_read_fn( VipsStreami *streami, 
++	VipsStreamiReadFn read_fn )
 +{
-+	VipsStreamInputClass *class = VIPS_STREAM_INPUT_GET_CLASS( input );
++	VipsStreamiClass *class = VIPS_STREAMI_GET_CLASS( streami );
 +
 +	class->read = read_fn;
 +}
 +
 +void
-+vips_stream_input_set_custom_map_fn( VipsStreamInput *input, 
-+	VipsStreamInputMapFn map_fn )
++vips_streami_set_custom_seek_fn( VipsStreami *streami, 
++	VipsStreamiSeekFn seek_fn )
 +{
-+	VipsStreamInputClass *class = VIPS_STREAM_INPUT_GET_CLASS( input );
-+
-+	class->map = map_fn;
-+}
-+
-+void
-+vips_stream_input_set_custom_seek_fn( VipsStreamInput *input, 
-+	VipsStreamInputSeekFn seek_fn )
-+{
-+	VipsStreamInputClass *class = VIPS_STREAM_INPUT_GET_CLASS( input );
++	VipsStreamiClass *class = VIPS_STREAMI_GET_CLASS( streami );
 +
 +	class->seek = seek_fn;
 +}
 +
-+void
-+vips_stream_input_set_custom_minimise_fn( VipsStreamInput *input, 
-+	VipsStreamInputMinimiseFn minimise_fn )
-+{
-+	VipsStreamInputClass *class = VIPS_STREAM_INPUT_GET_CLASS( input );
-+
-+	class->minimise = minimise_fn;
-+}
-+
  static void
- vips_stream_input_class_init( VipsStreamInputClass *class )
+ vips_streami_class_init( VipsStreamiClass *class )
  {
-@@ -407,6 +443,13 @@ vips_stream_input_class_init( VipsStreamInputClass *class )
- 		G_STRUCT_OFFSET( VipsStreamInput, blob ),
+@@ -329,6 +347,13 @@ vips_streami_class_init( VipsStreamiClass *class )
+ 		G_STRUCT_OFFSET( VipsStreami, blob ),
  		VIPS_TYPE_BLOB );
  
-+	VIPS_ARG_BOOL( class, "seekable", 4, 
-+		_( "Seekable" ),
-+		_( "stream supports seeking" ),
++	VIPS_ARG_BOOL( class, "is_pipe", 4, 
++		_( "Is pipe" ),
++		_( "stream is a pipe-style input" ),
 +		VIPS_ARGUMENT_OPTIONAL_INPUT, 
-+		G_STRUCT_OFFSET( VipsStreamInput, seekable ),
++		G_STRUCT_OFFSET( VipsStreami, is_pipe ),
 +		FALSE );
 +
  }
  
  static void
-@@ -930,6 +973,24 @@ vips_stream_output_finish_real( VipsStreamOutput *output )
+diff --git a/libvips/iofuncs/streamo.c b/libvips/iofuncs/streamo.c
+index 1111111..2222222 100644
+--- a/libvips/iofuncs/streamo.c
++++ b/libvips/iofuncs/streamo.c
+@@ -190,6 +190,24 @@ vips_streamo_finish_real( VipsStreamo *streamo )
  	}
  }
  
 +void
-+vips_stream_output_set_custom_write_fn( VipsStreamOutput *output, 
-+	VipsStreamOutputWriteFn write_fn )
++vips_streamo_set_custom_write_fn( VipsStreamo *streamo, 
++	VipsStreamoWriteFn write_fn )
 +{
-+	VipsStreamOutputClass *class = VIPS_STREAM_OUTPUT_GET_CLASS( output );
++	VipsStreamoClass *class = VIPS_STREAMO_GET_CLASS( streamo );
 +
 +	class->write = write_fn;
 +}
 +
 +void
-+vips_stream_output_set_custom_finish_fn( VipsStreamOutput *output, 
-+	VipsStreamOutputFinishFn finish_fn )
++vips_streamo_set_custom_finish_fn( VipsStreamo *streamo, 
++	VipsStreamoFinishFn finish_fn )
 +{
-+	VipsStreamOutputClass *class = VIPS_STREAM_OUTPUT_GET_CLASS( output );
++	VipsStreamoClass *class = VIPS_STREAMO_GET_CLASS( streamo );
 +
 +	class->finish = finish_fn;
 +}
 +
  static void
- vips_stream_output_class_init( VipsStreamOutputClass *class )
+ vips_streamo_class_init( VipsStreamoClass *class )
  {
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Thu, 17 Oct 2019 18:35:00 +0200
-Subject: [PATCH 2/3] Fix build
+Date: Mon, 28 Oct 2019 18:04:32 +0100
+Subject: [PATCH 2/4] Don't signal pixel decode phase on header read
 
 
-diff --git a/libvips/iofuncs/util.c b/libvips/iofuncs/util.c
+diff --git a/libvips/foreign/jpeg2vips.c b/libvips/foreign/jpeg2vips.c
 index 1111111..2222222 100644
---- a/libvips/iofuncs/util.c
-+++ b/libvips/iofuncs/util.c
-@@ -1078,7 +1078,7 @@ vips__ftruncate( int fd, gint64 pos )
- 	LARGE_INTEGER p;
- 
- 	p.QuadPart = pos;
--	if( vips__seek( fd, pos ) )
-+	if( vips__seek( fd, pos, SEEK_SET ) )
+--- a/libvips/foreign/jpeg2vips.c
++++ b/libvips/foreign/jpeg2vips.c
+@@ -971,8 +971,12 @@ vips__jpeg_read_stream( VipsStreami *input, VipsImage *out,
  		return( -1 );
- 	if( !SetEndOfFile( hFile ) ) {
-                 vips_error_system( GetLastError(), "vips__ftruncate", 
+ 
+ 	if( readjpeg_open_input( jpeg ) ||
+-		vips__jpeg_read( jpeg, out, header_only ) ||
+-		vips_streami_decode( jpeg->input ) )
++		vips__jpeg_read( jpeg, out, header_only ) )
++		return( -1 );
++
++	if( header_only )
++		vips_streami_minimise( jpeg->input );
++	else if( vips_streami_decode( jpeg->input ) )
+ 		return( -1 );
+ 
+ 	return( 0 );
+diff --git a/libvips/foreign/vipspng.c b/libvips/foreign/vipspng.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/vipspng.c
++++ b/libvips/foreign/vipspng.c
+@@ -711,10 +711,11 @@ vips__png_header_stream( VipsStreami *input, VipsImage *out )
+ 	Read *read;
+ 
+ 	if( !(read = read_new( input, out, TRUE )) ||
+-		png2vips_header( read, out ) || 
+-		vips_streami_decode( input ) )
++		png2vips_header( read, out ) )
+ 		return( -1 );
+ 
++	vips_streami_minimise( input );
++
+ 	return( 0 );
+ }
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 28 Oct 2019 18:07:08 +0100
+Subject: [PATCH 3/4] Ensure target == -1 works
+
+
+diff --git a/libvips/iofuncs/streami.c b/libvips/iofuncs/streami.c
+index 1111111..2222222 100644
+--- a/libvips/iofuncs/streami.c
++++ b/libvips/iofuncs/streami.c
+@@ -730,7 +730,7 @@ vips_streami_read( VipsStreami *streami, void *buffer, size_t length )
+ 	return( bytes_read );
+ }
+ 
+-/* Read to a position. -1 means read to end of stream. Does not chenge 
++/* Read to a position. -1 means read to end of stream. Does not change 
+  * read_position.
+  */
+ static int
+@@ -745,7 +745,7 @@ vips_streami_pipe_read_to_position( VipsStreami *streami, gint64 target )
+ 	g_assert( !streami->decode );
+ 	g_assert( streami->header_bytes );
+ 
+-	if( target < 0 ||
++	if( (target != -1 && target < 0) ||
+ 		(streami->length != -1 && 
+ 		 target > streami->length) ) {
+ 		vips_error( vips_stream_nick( VIPS_STREAM( streami ) ), 
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Fri, 18 Oct 2019 13:00:0 +0200
-Subject: [PATCH 3/3] vips_stream_input_map now supports seekable streams
+Date: Mon, 28 Oct 2019 18:16:23 +0100
+Subject: [PATCH 4/4] Test the properties also for subclass streams
 
+is_pipe can also be tested for non-file based input.
 
-diff --git a/libvips/iofuncs/stream.c b/libvips/iofuncs/stream.c
+diff --git a/libvips/iofuncs/streami.c b/libvips/iofuncs/streami.c
 index 1111111..2222222 100644
---- a/libvips/iofuncs/stream.c
-+++ b/libvips/iofuncs/stream.c
-@@ -646,10 +646,10 @@ vips_stream_input_read( VipsStreamInput *input,
- 		}
+--- a/libvips/iofuncs/streami.c
++++ b/libvips/iofuncs/streami.c
+@@ -238,26 +238,20 @@ vips_streami_build( VipsObject *object )
  
- 		/* We need to save bytes if we're in header mode and we can't
--		 * seek or map.
-+		 * seek.
+ 		streami->data = vips_blob_get( streami->blob, &length );
+ 		streami->length = VIPS_MIN( length, G_MAXSSIZE );
+-	}
+-
+-	/* If there's a descriptor for streami, test its properties.
+-	 */
+-	if( stream->descriptor != -1 ) {
++	} 
++	else if( class->seek( streami, 0, SEEK_CUR ) == -1 ) {
+ 		/* Can we seek? If not, this is some kind of pipe.
+ 		 * 
+ 		 * We must call the class method directly: if we go via
+ 		 * vips_streami_seek() we'll trigger seek emulation on pipes.
  		 */
- 		if( input->header_bytes &&
--			(!input->seekable || !input->mappable) &&
-+			!input->seekable &&
- 			!input->decode &&
- 			n > 0 ) 
- 			g_byte_array_append( input->header_bytes, 
-@@ -698,6 +698,35 @@ vips_stream_input_map( VipsStreamInput *input, size_t *length )
- 		return( input->baseaddr );
+-		if( class->seek( streami, 0, SEEK_CUR ) == -1 ) {
+-			VIPS_DEBUG_MSG( "    not seekable\n" );
+-			streami->is_pipe = TRUE;
+-		}
+-
++		VIPS_DEBUG_MSG( "    not seekable\n" );
++		streami->is_pipe = TRUE;
++	} 
++	else if( (streami->length = vips_streami_size( streami )) == -1 ) {
+ 		/* Try and get the length, as long as we're seekable.
+ 		 */
+-		if( !streami->is_pipe &&
+-			(streami->length = vips_streami_size( streami )) == -1 )
+-			return( -1 );
++		return( -1 );
  	}
  
-+	/* An input that is seekable but doesn't supports mmap,
-+	 * read() the whole thing and move it to a memory source.
-+	 */
-+	if( input->seekable ) {
-+		GByteArray *bytes;
-+		unsigned char *data;
-+		ssize_t n;
-+		size_t bytes_length;
-+
-+		bytes = g_byte_array_new();
-+
-+		VIPS_DEBUG_MSG( "    read() of entire source\n" );
-+		if( vips_stream_input_rewind( input ) )
-+			return( NULL );
-+
-+		while( (n = vips_stream_input_read( input, buffer, 4096 )) > 0 )
-+			g_byte_array_append( bytes, buffer, n );
-+
-+		bytes_length = bytes->len;
-+		data = g_byte_array_free( bytes, FALSE );
-+		bytes = NULL;
-+
-+		input->blob = vips_blob_new( NULL, NULL, 0 );
-+		vips_blob_set( input->blob,
-+			(VipsCallbackFn) g_free, data, bytes_length );
-+
-+		return( vips_blob_get( input->blob, length ) );
-+	}
-+
- 	/* Have to read() the whole thing. header_bytes will keep a copy of
- 	 * the file.
- 	 */
+ 	/* If we can seek, we won't need to save header bytes.
