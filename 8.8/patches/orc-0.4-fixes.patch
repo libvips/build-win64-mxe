@@ -3,52 +3,9 @@ This file is part of MXE. See LICENSE.md for licensing information.
 Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Xavier Claessens <xavier.claessens@collabora.com>
-Date: Fri, 12 Apr 2019 11:34:33 -0400
-Subject: [PATCH 1/2] Meson: Do not always generate static library
-
-Since Meson 0.46.0 'default_library' can be set to 'both' when user
-wants both shared and static libraries.
-
-diff --git a/orc/meson.build b/orc/meson.build
-index 1111111..2222222 100644
---- a/orc/meson.build
-+++ b/orc/meson.build
-@@ -101,7 +101,7 @@ orc_c_args = ['-DORC_ENABLE_UNSTABLE_API', '-D_GNU_SOURCE']
- 
- orc_dependencies = [libm, librt, liblog]
- 
--orc_shr = shared_library ('orc-' + orc_api,
-+orc_lib = library ('orc-' + orc_api,
-   orc_sources,
-   version : libversion,
-   soversion : soversion,
-@@ -111,18 +111,9 @@ orc_shr = shared_library ('orc-' + orc_api,
-   dependencies : orc_dependencies,
-   install : true)
- 
--orc_sta = static_library ('orc-' + orc_api,
--  objects: orc_shr.extract_all_objects(),
--  include_directories : orc_inc,
--  c_args : orc_c_args + ['-DBUILDING_ORC'],
--  install : true)
--
-+orc_dep_cargs = []
- if get_option('default_library') == 'static'
--  orc_lib = orc_sta
--  orc_dep_cargs = ['-DORC_STATIC_COMPILATION']
--else
--  orc_lib = orc_shr
--  orc_dep_cargs = []
-+  orc_dep_cargs += ['-DORC_STATIC_COMPILATION']
- endif
- 
- orc_dep = declare_dependency(include_directories : orc_inc,
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 18 Apr 2019 16:00:00 +0200
-Subject: [PATCH 2/2] Fix symbol visibility with MinGW-w64 / static library
+Subject: [PATCH 1/1] Fix symbol visibility with MinGW-w64 / static library
 
 
 diff --git a/meson.build b/meson.build
@@ -90,7 +47,7 @@ index 1111111..2222222 100644
  endif
  # Passing this through the command line would be too messy
  cdata.set('ORC_API_EXPORT', export_define)
-@@ -85,7 +92,6 @@ if cc.has_header_symbol('android/log.h', '__android_log_print')
+@@ -87,7 +94,6 @@ if cc.has_header_symbol('android/log.h', '__android_log_print')
    liblog = [cc.find_library('log', required : true)]
  endif
  
@@ -102,7 +59,7 @@ diff --git a/orc/orcutils.h b/orc/orcutils.h
 index 1111111..2222222 100644
 --- a/orc/orcutils.h
 +++ b/orc/orcutils.h
-@@ -202,7 +202,7 @@ typedef unsigned int orc_bool;
+@@ -210,7 +210,7 @@ typedef unsigned int orc_bool;
  /* FIXME: unused, remove */
  #define ORC_EXPORT
  

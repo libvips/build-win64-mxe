@@ -78,7 +78,7 @@ diff --git a/gio/tests/meson.build b/gio/tests/meson.build
 index 1111111..2222222 100644
 --- a/gio/tests/meson.build
 +++ b/gio/tests/meson.build
-@@ -378,7 +378,7 @@ test_extra_programs += {
+@@ -386,7 +386,7 @@ test_extra_programs += {
    },
  }
  
@@ -87,7 +87,7 @@ index 1111111..2222222 100644
    test_extra_programs += {
      # These three are manual-run tests because they need a session bus but don't bring one up themselves
      # FIXME: these build but don't seem to work!
-@@ -465,7 +465,7 @@ if installed_tests_enabled
+@@ -473,7 +473,7 @@ if installed_tests_enabled
    install_data('static-link.py', install_dir : installed_tests_execdir)
  endif
  

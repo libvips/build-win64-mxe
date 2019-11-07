@@ -12,7 +12,7 @@ diff --git a/cmake/modules/PopplerMacros.cmake b/cmake/modules/PopplerMacros.cma
 index 1111111..2222222 100644
 --- a/cmake/modules/PopplerMacros.cmake
 +++ b/cmake/modules/PopplerMacros.cmake
-@@ -125,7 +125,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
+@@ -123,7 +123,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
    set(DEFAULT_COMPILE_WARNINGS_EXTRA "${_warn} ${_warnx}")
  
    set(_save_cxxflags "${CMAKE_CXX_FLAGS}")
@@ -25,7 +25,7 @@ diff --git a/poppler/Annot.h b/poppler/Annot.h
 index 1111111..2222222 100644
 --- a/poppler/Annot.h
 +++ b/poppler/Annot.h
-@@ -43,7 +43,11 @@
+@@ -44,7 +44,11 @@
  
  #include <memory>
  #include <atomic>

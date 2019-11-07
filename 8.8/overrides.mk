@@ -68,14 +68,14 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.10-68
-imagemagick_CHECKSUM := 2caa3d8d1f65e733de30d1f537e57991ff3adb3edb5b60afa9cd0f6e0a20945f
+imagemagick_VERSION  := 6.9.10-71
+imagemagick_CHECKSUM := 9d7adba1488570a78626554c48d6c50eea8c307b718efbddb6e2a9647415c0a4
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.4
-x265_VERSION  := 3.2
-x265_CHECKSUM := 364d79bcd56116a9e070fdeb1d9d2aaef1a786b4970163fb56ff0991a183133b
+x265_VERSION  := 3.2.1
+x265_CHECKSUM := fb9badcf92364fd3567f8b5aa0e5e952aeea7a39a2b864387cec31e3b58cbbcc
 x265_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
 x265_SUBDIR   := x265_$(x265_VERSION)
 x265_FILE     := x265_$(x265_VERSION).tar.gz
@@ -83,16 +83,16 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.46.1
-librsvg_CHECKSUM := 2da1f2547a63a24ead121ad345011d5fd4f038ef46f74712ec82a1e85ec67643
+librsvg_VERSION  := 2.47.0
+librsvg_CHECKSUM := 25754ada6615303bd9339af05645fb25c169b331991c11dd4a09da81d9a65a7c
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.44.6
-pango_CHECKSUM := 3e1e41ba838737e200611ff001e3b304c2ca4cdbba63d200a20db0b0ddc0f86c
+pango_VERSION  := 1.44.7
+pango_CHECKSUM := 66a5b6cc13db73efed67b8e933584509f8ddb7b10a8a40c3850ca4a985ea1b1f
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -119,8 +119,8 @@ libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
 libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.63.0
-glib_CHECKSUM := d974d7f514358ee6f69451826a215578141701075924108da311ec2c8dc01056
+glib_VERSION  := 2.63.1
+glib_CHECKSUM := 6bd00b8e410501f0fb76078b970b8d1bcb290507f1c02288dee2b3a75c2fa082
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -159,19 +159,19 @@ openexr_URL      := https://github.com/openexr/openexr/archive/v$(openexr_VERSIO
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # ilmbase_GH_CONF  := openexr/openexr/tags
-ilmbase_VERSION  := 2.4.0
-ilmbase_CHECKSUM := 4904c5ea7914a58f60a5e2fbc397be67e7a25c380d7d07c1c31a3eefff1c92f1
+ilmbase_VERSION  := $(openexr_VERSION)
+ilmbase_CHECKSUM := $(openexr_CHECKSUM)
 ilmbase_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/ilmbase-[0-9]*.patch)))
-ilmbase_SUBDIR   := openexr-$(openexr_VERSION)
-ilmbase_FILE     := openexr-$(openexr_VERSION).tar.gz
-ilmbase_URL      := https://github.com/openexr/openexr/archive/v$(openexr_VERSION).tar.gz
+ilmbase_SUBDIR   := $(openexr_SUBDIR)
+ilmbase_FILE     := $(openexr_FILE)
+ilmbase_URL      := $(openexr_URL)
 
 # upstream version is 3410
-cfitsio_VERSION  := 3450
-cfitsio_CHECKSUM := bf6012dbe668ecb22c399c4b7b2814557ee282c74a7d5dc704eb17c30d9fb92e
+cfitsio_VERSION  := 3.47
+cfitsio_CHECKSUM := 418516f10ee1e0f1b520926eeca6b77ce639bed88804c7c545e74f26b3edf4ef
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
-cfitsio_SUBDIR   := cfitsio
-cfitsio_FILE     := cfitsio$(cfitsio_VERSION).tar.gz
+cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
+cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
@@ -215,8 +215,10 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 #  Added: libxml2, openjpeg
 #  Removed: bzip2, ffmpeg, fftw, freetype, jasper, liblqr-1, libltdl, libpng, openexr, tiff, zlib
 #  Replaced: jpeg with libjpeg-turbo
+# OpenEXR:
+#  Added: $(BUILD)~cmake
 # IlmBase:
-#  Added: pthreads
+#  Added: pthreads $(BUILD)~cmake
 # Pango:
 #  Added: fribidi
 # Poppler:
@@ -238,7 +240,8 @@ gdk-pixbuf_DEPS         := cc glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
 tiff_DEPS               := cc libjpeg-turbo libwebp xz zlib
 imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo pthreads
-ilmbase_DEPS            := cc pthreads
+openexr_DEPS            := cc ilmbase pthreads zlib $(BUILD)~cmake
+ilmbase_DEPS            := cc pthreads $(BUILD)~cmake
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc mingw-std-threads cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 libwebp_DEPS            := $(libwebp_DEPS) gettext
@@ -591,70 +594,54 @@ endef
 
 # build with CMake.
 define openexr_BUILD
-    # Add missing files
-    touch '$(SOURCE_DIR)/IlmBase'/{NEWS,AUTHORS,ChangeLog,README}
+    echo "patches: $(ilmbase_PATCHES)"
+    $(foreach PKG_PATCH,$(ilmbase_PATCHES), \
+        echo $(PKG_PATCH); \
+        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(PKG_PATCH))
+    mkdir -p '$(BUILD_DIR)/native/IlmBase'
+    mkdir '$(BUILD_DIR)/cross'
+    cd '$(BUILD_DIR)/native/IlmBase' && cmake \
+        -DOPENEXR_CXX_STANDARD=14 \
+        -DCMAKE_INSTALL_PREFIX='$(BUILD_DIR)/native/IlmBase/install'\
+        '$(SOURCE_DIR)/IlmBase'
+    $(MAKE) -C '$(BUILD_DIR)/native/IlmBase' -j '$(JOBS)' install
 
-    # Update auto-stuff, except autoheader, because if fails...
-    cd '$(SOURCE_DIR)/IlmBase' && AUTOHEADER=true autoreconf -fi
-
-    # build a native version of IlmBase
-    cd '$(SOURCE_DIR)/IlmBase' && $(SHELL) ./configure \
-        --build="`config.guess`" \
-        --disable-shared \
-        --prefix='$(SOURCE_DIR)/IlmBase' \
-        --enable-threading=yes \
-        CONFIG_SHELL=$(SHELL) \
-        SHELL=$(SHELL)
-    $(MAKE) -C '$(SOURCE_DIR)/IlmBase' -j '$(JOBS)' install $(MXE_DISABLE_PROGRAMS)
-
-    # build OpenEXR with CMake.
-    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+    cd '$(BUILD_DIR)/native/' && cmake \
+        -DOPENEXR_CXX_STANDARD=14 \
+        -DIlmBase_DIR='$(BUILD_DIR)/native/IlmBase/install/lib/cmake/IlmBase'\
+        '$(SOURCE_DIR)/OpenEXR'
+    $(MAKE) -C '$(BUILD_DIR)/native/IlmImf' -j '$(JOBS)'
+ 
+    cd '$(BUILD_DIR)/cross' && $(TARGET)-cmake \
+        -DOPENEXR_CXX_STANDARD=14 \
+        -DOPENEXR_INSTALL_PKG_CONFIG=ON \
+        -DNATIVE_OPENEXR_BUILD_DIR='$(BUILD_DIR)/native' \
         -DBUILD_TESTING=OFF \
         -DOPENEXR_BUILD_UTILS=OFF \
-        -DOPENEXR_INSTALL_PKG_CONFIG=ON \
         '$(SOURCE_DIR)/OpenEXR'
-
-    # build the code generator manually
-    cd '$(SOURCE_DIR)/OpenEXR/IlmImf/' && $(BUILD_CXX) -O2 \
-        -I'$(SOURCE_DIR)/IlmBase/include/OpenEXR' \
-        -L'$(SOURCE_DIR)/IlmBase/lib' \
-        b44ExpLogTable.cpp \
-        -lHalf \
-        -o b44ExpLogTable
-    '$(SOURCE_DIR)/OpenEXR/IlmImf/b44ExpLogTable' > '$(SOURCE_DIR)/OpenEXR/IlmImf/b44ExpLogTable.h'
-    cd '$(SOURCE_DIR)/OpenEXR/IlmImf/' && $(BUILD_CXX) -O2 \
-        -I. \
-        -I'$(BUILD_DIR)/config' \
-        -I'$(SOURCE_DIR)/IlmBase/include/OpenEXR' \
-        -L'$(SOURCE_DIR)/IlmBase/lib' \
-        dwaLookups.cpp \
-        -lHalf -lIlmThread -lIex -lpthread \
-        -o dwaLookups
-    '$(SOURCE_DIR)/OpenEXR/IlmImf/dwaLookups' > '$(SOURCE_DIR)/OpenEXR/IlmImf/dwaLookups.h'
-
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+    $(MAKE) -C '$(BUILD_DIR)/cross' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)/cross' -j 1 install
 endef
 
 # build with CMake.
 define ilmbase_BUILD
-    # do the first build step by hand, because programs are built that
-    # generate source files
-    mkdir -p '$(BUILD_DIR)/Half'
-    cd '$(SOURCE_DIR)/IlmBase/Half' && $(BUILD_CXX) eLut.cpp -o eLut
-    '$(SOURCE_DIR)/IlmBase/Half/eLut' > '$(BUILD_DIR)/Half/eLut.h'
-    cd '$(SOURCE_DIR)/IlmBase/Half' && $(BUILD_CXX) toFloat.cpp -o toFloat
-    '$(SOURCE_DIR)/IlmBase/Half/toFloat' > '$(BUILD_DIR)/Half/toFloat.h'
+    mkdir '$(BUILD_DIR)/native'
+    mkdir '$(BUILD_DIR)/cross'
+    cd '$(BUILD_DIR)/native' && cmake \
+        -DOPENEXR_CXX_STANDARD=14 \
+        '$(SOURCE_DIR)/IlmBase'
+    $(MAKE) -C '$(BUILD_DIR)/native/Half' -j '$(JOBS)'
 
-    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+    cd '$(BUILD_DIR)/cross' && $(TARGET)-cmake \
         -DILMBASE_FORCE_CXX03=ON \
+        -DOPENEXR_CXX_STANDARD=14 \
+        -DNATIVE_ILMBASE_BUILD_DIR='$(BUILD_DIR)/native' \
         -DBUILD_TESTING=OFF \
         -DBUILD_SHARED_LIBS=OFF \
         -DILMBASE_INSTALL_PKG_CONFIG=ON \
         '$(SOURCE_DIR)/IlmBase'
-
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+    $(MAKE) -C '$(BUILD_DIR)/cross' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)/cross' -j 1 install
 endef
 
 define cfitsio_BUILD_SHARED
