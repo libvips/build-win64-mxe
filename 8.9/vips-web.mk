@@ -2,9 +2,9 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-# https://api.github.com/repos/libvips/libvips/tarball/be7c1404c321917c602c1fb3f54da009a92bef0d
-$(PKG)_VERSION  := be7c140
-$(PKG)_CHECKSUM := 7296aad5056c87b30dfe75d9bc200e029b99b52b2c4b20dc3c5fd76f80f340fa
+# https://api.github.com/repos/libvips/libvips/tarball/317feec6a45aef717b2dfc7a31859ae2bc4cdcac
+$(PKG)_VERSION  := 317feec
+$(PKG)_CHECKSUM := aa12b6db2aa99f4b174edf4f82904dbe215a0c34c59ab61a7b5daa24f5c075f8
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libvips/libvips/branches/master
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
@@ -50,6 +50,8 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
+    $(SED) -i 's/$$\*/"$$@"/g' '$(SOURCE_DIR)/autogen.sh'
+
     # Always build as shared library, we need
     # libvips-42.dll for the language bindings.
     cd '$(SOURCE_DIR)' && ./autogen.sh \
@@ -74,7 +76,13 @@ define $(PKG)_BUILD
         --without-analyze \
         --without-radiance \
         --without-imagequant \
-        --disable-introspection
+        --disable-introspection \
+        $(if $(findstring posix,$(TARGET)), CXXFLAGS="$(CXXFLAGS) -Wno-incompatible-ms-struct")
+
+    # remove -nostdlib from linker commandline options
+    # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
+    $(if $(findstring posix,$(TARGET)), \
+        $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(SOURCE_DIR)/libtool')
 
     $(MAKE) -C '$(SOURCE_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(SOURCE_DIR)' -j 1 install

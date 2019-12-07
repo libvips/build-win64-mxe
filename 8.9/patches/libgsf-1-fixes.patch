@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: "fix@me" <fix@me>
 Date: Fri, 24 Sep 2010 23:34:26 +0200
-Subject: [PATCH 1/1] s,DllMain,static _disabled_DllMain,
+Subject: [PATCH 1/2] s,DllMain,static _disabled_DllMain,
 
 
 diff --git a/gsf/gsf-utils.c b/gsf/gsf-utils.c
@@ -24,3 +24,179 @@ index 1111111..2222222 100644
  {
  	if (fdwReason == DLL_PROCESS_ATTACH) gsf_dll_hmodule = hinstDLL;
  	return TRUE;
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 25 Nov 2019 20:20:00 +0100
+Subject: [PATCH 2/2] Simplify ISO 8601 parser
+
+By using g_date_time_new_from_iso8601 and g_date_time_format_iso8601.
+
+diff --git a/configure.ac b/configure.ac
+index 1111111..2222222 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -301,14 +301,6 @@ AC_DEFINE(HAVE_2ARG_STATFS, 1, [Define if you have two-argument statfs like linu
+ 
+ AC_CHECK_FUNCS(chown setrlimit)
+ 
+-AC_CHECK_FUNCS(gmtime_r, [],
+-	       [AC_CHECK_FUNCS(gmtime,
+-	       		       [AC_MSG_WARN(*** Please note that gmtime_r() is missing and I will use gmtime() which is not thread safe ***)],
+-			       [AC_MSG_ERROR([Neither gmtime_r or gmtime is available])])])
+-
+-AC_CHECK_MEMBERS(struct tm.tm_gmtoff,,,
+-[#include <time.h>])
+-
+ SAVE_CFLAGS=$CFLAGS
+ SAVE_LIBS=$LIBS
+ CFLAGS="$CFLAGS $LIBGSF_CFLAGS"
+diff --git a/gsf/gsf-timestamp.c b/gsf/gsf-timestamp.c
+index 1111111..2222222 100644
+--- a/gsf/gsf-timestamp.c
++++ b/gsf/gsf-timestamp.c
+@@ -25,9 +25,6 @@
+ 
+ #include <string.h>
+ #include <time.h>
+-#ifdef G_OS_WIN32
+-#include <windows.h>
+-#endif
+ 
+ static void
+ timestamp_to_string (GValue const *src_value, GValue *dest_value)
+@@ -88,46 +85,12 @@ gsf_timestamp_free (GsfTimestamp *stamp)
+ 	g_free (stamp);
+ }
+ 
+-#if defined(HAVE_STRUCT_TM_TM_GMTOFF)
+-#define GMTOFF(t) ((t).tm_gmtoff)
+-#elif defined(HAVE_STRUCT_TM___TM_GMTOFF)
+-#define GMTOFF(t) ((t).__tm_gmtoff)
+-#elif defined(G_OS_WIN32)
+-#define GMTOFF(t) (gmt_to_local_win32())
+-#else
+-/* FIXME: work out the offset anyway. */
+-#define GMTOFF(t) (0)
+-#endif
+-
+-#ifdef G_OS_WIN32
+-static time_t gmt_to_local_win32(void)
+-{
+-    TIME_ZONE_INFORMATION tzinfo;
+-    DWORD dwStandardDaylight;
+-    long bias;
+-
+-    dwStandardDaylight = GetTimeZoneInformation(&tzinfo);
+-    bias = tzinfo.Bias;
+-
+-    if (dwStandardDaylight == TIME_ZONE_ID_STANDARD)
+-        bias += tzinfo.StandardBias;
+-
+-    if (dwStandardDaylight == TIME_ZONE_ID_DAYLIGHT)
+-        bias += tzinfo.DaylightBias;
+-
+-    return (- bias * 60);
+-}
+-#endif
+-
+-
+ /**
+  * gsf_timestamp_load_from_string:
+  * @stamp: #GsfTimestamp
+  * @spec: The string to parse
+  *
+- * Very simple parser for time stamps.  Currently requires a format of
+- * 	'YYYY-MM-DDThh:mm:ss'
+- * and does only rudimentary range checking
++ * Parser for time stamps. Requires a ISO 8601 formatted string.
+  *
+  * Since: 1.14.24
+  *
+@@ -136,29 +99,12 @@ static time_t gmt_to_local_win32(void)
+ int
+ gsf_timestamp_load_from_string (GsfTimestamp *stamp, char const *spec)
+ {
+-	guint year, month, day, hour, minute;
+-	float second;
++	GTimeZone *utc;
+ 	GDateTime *dt;
+ 
+-	/* 'YYYY-MM-DDThh:mm:ss' */
+-	if (6 != sscanf (spec, "%u-%u-%uT%u:%u:%f",
+-			 &year, &month, &day, &hour, &minute, &second))
+-		return FALSE;
+-
+-	/* g_date_time_new_utc documentation says: */
+-	/* It not considered a programmer error for the values to this function to be out of range,*/
+-	/* but in the case that they are, the function will return NULL. */
+-	/* Nevertheless it seems to fail on values that are extremely out of range, see bug #702671 */
+-	if (second < 0.0 || second >= 60.0)
+-		return FALSE;
+-	if (minute > 59 || hour > 23)
+-		return FALSE;
+-	if (day > 32 || month > 12 || year > 9999)
+-		return FALSE;
+-
+-	dt = g_date_time_new_utc ((int)year, (int)month, (int)day, (int)hour, (int)minute, second);
+-	if (!dt)
+-		return FALSE;
++	utc = g_time_zone_new_utc ();
++	dt = g_date_time_new_from_iso8601 (spec, utc);
++	g_time_zone_unref (utc);
+ 
+ 	stamp->timet = g_date_time_to_unix (dt);
+ 
+@@ -171,9 +117,7 @@ gsf_timestamp_load_from_string (GsfTimestamp *stamp, char const *spec)
+  * @spec: The string to parse
+  * @stamp: #GsfTimestamp
+  *
+- * Very simple parser for time stamps.  Currently requires a format of
+- * 	'YYYY-MM-DDThh:mm:ss'
+- * and does no bounds checking.
++ * Parser for time stamps. Requires a ISO 8601 formatted string.
+  *
+  * Deprecated: 1.14.24, use gsf_timestamp_load_from_string
+  *
+@@ -190,9 +134,7 @@ gsf_timestamp_from_string (char const *spec, GsfTimestamp *stamp)
+  * @spec: The string to parse
+  * @stamp: #GsfTimestamp
+  *
+- * Very simple parser for time stamps.  Currently requires a format of
+- * 	'YYYY-MM-DDThh:mm:ss'
+- * and does no bounds checking.
++ * Parser for time stamps. Requires a ISO 8601 formatted string.
+  *
+  * Deprecated: Use gsf_timestamp_load_from_string
+  *
+@@ -216,24 +158,16 @@ gsf_timestamp_parse (char const *spec, GsfTimestamp *stamp)
+ char *
+ gsf_timestamp_as_string	(GsfTimestamp const *stamp)
+ {
+-	time_t    t;
+-	struct tm tm;
++	GDateTime *dt;
++	gchar *iso8601_string;
+ 
+ 	g_return_val_if_fail (stamp != NULL, g_strdup ("<invalid>"));
+ 
+-	t = stamp->timet;	/* Use an honest time_t for gmtime_r.  */
+-#ifdef HAVE_GMTIME_R
+-	gmtime_r (&t, &tm);
+-#else
+-	/* -NOT- thread-safe */
+-	tm = *gmtime (&t);
+-#endif
+-
++	dt = g_date_time_new_from_unix_utc (stamp->timet);
++	iso8601_string = g_date_time_format_iso8601 (dt);
++	g_date_time_unref (dt);
+ 
+-	/* using 'YYYY-MM-DDThh:mm:ss' */
+-	return g_strdup_printf ("%4d-%02d-%02dT%02d:%02d:%02dZ",
+-		tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday,
+-		tm.tm_hour, tm.tm_min, tm.tm_sec);
++    return iso8601_string;
+ }
+ 
+ guint

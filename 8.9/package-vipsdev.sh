@@ -47,11 +47,16 @@ fi
 
 echo "Copying libvips and dependencies"
 
+# Need to whitelist the Universal C Runtime (CRT) DLLs
+# Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
+whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
+
 # Copy libvips and dependencies with pe-util
 $mxe_prefix/$build_os/bin/peldd \
   $mxe_prefix/$target.$deps/bin/$target_dll \
   --clear-path \
   --path $mxe_prefix/$target.$deps/bin \
+  ${whitelist[@]/#/--wlist } \
   -a | xargs cp -t $repackage_dir/bin
 
 echo "Copying install area $mxe_prefix/$target.$deps/"
@@ -69,11 +74,10 @@ echo "Generating import files"
 echo "Cleaning unnecessary files / directories"
 
 # TODO Do we need to keep /share/doc and /share/gtk-doc?
-rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml}
+rm -rf $repackage_dir/share/{aclocal,bash-completion,clang,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,opt-viewer,scan-build,scan-view,thumbnailers,xml}
+rm -rf $repackage_dir/include/{cairo,clang-c,c++,llvm-c}
+rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,clang,ldscripts}
 
-rm -rf $repackage_dir/include/cairo
-
-rm -rf $repackage_dir/lib/{*cairo*,*gdk*,ldscripts}
 find $repackage_dir/lib -name "*.la" -exec rm -f {} \;
 
 # We only support GB and de locales

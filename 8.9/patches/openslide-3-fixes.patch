@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Gilbert <bgilbert@cs.cmu.edu>
 Date: Tue, 1 Sep 2015 21:05:25 -0400
-Subject: [PATCH 1/5] jp2k: Allow OpenJPEG 2.x to read buffer in multiple chunks
+Subject: [PATCH 1/6] jp2k: Allow OpenJPEG 2.x to read buffer in multiple chunks
 
 Preparation for next commit.
 
@@ -65,7 +65,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Gilbert <bgilbert@cs.cmu.edu>
 Date: Tue, 1 Sep 2015 21:43:01 -0400
-Subject: [PATCH 2/5] jp2k: Support seeking within memory buffer for OpenJPEG 2.x
+Subject: [PATCH 2/6] jp2k: Support seeking within memory buffer for OpenJPEG 2.x
 
 With current OpenJPEG master, streams must be seekable to prevent
 opj_decode() from failing with the message
@@ -151,7 +151,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Gilbert <bgilbert@cs.cmu.edu>
 Date: Mon, 7 Sep 2015 22:28:22 -0400
-Subject: [PATCH 3/5] On Windows, assume filenames are in UTF-8, not the system
+Subject: [PATCH 3/6] On Windows, assume filenames are in UTF-8, not the system
  codepage
 
 On Windows, fopen() expects filenames in the system codepage, and thus
@@ -279,7 +279,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Gilbert <bgilbert@cs.cmu.edu>
 Date: Sun, 15 May 2016 23:37:33 -0500
-Subject: [PATCH 4/5] Use g_utf8_to_utf16() to compute Windows file paths
+Subject: [PATCH 4/6] Use g_utf8_to_utf16() to compute Windows file paths
 
 On glib 2.47.6 through at least 2.48.1, g_convert() adds a BOM to the
 beginning of the returned string, causing _wfopen() to fail.  Switch to
@@ -312,7 +312,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 2 June 2018 14:20:00 +0200
-Subject: [PATCH 5/5] Windows fixes
+Subject: [PATCH 5/6] Windows fixes
 
 - Fix compile errors with labeled statements named `OUT`.
 - The `host_os` and `build_os` variables may contain the
@@ -396,3 +396,70 @@ index 1111111..2222222 100644
  
  AC_SUBST(FEATURE_FLAGS)
  
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 28 Nov 2019 15:00:00 +0100
+Subject: [PATCH 6/6] Rename openslide-dll.manifest to openslide.manifest
+
+For some reason llvm-rc parses the RT_MANIFEST as 'openslide'.
+It looks like this is a result of a substring that ends at
+(but not including) the last hyphen.
+
+TODO: Report this behavior to the llvm-mingw repository.
+
+diff --git a/Makefile.am b/Makefile.am
+index 1111111..2222222 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -54,7 +54,7 @@ src/openslide-tables.c: src/make-tables.c
+ 
+ if WINDOWS_RESOURCES
+ src_libopenslide_la_SOURCES += src/openslide-dll.rc
+-src/openslide-dll.lo: src/openslide-dll.manifest
++src/openslide-dll.lo: src/openslide.manifest
+ endif
+ 
+ .rc.lo:
+diff --git a/configure.ac b/configure.ac
+index 1111111..2222222 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -210,7 +210,7 @@ AC_SUBST(FEATURE_FLAGS)
+ AC_CONFIG_FILES([
+ Makefile
+ openslide.pc
+-src/openslide-dll.manifest
++src/openslide.manifest
+ src/openslide-dll.rc
+ tools/openslide-quickhash1sum.1
+ tools/openslide-show-properties.1
+diff --git a/src/openslide-dll.rc b/src/openslide-dll.rc
+index 1111111..2222222 100644
+--- a/src/openslide-dll.rc
++++ b/src/openslide-dll.rc
+@@ -1,7 +1,7 @@
+ #include "winuser.h"
+ #include "winver.h"
+ 
+-2 RT_MANIFEST openslide-dll.manifest
++2 RT_MANIFEST openslide.manifest
+ 
+ 1 VERSIONINFO
+ FILEVERSION 3,4,1,0
+diff --git a/src/openslide-dll.rc.in b/src/openslide-dll.rc.in
+index 1111111..2222222 100644
+--- a/src/openslide-dll.rc.in
++++ b/src/openslide-dll.rc.in
+@@ -1,7 +1,7 @@
+ #include "winuser.h"
+ #include "winver.h"
+ 
+-2 RT_MANIFEST openslide-dll.manifest
++2 RT_MANIFEST openslide.manifest
+ 
+ 1 VERSIONINFO
+ FILEVERSION @WINDOWS_VERSIONINFO@
+diff --git a/src/openslide-dll.manifest.in b/src/openslide.manifest.in
+similarity index 100%
+rename from src/openslide-dll.manifest.in
+rename to src/openslide.manifest.in
