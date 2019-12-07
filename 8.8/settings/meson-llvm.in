@@ -1,8 +1,8 @@
 # This file is part of MXE. See LICENSE.md for licensing information.
 
 [binaries]
-c = '@PREFIX@/bin/@TARGET@-gcc'
-cpp = '@PREFIX@/bin/@TARGET@-g++'
+c = '@PREFIX@/bin/@TARGET@-clang'
+cpp = '@PREFIX@/bin/@TARGET@-clang++'
 ar = '@PREFIX@/bin/@TARGET@-ar'
 ranlib = '@PREFIX@/bin/@TARGET@-ranlib'
 ld = '@PREFIX@/bin/@TARGET@-ld'
@@ -18,16 +18,14 @@ glib-compile-resources = '@PREFIX@/@TARGET@/bin/glib-compile-resources'
 # MXE forbids this
 # exe_wrapper = 'wine'
 
+# Note: We force stpcpy to be false because our ancient version of the mingw
+# toolchain claims to provide it but doesn't define it in the standard string.h
 [properties]
 needs_exe_wrapper = true
+has_function_stpcpy = false
 # Turn on debugging
 # c_args = ['-g']
 # cpp_args = ['-g']
-
-c_args = ['-s', '-O3', '-ffast-math', '-fdata-sections', '-ffunction-sections', '-fPIC']
-cpp_args = ['-s', '-O3', '-ffast-math', '-fdata-sections', '-ffunction-sections', '-fPIC']
-c_link_args = ['-Wl,--gc-sections', '-Wl,--strip-all', '-Wl,--as-needed']
-cpp_link_args = ['-Wl,--gc-sections', '-Wl,--strip-all', '-Wl,--as-needed']
 
 [host_machine]
 system = 'windows'

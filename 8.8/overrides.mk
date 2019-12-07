@@ -5,8 +5,8 @@ $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 # /lib directories
 mingw-w64-headers_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw'
 
-# Common configure options for building mingw-w64-crt
-# and winpthreads somewhere else
+# Common configure options for building within the
+# $(PREFIX)/$(TARGET)/mingw directory.
 common_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw' \
 --with-sysroot='$(PREFIX)/$(TARGET)/mingw' \
 CPPFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include' \
@@ -26,13 +26,13 @@ CXXFLAGS='-s -O3 -ffast-math' \
 LDFLAGS=''
 
 # The trick here is to symlink all files from /mingw/{bin,lib,include}/
-# to $(PREFIX)/$(TARGET) just before the make command
+# to $(PREFIX)/$(TARGET) after building MinGW-w64
 # This ensures that all files are found during linking and that we
 # can clean up those unnecessary files afterwards
 define gcc_BUILD_x86_64-w64-mingw32
     $(subst # build rest of gcc, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
-    ln -sf $(PREFIX)/$(TARGET)/mingw/lib/* $(PREFIX)/$(TARGET)/lib && \
-    ln -sf $(PREFIX)/$(TARGET)/mingw/include/* $(PREFIX)/$(TARGET)/include, \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* $(PREFIX)/$(TARGET)/lib && \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* $(PREFIX)/$(TARGET)/include, \
     $(subst @gcc-crt-config-opts@,--disable-lib32 $(common_CONFIGURE_OPTS), \
     $(subst winpthreads/configure' $(MXE_CONFIGURE_OPTS),winpthreads/configure' $(MXE_CONFIGURE_OPTS) $(common_CONFIGURE_OPTS), \
     $(gcc_BUILD_mingw-w64))))
@@ -40,14 +40,37 @@ endef
 
 define gcc_BUILD_i686-w64-mingw32
     $(subst # build rest of gcc, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
-    ln -sf $(PREFIX)/$(TARGET)/mingw/lib/* $(PREFIX)/$(TARGET)/lib && \
-    ln -sf $(PREFIX)/$(TARGET)/mingw/include/* $(PREFIX)/$(TARGET)/include, \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib' && \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include', \
     $(subst @gcc-crt-config-opts@,--disable-lib64 $(common_CONFIGURE_OPTS), \
     $(subst winpthreads/configure' $(MXE_CONFIGURE_OPTS),winpthreads/configure' $(MXE_CONFIGURE_OPTS) $(common_CONFIGURE_OPTS), \
     $(gcc_BUILD_mingw-w64))))
 endef
 
+define llvm-mingw_BUILD_x86_64-w64-mingw32
+    $(subst # install the usual wrappers, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib' && \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include', \
+    $(subst @mingw-crt-config-opts@,--disable-lib32 --enable-lib64 $(common_CONFIGURE_OPTS), $(llvm-mingw_BUILD_mingw-w64)))
+endef
+
+define llvm-mingw_BUILD_i686-w64-mingw32
+    $(subst # install the usual wrappers, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib' && \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include', \
+    $(subst @mingw-crt-config-opts@,--enable-lib32 --disable-lib64 $(common_CONFIGURE_OPTS), $(llvm-mingw_BUILD_mingw-w64)))
+endef
+
 ## Update dependencies
+
+# upstream version is 3.2.1
+libffi_VERSION  := 3.3
+libffi_CHECKSUM := 72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056
+libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
+libffi_SUBDIR   := libffi-$(libffi_VERSION)
+libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
+libffi_URL      := https://www.mirrorservice.org/sites/sourceware.org/pub/libffi/$(libffi_FILE)
+libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
 # upstream version is 2.32.3
 gdk-pixbuf_VERSION  := 2.40.0
@@ -108,8 +131,9 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.bz2
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
-# Use the mutex helper from mingw-std-threads
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 
 # upstream version is 0.6.2
 libcroco_VERSION  := 0.6.13
@@ -142,7 +166,7 @@ cairo_SUBDIR   := cairo-$(cairo_VERSION)
 cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
 cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 
-# zlib will make libzlib.dll, but we want libz.dll so we must 
+# zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
 zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
@@ -190,6 +214,14 @@ fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
 
+# upstream version is 1.8.12
+hdf5_VERSION  := 1.10.5
+hdf5_CHECKSUM := 68d6ea8843d2a106ec6a7828564c1689c7a85714a35d8efafa2fee20ca366f44
+hdf5_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/hdf5-[0-9]*.patch)))
+hdf5_SUBDIR   := hdf5-$(hdf5_VERSION)
+hdf5_FILE     := hdf5-$(hdf5_VERSION).tar.bz2
+hdf5_URL      := https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$(call SHORT_PKG_VERSION,hdf5)/hdf5-$(hdf5_VERSION)/src/$(hdf5_FILE)
+
 # Override libjpeg-turbo patch with our own
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 
@@ -200,11 +232,11 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 #  Removed: bzip2
 # freetype:
 #  Removed: bzip2
-# freetype-bootstrap: 
+# freetype-bootstrap:
 #  Removed: bzip2
-# GLib: 
+# GLib:
 #  Removed: dbus, libiconv, pcre
-# GDK-PixBuf: 
+# GDK-PixBuf:
 #  Removed: jasper, libiconv
 #  Replaced: jpeg with libjpeg-turbo
 # lcms:
@@ -213,12 +245,13 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 #  Replaced: jpeg with libjpeg-turbo
 # ImageMagick:
 #  Added: libxml2, openjpeg
-#  Removed: bzip2, ffmpeg, fftw, freetype, jasper, liblqr-1, libltdl, libpng, openexr, tiff, zlib
+#  Removed: bzip2, ffmpeg, fftw, freetype, jasper, liblqr-1, libltdl, libpng, openexr, pthreads, tiff, zlib
 #  Replaced: jpeg with libjpeg-turbo
 # OpenEXR:
 #  Added: $(BUILD)~cmake
+#  Removed: pthreads
 # IlmBase:
-#  Added: pthreads $(BUILD)~cmake
+#  Added: $(BUILD)~cmake
 # Pango:
 #  Added: fribidi
 # Poppler:
@@ -228,6 +261,9 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 #  Added: gettext
 # Cairo:
 #  Removed: lzo zlib
+# hdf5:
+#  Added: $(BUILD)~cmake
+#  Removed: pthreads
 # x265:
 #  Replaced: yasm with $(BUILD)~nasm
 
@@ -239,16 +275,28 @@ glib_DEPS               := cc gettext libffi zlib
 gdk-pixbuf_DEPS         := cc glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
 tiff_DEPS               := cc libjpeg-turbo libwebp xz zlib
-imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo pthreads
-openexr_DEPS            := cc ilmbase pthreads zlib $(BUILD)~cmake
-ilmbase_DEPS            := cc pthreads $(BUILD)~cmake
+imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
+openexr_DEPS            := cc ilmbase zlib $(BUILD)~cmake
+ilmbase_DEPS            := cc $(BUILD)~cmake
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc mingw-std-threads cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 libwebp_DEPS            := $(libwebp_DEPS) gettext
 cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
+hdf5_DEPS               := cc zlib $(BUILD)~cmake
 x265_DEPS               := cc $(BUILD)~nasm
 
 ## Override build scripts
+
+# disable version script on llvm-mingw
+define libffi_BUILD
+    # build and install the library
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS) \
+        $(if $(findstring posix,$(TARGET)), --disable-symvers)
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+endef
 
 # icu will pull in standard linux headers, which we don't want,
 # build with CMake.
@@ -284,6 +332,10 @@ endef
 # exclude bz2 and gdk-pixbuf
 define libgsf_BUILD
     $(SED) -i 's,\ssed\s, $(SED) ,g'           '$(SOURCE_DIR)'/gsf/Makefile.in
+
+    # need to regenerate the configure script
+    cd '$(SOURCE_DIR)' && autoreconf -fi
+
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-nls \
@@ -302,6 +354,8 @@ endef
 # and the Meson build system
 define gdk-pixbuf_BUILD
     '$(TARGET)-meson' \
+        --buildtype=release \
+        --strip \
         --libdir='lib' \
         --bindir='bin' \
         --libexecdir='bin' \
@@ -318,6 +372,8 @@ endef
 # build pixman with the Meson build system
 define pixman_BUILD
     '$(TARGET)-meson' \
+        --buildtype=release \
+        --strip \
         --libdir='lib' \
         --bindir='bin' \
         --libexecdir='bin' \
@@ -329,18 +385,38 @@ define pixman_BUILD
     ninja -C '$(BUILD_DIR)' install
 endef
 
+# build fribidi with the Meson build system
+define fribidi_BUILD
+    '$(TARGET)-meson' \
+        --buildtype=release \
+        --strip \
+        --libdir='lib' \
+        --bindir='bin' \
+        --libexecdir='bin' \
+        --includedir='include' \
+        -Ddocs=false \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+    ninja -C '$(BUILD_DIR)' install
+endef
+
 # exclude jpeg, tiff dependencies
+# build with -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT to avoid a
+# horrible hack (we don't target pre-Windows XP, so it should be safe)
 define lcms_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
-        --with-zlib
+        --with-zlib \
+        CFLAGS="$(CFLAGS) -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
 
 # disable largefile support, we rely on vips for that and ImageMagick's
 # detection does not work when cross-compiling
-# build with jpeg-turbo and without lzma 
+# build with jpeg-turbo and without lzma
+# disable POSIX threads with --without-threads, use Win32 threads instead.
 define imagemagick_BUILD
     $(eval GIT_REVISION=$(shell $(SED) -n 's/MAGICK_GIT_REVISION=\(.*\)/\1/p' $(SOURCE_DIR)/configure))
     $(SED) -i 's|\(\[magick_git_revision\], \).*)|\1[$(GIT_REVISION)])|' $(SOURCE_DIR)/configure.ac
@@ -367,6 +443,7 @@ define imagemagick_BUILD
         --without-webp \
         --without-x \
         --without-zlib \
+        --without-threads \
         --disable-largefile \
         --disable-opencl \
         --disable-openmp \
@@ -375,7 +452,7 @@ define imagemagick_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
 
-# WITH_TURBOJPEG=OFF turns off a library we don't use (we just use the 
+# WITH_TURBOJPEG=OFF turns off a library we don't use (we just use the
 # libjpeg API)
 define libjpeg-turbo_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
@@ -392,6 +469,8 @@ endef
 # build with the Meson build system
 define pango_BUILD
     '$(TARGET)-meson' \
+        --buildtype=release \
+        --strip \
         --libdir='lib' \
         --libexecdir='bin' \
         --includedir='include' \
@@ -402,7 +481,7 @@ define pango_BUILD
     ninja -C '$(BUILD_DIR)' install
 endef
 
-# compile with the Rust toolchain 
+# compile with the Rust toolchain
 define librsvg_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
@@ -421,6 +500,9 @@ endef
 
 # compile with CMake and with libjpeg-turbo
 define poppler_BUILD
+    $(if $(findstring win32,$(TARGET)),\
+        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(poppler_PATCHES))))/patches/poppler-mingw-std-threads.patch)
+
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
         -DENABLE_TESTS=OFF \
         -DENABLE_ZLIB=ON \
@@ -441,7 +523,10 @@ define poppler_BUILD
         -DBUILD_QT5_TESTS=OFF \
         -DBUILD_CPP_TESTS=OFF \
         -DENABLE_GTK_DOC=OFF \
-        -DCMAKE_CXX_FLAGS="-I$(PREFIX)/$(TARGET)/include/mingw-std-threads" \
+        $(if $(findstring win32,$(TARGET)), \
+             -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads' \
+        $(else), \
+             -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -Wno-incompatible-ms-struct') \
         '$(SOURCE_DIR)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
@@ -482,7 +567,6 @@ define tiff_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
 
-# build with libjpeg-turbo
 # disable unneeded loaders
 define libwebp_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
@@ -502,9 +586,7 @@ endef
 # replace libpng12 with libpng16
 define cairo_BUILD
     $(SED) -i 's,libpng12,libpng16,g'                        '$(SOURCE_DIR)/configure'
-    $(SED) -i 's,^\(Libs:.*\),\1 @CAIRO_NONPKGCONFIG_LIBS@,' '$(SOURCE_DIR)/src/cairo.pc.in'
-    cd '$(BUILD_DIR)' && ax_cv_c_float_words_bigendian=no \
-    $(SOURCE_DIR)/configure \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gl \
         --disable-lto \
@@ -531,8 +613,10 @@ define cairo_BUILD
         --enable-svg \
         --without-x \
         CFLAGS="$(CFLAGS) $(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD)" \
-        LIBS="-lmsimg32 -lgdi32 `$(TARGET)-pkg-config pixman-1 --libs`"
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' install $(MXE_DISABLE_PROGRAMS)
+        $(if $(findstring win32,$(TARGET)), ax_cv_c_float_words_bigendian=no)
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
 
 define matio_BUILD
@@ -547,19 +631,35 @@ define matio_BUILD_SHARED
     $($(PKG)_BUILD)
 endef
 
-# build without lzma
+# build without lzma, disable the linker version script on llvm-mingw
 define libxml2_BUILD
     $(SED) -i 's,`uname`,MinGW,g' '$(1)/xml2-config.in'
-    cd '$(1)' && ./configure \
+
+    # need to regenerate the configure script
+    cd '$(SOURCE_DIR)' && autoreconf -fi
+
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-zlib='$(PREFIX)/$(TARGET)/lib' \
         --without-lzma \
         --without-debug \
         --without-python \
-        --without-threads
-    $(MAKE) -C '$(1)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(1)' -j 1 install $(MXE_DISABLE_CRUFT)
+        --without-threads \
+        $(if $(findstring posix,$(TARGET)), --disable-ld-version-script)
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
     ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
+endef
+
+# build with --disable-Bsymbolic on llvm-mingw
+define libcroco_BUILD
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS) \
+        --disable-gtk-doc \
+        $(if $(findstring posix,$(TARGET)), --disable-Bsymbolic)
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
 
 # build with the Meson build system
@@ -579,6 +679,8 @@ define glib_BUILD
     # and `libglib-2.0-0.dll` for the language bindings.
     '$(TARGET)-meson' \
         --default-library=shared \
+        --buildtype=release \
+        --strip \
         --libdir='lib' \
         --bindir='bin' \
         --libexecdir='bin' \
@@ -606,12 +708,12 @@ define openexr_BUILD
         '$(SOURCE_DIR)/IlmBase'
     $(MAKE) -C '$(BUILD_DIR)/native/IlmBase' -j '$(JOBS)' install
 
-    cd '$(BUILD_DIR)/native/' && cmake \
+    cd '$(BUILD_DIR)/native' && cmake \
         -DOPENEXR_CXX_STANDARD=14 \
         -DIlmBase_DIR='$(BUILD_DIR)/native/IlmBase/install/lib/cmake/IlmBase'\
         '$(SOURCE_DIR)/OpenEXR'
     $(MAKE) -C '$(BUILD_DIR)/native/IlmImf' -j '$(JOBS)'
- 
+
     cd '$(BUILD_DIR)/cross' && $(TARGET)-cmake \
         -DOPENEXR_CXX_STANDARD=14 \
         -DOPENEXR_INSTALL_PKG_CONFIG=ON \
@@ -633,7 +735,7 @@ define ilmbase_BUILD
     $(MAKE) -C '$(BUILD_DIR)/native/Half' -j '$(JOBS)'
 
     cd '$(BUILD_DIR)/cross' && $(TARGET)-cmake \
-        -DILMBASE_FORCE_CXX03=ON \
+        $(if $(findstring win32,$(TARGET)), -DILMBASE_FORCE_CXX03=ON) \
         -DOPENEXR_CXX_STANDARD=14 \
         -DNATIVE_ILMBASE_BUILD_DIR='$(BUILD_DIR)/native' \
         -DBUILD_TESTING=OFF \
@@ -663,6 +765,52 @@ define cfitsio_BUILD_SHARED
         -W -Wall -Werror -ansi \
         '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-cfitsio.exe' \
         `'$(TARGET)-pkg-config' cfitsio --cflags --libs`
+endef
+
+# build with CMake.
+define hdf5_BUILD
+    mkdir '$(BUILD_DIR)/native'
+    mkdir '$(BUILD_DIR)/cross'
+
+    # TODO: Do we need to generate H5lib_settings.c and H5Tinit.c on
+    # the host system instead?
+    cd '$(BUILD_DIR)/native' && cmake \
+        -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
+        -DBUILD_TESTING=OFF \
+        -DHDF5_BUILD_TOOLS=OFF \
+        -DHDF5_BUILD_EXAMPLES=OFF \
+        -DHDF5_BUILD_HL_LIB=OFF \
+        -DHDF5_GENERATE_HEADERS=OFF \
+        '$(SOURCE_DIR)'
+    $(MAKE) -C '$(BUILD_DIR)/native' -j '$(JOBS)' gen_hdf5-$(if $(BUILD_STATIC),static,shared)
+    cp '$(BUILD_DIR)/native/H5lib_settings.c' '$(BUILD_DIR)/cross'
+
+    cd '$(BUILD_DIR)/cross' && '$(TARGET)-cmake' \
+        -DH5_ENABLE_SHARED_LIB=$(CMAKE_SHARED_BOOL) \
+        -DH5_ENABLE_STATIC_LIB=$(CMAKE_STATIC_BOOL) \
+        -DH5_PRINTF_LL_WIDTH='"ll"' \
+        -DH5_LDOUBLE_TO_LONG_SPECIAL=OFF \
+        -DH5_LONG_TO_LDOUBLE_SPECIAL=OFF \
+        -DH5_LDOUBLE_TO_LLONG_ACCURATE=ON \
+        -DH5_LLONG_TO_LDOUBLE_CORRECT=ON \
+        -DH5_DISABLE_SOME_LDOUBLE_CONV=OFF \
+        -DH5_NO_ALIGNMENT_RESTRICTIONS=ON \
+        -DHDF5_ENABLE_THREADSAFE=ON \
+        -DHDF5_USE_PREGEN=ON \
+        -DHDF5_USE_PREGEN_DIR='$(BUILD_DIR)/native' \
+        -DBUILD_TESTING=OFF \
+        -DHDF5_BUILD_TOOLS=OFF \
+        -DHDF5_BUILD_EXAMPLES=OFF \
+        -DHDF5_BUILD_HL_LIB=OFF \
+        -DHDF5_GENERATE_HEADERS=OFF \
+        '$(SOURCE_DIR)'
+    $(MAKE) -C '$(BUILD_DIR)/cross' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)/cross' -j 1 install
+
+    # setup cmake toolchain
+    (echo 'set(HDF5_C_COMPILER_EXECUTABLE $(PREFIX)/bin/$(TARGET)-h5cc)'; \
+     echo 'set(HDF5_CXX_COMPILER_EXECUTABLE $(PREFIX)/bin/$(TARGET)-h5c++)'; \
+     ) > '$(CMAKE_TOOLCHAIN_DIR)/$(PKG).cmake'
 endef
 
 # `-DENABLE_DYNAMIC_HDR10=ON` -> `-DENABLE_HDR10_PLUS=ON`

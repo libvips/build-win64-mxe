@@ -29,10 +29,23 @@ else
   with_mozjpeg=false
 fi
 
-# Use native Win32 threading functions because 
-# POSIX threads functionality is significantly  
-# slower than the native Win32 implementation.
-threads="win32"
+if [[ "$*" == *--with-llvm* ]]; then
+  # This indicates that we don't need to force C++03
+  # compilication for some packages, we can safely use
+  # libstdc++'s C++11 <thread>, <mutex>, and <future>
+  # functionality when compiling with the LLVM toolchain.
+  # Note: We don't distribute the winpthreads DLL as
+  # libc++ uses Win32 threads to implement the internal
+  # threading API.
+  threads="posix"
+  with_llvm=true
+else
+  # Use native Win32 threading functions when compiling with
+  # GCC because POSIX threads functionality is significantly
+  # slower than the native Win32 implementation.
+  threads="win32"
+  with_llvm=false
+fi
 
 if [ "$type" = "static" ] && [ "$deps" == "all" ]; then
   echo "WARNING: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
@@ -60,6 +73,7 @@ docker run --rm -t \
   -u $(id -u):$(id -g) \
   -v $PWD/$version:/data \
   -e "MOZJPEG=$with_mozjpeg" \
+  -e "LLVM=$with_llvm" \
   libvips-build-win-mxe \
   $deps \
   $target

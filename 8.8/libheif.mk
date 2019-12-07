@@ -9,8 +9,8 @@ $(PKG)_GH_CONF  := strukturag/libheif/releases,v
 $(PKG)_DEPS     := cc libde265 x265
 
 define $(PKG)_BUILD
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
-        -DCMAKE_CXX_FLAGS='-Wno-error=unused-variable'
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)'
+
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef

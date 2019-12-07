@@ -70,7 +70,13 @@ define $(PKG)_BUILD
         --enable-debug=no \
         --without-pdfium \
         --without-imagequant \
-        --disable-introspection
+        --disable-introspection \
+        $(if $(findstring posix,$(TARGET)), CXXFLAGS="$(CXXFLAGS) -Wno-incompatible-ms-struct")
+
+    # remove -nostdlib from linker commandline options
+    # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
+    $(if $(findstring posix,$(TARGET)), \
+        $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(BUILD_DIR)/libtool')
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install

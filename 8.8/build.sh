@@ -41,14 +41,33 @@ if [ ! "$curr_revision" = "$revision" ]; then
 fi
 
 if [ "$initialize" = true ] ; then
-  # Copy settings
-  cp -f $work_dir/settings.mk $mxe_dir
-
   # Copy our customized tool
   cp -f $work_dir/tools/make-shared-from-static $mxe_dir/tools
+fi
 
-  # Copy our customized Meson cross file
-  cp -f $work_dir/mxe-crossfile.meson.in $mxe_dir/plugins/meson-wrapper/conf
+# The 'plugins' variable controls which plugins are in use.
+if [ "$LLVM" = "true" ]; then
+  echo "llvm-mingw plugin enabled"
+  plugins="$work_dir/plugins/llvm-mingw"
+
+  # Copy LLVM settings
+  cp -f $work_dir/settings/llvm.mk $mxe_dir/settings.mk
+  cp -f $work_dir/settings/meson-llvm.in $mxe_dir/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
+else
+  # Build with GCC 9.2
+  plugins="plugins/gcc9"
+
+  # Copy GCC settings
+  cp -f $work_dir/settings/gcc.mk $mxe_dir/settings.mk
+  cp -f $work_dir/settings/meson-gcc.in $mxe_dir/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
+fi
+
+# Use the meson-wrapper and our custom overrides
+plugins+=" plugins/meson-wrapper $work_dir"
+
+if [ "$MOZJPEG" = "true" ]; then
+  echo "MozJPEG plugin enabled"
+  plugins+=" $work_dir/plugins/mozjpeg"
 fi
 
 # Prepare MinGW directories
@@ -56,15 +75,6 @@ mkdir -p $mxe_prefix/$target.$deps/mingw/{bin,include,lib}
 
 # Build pe-util, handy for copying DLL dependencies.
 make pe-util MXE_TARGETS=`$mxe_dir/ext/config.guess`
-
-# This variable controls which plugins are in use.
-# Build with GCC 9.2 and use the meson-wrapper.
-plugins="plugins/gcc9 plugins/meson-wrapper $work_dir"
-
-if [ "$MOZJPEG" = "true" ]; then
-  echo "MozJPEG plugin enabled"
-  plugins+=" $work_dir/plugins/mozjpeg"
-fi
 
 # Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc), 
 # gendef (a tool for generating def files from DLLs)

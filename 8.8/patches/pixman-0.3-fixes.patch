@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Basile Clement <basile-pixman@clement.pm>
 Date: Tue, 9 Apr 2019 23:16:13 +0200
-Subject: [PATCH 1/4] Fix bilinear filter computation in wide pipeline
+Subject: [PATCH 1/5] Fix bilinear filter computation in wide pipeline
 
 The recently introduced wide pipeline for filters has a typo which
 causes it to improperly compute bilinear interpolation positions,
@@ -82,7 +82,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Christoph Reiter <reiter.christoph@gmail.com>
 Date: Sat, 11 May 2019 10:17:36 +0200
-Subject: [PATCH 2/4] meson: define SIZEOF_LONG  and use -Wundef
+Subject: [PATCH 2/5] meson: define SIZEOF_LONG  and use -Wundef
 
 meson builds defaulted to SIZEOF_LONG=0 in various places
 
@@ -110,7 +110,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Christoph Reiter <reiter.christoph@gmail.com>
 Date: Sat, 11 May 2019 11:18:35 +0200
-Subject: [PATCH 3/4] meson: allow building a static library
+Subject: [PATCH 3/5] meson: allow building a static library
 
 So that passing "-Ddefault_library=both" also creates a static lib.
 
@@ -135,7 +135,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Christoph Reiter <reiter.christoph@gmail.com>
 Date: Sat, 11 May 2019 10:23:08 +0200
-Subject: [PATCH 4/4] meson: fix TLS support under mingw
+Subject: [PATCH 4/5] meson: fix TLS support under mingw
 
 GCC on Windows complains that "__declspec(thread)" doesn't work, but still
 compiles it, so the meson check doesn't work. The warning printed by gcc:
@@ -163,3 +163,89 @@ index 1111111..2222222 100644
    config.set('TLS', '__declspec(thread)')
  elif cc.compiles('int __thread foo;', name : 'TLS via __thread')
    config.set('TLS', '__thread')
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date: Wed, 24 Jul 2019 14:44:39 +0800
+Subject: [PATCH 5/5] build: Don't assume PThreads if threading support is found
+
+Look also for pthread.h if threading support is found by Meson, as the
+underlying threading support may not be PThreads, depending on platform.
+
+For now, disable the thread-test test program if pthread.h and if
+necessary, the PThreads library, cannot be found, as the current
+implementation assumes the use of PThreads.
+
+Also bump the required Meson version to 0.50.0 since we need it for
+-cc.get_argument_syntax()
+-For a later commit, the has_headers sub-method for cc.find_library()
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -23,7 +23,7 @@ project(
+   ['c'],
+   version : '0.38.5',
+   license : 'MIT',
+-  meson_version : '>= 0.47.2',
++  meson_version : '>= 0.50.0',
+   default_options : ['buildtype=debugoptimized'],
+ )
+ 
+@@ -393,7 +393,29 @@ if dep_png.found()
+ endif
+ dep_m = cc.find_library('m', required : false)
+ dep_threads = dependency('threads')
+-if dep_threads.found()
++
++# MSVC-style compilers do not come with pthreads, so we must link
++# to it explicitly, currently pthreads-win32 is supported
++pthreads_found = false
++
++if dep_threads.found() and cc.has_header('pthread.h')
++  if cc.get_argument_syntax() == 'msvc'
++    pthread_lib = null_dep
++    foreach pthread_type : ['VC3', 'VSE3', 'VCE3', 'VC2', 'VSE2', 'VCE2']
++      if not pthread_lib.found()
++        pthread_lib = cc.find_library('pthread@0@'.format(pthread_type), required : false)
++      endif
++    endforeach
++    if pthread_lib.found()
++      pthreads_found = true
++      dep_threads = pthread_lib
++    endif
++  else
++    pthreads_found = true
++  endif
++endif
++
++if pthreads_found
+   config.set('HAVE_PTHREADS', 1)
+ endif
+ 
+diff --git a/test/meson.build b/test/meson.build
+index 1111111..2222222 100644
+--- a/test/meson.build
++++ b/test/meson.build
+@@ -34,7 +34,6 @@ tests = [
+   'scaling-crash-test',
+   'alpha-loop',
+   'scaling-helpers-test',
+-  'thread-test',
+   'rotate-test',
+   'alphamap',
+   'gradient-crash-test',
+@@ -54,6 +53,12 @@ tests = [
+   'tolerance-test',
+ ]
+ 
++# Remove/update this once thread-test.c supports threading methods
++# other than PThreads
++if pthreads_found
++  tests += 'thread-test'
++endif
++
+ progs = [
+   'lowlevel-blt-bench',
+   'radial-perf-test',

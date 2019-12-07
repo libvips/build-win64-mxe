@@ -20,6 +20,11 @@ RUN rustup target add ${ARCH}-pc-windows-gnu
 # Install Ninja and Meson
 RUN pip3 install ninja meson
 
+# TODO: Remove when https://github.com/mesonbuild/meson/pull/5912 is merged
+RUN cd `python3 -c "import site; print(site.getsitepackages()[0])"` \
+  && curl https://patch-diff.githubusercontent.com/raw/mesonbuild/meson/pull/5912.patch | git apply -v \
+  && curl https://gist.githubusercontent.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/9b91bc3d3cd8244fb6c46c710cd85af080cbb166/meson.patch | git apply -v
+
 # The versioned build dir is mounted at /data, so this runs the build script
 # in that
 ENTRYPOINT ["/bin/bash", "/data/build.sh"]

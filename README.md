@@ -18,7 +18,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [lcms]          | 2.9       | MIT Licence                     |
 | [libcroco]      | 0.6.13    | LGPLv3                          |
 | [libexif]       | 0.6.21    | LGPLv3                          |
-| [libffi]        | 3.2.1     | MIT Licence                     |
+| [libffi]        | 3.3       | MIT Licence                     |
 | [libgsf]        | 1.14.46   | LGPLv3                          |
 | [libiconv]      | 1.16      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.3     | [zlib License, IJG License]     |
@@ -74,7 +74,7 @@ Same as libvips-web + these extra dependencies:
 |-----------------|-----------|----------------------------------|
 | [cfitsio]       | 3.470     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
-| [hdf5]          | 1.8.12    | BSD-like                         |
+| [hdf5]          | 1.10.5    | BSD-like                         |
 | [imagemagick]   | 6.9.10-71 | [ImageMagick License] (GPL-like) |
 | [libde265]      | 1.0.3     | LGPLv3                           |
 | [libheif]       | 1.5.1     | LGPLv3                           |
