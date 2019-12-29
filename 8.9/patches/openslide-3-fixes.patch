@@ -398,41 +398,15 @@ index 1111111..2222222 100644
  
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Thu, 28 Nov 2019 15:00:00 +0100
-Subject: [PATCH 6/6] Rename openslide-dll.manifest to openslide.manifest
+Date: Wed, 25 Dec 2019 18:00:00 +0100
+Subject: [PATCH 6/6] Ensure that the RT_MANIFEST value is quoted
 
-For some reason llvm-rc parses the RT_MANIFEST as 'openslide'.
-It looks like this is a result of a substring that ends at
-(but not including) the last hyphen.
+GNU windres does not treat hyphens as separators. However,
+llvm-rc or MSVC's rc.exe treats them as separators, causing
+a build error on these toolchains if the value is not quoted.
 
-TODO: Report this behavior to the llvm-mingw repository.
+See: https://github.com/mstorsjo/llvm-mingw/issues/67
 
-diff --git a/Makefile.am b/Makefile.am
-index 1111111..2222222 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -54,7 +54,7 @@ src/openslide-tables.c: src/make-tables.c
- 
- if WINDOWS_RESOURCES
- src_libopenslide_la_SOURCES += src/openslide-dll.rc
--src/openslide-dll.lo: src/openslide-dll.manifest
-+src/openslide-dll.lo: src/openslide.manifest
- endif
- 
- .rc.lo:
-diff --git a/configure.ac b/configure.ac
-index 1111111..2222222 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -210,7 +210,7 @@ AC_SUBST(FEATURE_FLAGS)
- AC_CONFIG_FILES([
- Makefile
- openslide.pc
--src/openslide-dll.manifest
-+src/openslide.manifest
- src/openslide-dll.rc
- tools/openslide-quickhash1sum.1
- tools/openslide-show-properties.1
 diff --git a/src/openslide-dll.rc b/src/openslide-dll.rc
 index 1111111..2222222 100644
 --- a/src/openslide-dll.rc
@@ -442,7 +416,7 @@ index 1111111..2222222 100644
  #include "winver.h"
  
 -2 RT_MANIFEST openslide-dll.manifest
-+2 RT_MANIFEST openslide.manifest
++2 RT_MANIFEST "openslide-dll.manifest"
  
  1 VERSIONINFO
  FILEVERSION 3,4,1,0
@@ -455,11 +429,7 @@ index 1111111..2222222 100644
  #include "winver.h"
  
 -2 RT_MANIFEST openslide-dll.manifest
-+2 RT_MANIFEST openslide.manifest
++2 RT_MANIFEST "openslide-dll.manifest"
  
  1 VERSIONINFO
  FILEVERSION @WINDOWS_VERSIONINFO@
-diff --git a/src/openslide-dll.manifest.in b/src/openslide.manifest.in
-similarity index 100%
-rename from src/openslide-dll.manifest.in
-rename to src/openslide.manifest.in

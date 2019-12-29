@@ -91,8 +91,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.10-71
-imagemagick_CHECKSUM := 9d7adba1488570a78626554c48d6c50eea8c307b718efbddb6e2a9647415c0a4
+imagemagick_VERSION  := 6.9.10-80
+imagemagick_CHECKSUM := 714e3f3423546e4a61206a19fc6d438b2cdd71ea4b9db601cc4b4fb73509a36b
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -106,8 +106,8 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.47.0
-librsvg_CHECKSUM := 25754ada6615303bd9339af05645fb25c169b331991c11dd4a09da81d9a65a7c
+librsvg_VERSION  := 2.47.1
+librsvg_CHECKSUM := a15619af34d5eb692b5d35006cfb1940df8db608f769552a1b350035ee26b93e
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -124,8 +124,8 @@ pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERS
 # upstream version is 1.0.5
 # cannot use GH_CONF:
 # fribidi_GH_CONF  := fribidi/fribidi/releases,v
-fribidi_VERSION  := 1.0.7
-fribidi_CHECKSUM := 5ab5f21e9f2fc57b4b40f8ea8f14dba78a5cc46d9cf94bc5e00a58e6886a935d
+fribidi_VERSION  := 1.0.8
+fribidi_CHECKSUM := 94c7b68d86ad2a9613b4dcffe7bbeb03523d63b5b37918bdf2e4ef34195c1e6c
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.bz2
@@ -135,16 +135,9 @@ poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 
-# upstream version is 0.6.2
-libcroco_VERSION  := 0.6.13
-libcroco_CHECKSUM := 767ec234ae7aa684695b3a735548224888132e063f92db585759b422570621d4
-libcroco_SUBDIR   := libcroco-$(libcroco_VERSION)
-libcroco_FILE     := libcroco-$(libcroco_VERSION).tar.xz
-libcroco_URL      := https://download.gnome.org/sources/libcroco/$(call SHORT_PKG_VERSION,libcroco)/$(libcroco_FILE)
-
 # upstream version is 2.50.2
-glib_VERSION  := 2.63.1
-glib_CHECKSUM := 6bd00b8e410501f0fb76078b970b8d1bcb290507f1c02288dee2b3a75c2fa082
+glib_VERSION  := 2.63.3
+glib_CHECKSUM := 8a09a2a059eb617d52b6fcd6f25e0243f0849c598612c9aa5074ce3a6ee1c11c
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -215,8 +208,8 @@ fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
 
 # upstream version is 1.8.12
-hdf5_VERSION  := 1.10.5
-hdf5_CHECKSUM := 68d6ea8843d2a106ec6a7828564c1689c7a85714a35d8efafa2fee20ca366f44
+hdf5_VERSION  := 1.10.6
+hdf5_CHECKSUM := 09d6301901685201bb272a73e21c98f2bf7e044765107200b01089104a47c3bd
 hdf5_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/hdf5-[0-9]*.patch)))
 hdf5_SUBDIR   := hdf5-$(hdf5_VERSION)
 hdf5_FILE     := hdf5-$(hdf5_VERSION).tar.bz2
@@ -257,6 +250,9 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 # Poppler:
 #  Removed: curl, qtbase, libwebp
 #  Added: mingw-std-threads, libjpeg-turbo, lcms
+# librsvg:
+#  Removed: libcroco, libgsf
+#  Added: libxml2
 # libwebp:
 #  Added: gettext
 # Cairo:
@@ -280,6 +276,7 @@ openexr_DEPS            := cc ilmbase zlib $(BUILD)~cmake
 ilmbase_DEPS            := cc $(BUILD)~cmake
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc mingw-std-threads cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
+librsvg_DEPS            := cc cairo gdk-pixbuf glib pango libxml2
 libwebp_DEPS            := $(libwebp_DEPS) gettext
 cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
 hdf5_DEPS               := cc zlib $(BUILD)~cmake
@@ -446,8 +443,7 @@ define imagemagick_BUILD
         --without-threads \
         --disable-largefile \
         --disable-opencl \
-        --disable-openmp \
-        ax_cv_check_cl_libcl=no
+        --disable-openmp
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
@@ -501,7 +497,7 @@ endef
 # compile with CMake and with libjpeg-turbo
 define poppler_BUILD
     $(if $(findstring win32,$(TARGET)),\
-        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(poppler_PATCHES))))/patches/poppler-mingw-std-threads.patch)
+        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(poppler_PATCHES))))/poppler-mingw-std-threads.patch)
 
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
         -DENABLE_TESTS=OFF \
@@ -586,6 +582,7 @@ endef
 # replace libpng12 with libpng16
 define cairo_BUILD
     $(SED) -i 's,libpng12,libpng16,g'                        '$(SOURCE_DIR)/configure'
+    $(SED) -i 's,^\(Libs:.*\),\1 @CAIRO_NONPKGCONFIG_LIBS@,' '$(SOURCE_DIR)/src/cairo.pc.in'
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gl \
@@ -613,6 +610,7 @@ define cairo_BUILD
         --enable-svg \
         --without-x \
         CFLAGS="$(CFLAGS) $(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD)" \
+        LIBS="-lmsimg32 -lgdi32" \
         $(if $(findstring win32,$(TARGET)), ax_cv_c_float_words_bigendian=no)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
@@ -649,17 +647,6 @@ define libxml2_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
     ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
-endef
-
-# build with --disable-Bsymbolic on llvm-mingw
-define libcroco_BUILD
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --disable-gtk-doc \
-        $(if $(findstring posix,$(TARGET)), --disable-Bsymbolic)
-
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
 
 # build with the Meson build system
@@ -776,6 +763,7 @@ define hdf5_BUILD
     # the host system instead?
     cd '$(BUILD_DIR)/native' && cmake \
         -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
+        -DONLY_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
         -DBUILD_TESTING=OFF \
         -DHDF5_BUILD_TOOLS=OFF \
         -DHDF5_BUILD_EXAMPLES=OFF \
@@ -785,7 +773,9 @@ define hdf5_BUILD
     $(MAKE) -C '$(BUILD_DIR)/native' -j '$(JOBS)' gen_hdf5-$(if $(BUILD_STATIC),static,shared)
     cp '$(BUILD_DIR)/native/H5lib_settings.c' '$(BUILD_DIR)/cross'
 
+    # H5_HAVE_IOEO=1 requires WINVER >= 0x600
     cd '$(BUILD_DIR)/cross' && '$(TARGET)-cmake' \
+        -DONLY_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
         -DH5_ENABLE_SHARED_LIB=$(CMAKE_SHARED_BOOL) \
         -DH5_ENABLE_STATIC_LIB=$(CMAKE_STATIC_BOOL) \
         -DH5_PRINTF_LL_WIDTH='"ll"' \
@@ -795,6 +785,11 @@ define hdf5_BUILD
         -DH5_LLONG_TO_LDOUBLE_CORRECT=ON \
         -DH5_DISABLE_SOME_LDOUBLE_CONV=OFF \
         -DH5_NO_ALIGNMENT_RESTRICTIONS=ON \
+        $(if $(findstring posix,$(TARGET)), \
+            -DH5_HAVE_IOEO=1 \
+        $(else), \
+            -DH5_HAVE_IOEO=0) \
+        -DTEST_LFS_WORKS_RUN=0 \
         -DHDF5_ENABLE_THREADSAFE=ON \
         -DHDF5_USE_PREGEN=ON \
         -DHDF5_USE_PREGEN_DIR='$(BUILD_DIR)/native' \

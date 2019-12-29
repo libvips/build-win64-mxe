@@ -1,7 +1,7 @@
 $(PLUGIN_HEADER)
 
 # Override sub-dependencies
-cc_DEPS  := llvm-mingw libcxx
+cc_DEPS := llvm-mingw libcxx
 
 # Update MinGW-w64 to 7.0.0
 mingw-w64_VERSION  := 7.0.0

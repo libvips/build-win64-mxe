@@ -1,0 +1,46 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 23 Dec 2019 17:00:00 +0100
+Subject: [PATCH 1/1] Fix MinGW-w64 build
+
+See: https://github.com/ImageMagick/ImageMagick6/issues/67
+
+diff --git a/magick/memory_.h b/magick/memory_.h
+index 1111111..2222222 100644
+--- a/magick/memory_.h
++++ b/magick/memory_.h
+@@ -68,7 +68,7 @@ extern MagickExport void
+   SetMagickMemoryMethods(AcquireMemoryHandler,ResizeMemoryHandler,
+     DestroyMemoryHandler);
+ 
+-inline MagickExport MagickBooleanType HeapOverflowSanityCheck(
++static inline MagickBooleanType HeapOverflowSanityCheck(
+   const size_t count,const size_t quantum)
+ {
+   if ((count == 0) || (quantum == 0))
+@@ -81,7 +81,7 @@ inline MagickExport MagickBooleanType HeapOverflowSanityCheck(
+   return(MagickFalse);
+ }
+ 
+-inline MagickExport MagickBooleanType HeapOverflowSanityCheckGetSize(
++static inline MagickBooleanType HeapOverflowSanityCheckGetSize(
+   const size_t count,const size_t quantum,size_t *const extent)
+ {
+   size_t
+diff --git a/magick/magick-config.h b/magick/magick-config.h
+index 1111111..2222222 100644
+--- a/magick/magick-config.h
++++ b/magick/magick-config.h
+@@ -162,7 +162,7 @@ extern "C" {
+ #  define __has_builtin(x) 0
+ #endif
+ 
+-#if __STDC_VERSION__ > 201112L
++#if defined(__STDC_VERSION__) && __STDC_VERSION__ > 201112L && !defined(__MINGW32__)
+ # define MAGICKCORE_HAVE_STDC_ALIGNED_ALLOC 1
+ #endif
+ 

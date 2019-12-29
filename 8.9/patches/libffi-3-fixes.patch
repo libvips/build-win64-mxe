@@ -1,0 +1,26 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 27 Dec 2019 18:00:00 +0100
+Subject: [PATCH 1/1] Quote the ffi_closure_inner symbol
+
+Fixes the llvm-mingw x86 build.
+
+Similar to: https://bugzilla.mozilla.org/show_bug.cgi?id=1490568
+
+diff --git a/src/x86/sysv.S b/src/x86/sysv.S
+index 1111111..2222222 100644
+--- a/src/x86/sysv.S
++++ b/src/x86/sysv.S
+@@ -57,7 +57,7 @@
+ /* Handle win32 fastcall name mangling.  */
+ #ifdef X86_WIN32
+ # define ffi_call_i386		@ffi_call_i386@8
+-# define ffi_closure_inner	@ffi_closure_inner@8
++# define ffi_closure_inner	"@ffi_closure_inner@8"
+ #else
+ # define ffi_call_i386		C(ffi_call_i386)
+ # define ffi_closure_inner	C(ffi_closure_inner)

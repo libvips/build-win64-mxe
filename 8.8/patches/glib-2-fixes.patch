@@ -25,7 +25,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1749,7 +1749,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
+@@ -1801,7 +1801,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
  # available in the actual runtime environment. On Windows, we always use
  # the built-in implementation
  iconv_opt = get_option('iconv')
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
    libiconv = []
    # We have a #include "win_iconv.c" in gconvert.c on Windows, so we don't need
    # any external library for it
-@@ -1838,17 +1838,24 @@ endif
+@@ -1890,17 +1890,24 @@ endif
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.
@@ -78,21 +78,21 @@ diff --git a/gio/tests/meson.build b/gio/tests/meson.build
 index 1111111..2222222 100644
 --- a/gio/tests/meson.build
 +++ b/gio/tests/meson.build
-@@ -386,7 +386,7 @@ test_extra_programs += {
+@@ -391,7 +391,7 @@ test_extra_programs += {
    },
  }
  
 -if cc.get_id() != 'msvc' and cc.get_id() != 'clang-cl'
-+if host_system != 'windows' and cc.get_id() != 'clang-cl'
++if host_machine.system() != 'windows' and cc.get_id() != 'clang-cl'
    test_extra_programs += {
      # These three are manual-run tests because they need a session bus but don't bring one up themselves
      # FIXME: these build but don't seem to work!
-@@ -473,7 +473,7 @@ if installed_tests_enabled
-   install_data('static-link.py', install_dir : installed_tests_execdir)
- endif
+@@ -503,7 +503,7 @@ foreach memory_monitor_test : memory_monitor_tests
+   )
+ endforeach
  
 -if not meson.is_cross_build() or meson.has_exe_wrapper()
-+if not (meson.is_cross_build() or meson.has_exe_wrapper()) and host_system != 'windows'
++if not (meson.is_cross_build() or meson.has_exe_wrapper()) and host_machine.system() != 'windows'
  
    plugin_resources_c = custom_target('plugin-resources.c',
      input : 'test4.gresource.xml',
@@ -131,7 +131,7 @@ index 1111111..2222222 100644
  links = cc.links ('''#include <math.h>
                       double x;
                       int y;
-@@ -303,7 +296,7 @@ inf_tmpl = '''#include <math.h>
+@@ -303,7 +311,7 @@ inf_tmpl = '''#include <math.h>
  
  other_needed_math_sources = []
  # Some compilers may not have isfinite, isinf available
@@ -140,7 +140,7 @@ index 1111111..2222222 100644
    links = cc.links (inf_tmpl.format('@0@'.format(f)),
                      dependencies : [libm])
    math_h_config.set ('HAVE_@0@'.format(f.to_upper()), links ? 1 : 0)
-@@ -313,7 +306,7 @@ foreach f: ['isfinite', 'isinf', 'isnan', 'isnanf', 'signbit']
+@@ -313,7 +321,7 @@ foreach f: ['isfinite', 'isinf', 'isnan', 'isnanf', 'signbit']
    if not links
      if f == 'signbit'
        other_needed_math_sources += [ 'signbitd.c', 'signbitf.c', 'signbitl.c' ]

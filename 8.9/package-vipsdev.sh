@@ -45,11 +45,18 @@ if [ "$MOZJPEG" = "true" ]; then
   zip_suffix+="-mozjpeg"
 fi
 
+if [ "$LLVM" = "true" ]; then
+  zip_suffix+="-llvm"
+fi
+
 echo "Copying libvips and dependencies"
 
 # Need to whitelist the Universal C Runtime (CRT) DLLs
 # Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
 whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
+
+# CreateEnvironmentBlock, GetUserProfileDirectoryA, etc.
+whitelist+=(userenv.dll)
 
 # Copy libvips and dependencies with pe-util
 $mxe_prefix/$build_os/bin/peldd \

@@ -5,13 +5,14 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the clang, lld, compiler-rt, libunwind, libcxx and libcxxabi packages
-$(PKG)_VERSION  := 9.0.0
-$(PKG)_CHECKSUM := d6a0565cf21f22e9b4353b2eb92622e8365000a9e90a16b09b56f8157eabfe84
+$(PKG)_VERSION  := 9.0.1
+$(PKG)_CHECKSUM := 00a1ee1f389f81e9979f3a640a01c431b3021de0d42278f6508391a2f0b81c9a
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
-$(PKG)_GH_CONF  := llvm/llvm-project/tags, llvmorg-
+$(PKG)_GH_CONF  := llvm/llvm-project/releases,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION).src
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).src.tar.xz
-$(PKG)_URL      := https://releases.llvm.org/$($(PKG)_VERSION)/$($(PKG)_FILE)
+# This is needed to properly override: https://github.com/mxe/mxe/blob/master/src/llvm.mk#L11
+$(PKG)_URL      := https://github.com/llvm/llvm-project/releases/download/llvmorg-$($(PKG)_VERSION)/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~cmake clang lld
 
 define $(PKG)_BUILD

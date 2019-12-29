@@ -9,59 +9,58 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [expat]         | 2.2.9     | MIT Licence                     |
 | [fontconfig]    | 2.13.92   | [fontconfig Licence] (BSD-like) |
 | [freetype]      | 2.10.1    | [freetype Licence] (BSD-like)   |
-| [fribidi]       | 1.0.7     | LGPLv3                          |
+| [fribidi]       | 1.0.8     | LGPLv3                          |
 | [gdk-pixbuf]    | 2.40.0    | LGPLv3                          |
 | [gettext]       | 0.20.1    | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
-| [glib]          | 2.63.1    | LGPLv3                          |
+| [glib]          | 2.63.3    | LGPLv3                          |
 | [harfbuzz]      | 2.6.4     | MIT Licence                     |
 | [lcms]          | 2.9       | MIT Licence                     |
-| [libcroco]      | 0.6.13    | LGPLv3                          |
 | [libexif]       | 0.6.21    | LGPLv3                          |
 | [libffi]        | 3.3       | MIT Licence                     |
 | [libgsf]        | 1.14.46   | LGPLv3                          |
 | [libiconv]      | 1.16      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.3     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
-| [librsvg]       | 2.47.0    | LGPLv3                          |
+| [librsvg]       | 2.47.1    | LGPLv3                          |
 | [libtiff]       | 4.1.0     | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.8.3     | LGPLv3                          |
+| [libvips]       | 8.8.4     | LGPLv3                          |
 | [libwebp]       | 1.0.3     | New BSD License                 |
 | [libxml2]       | 2.9.10    | MIT Licence                     |
-| [orc]           | 0.4.31    | BSD 2-Clause                    |
+| [orc]           | 0.4.31    | [orc License] (BSD-like)        |
 | [pango]         | 1.44.7    | LGPLv3                          |
 | [pixman]        | 0.38.4    | MIT Licence                     |
 | [zlib]          | 1.2.11    | [zlib Licence]                  |
 
 [cairo]: https://cairographics.org/
-[expat]: https://github.com/libexpat/libexpat
+[expat]: https://libexpat.github.io/
 [fontconfig]: https://www.fontconfig.org/
-[fontconfig Licence]: https://cgit.freedesktop.org/fontconfig/tree/COPYING
+[fontconfig Licence]: https://gitlab.freedesktop.org/fontconfig/fontconfig/blob/master/COPYING
 [freetype]: https://www.freetype.org/
 [freetype Licence]: http://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/FTL.TXT
 [fribidi]: https://github.com/fribidi/fribidi
-[gdk-pixbuf]: https://github.com/GNOME/gdk-pixbuf
+[gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [gettext]: https://www.gnu.org/software/gettext/
 [giflib]: https://sourceforge.net/projects/giflib/
-[glib]: https://github.com/GNOME/glib
+[glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
 [lcms]: https://github.com/mm2/Little-CMS
-[libcroco]: https://github.com/GNOME/libcroco
 [libexif]: https://github.com/libexif/libexif
 [libffi]: https://sourceware.org/libffi/
-[libgsf]: https://github.com/GNOME/libgsf
+[libgsf]: https://gitlab.gnome.org/GNOME/libgsf
 [libiconv]: https://www.gnu.org/software/libiconv/
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
 [libpng]: https://github.com/glennrp/libpng
 [libpng License version 2]: http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
-[librsvg]: https://github.com/GNOME/librsvg
-[libtiff]: http://www.simplesystems.org/libtiff/
-[libtiff License]: http://www.simplesystems.org/libtiff/misc.html
+[librsvg]: https://gitlab.gnome.org/GNOME/librsvg
+[libtiff]: https://libtiff.gitlab.io/libtiff/
+[libtiff License]: https://libtiff.gitlab.io/libtiff/misc.html
 [libvips]: https://github.com/libvips/libvips
 [libwebp]: https://github.com/webmproject/libwebp
-[libxml2]: https://github.com/GNOME/libxml2
-[orc]: https://github.com/GStreamer/orc
+[libxml2]: https://gitlab.gnome.org/GNOME/libxml2
+[orc]: https://gitlab.freedesktop.org/gstreamer/orc
+[orc License]: https://gitlab.freedesktop.org/gstreamer/orc/blob/master/COPYING
 [pango]: https://www.pango.org/
 [pixman]: http://www.pixman.org/
 [zlib]: https://zlib.net/
@@ -74,16 +73,16 @@ Same as libvips-web + these extra dependencies:
 |-----------------|-----------|----------------------------------|
 | [cfitsio]       | 3.470     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
-| [hdf5]          | 1.10.5    | BSD-like                         |
-| [imagemagick]   | 6.9.10-71 | [ImageMagick License] (GPL-like) |
-| [libde265]      | 1.0.3     | LGPLv3                           |
-| [libheif]       | 1.5.1     | LGPLv3                           |
+| [hdf5]          | 1.10.6    | BSD-like                         |
+| [imagemagick]   | 6.9.10-80 | [ImageMagick License] (GPL-like) |
+| [libde265]      | 1.0.4     | LGPLv3                           |
+| [libheif]       | 1.6.1     | LGPLv3                           |
 | [matio]         | 1.5.17    | BSD 2-Clause                     |
 | [nifticlib]     | 2.0.0     | Public domain                    |
 | [openexr]       | 2.4.0     | BSD 3-Clause                     |
 | [openjpeg]      | 2.3.1     | BSD 2-Clause                     |
 | [openslide]     | 3.4.1     | LGPLv3                           |
-| [poppler]       | 0.82.0    | GPLv2                            |
+| [poppler]       | 0.83.0    | GPLv2                            |
 | [sqlite]        | 3.30.1    | Public domain                    |
 | [x265]          | 3.2.1     | GPLv2                            |
 
@@ -91,12 +90,12 @@ Same as libvips-web + these extra dependencies:
 [hdf5]: https://www.hdfgroup.org/solutions/hdf5/
 [fftw]: https://github.com/FFTW/fftw3
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
+[ImageMagick License]: https://www.imagemagick.org/script/license.php
 [libde265]: https://github.com/strukturag/libde265
 [libheif]: https://github.com/strukturag/libheif
-[ImageMagick License]: https://www.imagemagick.org/script/license.php
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://nifti.nimh.nih.gov/
-[openexr]: https://github.com/openexr/openexr
+[openexr]: https://github.com/AcademySoftwareFoundation/openexr
 [openjpeg]: http://www.openjpeg.org/
 [openslide]: https://github.com/openslide/openslide
 [poppler]: https://poppler.freedesktop.org/

@@ -29,3 +29,6 @@ export PATH        := /usr/local/cargo/bin:$(PATH)
 # https://github.com/GNOME/librsvg/commit/8215d7f1f581f0aaa317cccc3e974c61d1a6ad84
 # adds ~26 MB to the librsvg DLL if we don't install-strip it.
 STRIP_LIB := $(true)
+
+# Disable ccache
+MXE_USE_CCACHE := $(false)

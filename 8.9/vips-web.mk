@@ -2,11 +2,12 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-# https://api.github.com/repos/libvips/libvips/tarball/317feec6a45aef717b2dfc7a31859ae2bc4cdcac
-$(PKG)_VERSION  := 317feec
-$(PKG)_CHECKSUM := aa12b6db2aa99f4b174edf4f82904dbe215a0c34c59ab61a7b5daa24f5c075f8
+$(PKG)_VERSION  := 8.9.0-rc3
+$(PKG)_CHECKSUM := 1f14e93f24f1548fc3544c9496d4d94056663b2e505e94b9966171b4c0004b42
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/branches/master
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,-rc3.tar.gz
+$(PKG)_SUBDIR   := vips-$(firstword $(subst -, ,$($(PKG)_VERSION)))
+$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libpng orc
 
@@ -17,7 +18,6 @@ define $(PKG)_PRE_CONFIGURE
 
     (echo '{'; \
      echo '  "cairo": "$(cairo_VERSION)",'; \
-     echo '  "croco": "$(libcroco_VERSION)",'; \
      echo '  "exif": "$(libexif_VERSION)",'; \
      echo '  "expat": "$(expat_VERSION)",'; \
      echo '  "ffi": "$(libffi_VERSION)",'; \
@@ -50,11 +50,9 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
-    $(SED) -i 's/$$\*/"$$@"/g' '$(SOURCE_DIR)/autogen.sh'
-
     # Always build as shared library, we need
     # libvips-42.dll for the language bindings.
-    cd '$(SOURCE_DIR)' && ./autogen.sh \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --host='$(TARGET)' \
         --build='$(BUILD)' \
         --prefix='$(PREFIX)/$(TARGET)' \
@@ -82,10 +80,10 @@ define $(PKG)_BUILD
     # remove -nostdlib from linker commandline options
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
     $(if $(findstring posix,$(TARGET)), \
-        $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(SOURCE_DIR)/libtool')
+        $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(BUILD_DIR)/libtool')
 
-    $(MAKE) -C '$(SOURCE_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(SOURCE_DIR)' -j 1 install
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 
     $(if $(BUILD_STATIC), \
         $(MAKE_SHARED_FROM_STATIC) --libprefix 'lib' --libsuffix '-42' \

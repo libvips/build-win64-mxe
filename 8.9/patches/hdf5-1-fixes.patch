@@ -5,30 +5,30 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 28 Nov 2019 12:00:00 +0100
-Subject: [PATCH 1/2] Use H5make_libsettings.c from native build
+Subject: [PATCH 1/3] Use H5make_libsettings.c from native build
 
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -1019,38 +1019,61 @@ else ()
+@@ -1025,38 +1025,61 @@ else ()
    endif ()
  endif ()
  
 -add_executable (H5make_libsettings ${HDF5_SRC_DIR}/H5make_libsettings.c)
--target_include_directories(H5make_libsettings PRIVATE "${HDF5_SRC_DIR};${HDF5_BINARY_DIR};$<$<BOOL:${HDF5_ENABLE_PARALLEL}>:${MPI_C_INCLUDE_DIRS}>")
+-target_include_directories (H5make_libsettings PRIVATE "${HDF5_SRC_DIR};${HDF5_BINARY_DIR};$<$<BOOL:${HDF5_ENABLE_PARALLEL}>:${MPI_C_INCLUDE_DIRS}>")
 -target_compile_definitions(H5make_libsettings PUBLIC ${HDF_EXTRA_C_FLAGS} ${HDF_EXTRA_FLAGS})
 -TARGET_C_PROPERTIES (H5make_libsettings STATIC)
 -target_link_libraries (H5make_libsettings
--    PRIVATE "$<$<BOOL:${HDF5_ENABLE_PARALLEL}>:${MPI_C_LIBRARIES}>" $<$<PLATFORM_ID:Windows>:ws2_32.lib>
+-    PRIVATE "$<$<BOOL:${HDF5_ENABLE_PARALLEL}>:${MPI_C_LIBRARIES}>" $<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:MinGW>>:ws2_32.lib>
 -    PRIVATE $<$<PLATFORM_ID:Emscripten>:"-O0">
 -)
 -
 -add_custom_command (
 -    OUTPUT ${HDF5_BINARY_DIR}/H5lib_settings.c
 -           ${HDF5_BINARY_DIR}/gen_SRCS.stamp2
--    COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR}$<TARGET_FILE:H5make_libsettings>
+-    COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:H5make_libsettings>
 -    ARGS ${HDF5_BINARY_DIR}/H5lib_settings.c
 -    COMMAND    ${CMAKE_COMMAND}
 -    ARGS       -E touch ${HDF5_GENERATED_SOURCE_DIR}/gen_SRCS.stamp2
@@ -37,29 +37,33 @@ index 1111111..2222222 100644
 -)
 -set_source_files_properties (${HDF5_BINARY_DIR}/H5lib_settings.c PROPERTIES GENERATED TRUE)
 -if (BUILD_SHARED_LIBS)
-+if (NOT EXISTS ${HDF5_BINARY_DIR}/H5lib_settings.c)
++if (NOT EXISTS "${HDF5_BINARY_DIR}/H5lib_settings.c")
 +  add_executable (H5make_libsettings ${HDF5_SRC_DIR}/H5make_libsettings.c)
-+  target_include_directories(H5make_libsettings PRIVATE "${HDF5_SRC_DIR};${HDF5_BINARY_DIR};$<$<BOOL:${HDF5_ENABLE_PARALLEL}>:${MPI_C_INCLUDE_DIRS}>")
++  target_include_directories (H5make_libsettings PRIVATE "${HDF5_SRC_DIR};${HDF5_BINARY_DIR};$<$<BOOL:${HDF5_ENABLE_PARALLEL}>:${MPI_C_INCLUDE_DIRS}>")
 +  target_compile_definitions(H5make_libsettings PUBLIC ${HDF_EXTRA_C_FLAGS} ${HDF_EXTRA_FLAGS})
 +  TARGET_C_PROPERTIES (H5make_libsettings STATIC)
 +  target_link_libraries (H5make_libsettings
-+      PRIVATE "$<$<BOOL:${HDF5_ENABLE_PARALLEL}>:${MPI_C_LIBRARIES}>" $<$<PLATFORM_ID:Windows>:ws2_32.lib>
++      PRIVATE "$<$<BOOL:${HDF5_ENABLE_PARALLEL}>:${MPI_C_LIBRARIES}>" $<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:MinGW>>:ws2_32.lib>
 +      PRIVATE $<$<PLATFORM_ID:Emscripten>:"-O0">
 +  )
 +  
    add_custom_command (
 -      OUTPUT ${HDF5_BINARY_DIR}/shared/H5lib_settings.c
 -             ${HDF5_BINARY_DIR}/shared/shared_gen_SRCS.stamp2
+-      COMMAND    ${CMAKE_COMMAND}
+-      ARGS       -E copy_if_different "${HDF5_BINARY_DIR}/H5lib_settings.c" "${HDF5_BINARY_DIR}/shared/H5lib_settings.c"
 +      OUTPUT ${HDF5_BINARY_DIR}/H5lib_settings.c
 +             ${HDF5_BINARY_DIR}/gen_SRCS.stamp2
-+      COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR}$<TARGET_FILE:H5make_libsettings>
++      COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:H5make_libsettings>
 +      ARGS ${HDF5_BINARY_DIR}/H5lib_settings.c
        COMMAND    ${CMAKE_COMMAND}
--      ARGS       -E copy_if_different "${HDF5_BINARY_DIR}/H5lib_settings.c" "${HDF5_BINARY_DIR}/shared/H5lib_settings.c"
+-      ARGS       -E touch ${HDF5_GENERATED_SOURCE_DIR}/shared/shared_gen_SRCS.stamp2
+-      DEPENDS    ${HDF5_BINARY_DIR}/H5lib_settings.c
 +      ARGS       -E touch ${HDF5_BINARY_DIR}/gen_SRCS.stamp2
 +      DEPENDS H5make_libsettings
-+      WORKING_DIRECTORY ${HDF5_BINARY_DIR}
-+  )
+       WORKING_DIRECTORY ${HDF5_BINARY_DIR}
+   )
+-  set_source_files_properties (${HDF5_BINARY_DIR}/shared/H5lib_settings.c PROPERTIES GENERATED TRUE)
 +  set_source_files_properties (${HDF5_BINARY_DIR}/H5lib_settings.c PROPERTIES GENERATED TRUE)
 +  if (BUILD_SHARED_LIBS)
 +    add_custom_command (
@@ -77,13 +81,11 @@ index 1111111..2222222 100644
 +else ()
 +  add_custom_command (
 +      OUTPUT ${HDF5_BINARY_DIR}/gen_SRCS.stamp2
-       COMMAND    ${CMAKE_COMMAND}
--      ARGS       -E touch ${HDF5_GENERATED_SOURCE_DIR}/shared/shared_gen_SRCS.stamp2
++      COMMAND    ${CMAKE_COMMAND}
 +      ARGS       -E touch ${HDF5_BINARY_DIR}/gen_SRCS.stamp2
-       DEPENDS    ${HDF5_BINARY_DIR}/H5lib_settings.c
-       WORKING_DIRECTORY ${HDF5_BINARY_DIR}
-   )
--  set_source_files_properties (${HDF5_BINARY_DIR}/shared/H5lib_settings.c PROPERTIES GENERATED TRUE)
++      DEPENDS    ${HDF5_BINARY_DIR}/H5lib_settings.c
++      WORKING_DIRECTORY ${HDF5_BINARY_DIR}
++   )
 +  if (BUILD_SHARED_LIBS)
 +    add_custom_command (
 +        OUTPUT ${HDF5_BINARY_DIR}/shared/H5lib_settings.c
@@ -100,36 +102,18 @@ index 1111111..2222222 100644
  endif ()
  
  ## all_packages="AC,B,B2,D,F,FA,FL,FS,HL,I,O,S,ST,T,Z"
-@@ -1061,7 +1084,7 @@ option (HDF5_ENABLE_DEBUG_APIS "Turn on extra debug output in all packages" OFF)
- # Add H5Tinit source to build - generated by H5detect/CMake at configure time
- #-----------------------------------------------------------------------------
- set (gen_SRCS ${HDF5_GENERATED_SOURCE_DIR}/H5Tinit.c ${HDF5_BINARY_DIR}/H5lib_settings.c)
--add_custom_target (gen_${HDF5_LIB_TARGET} ALL DEPENDS ${HDF5_GENERATED_SOURCE_DIR}/gen_SRCS.stamp1 ${HDF5_GENERATED_SOURCE_DIR}/gen_SRCS.stamp2)
-+add_custom_target (gen_${HDF5_LIB_TARGET} ALL DEPENDS ${HDF5_GENERATED_SOURCE_DIR}/gen_SRCS.stamp1 ${HDF5_BINARY_DIR}/gen_SRCS.stamp2)
- 
- add_library (${HDF5_LIB_TARGET} STATIC ${common_SRCS} ${gen_SRCS} ${H5_PUBLIC_HEADERS} ${H5_PRIVATE_HEADERS} ${H5_GENERATED_HEADERS})
- target_include_directories(${HDF5_LIB_TARGET}
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Tom Schoonjans <Tom.Schoonjans@diamond.ac.uk>
 Date: Tue, 27 Feb 2018 15:49:30 +0000
-Subject: [PATCH 2/2] Restore MSYS/MINGW support
+Subject: [PATCH 2/3] Restore MSYS/MINGW support
 
 
 diff --git a/config/cmake_ext_mod/HDFMacros.cmake b/config/cmake_ext_mod/HDFMacros.cmake
 index 1111111..2222222 100644
 --- a/config/cmake_ext_mod/HDFMacros.cmake
 +++ b/config/cmake_ext_mod/HDFMacros.cmake
-@@ -117,7 +117,7 @@ macro (HDF_SET_LIB_OPTIONS libtarget libname libtype)
-     set (LIB_RELEASE_NAME "${libname}")
-     set (LIB_DEBUG_NAME "${libname}${LIB_DEBUG_SUFFIX}")
-   else ()
--    if (WIN32)
-+    if (WIN32 AND NOT MINGW)
-       set (LIB_RELEASE_NAME "lib${libname}")
-       set (LIB_DEBUG_NAME "lib${libname}${LIB_DEBUG_SUFFIX}")
-     else ()
-@@ -151,16 +151,6 @@ macro (HDF_SET_LIB_OPTIONS libtarget libname libtype)
+@@ -153,16 +153,6 @@ macro (HDF_SET_LIB_OPTIONS libtarget libname libtype)
        )
      endif ()
    endif ()
@@ -146,7 +130,7 @@ index 1111111..2222222 100644
  endmacro ()
  
  #-------------------------------------------------------------------------------
-@@ -180,7 +170,7 @@ macro (HDF_IMPORT_SET_LIB_OPTIONS libtarget libname libtype libversion)
+@@ -182,7 +172,7 @@ macro (HDF_IMPORT_SET_LIB_OPTIONS libtarget libname libtype libversion)
      if (WIN32)
        if (MINGW)
          set_target_properties (${libtarget} PROPERTIES
@@ -159,7 +143,7 @@ diff --git a/src/H5system.c b/src/H5system.c
 index 1111111..2222222 100644
 --- a/src/H5system.c
 +++ b/src/H5system.c
-@@ -799,6 +799,10 @@ Wgettimeofday(struct timeval *tv, struct timezone *tz)
+@@ -809,6 +809,10 @@ Wgettimeofday(struct timeval *tv, struct timezone *tz)
   *
   *-------------------------------------------------------------------------
   */
@@ -170,21 +154,70 @@ index 1111111..2222222 100644
  int
  Wsetenv(const char *name, const char *value, int overwrite)
  {
-diff --git a/src/H5win32defs.h b/src/H5win32defs.h
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 26 Dec 2019 09:45:00 +0100
+Subject: [PATCH 3/3] Remove -static-[libgcc,libstdc++] linker flags
+
+It won't work with llvm-mingw.
+
+diff --git a/c++/examples/CMakeLists.txt b/c++/examples/CMakeLists.txt
 index 1111111..2222222 100644
---- a/src/H5win32defs.h
-+++ b/src/H5win32defs.h
-@@ -54,7 +54,12 @@ typedef __int64             h5_stat_size_t;
-  * Also note that the variadic macro is using a VC++ extension
-  * where the comma is dropped if nothing is passed to the ellipsis.
-  */
--#define HDopen(S,F,...)       _open(S, F | _O_BINARY, __VA_ARGS__)
-+#ifdef H5_HAVE_MINGW
-+  /* GCC/MINGW uses a different extension to handle unused ellipses */
-+  #define HDopen(S,F,...)       _open(S, F | _O_BINARY, ##__VA_ARGS__)
-+#else
-+  #define HDopen(S,F,...)       _open(S, F | _O_BINARY, __VA_ARGS__)
-+#endif
- #define HDread(F,M,Z)       _read(F,M,Z)
- #define HDrmdir(S)          _rmdir(S)
- #define HDsetvbuf(F,S,M,Z)  setvbuf(F,S,M,(Z>1?Z:2))
+--- a/c++/examples/CMakeLists.txt
++++ b/c++/examples/CMakeLists.txt
+@@ -41,11 +41,6 @@ foreach (example ${examples})
+   else ()
+     TARGET_C_PROPERTIES (cpp_ex_${example} SHARED)
+     target_link_libraries (cpp_ex_${example} PRIVATE ${HDF5_CPP_LIBSH_TARGET} ${HDF5_LIBSH_TARGET})
+-    if (MINGW)
+-      target_link_options (${HDF5_CPP_LIBSH_TARGET}
+-          PRIVATE -static-libgcc -static-libstdc++
+-      )
+-    endif ()
+   endif ()
+   set_target_properties (cpp_ex_${example} PROPERTIES FOLDER examples/cpp)
+ endforeach ()
+@@ -59,11 +54,6 @@ foreach (example ${tutr_examples})
+   else ()
+     TARGET_C_PROPERTIES (cpp_ex_${example} SHARED)
+     target_link_libraries (cpp_ex_${example} PRIVATE ${HDF5_CPP_LIBSH_TARGET} ${HDF5_LIBSH_TARGET})
+-    if (MINGW)
+-      target_link_options (${HDF5_CPP_LIBSH_TARGET}
+-          PRIVATE -static-libgcc -static-libstdc++
+-      )
+-    endif ()
+   endif ()
+   set_target_properties (cpp_ex_${example} PROPERTIES FOLDER examples/cpp)
+ endforeach ()
+diff --git a/c++/src/CMakeLists.txt b/c++/src/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/c++/src/CMakeLists.txt
++++ b/c++/src/CMakeLists.txt
+@@ -115,11 +115,6 @@ if (BUILD_SHARED_LIBS)
+   target_link_libraries (${HDF5_CPP_LIBSH_TARGET}
+       PUBLIC ${HDF5_LIBSH_TARGET}
+   )
+-  if (MINGW)
+-    target_link_options (${HDF5_CPP_LIBSH_TARGET}
+-        PRIVATE -static-libgcc -static-libstdc++
+-    )
+-  endif ()
+   set_global_variable (HDF5_LIBRARIES_TO_EXPORT "${HDF5_LIBRARIES_TO_EXPORT};${HDF5_CPP_LIBSH_TARGET}")
+   H5_SET_LIB_OPTIONS (${HDF5_CPP_LIBSH_TARGET} ${HDF5_CPP_LIB_NAME} SHARED "CXX")
+   set_target_properties (${HDF5_CPP_LIBSH_TARGET} PROPERTIES FOLDER libraries/cpp)
+diff --git a/c++/test/CMakeLists.txt b/c++/test/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/c++/test/CMakeLists.txt
++++ b/c++/test/CMakeLists.txt
+@@ -48,10 +48,6 @@ if (NOT BUILD_SHARED_LIBS)
+ else ()
+   TARGET_C_PROPERTIES (cpp_testhdf5 SHARED)
+   target_link_libraries (cpp_testhdf5 PRIVATE ${HDF5_CPP_LIBSH_TARGET} ${HDF5_LIBSH_TARGET} ${HDF5_TEST_LIBSH_TARGET})
+-  if (MINGW)
+-    target_link_options (${HDF5_CPP_LIBSH_TARGET}
+-        PRIVATE -static-libgcc -static-libstdc++
+-    )
+   endif ()
+ endif ()
+ set_target_properties (cpp_testhdf5 PROPERTIES FOLDER test/cpp)

@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 7 Nov 2019 13:30:00 +0100
-Subject: [PATCH 1/1] Make cURL optional
+Subject: [PATCH 1/2] Make cURL optional
 
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
@@ -52,3 +52,30 @@ index 1111111..2222222 100644
  
  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES VERSION ${${PROJECT_NAME}_VERSION} SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION})
  install(TARGETS ${LIB_NAME} DESTINATION ${LIB_DESTINATION})
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 26 Dec 2019 20:00:00 +0100
+Subject: [PATCH 2/2] Don't install the library in lib/
+
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -20,7 +20,6 @@ OPTION (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
+ OPTION (USE_PTHREADS "Thread-safe build (using pthreads)" OFF)
+ 
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
+-set (LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
+ set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include/")
+ 
+ # Define project version
+@@ -135,7 +134,6 @@ ADD_LIBRARY(${LIB_NAME} ${LIB_TYPE} ${H_FILES} ${SRC_FILES})
+ TARGET_LINK_LIBRARIES(${LIB_NAME} ${PTHREADS_LIBRARY} ${M_LIB} ${CURL_LIBRARIES})
+ 
+ SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES VERSION ${${PROJECT_NAME}_VERSION} SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION})
+-install(TARGETS ${LIB_NAME} DESTINATION ${LIB_DESTINATION})
+ install(TARGETS ${LIB_NAME}
+                             RUNTIME DESTINATION bin
+                             LIBRARY DESTINATION lib

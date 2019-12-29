@@ -2,8 +2,8 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.8.3
-$(PKG)_CHECKSUM := c5e4dd5a5c6a777c129037d19ca606769b3f1d405fcc9c8eeda906a61491f790
+$(PKG)_VERSION  := 8.8.4
+$(PKG)_CHECKSUM := 9f7ae87814d990b67913ae69dc5f26fe62719e29aa7e6cc8908066f31ee15a35
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libvips/libvips/releases,v
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
@@ -18,7 +18,6 @@ define $(PKG)_PRE_CONFIGURE
 
     (echo '{'; \
      echo '  "cairo": "$(cairo_VERSION)",'; \
-     echo '  "croco": "$(libcroco_VERSION)",'; \
      echo '  "exif": "$(libexif_VERSION)",'; \
      echo '  "expat": "$(expat_VERSION)",'; \
      echo '  "ffi": "$(libffi_VERSION)",'; \

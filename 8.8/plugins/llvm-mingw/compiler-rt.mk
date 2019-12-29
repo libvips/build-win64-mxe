@@ -3,13 +3,12 @@
 PKG             := compiler-rt
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 9.0.0
-$(PKG)_CHECKSUM := 56e4cd96dd1d8c346b07b4d6b255f976570c6f2389697347a6c3dcb9e820d10e
+$(PKG)_VERSION  := 9.0.1
+$(PKG)_CHECKSUM := c2bfab95c9986318318363d7f371a85a95e333bc0b34fbfa52edbd3f5e3a9077
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/compiler-rt-[0-9]*.patch)))
-$(PKG)_GH_CONF  := llvm/llvm-project/tags, llvmorg-
+$(PKG)_GH_CONF  := llvm/llvm-project/releases,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION).src
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).src.tar.xz
-$(PKG)_URL      := https://releases.llvm.org/$($(PKG)_VERSION)/$($(PKG)_FILE)
 $(PKG)_DEPS     := llvm-mingw
 
 define $(PKG)_BUILD
@@ -31,5 +30,4 @@ define $(PKG)_BUILD
     $(else), \
         cp '$(BUILD_DIR)/lib/windows/libclang_rt.builtins-$(if $(findstring i686,$(PROCESSOR)),i386,$(PROCESSOR)).a' \
             '$(PREFIX)/$(TARGET)/lib/clang/$($(PKG)_VERSION)/lib/windows')
-
 endef

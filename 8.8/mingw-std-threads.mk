@@ -6,7 +6,6 @@ $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := bee085c
 $(PKG)_CHECKSUM := eaa451e3db0b64b285ae2bc163e30f384ee933bb2765ed428b95686a94814dd7
 $(PKG)_GH_CONF  := meganz/mingw-std-threads/branches/master
-$(PKG)_TYPE     := script
 $(PKG)_DEPS     :=
 
 
