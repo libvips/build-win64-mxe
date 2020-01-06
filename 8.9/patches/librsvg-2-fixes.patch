@@ -17,7 +17,7 @@ index 1111111..2222222 100644
  Description: library that renders svg files
  Version: @VERSION@
 -Requires: glib-2.0 gio-2.0 gdk-pixbuf-2.0 cairo
-+Requires: glib-2.0 gio-2.0 gdk-pixbuf-2.0 cairo pangocairo
++Requires: glib-2.0 gio-2.0 gdk-pixbuf-2.0 cairo cairo-gobject pangocairo
  Requires.private:
  Libs: -L${libdir} -lrsvg-@RSVG_API_MAJOR_VERSION@ -lm
  Cflags: -I${includedir}/librsvg-@RSVG_API_VERSION@
@@ -33,13 +33,12 @@ diff --git a/Cargo.toml b/Cargo.toml
 index 1111111..2222222 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -9,6 +9,3 @@ members = [
-     "servo_crates/to_shmem",
-     "servo_crates/to_shmem_derive",
+@@ -11,4 +11,4 @@ members = [
  ]
--
--[profile.release]
+ 
+ [profile.release]
 -debug = true
++debug = false
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>

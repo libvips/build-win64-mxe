@@ -2,7 +2,7 @@
 
 vips_package=vips
 vips_version=8.9
-vips_patch_version=0-rc3
+vips_patch_version=0-rc4
 
 # build-win64/x.xx dir we are building
 work_dir=$(pwd)

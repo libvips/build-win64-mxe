@@ -3,7 +3,7 @@
 if [ $# -lt 1 ]; then
   echo "Usage: $0 VERSION [DEPS] [ARCH] [TYPE]"
   echo "Build libvips for Windows in a Docker container"
-  echo "VERSION is the name of a versioned subdirectory, e.g. 8.8"
+  echo "VERSION is the name of a versioned subdirectory, e.g. 8.9"
   echo "DEPS is the group of dependencies to build libvips with,"
   echo "    defaults to 'web'"
   echo "ARCH is the architecture name to build libvips with,"

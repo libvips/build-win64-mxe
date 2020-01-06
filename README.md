@@ -20,11 +20,11 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libffi]        | 3.3       | MIT Licence                     |
 | [libgsf]        | 1.14.46   | LGPLv3                          |
 | [libiconv]      | 1.16      | LGPLv3                          |
-| [libjpeg-turbo] | 2.0.3     | [zlib License, IJG License]     |
+| [libjpeg-turbo] | 2.0.4     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
 | [librsvg]       | 2.47.1    | LGPLv3                          |
 | [libtiff]       | 4.1.0     | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.8.4     | LGPLv3                          |
+| [libvips]       | 8.9.0-rc4 | LGPLv3                          |
 | [libwebp]       | 1.0.3     | New BSD License                 |
 | [libxml2]       | 2.9.10    | MIT Licence                     |
 | [orc]           | 0.4.31    | [orc License] (BSD-like)        |
@@ -74,7 +74,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.470     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.10.6    | BSD-like                         |
-| [imagemagick]   | 6.9.10-80 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.10-83 | [ImageMagick License] (GPL-like) |
 | [libde265]      | 1.0.4     | LGPLv3                           |
 | [libheif]       | 1.6.1     | LGPLv3                           |
 | [matio]         | 1.5.17    | BSD 2-Clause                     |
@@ -82,7 +82,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 2.4.0     | BSD 3-Clause                     |
 | [openjpeg]      | 2.3.1     | BSD 2-Clause                     |
 | [openslide]     | 3.4.1     | LGPLv3                           |
-| [poppler]       | 0.83.0    | GPLv2                            |
+| [poppler]       | 0.84.0    | GPLv2                            |
 | [sqlite]        | 3.30.1    | Public domain                    |
 | [x265]          | 3.2.1     | GPLv2                            |
 
@@ -109,7 +109,7 @@ with MozJPEG instead of libjpeg-turbo. This can be turned on with the `--with-mo
 argument. For example:
 
 ```bash
-./build.sh 8.8 --with-mozjpeg
+./build.sh 8.9 --with-mozjpeg
 ```
 
 | Dependency      | Version   | Used under the terms of          |

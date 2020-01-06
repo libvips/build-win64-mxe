@@ -87,7 +87,6 @@ index 1111111..2222222 100644
  #include <utility>
 diff --git a/poppler/GlobalParams.h b/poppler/GlobalParams.h
 index 1111111..2222222 100644
-index 1111111..2222222 100644
 --- a/poppler/GlobalParams.h
 +++ b/poppler/GlobalParams.h
 @@ -45,7 +45,11 @@
@@ -117,7 +116,7 @@ index 1111111..2222222 100644
 +#endif
  
  #include "poppler-config.h"
- #include <stdio.h>
+ #include <cstdio>
 diff --git a/poppler/Page.h b/poppler/Page.h
 index 1111111..2222222 100644
 --- a/poppler/Page.h

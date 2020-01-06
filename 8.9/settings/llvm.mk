@@ -22,7 +22,7 @@ export LDFLAGS  := -Wl,-s
 #export CARGO_HOME  := /home/kleisauke/.cargo
 #export PATH        := /home/kleisauke/.cargo/bin:$(PATH)
 export RUSTUP_HOME := /usr/local/rustup
-export RUSTFLAGS   := -C panic=abort
+export RUSTFLAGS   := -C opt-level=s -C lto=on -C codegen-units=1 -C incremental=false -C panic=abort
 export CARGO_HOME  := /usr/local/cargo
 export PATH        := /usr/local/cargo/bin:$(PATH)
 
