@@ -91,8 +91,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.10-83
-imagemagick_CHECKSUM := ebc3856fc9bcb128db37c732c7a05154ba3a1391a0821e9b4b423c95d0532670
+imagemagick_VERSION  := 6.9.10-87
+imagemagick_CHECKSUM := 2fc3789fd162c65f3a1e932cd82ef0301d3591cc8406d66dc6dbc4e829002379
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -131,19 +131,17 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.bz2
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
-# upstream version is 0.83.0
-poppler_VERSION  := 0.84.0
-poppler_CHECKSUM := c7a130da743b38a548f7a21fe5940506fb1949f4ebdd3209f0e5b302fa139731
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
-
-libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+# upstream version is 1.0.3
+libwebp_VERSION  := 1.1.0
+libwebp_CHECKSUM := 98a052268cc4d5ece27f76572a7f50293f439c17a98e67c4ea0c7ed6f50ef043
+libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
+libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
+libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
+libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.63.3
-glib_CHECKSUM := 8a09a2a059eb617d52b6fcd6f25e0243f0849c598612c9aa5074ce3a6ee1c11c
+glib_VERSION  := 2.63.4
+glib_CHECKSUM := d6ba2b0cde747367f43ad64751221d5beb95de1739a89856316df804e3447618
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -164,10 +162,6 @@ cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)
 cairo_SUBDIR   := cairo-$(cairo_VERSION)
 cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
 cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
-
-# zlib will make libzlib.dll, but we want libz.dll so we must
-# patch CMakeLists.txt
-zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -221,13 +215,15 @@ hdf5_SUBDIR   := hdf5-$(hdf5_VERSION)
 hdf5_FILE     := hdf5-$(hdf5_VERSION).tar.bz2
 hdf5_URL      := https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$(call SHORT_PKG_VERSION,hdf5)/hdf5-$(hdf5_VERSION)/src/$(hdf5_FILE)
 
-# upstream version is 2.0.3
-libjpeg-turbo_VERSION  := 2.0.4
-libjpeg-turbo_CHECKSUM := 33dd8547efd5543639e890efbf2ef52d5a21df81faf41bb940657af916a23406
+## Patches that we override with our own
+
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
-libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
-libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
-libjpeg-turbo_URL      := https://$(SOURCEFORGE_MIRROR)/project/libjpeg-turbo/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+
+# zlib will make libzlib.dll, but we want libz.dll so we must
+# patch CMakeLists.txt
+zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
 ## Override sub-dependencies
 # HarfBuzz:

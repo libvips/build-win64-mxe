@@ -2,11 +2,11 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.9.0-rc4
-$(PKG)_CHECKSUM := 899964dd3fb8ee7567342d7a3d15488a8e03d5fab2eefc54c9b164b6eda42e97
+$(PKG)_VERSION  := 8.9.0
+$(PKG)_CHECKSUM := 97334a5e70aff343d2587f23cb8068fc846a58cd937c89a446142ccf00ea0349
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,-rc4.tar.gz
-$(PKG)_SUBDIR   := vips-$(firstword $(subst -, ,$($(PKG)_VERSION)))
+$(PKG)_GH_CONF  := libvips/libvips/releases,v
+$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
                    libgsf libjpeg-turbo tiff openslide lcms libexif libheif \

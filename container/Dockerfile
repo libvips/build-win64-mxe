@@ -16,9 +16,8 @@ RUN apt-get update \
 RUN pip3 install meson
 
 # TODO: Remove when https://github.com/mesonbuild/meson/pull/5912 is merged
-RUN cd `python3 -c "import site; print(site.getsitepackages()[0])"` \
-  && curl https://patch-diff.githubusercontent.com/raw/mesonbuild/meson/pull/5912.patch | git apply -v \
-  && curl https://gist.githubusercontent.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/9b91bc3d3cd8244fb6c46c710cd85af080cbb166/meson.patch | git apply -v
+RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
+  && curl https://gist.githubusercontent.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/c99122daaee097430aef0df88b87d449a0b36999/meson-llvm-mingw.patch | git apply -v
 
 ARG ARCH=x86_64
 

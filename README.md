@@ -13,7 +13,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [gdk-pixbuf]    | 2.40.0    | LGPLv3                          |
 | [gettext]       | 0.20.1    | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
-| [glib]          | 2.63.3    | LGPLv3                          |
+| [glib]          | 2.63.4    | LGPLv3                          |
 | [harfbuzz]      | 2.6.4     | MIT Licence                     |
 | [lcms]          | 2.9       | MIT Licence                     |
 | [libexif]       | 0.6.21    | LGPLv3                          |
@@ -22,10 +22,10 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libiconv]      | 1.16      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.4     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
-| [librsvg]       | 2.47.1    | LGPLv3                          |
+| [librsvg]       | 2.47.2    | LGPLv3                          |
 | [libtiff]       | 4.1.0     | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.9.0-rc4 | LGPLv3                          |
-| [libwebp]       | 1.0.3     | New BSD License                 |
+| [libvips]       | 8.9.0     | LGPLv3                          |
+| [libwebp]       | 1.1.0     | New BSD License                 |
 | [libxml2]       | 2.9.10    | MIT Licence                     |
 | [orc]           | 0.4.31    | [orc License] (BSD-like)        |
 | [pango]         | 1.44.7    | LGPLv3                          |
@@ -74,8 +74,8 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.470     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.10.6    | BSD-like                         |
-| [imagemagick]   | 6.9.10-83 | [ImageMagick License] (GPL-like) |
-| [libde265]      | 1.0.4     | LGPLv3                           |
+| [imagemagick]   | 6.9.10-87 | [ImageMagick License] (GPL-like) |
+| [libde265]      | 1.0.5     | LGPLv3                           |
 | [libheif]       | 1.6.1     | LGPLv3                           |
 | [matio]         | 1.5.17    | BSD 2-Clause                     |
 | [nifticlib]     | 2.0.0     | Public domain                    |
@@ -83,7 +83,7 @@ Same as libvips-web + these extra dependencies:
 | [openjpeg]      | 2.3.1     | BSD 2-Clause                     |
 | [openslide]     | 3.4.1     | LGPLv3                           |
 | [poppler]       | 0.84.0    | GPLv2                            |
-| [sqlite]        | 3.30.1    | Public domain                    |
+| [sqlite]        | 3.31.0    | Public domain                    |
 | [x265]          | 3.2.1     | GPLv2                            |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
