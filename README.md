@@ -24,7 +24,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
 | [librsvg]       | 2.47.2    | LGPLv3                          |
 | [libtiff]       | 4.1.0     | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.9.0     | LGPLv3                          |
+| [libvips]       | 8.9.1     | LGPLv3                          |
 | [libwebp]       | 1.1.0     | New BSD License                 |
 | [libxml2]       | 2.9.10    | MIT Licence                     |
 | [orc]           | 0.4.31    | [orc License] (BSD-like)        |

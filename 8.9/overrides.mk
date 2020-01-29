@@ -106,8 +106,8 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.47.1
-librsvg_CHECKSUM := a15619af34d5eb692b5d35006cfb1940df8db608f769552a1b350035ee26b93e
+librsvg_VERSION  := 2.47.2
+librsvg_CHECKSUM := f7437f0724b1a3f7e399e20c4720de0358c7db42b2a749e5ec64e0010502a78b
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz

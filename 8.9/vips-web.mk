@@ -2,8 +2,8 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.9.0
-$(PKG)_CHECKSUM := 97334a5e70aff343d2587f23cb8068fc846a58cd937c89a446142ccf00ea0349
+$(PKG)_VERSION  := 8.9.1
+$(PKG)_CHECKSUM := 45633798877839005016c9d3494e98dee065f5cb9e20f4552d3b315b8e8bce91
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libvips/libvips/releases,v
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
@@ -16,34 +16,34 @@ define $(PKG)_PRE_CONFIGURE
     mkdir -p $(TOP_DIR)/vips-packaging
     $(foreach f,COPYING ChangeLog README.md AUTHORS, mv '$(SOURCE_DIR)/$f' '$(TOP_DIR)/vips-packaging';)
 
-    (echo '{'; \
-     echo '  "cairo": "$(cairo_VERSION)",'; \
-     echo '  "exif": "$(libexif_VERSION)",'; \
-     echo '  "expat": "$(expat_VERSION)",'; \
-     echo '  "ffi": "$(libffi_VERSION)",'; \
-     echo '  "fontconfig": "$(fontconfig_VERSION)",'; \
-     echo '  "freetype": "$(freetype_VERSION)",'; \
-     echo '  "fribidi": "$(fribidi_VERSION)",'; \
-     echo '  "gdkpixbuf": "$(gdk-pixbuf_VERSION)",'; \
-     echo '  "gettext": "$(gettext_VERSION)",'; \
-     echo '  "gif": "$(giflib_VERSION)",'; \
-     echo '  "glib": "$(glib_VERSION)",'; \
-     echo '  "gsf": "$(libgsf_VERSION)",'; \
-     echo '  "harfbuzz": "$(harfbuzz_VERSION)",'; \
-     echo '  "iconv": "$(libiconv_VERSION)",'; \
-     echo '  "jpeg": "$(libjpeg-turbo_VERSION)",'; \
-     echo '  "lcms": "$(lcms_VERSION)",'; \
-     echo '  "orc": "$(orc_VERSION)",'; \
-     echo '  "pango": "$(pango_VERSION)",'; \
-     echo '  "pixman": "$(pixman_VERSION)",'; \
-     echo '  "png": "$(libpng_VERSION)",'; \
-     echo '  "svg": "$(librsvg_VERSION)",'; \
-     echo '  "tiff": "$(tiff_VERSION)",'; \
-     echo '  "vips": "$(vips-web_VERSION)",'; \
-     echo '  "webp": "$(libwebp_VERSION)",'; \
-     echo '  "xml": "$(libxml2_VERSION)",'; \
-     echo '  "zlib": "$(zlib_VERSION)"'; \
-     echo '}';) \
+    (printf '{\n'; \
+     printf '  "cairo": "$(cairo_VERSION)",\n'; \
+     printf '  "exif": "$(libexif_VERSION)",\n'; \
+     printf '  "expat": "$(expat_VERSION)",\n'; \
+     printf '  "ffi": "$(libffi_VERSION)",\n'; \
+     printf '  "fontconfig": "$(fontconfig_VERSION)",\n'; \
+     printf '  "freetype": "$(freetype_VERSION)",\n'; \
+     printf '  "fribidi": "$(fribidi_VERSION)",\n'; \
+     printf '  "gdkpixbuf": "$(gdk-pixbuf_VERSION)",\n'; \
+     printf '  "gettext": "$(gettext_VERSION)",\n'; \
+     printf '  "gif": "$(giflib_VERSION)",\n'; \
+     printf '  "glib": "$(glib_VERSION)",\n'; \
+     printf '  "gsf": "$(libgsf_VERSION)",\n'; \
+     printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
+     printf '  "iconv": "$(libiconv_VERSION)",\n'; \
+     printf '  "jpeg": "$(libjpeg-turbo_VERSION)",\n'; \
+     printf '  "lcms": "$(lcms_VERSION)",\n'; \
+     printf '  "orc": "$(orc_VERSION)",\n'; \
+     printf '  "pango": "$(pango_VERSION)",\n'; \
+     printf '  "pixman": "$(pixman_VERSION)",\n'; \
+     printf '  "png": "$(libpng_VERSION)",\n'; \
+     printf '  "svg": "$(librsvg_VERSION)",\n'; \
+     printf '  "tiff": "$(tiff_VERSION)",\n'; \
+     printf '  "vips": "$(vips-web_VERSION)",\n'; \
+     printf '  "webp": "$(libwebp_VERSION)",\n'; \
+     printf '  "xml": "$(libxml2_VERSION)",\n'; \
+     printf '  "zlib": "$(zlib_VERSION)"\n'; \
+     printf '}';) \
      > '$(TOP_DIR)/vips-packaging/versions.json'
 endef
 
