@@ -91,8 +91,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.10-87
-imagemagick_CHECKSUM := 2fc3789fd162c65f3a1e932cd82ef0301d3591cc8406d66dc6dbc4e829002379
+imagemagick_VERSION  := 6.9.10-92
+imagemagick_CHECKSUM := 170cff8a401e958692513d19290b12bb63a7af48d19a2f7640fbfe7dede60f3a
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -106,8 +106,8 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.47.2
-librsvg_CHECKSUM := f7437f0724b1a3f7e399e20c4720de0358c7db42b2a749e5ec64e0010502a78b
+librsvg_VERSION  := 2.47.3
+librsvg_CHECKSUM := bf8b970f5e72edb66be79e11df2b20f180abff5029c90e94d6c254476b0ba5fa
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -140,8 +140,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.63.4
-glib_CHECKSUM := d6ba2b0cde747367f43ad64751221d5beb95de1739a89856316df804e3447618
+glib_VERSION  := 2.63.5
+glib_CHECKSUM := 851a4725a2ae401c1a4e49cf2138920cf87e028f033a2af33f5a16d159a3b78c
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -165,13 +165,13 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
-# openexr_GH_CONF  := openexr/openexr/tags
-openexr_VERSION  := 2.4.0
-openexr_CHECKSUM := 4904c5ea7914a58f60a5e2fbc397be67e7a25c380d7d07c1c31a3eefff1c92f1
+# openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
+openexr_VERSION  := 2.4.1
+openexr_CHECKSUM := 3ebbe9a8e67edb4a25890b98c598e9fe23b10f96d1416d6a3ff0732e99d001c1
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
-openexr_URL      := https://github.com/openexr/openexr/archive/v$(openexr_VERSION).tar.gz
+openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -203,6 +203,7 @@ pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 # upstream version is 2.13.1
 fontconfig_VERSION  := 2.13.92
 fontconfig_CHECKSUM := 506e61283878c1726550bc94f2af26168f1e9f2106eac77eaaf0b2cdfad66e4e
+fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
@@ -417,13 +418,20 @@ define lcms_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
 
+define imagemagick_REVISION
+    $(SED) -n 's/MAGICK_GIT_REVISION=\(.*\)/\1/p' $(SOURCE_DIR)/configure
+endef
+
 # disable largefile support, we rely on vips for that and ImageMagick's
 # detection does not work when cross-compiling
 # build with jpeg-turbo and without lzma
-# disable POSIX threads with --without-threads, use Win32 threads instead.
+# disable POSIX threads with --without-threads, use Win32 threads instead
+# exclude deprecated methods in MagickCore API
 define imagemagick_BUILD
-    $(eval GIT_REVISION=$(shell $(SED) -n 's/MAGICK_GIT_REVISION=\(.*\)/\1/p' $(SOURCE_DIR)/configure))
-    $(SED) -i 's|\(\[magick_git_revision\], \).*)|\1[$(GIT_REVISION)])|' $(SOURCE_DIR)/configure.ac
+    $(SED) -i "s|\(\[MAGICK_GIT_REVISION\],\).*\]|\1['$(shell $(imagemagick_REVISION))']|" $(SOURCE_DIR)/configure.ac
+
+    # avoid linking against -lgdi32, see: https://github.com/kleisauke/net-vips/issues/61
+    $(SED) -i 's,-lgdi32,,g' $(SOURCE_DIR)/configure.ac
 
     # need to regenerate the configure script
     cd '$(SOURCE_DIR)' && autoreconf -fi
@@ -450,7 +458,8 @@ define imagemagick_BUILD
         --without-threads \
         --disable-largefile \
         --disable-opencl \
-        --disable-openmp
+        --disable-openmp \
+        CFLAGS="$(CFLAGS) -DMAGICKCORE_EXCLUDE_DEPRECATED"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
@@ -470,6 +479,7 @@ endef
 
 # disable GObject introspection
 # build with the Meson build system
+# force FontConfig since the Win32 font backend within Cairo is disabled
 define pango_BUILD
     '$(TARGET)-meson' \
         --buildtype=release \
@@ -478,6 +488,7 @@ define pango_BUILD
         --libexecdir='bin' \
         --includedir='include' \
         -Dintrospection=false \
+        -Duse_fontconfig=true \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -492,10 +503,7 @@ define librsvg_BUILD
         --disable-gtk-doc \
         --disable-introspection \
         --disable-tools \
-        LIBS='-lws2_32 -luserenv' \
-        RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu \
-        AR='$(TARGET)-ar' \
-        NM='$(TARGET)-nm'
+        RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
@@ -587,6 +595,10 @@ define libwebp_BUILD
 endef
 
 # replace libpng12 with libpng16
+# disable the SVG and PDF backends, we use librsvg and Poppler for that
+# disable the Win32 surface and font backend to avoid having to link against -lgdi32 and -lmsimg32, see: https://github.com/kleisauke/net-vips/issues/61
+# disable the PostScript backend
+# ensure the FontConfig backend is enabled
 define cairo_BUILD
     $(SED) -i 's,libpng12,libpng16,g'                        '$(SOURCE_DIR)/configure'
     $(SED) -i 's,^\(Libs:.*\),\1 @CAIRO_NONPKGCONFIG_LIBS@,' '$(SOURCE_DIR)/src/cairo.pc.in'
@@ -609,15 +621,16 @@ define cairo_BUILD
         --disable-atomic \
         --disable-ps \
         --disable-script \
-        --enable-win32 \
-        --enable-win32-font \
+        --disable-pdf \
+        --disable-svg \
+        --disable-win32 \
+        --disable-win32-font \
+        --disable-interpreter \
         --enable-png \
+        --enable-fc \
         --enable-ft \
-        --enable-pdf \
-        --enable-svg \
         --without-x \
         CFLAGS="$(CFLAGS) $(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD)" \
-        LIBS="-lmsimg32 -lgdi32" \
         $(if $(findstring win32,$(TARGET)), ax_cv_c_float_words_bigendian=no)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'

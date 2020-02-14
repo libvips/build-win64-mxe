@@ -25,7 +25,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1801,7 +1801,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
+@@ -1808,7 +1808,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
  # available in the actual runtime environment. On Windows, we always use
  # the built-in implementation
  iconv_opt = get_option('iconv')
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
    libiconv = []
    # We have a #include "win_iconv.c" in gconvert.c on Windows, so we don't need
    # any external library for it
-@@ -1890,17 +1890,24 @@ endif
+@@ -1897,17 +1897,24 @@ endif
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.
@@ -78,16 +78,16 @@ diff --git a/gio/tests/meson.build b/gio/tests/meson.build
 index 1111111..2222222 100644
 --- a/gio/tests/meson.build
 +++ b/gio/tests/meson.build
-@@ -391,7 +391,7 @@ test_extra_programs += {
-   },
- }
+@@ -436,7 +436,7 @@ gdbus_example_objectmanager_sources = files(
+   'gdbus-example-objectmanager-server.c',
+ )
  
 -if cc.get_id() != 'msvc' and cc.get_id() != 'clang-cl'
 +if host_machine.system() != 'windows' and cc.get_id() != 'clang-cl'
    test_extra_programs += {
      # These three are manual-run tests because they need a session bus but don't bring one up themselves
      # FIXME: these build but don't seem to work!
-@@ -503,7 +503,7 @@ foreach memory_monitor_test : memory_monitor_tests
+@@ -549,7 +549,7 @@ foreach memory_monitor_test : memory_monitor_tests
    )
  endforeach
  

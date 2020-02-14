@@ -50,3 +50,25 @@ index 1111111..2222222 100644
  # invalidate cached value if MAYBE_WARN has changed
  if test "x$cairo_cv_warn_maybe" != "x$MAYBE_WARN"; then
  	unset cairo_cv_warn_cflags
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 12 Feb 2020 20:00:00 +0100
+Subject: [PATCH 3/3] Always define _cairo_utf8_to_utf16 on Windows
+
+_cairo_utf8_to_utf16 is used by _cairo_fopen on Windows so it must
+be defined even if Win32 fonts or other features are disabled.
+
+diff --git a/src/cairoint.h b/src/cairoint.h
+index 1111111..2222222 100644
+--- a/src/cairoint.h
++++ b/src/cairoint.h
+@@ -1913,7 +1913,7 @@ cairo_private int
+ _cairo_ucs4_to_utf16 (uint32_t    unicode,
+ 		      uint16_t   *utf16);
+ 
+-#if CAIRO_HAS_WIN32_FONT || CAIRO_HAS_QUARTZ_FONT || CAIRO_HAS_PDF_OPERATORS
++#if _WIN32 || CAIRO_HAS_WIN32_FONT || CAIRO_HAS_QUARTZ_FONT || CAIRO_HAS_PDF_OPERATORS
+ # define CAIRO_HAS_UTF8_TO_UTF16 1
+ #endif
+ #if CAIRO_HAS_UTF8_TO_UTF16
