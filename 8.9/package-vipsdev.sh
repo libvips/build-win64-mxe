@@ -102,7 +102,7 @@ if [ "$type" = "shared" ]; then
   echo "Strip unneeded symbols"
 
   # Remove all symbols that are not needed
-  strip --strip-unneeded $repackage_dir/bin/*.exe
+  strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
 fi
 
 echo "Copying packaging files"
