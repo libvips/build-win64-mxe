@@ -19,13 +19,14 @@ define $(PKG)_BUILD
     $(call PREPARE_PKG_SOURCE,clang,$(BUILD_DIR))
     $(call PREPARE_PKG_SOURCE,lld,$(BUILD_DIR))
 
-    # TODO: Do we need to build all four architectures (i686, x86_64, armv7 and arm64)?
-    # -DLLVM_TARGETS_TO_BUILD='ARM;AArch64;X86'
     cd '$(BUILD_DIR)' && cmake '$(SOURCE_DIR)' \
         -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(TARGET)' \
         -DCMAKE_BUILD_TYPE=Release \
         -DLLVM_ENABLE_ASSERTIONS=OFF \
-        -DLLVM_TARGETS_TO_BUILD='X86' \
+        -DLLVM_TARGETS_TO_BUILD=$(strip \
+            $(if $(findstring armv7,$(PROCESSOR)),ARM, \
+            $(if $(findstring aarch64,$(PROCESSOR)),AArch64, \
+            X86))) \
         -DLLVM_TARGET_ARCH='$(PROCESSOR)' \
         -DLLVM_DEFAULT_TARGET_TRIPLE='$(TARGET)' \
         -DLLVM_INSTALL_TOOLCHAIN_ONLY=ON \

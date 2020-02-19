@@ -1,0 +1,45 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 14 Feb 2020 15:20:00 +0100
+Subject: [PATCH 1/1] Add support for targeting ARM/ARM64
+
+See: mxe/mxe#2330
+
+diff --git a/Makefile b/Makefile
+index 1111111..2222222 100644
+--- a/Makefile
++++ b/Makefile
+@@ -8,7 +8,8 @@ EXT_DIR  := $(TOP_DIR)/ext
+ # See docs/gmsl.html for further information
+ include $(EXT_DIR)/gmsl
+ 
+-MXE_TRIPLETS       := i686-w64-mingw32 x86_64-w64-mingw32
++MXE_TRIPLETS       := i686-w64-mingw32 x86_64-w64-mingw32 \
++                      armv7-w64-mingw32 aarch64-w64-mingw32
+ MXE_LIB_TYPES      := static shared
+ MXE_TARGET_LIST    := $(strip $(foreach TRIPLET,$(MXE_TRIPLETS),\
+                           $(addprefix $(TRIPLET).,$(MXE_LIB_TYPES))))
+diff --git a/plugins/meson-wrapper/meson-wrapper.mk b/plugins/meson-wrapper/meson-wrapper.mk
+index 1111111..2222222 100644
+--- a/plugins/meson-wrapper/meson-wrapper.mk
++++ b/plugins/meson-wrapper/meson-wrapper.mk
+@@ -16,11 +16,10 @@ define $(PKG)_BUILD
+         -DTARGET=$(TARGET) \
+         -DBUILD=$(BUILD) \
+         -DCPU_FAMILY=$(strip \
+-             $(if $(findstring x86_64,$(TARGET)),x86_64,\
+-             $(if $(findstring i686,$(TARGET)),x86))) \
+-        -DCPU=$(strip \
+-             $(if $(findstring x86_64,$(TARGET)),x86_64,\
+-             $(if $(findstring i686,$(TARGET)),i686))) \
++            $(if $(findstring armv7,$(PROCESSOR)),arm, \
++            $(if $(findstring i686,$(PROCESSOR)),x86, \
++            $(PROCESSOR)))) \
++        -DCPU=$(PROCESSOR) \
+         -DINPUT='$(PWD)/plugins/meson-wrapper/conf/mxe-crossfile.meson.in' \
+         -DOUTPUT='$(PREFIX)/$(TARGET)/share/meson/mxe-crossfile.meson'
+ 

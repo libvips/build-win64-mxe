@@ -39,6 +39,11 @@ if [[ "$*" == *--with-llvm* ]]; then
   # threading API.
   threads="posix"
   with_llvm=true
+elif [ "$arch" = "aarch64" ] || [ "$arch" = "armv7" ]; then
+  # Force the LLVM toolchain for the ARM/ARM64 targets,
+  # GCC does not support Windows on ARM.
+  threads="posix"
+  with_llvm=true
 else
   # Use native Win32 threading functions when compiling with
   # GCC because POSIX threads functionality is significantly

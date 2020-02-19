@@ -47,6 +47,10 @@ define gcc_BUILD_i686-w64-mingw32
     $(gcc_BUILD_mingw-w64))))
 endef
 
+# GCC does not support Windows on ARM
+gcc_BUILD_armv7-w64-mingw32   =
+gcc_BUILD_aarch64-w64-mingw32 =
+
 define llvm-mingw_BUILD_x86_64-w64-mingw32
     $(subst # install the usual wrappers, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
     ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib' && \
@@ -59,6 +63,20 @@ define llvm-mingw_BUILD_i686-w64-mingw32
     ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib' && \
     ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include', \
     $(subst @mingw-crt-config-opts@,--enable-lib32 --disable-lib64 $(common_CONFIGURE_OPTS), $(llvm-mingw_BUILD_mingw-w64)))
+endef
+
+define llvm-mingw_BUILD_armv7-w64-mingw32
+    $(subst # install the usual wrappers, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib' && \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include', \
+    $(subst @mingw-crt-config-opts@,--disable-lib32 --disable-lib64 --enable-libarm32 $(common_CONFIGURE_OPTS), $(llvm-mingw_BUILD_mingw-w64)))
+endef
+
+define llvm-mingw_BUILD_aarch64-w64-mingw32
+    $(subst # install the usual wrappers, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib' && \
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include', \
+    $(subst @mingw-crt-config-opts@,--disable-lib32 --disable-lib64 --enable-libarm64 $(common_CONFIGURE_OPTS), $(llvm-mingw_BUILD_mingw-w64)))
 endef
 
 ## Update dependencies
@@ -221,6 +239,7 @@ hdf5_URL      := https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$(call SHOR
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fftw-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
@@ -509,6 +528,10 @@ define librsvg_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
 endef
+
+# TODO: Rust MinGW-w64 ARM/ARM64 targets are not yet supported
+librsvg_BUILD_armv7-w64-mingw32   =
+librsvg_BUILD_aarch64-w64-mingw32 =
 
 # compile with CMake and with libjpeg-turbo
 define poppler_BUILD

@@ -43,6 +43,9 @@ fi
 if [ "$initialize" = true ] ; then
   # Copy our customized tool
   cp -f $work_dir/tools/make-shared-from-static $mxe_dir/tools
+
+  # Patch MXE to support the ARM/ARM64 targets
+  git apply $work_dir/plugins/llvm-mingw/patches/mxe-fixes.patch
 fi
 
 # The 'plugins' variable controls which plugins are in use.

@@ -22,7 +22,12 @@ RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
 ARG ARCH=x86_64
 
 # Add Windows target for cross-compilation
-RUN rustup target add $ARCH-pc-windows-gnu
+# TODO: the armv7-pc-windows-gnu and aarch64-pc-windows-gnu Rust targets are not yet supported
+RUN if [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "i686" ]; then rustup target add $ARCH-pc-windows-gnu; else echo Rust MinGW target CPU architecture $ARCH is not supported; fi
+
+# gas-preprocessor.pl is required for the ARM/ARM64 builds of libjpeg-turbo
+RUN curl -L https://github.com/libav/gas-preprocessor/raw/master/gas-preprocessor.pl -o /usr/bin/gas-preprocessor.pl \
+  && chmod +x /usr/bin/gas-preprocessor.pl
 
 # The versioned build dir is mounted at /data, so this runs the build script
 # in that

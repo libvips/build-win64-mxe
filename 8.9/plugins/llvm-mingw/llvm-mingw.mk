@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://api.github.com/repos/mstorsjo/llvm-mingw/tarball/ee894b6f6365425ddafec6e8a01173be820f81bf
-$(PKG)_VERSION  := ee894b6
-$(PKG)_CHECKSUM := c23f741fff77cd4c588b700ce9995271c22ba0e550374dd9afc98378e6513fb0
+# https://api.github.com/repos/mstorsjo/llvm-mingw/tarball/130bbed69556ba817fca0f1f1c791e86c72700f8
+$(PKG)_VERSION  := 130bbed
+$(PKG)_CHECKSUM := 9c768d52a41d7886a2693562cfce94d987383e32f293af655799414cd8fc847c
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := llvm mingw-w64
@@ -79,5 +79,5 @@ $(PKG)_BUILD_x86_64-w64-mingw32 = $(subst @mingw-crt-config-opts@,--disable-lib3
 $(PKG)_BUILD_i686-w64-mingw32   = $(subst @mingw-crt-config-opts@,--enable-lib32 --disable-lib64,$($(PKG)_BUILD_mingw-w64))
 
 # TODO: These targets needs to be tested
-$(PKG)_BUILD_armv7-w64-mingw32    = $(subst @mingw-crt-config-opts@,--disable-lib32 --disable-lib64 --enable-libarm32,$($(PKG)_BUILD_mingw-w64))
-$(PKG)_BUILD_aarch64-w64-mingw32  = $(subst @mingw-crt-config-opts@,--disable-lib32 --disable-lib64 --enable-libarm64,$($(PKG)_BUILD_mingw-w64))
+$(PKG)_BUILD_armv7-w64-mingw32   = $(subst @mingw-crt-config-opts@,--disable-lib32 --disable-lib64 --enable-libarm32,$($(PKG)_BUILD_mingw-w64))
+$(PKG)_BUILD_aarch64-w64-mingw32 = $(subst @mingw-crt-config-opts@,--disable-lib32 --disable-lib64 --enable-libarm64,$($(PKG)_BUILD_mingw-w64))

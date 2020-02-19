@@ -21,8 +21,12 @@ build_os=`$mxe_dir/ext/config.guess`
 
 if [ "$arch" = "i686" ]; then
   arch="w32"
-else
+elif [ "$arch" = "x86_64" ]; then
   arch="w64"
+elif [ "$arch" = "armv7" ]; then
+  arch="arm32"
+elif [ "$arch" = "aarch64" ]; then
+  arch="arm64"
 fi
 
 # Make sure that the repackaging dir is empty
@@ -46,7 +50,7 @@ if [ "$MOZJPEG" = "true" ]; then
   zip_suffix+="-mozjpeg"
 fi
 
-if [ "$LLVM" = "true" ]; then
+if [ "$LLVM" = "true" ] && [[ "$arch" != "arm"* ]]; then
   zip_suffix+="-llvm"
 fi
 

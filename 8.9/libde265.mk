@@ -13,12 +13,9 @@ define $(PKG)_BUILD
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(libde265_PATCHES))))/libde265-mingw-std-threads.patch)
 
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
-        -DCMAKE_C_FLAGS="$(CFLAGS) -msse4.1" \
         $(if $(findstring win32,$(TARGET)), \
-             -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -msse4.1 -I$(PREFIX)/$(TARGET)/include/mingw-std-threads' \
-        $(else), \
-             -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -msse4.1') \
-        -DDISABLE_SSE=OFF
+            -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads') \
+        -DDISABLE_SIMD=OFF
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef

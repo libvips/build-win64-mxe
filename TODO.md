@@ -7,5 +7,6 @@
 - [ ] Try to test the binaries with the Python test suite on Wine.
 - [ ] Incorporate the llvm-mingw toolchain plugin into MXE (see [mxe/mxe#2330](https://github.com/mxe/mxe/issues/2330)).
   - [ ] Test the `armv7-w64-mingw32` and `aarch64-w64-mingw32` targets. Perhaps there's a VM to test these architectures?
-  - [ ] Build LLVM for the target architecture (`-DLLVM_TARGETS_TO_BUILD=`) instead of constantly building all four architectures (i686, x86_64, armv7 and arm64).
-  - [ ] [`libffi`](8.9/libffi-3-fixes.patch), [`openslide`](8.9/openslide-3-fixes.patch) ([mstorsjo/llvm-mingw#67](https://github.com/mstorsjo/llvm-mingw/issues/67)), [`hdf5`](8.9/hdf5-1-fixes.patch) and [`glib`](8.9/glib-2-fixes.patch) needs llvm-mingw specific patches. Fix them upstream or within LLVM.
+  - [x] Build LLVM for the target architecture (`-DLLVM_TARGETS_TO_BUILD=`) instead of constantly building all four architectures (i686, x86_64, armv7 and arm64).
+  - [ ] [`libffi`](8.9/patches/libffi-3-fixes.patch), [`openslide`](8.9/patches/openslide-3-fixes.patch) ([mstorsjo/llvm-mingw#67](https://github.com/mstorsjo/llvm-mingw/issues/67)), [`hdf5`](8.9/patches/hdf5-1-fixes.patch) and [`glib`](8.9/patches/glib-2-fixes.patch) needs llvm-mingw specific patches. Fix them upstream or within LLVM.
+  - [ ] The Rust MinGW-w64 ARM/ARM64 targets are not yet supported, is there an alternative way to build librsvg for these architectures?
