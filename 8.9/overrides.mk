@@ -297,6 +297,7 @@ define libffi_BUILD
     # build and install the library
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
+        --disable-multi-os-directory \
         $(if $(findstring posix,$(TARGET)), --disable-symvers)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
@@ -535,9 +536,9 @@ define poppler_BUILD
         -DBUILD_CPP_TESTS=OFF \
         -DENABLE_GTK_DOC=OFF \
         $(if $(findstring win32,$(TARGET)), \
-             -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads' \
+            -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads' \
         $(else), \
-             -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -Wno-incompatible-ms-struct') \
+            -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -Wno-incompatible-ms-struct') \
         '$(SOURCE_DIR)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
@@ -595,7 +596,8 @@ define libwebp_BUILD
 endef
 
 # replace libpng12 with libpng16
-# disable the SVG and PDF backends, we use librsvg and Poppler for that
+# node-canvas needs a Cairo with SVG support, so compile only with --disable-svg when building a statically linked binary
+# disable the PDF backend, we use Poppler for that
 # disable the Win32 surface and font backend to avoid having to link against -lgdi32 and -lmsimg32, see: https://github.com/kleisauke/net-vips/issues/61
 # disable the PostScript backend
 # ensure the FontConfig backend is enabled
@@ -622,7 +624,8 @@ define cairo_BUILD
         --disable-ps \
         --disable-script \
         --disable-pdf \
-        --disable-svg \
+        $(if $(BUILD_STATIC), \
+            --disable-svg') \
         --disable-win32 \
         --disable-win32-font \
         --disable-interpreter \
@@ -805,10 +808,7 @@ define hdf5_BUILD
         -DH5_LLONG_TO_LDOUBLE_CORRECT=ON \
         -DH5_DISABLE_SOME_LDOUBLE_CONV=OFF \
         -DH5_NO_ALIGNMENT_RESTRICTIONS=ON \
-        $(if $(findstring posix,$(TARGET)), \
-            -DH5_HAVE_IOEO=1 \
-        $(else), \
-            -DH5_HAVE_IOEO=0) \
+        -DH5_HAVE_IOEO=$(if $(findstring posix,$(TARGET)),1,0) \
         -DTEST_LFS_WORKS_RUN=0 \
         -DHDF5_ENABLE_THREADSAFE=ON \
         -DHDF5_USE_PREGEN=ON \

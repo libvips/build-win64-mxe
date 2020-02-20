@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 VERSION [DEPS] [ARCH] [TYPE]"
@@ -47,7 +47,7 @@ else
   with_llvm=false
 fi
 
-if [ "$type" = "static" ] && [ "$deps" == "all" ]; then
+if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
   echo "WARNING: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
   exit 1
 fi

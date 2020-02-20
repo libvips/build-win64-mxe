@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 [DEPS] [TARGET]"
@@ -20,9 +20,9 @@ type="${type%%.*}"
 build_os=`$mxe_dir/ext/config.guess`
 
 if [ "$arch" = "i686" ]; then
-  arch="32"
+  arch="w32"
 else
-  arch="64"
+  arch="w64"
 fi
 
 # Make sure that the repackaging dir is empty
@@ -36,6 +36,7 @@ zip_suffix=""
 
 if [ "$type" = "static" ]; then
   # Static build? Copy libvips-42.dll
+  # TODO(kleisauke): sharp needs libvips-cpp-42.dll
   target_dll="libvips-42.dll"
 
   zip_suffix="-static"
@@ -98,12 +99,12 @@ if [ "$type" = "shared" ]; then
 
   # We still need to copy the vips executables
   cp $mxe_prefix/$target.$deps/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
-
-  echo "Strip unneeded symbols"
-
-  # Remove all symbols that are not needed
-  strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
 fi
+
+echo "Strip unneeded symbols"
+
+# Remove all symbols that are not needed
+$mxe_prefix/bin/$target.$deps-strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
 
 echo "Copying packaging files"
 
@@ -111,6 +112,6 @@ cp $mxe_dir/vips-packaging/{AUTHORS,ChangeLog,COPYING,README.md,versions.json} $
 
 echo "Creating $zipfile"
 
-zipfile=$vips_package-dev-w$arch-$deps-$vips_version.$vips_patch_version$zip_suffix.zip
+zipfile=$vips_package-dev-$arch-$deps-$vips_version.$vips_patch_version$zip_suffix.zip
 rm -f $zipfile
 zip -r -qq $zipfile $repackage_dir
