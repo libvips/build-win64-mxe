@@ -1,6 +1,6 @@
-# This variable controls the number of compilation processes
-# within one package ("intra-package parallelism").
-JOBS := 4
+# MXE will run as many parallel jobs as there are
+# available CPU cores. This variable can limit this.
+#DEFAULT_MAX_JOBS := 4
 
 # Turn on debugging (see also mxe-crossfile.meson.in)
 #export CFLAGS   := -g

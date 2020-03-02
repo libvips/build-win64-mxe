@@ -50,7 +50,6 @@ fi
 
 # The 'plugins' variable controls which plugins are in use.
 if [ "$LLVM" = "true" ]; then
-  echo "llvm-mingw plugin enabled"
   plugins="$work_dir/plugins/llvm-mingw"
 
   # Copy LLVM settings
@@ -69,7 +68,6 @@ fi
 plugins+=" plugins/meson-wrapper $work_dir"
 
 if [ "$MOZJPEG" = "true" ]; then
-  echo "MozJPEG plugin enabled"
   plugins+=" $work_dir/plugins/mozjpeg"
 fi
 
@@ -77,7 +75,9 @@ fi
 mkdir -p $mxe_prefix/$target.$deps/mingw/{bin,include,lib}
 
 # Build pe-util, handy for copying DLL dependencies.
-make pe-util MXE_TARGETS=`$mxe_dir/ext/config.guess`
+make pe-util \
+  IGNORE_SETTINGS=yes \
+  MXE_TARGETS=`$mxe_dir/ext/config.guess`
 
 # Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc), 
 # gendef (a tool for generating def files from DLLs)
