@@ -203,7 +203,7 @@ index 1111111..2222222 100644
  #define FFI_TARGET_HAS_COMPLEX_TYPE
  #endif
 diff --git a/src/arm/ffi.c b/src/arm/ffi.c
-index 4e27071..81d8925 100644
+index 1111111..2222222 100644
 --- a/src/arm/ffi.c
 +++ b/src/arm/ffi.c
 @@ -28,7 +28,7 @@
@@ -233,16 +233,21 @@ index 4e27071..81d8925 100644
  extern unsigned int ffi_arm_trampoline[2] FFI_HIDDEN;
  #else
  extern unsigned int ffi_arm_trampoline[3] FFI_HIDDEN;
-@@ -592,7 +592,7 @@ ffi_prep_closure_loc (ffi_closure * closure,
+@@ -592,24 +592,26 @@ ffi_prep_closure_loc (ffi_closure * closure,
    config[1] = closure_func;
  #else
  
 -#ifndef _M_ARM
 +#ifndef ARM_WIN32
    memcpy(closure->tramp, ffi_arm_trampoline, 8);
- #else
+-#else
++#elif defined(_MSC_VER)
    // cast away function type so MSVC doesn't set the lower bit of the function pointer
-@@ -602,13 +602,13 @@ ffi_prep_closure_loc (ffi_closure * closure,
+   memcpy(closure->tramp, (void*)((uintptr_t)ffi_arm_trampoline & 0xFFFFFFFE), FFI_TRAMPOLINE_CLOSURE_OFFSET);
++#else
++  memcpy(closure->tramp, ffi_arm_trampoline, FFI_TRAMPOLINE_CLOSURE_OFFSET);
+ #endif
+ 
  #if defined (__QNX__)
    msync(closure->tramp, 8, 0x1000000);	/* clear data map */
    msync(codeloc, 8, 0x1000000);	/* clear insn map */
@@ -254,11 +259,13 @@ index 4e27071..81d8925 100644
    __clear_cache(codeloc, codeloc + 8);			/* clear insn map */
  #endif
 -#ifdef _M_ARM
+-  *(void(**)(void))(closure->tramp + FFI_TRAMPOLINE_CLOSURE_FUNCTION) = closure_func;
 +#ifdef ARM_WIN32
-   *(void(**)(void))(closure->tramp + FFI_TRAMPOLINE_CLOSURE_FUNCTION) = closure_func;
++  *(void (**)(void))(closure->tramp + FFI_TRAMPOLINE_CLOSURE_FUNCTION) = closure_func;
  #else
    *(void (**)(void))(closure->tramp + 8) = closure_func;
-@@ -851,4 +851,4 @@ layout_vfp_args (ffi_cif * cif)
+ #endif
+@@ -851,4 +853,4 @@ layout_vfp_args (ffi_cif * cif)
      }
  }
  
@@ -277,16 +284,17 @@ index 1111111..2222222 100644
    FFI_DEFAULT_ABI = FFI_VFP,
  #else
    FFI_DEFAULT_ABI = FFI_SYSV,
-@@ -57,7 +57,7 @@ typedef enum ffi_abi {
+@@ -57,7 +57,8 @@ typedef enum ffi_abi {
    signed char vfp_args[16]			\
  
  #define FFI_TARGET_SPECIFIC_VARIADIC
 -#ifndef _M_ARM
 +#ifndef ARM_WIN32
++/* No complex type on Windows */
  #define FFI_TARGET_HAS_COMPLEX_TYPE
  #endif
  
-@@ -77,7 +77,7 @@ typedef enum ffi_abi {
+@@ -77,7 +78,7 @@ typedef enum ffi_abi {
  #endif
  
  #else
@@ -323,29 +331,30 @@ index 1111111..2222222 100644
  
  #ifndef __clang__
  	/* We require interworking on LDM, which implies ARMv5T,
-@@ -128,7 +135,11 @@ ARM_FUNC_START(ffi_call_VFP)
+@@ -128,7 +135,12 @@ ARM_FUNC_START(ffi_call_VFP)
  	cfi_startproc
  
  	cmp	r3, #3			@ load only d0 if possible
 -#ifdef __clang__
 +#ifdef ARM_WIN32
-+	ITE LE
++	IT LE
 +	vldrle d0, [r0]
++	IT GT
 +	vldmgt r0, {d0-d7}
 +#elif defined(__clang__)
  	vldrle d0, [sp]
  	vldmgt sp, {d0-d7}
  #else
-@@ -167,8 +178,16 @@ ARM_FUNC_START(ffi_call_SYSV)
+@@ -167,8 +179,16 @@ ARM_FUNC_START(ffi_call_SYSV)
  	cfi_def_cfa_register(sp)
  
  	@ Store values stored in registers.
 +#ifdef ARM_WIN32
 +	.align	8
-+	lsl	r0, #3
-+	add	r0, r0, pc
-+	add	r0, #8
-+	mov	pc, r0
++	lsl	r3, #3
++	add	r3, r3, pc
++	add	r3, #8
++	mov	pc, r3
 +#else
  	.align	3
  	add	pc, pc, r3, lsl #3
@@ -353,84 +362,133 @@ index 1111111..2222222 100644
  	nop
  0:
  E(ARM_TYPE_VFP_S)
-@@ -227,6 +246,9 @@ ARM_FUNC_END(ffi_go_closure_SYSV)
+@@ -202,6 +222,9 @@ E(ARM_TYPE_VOID)
+ 	pop	{fp,pc}
+ 	nop
+ E(ARM_TYPE_STRUCT)
++#ifdef ARM_WIN32
++	cmp	r3, #ARM_TYPE_STRUCT
++#endif
+ 	pop	{fp,pc}
+ 
+ 	cfi_endproc
+@@ -227,6 +250,9 @@ ARM_FUNC_END(ffi_go_closure_SYSV)
  ARM_FUNC_START(ffi_closure_SYSV)
  	UNWIND(.fnstart)
  	cfi_startproc
 +#ifdef ARM_WIN32
-+	ldmfd	sp!, {ip,r0}			@ restore fp (r0 is used for stack alignment)
++	ldmfd	sp!, {r0,ip}			@ restore fp (r0 is used for stack alignment)
 +#endif
  	stmdb	sp!, {r0-r3}			@ save argument regs
  	cfi_adjust_cfa_offset(16)
  
-@@ -255,7 +277,13 @@ ARM_FUNC_START(ffi_closure_SYSV)
+@@ -238,8 +264,11 @@ ARM_FUNC_START(ffi_closure_SYSV)
+ 	ldr	r2, [ip, #FFI_TRAMPOLINE_CLOSURE_OFFSET+8]  @ load user_data
+ 0:
+ 	add	ip, sp, #16			@ compute entry sp
+-	sub	sp, sp, #64+32			@ allocate frame
++	sub	sp, sp, #64+32			@ allocate frame parameter (sizeof(vfp_space) = 64, sizeof(result) = 32)
+ 	cfi_adjust_cfa_offset(64+32)
++#ifdef ARM_WIN32
++	mov	r3, sp			@ set frame parameter
++#endif
+ 	stmdb	sp!, {ip,lr}
+ 
+ 	/* Remember that EABI unwind info only applies at call sites.
+@@ -248,14 +277,23 @@ ARM_FUNC_START(ffi_closure_SYSV)
+ 	UNWIND(.save {sp,lr})
+ 	cfi_adjust_cfa_offset(8)
+ 	cfi_rel_offset(lr, 4)
+-
++#ifndef ARM_WIN32
+ 	add	r3, sp, #8			@ load frame
++#endif
+ 	bl	CNAME(ffi_closure_inner_SYSV)
+ 
  	@ Load values returned in registers.
  	add	r2, sp, #8+64			@ load result
- 	adr	r3, CNAME(ffi_closure_ret)
 +#ifdef ARM_WIN32
++	bl	CNAME(ffi_closure_ret)	@ move result to correct register or memory for type
++
 +	ldmfd	sp!, {ip,lr}
-+	mov	sp, ip					@ restore stack pointer
++	mov	sp, ip			@ restore stack pointer
 +	mov	pc, lr
 +#else
+ 	adr	r3, CNAME(ffi_closure_ret)
  	add	pc, r3, r0, lsl #3
 +#endif
  	cfi_endproc
  	UNWIND(.fnend)
  ARM_FUNC_END(ffi_closure_SYSV)
-@@ -274,6 +302,9 @@ ARM_FUNC_END(ffi_go_closure_VFP)
+@@ -274,6 +312,9 @@ ARM_FUNC_END(ffi_go_closure_VFP)
  ARM_FUNC_START(ffi_closure_VFP)
  	UNWIND(.fnstart)
  	cfi_startproc
 +#ifdef ARM_WIN32
-+	ldmfd	sp!, {ip,r0}			@ restore fp (r0 is used for stack alignment)
++	ldmfd	sp!, {r0,ip}			@ restore fp (r0 is used for stack alignment)
 +#endif
  	stmdb	sp!, {r0-r3}			@ save argument regs
  	cfi_adjust_cfa_offset(16)
  
-@@ -291,6 +322,9 @@ ARM_FUNC_START(ffi_closure_VFP)
+@@ -285,9 +326,17 @@ ARM_FUNC_START(ffi_closure_VFP)
+ 	ldr	r2, [ip, #FFI_TRAMPOLINE_CLOSURE_OFFSET+8]  @ load user_data
+ 0:
+ 	add	ip, sp, #16
++#ifdef ARM_WIN32
++	sub	sp, sp, #32				@ save space for closure_frame->result
++#else
+ 	sub	sp, sp, #64+32			@ allocate frame
++#endif
+ 	cfi_adjust_cfa_offset(64+32)
+-#ifdef __clang__
++#ifdef ARM_WIN32
++	vstmdb	sp!, {d0-d7}			@ push closure_frame->vfp_space
++
++	mov	r3, sp						@ save closure_frame
++#elif defined(__clang__)
  	vstm sp, {d0-d7}
  #else
  	stc	p11, cr0, [sp], {16}		@ vstm sp, {d0-d7}
-+#endif
-+#ifdef ARM_WIN32
-+	mov	r3, sp					@ save closure_frame
- #endif
- 	stmdb	sp!, {ip,lr}
+@@ -299,13 +348,22 @@ ARM_FUNC_START(ffi_closure_VFP)
+ 	cfi_adjust_cfa_offset(8)
+ 	cfi_rel_offset(lr, 4)
  
-@@ -305,7 +339,13 @@ ARM_FUNC_START(ffi_closure_VFP)
++#ifndef ARM_WIN32
+ 	add	r3, sp, #8			@ load frame
++#endif
+ 	bl	CNAME(ffi_closure_inner_VFP)
+ 
  	@ Load values returned in registers.
  	add	r2, sp, #8+64			@ load result
- 	adr	r3, CNAME(ffi_closure_ret)
 +#ifdef ARM_WIN32
++	bl	CNAME(ffi_closure_ret)
 +	ldmfd	sp!, {ip,lr}
-+	mov	sp, ip					@ restore stack pointer
++	mov	sp, ip			@ restore stack pointer
 +	mov	pc, lr
 +#else
+ 	adr	r3, CNAME(ffi_closure_ret)
  	add	pc, r3, r0, lsl #3
 +#endif
  	cfi_endproc
  	UNWIND(.fnend)
  ARM_FUNC_END(ffi_closure_VFP)
-@@ -316,8 +356,18 @@ ARM_FUNC_END(ffi_closure_VFP)
+@@ -316,6 +374,15 @@ ARM_FUNC_END(ffi_closure_VFP)
  
  ARM_FUNC_START_LOCAL(ffi_closure_ret)
  	cfi_startproc
 +#ifdef ARM_WIN32
 +	stmdb	sp!, {fp,lr}
 +
-+	.align	8;
++	.align	8
 +	lsl	r0, #3
 +	add	r0, r0, pc
 +	add	r0, #8
 +	mov	pc, r0
-+#else
++#endif
  	cfi_rel_offset(sp, 0)
  	cfi_rel_offset(lr, 4)
-+#endif
  0:
- E(ARM_TYPE_VFP_S)
- #ifdef __clang__
-@@ -325,32 +375,56 @@ E(ARM_TYPE_VFP_S)
+@@ -325,32 +392,56 @@ E(ARM_TYPE_VFP_S)
  #else
  	ldc	p10, cr0, [r2]			@ vldr s0, [r2]
  #endif
@@ -487,19 +545,30 @@ index 1111111..2222222 100644
  	cfi_endproc
  ARM_FUNC_END(ffi_closure_ret)
  
-@@ -373,7 +447,12 @@ ARM_FUNC_END(ffi_closure_trampoline_table_page)
+@@ -369,10 +460,23 @@ ARM_FUNC_START(ffi_closure_trampoline_table_page)
+ ARM_FUNC_END(ffi_closure_trampoline_table_page)
+ #endif
+ 
++#elif 0
++.section	.trampoline,"r"
++	.balign	4
++	.globl	CNAME(ffi_arm_trampoline)
++CNAME(ffi_arm_trampoline):
++0:	adr	ip, 0b
++	stmdb	sp!, {r0, ip}
++	ldr	pc, [pc, #0]
++1:	.long	0
++	.end
+ #else
  
  ARM_FUNC_START(ffi_arm_trampoline)
  0:	adr	ip, 0b
 +#ifdef ARM_WIN32
-+	stmdb	sp!, {ip, r0}
-+	ldr	pc, [ip, #0]
-+#else
- 	ldr	pc, 1f
++	stmdb	sp!, {r0, ip}
 +#endif
+ 	ldr	pc, 1f
  1:	.long	0
  ARM_FUNC_END(ffi_arm_trampoline)
- 
 diff --git a/src/closures.c b/src/closures.c
 index 1111111..2222222 100644
 --- a/src/closures.c
