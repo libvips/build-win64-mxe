@@ -79,11 +79,8 @@ define $(PKG)_BUILD
 
     # remove -nostdlib from linker commandline options
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
-    # do not link explicitly against kernel32
-    # https://github.com/mstorsjo/llvm-mingw/issues/67
     $(if $(findstring posix,$(TARGET)), \
-        $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(BUILD_DIR)/libtool'; \
-        $(SED) -i '/^postdeps=/s/\-lkernel32//g' '$(BUILD_DIR)/libtool')
+        $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(BUILD_DIR)/libtool')
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install

@@ -317,6 +317,7 @@ define libffi_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-multi-os-directory \
+        --disable-raw-api \
         $(if $(findstring posix,$(TARGET)), --disable-symvers)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
@@ -333,7 +334,6 @@ endef
 define harfbuzz_BUILD
     # mman-win32 is only a partial implementation
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
         -DHB_HAVE_GLIB=ON \
         -DHB_HAVE_FREETYPE=ON \
         -DHB_HAVE_ICU=OFF \
@@ -494,7 +494,6 @@ endef
 # libjpeg API)
 define libjpeg-turbo_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
         -DWITH_TURBOJPEG=OFF \
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
         -DENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
@@ -546,7 +545,6 @@ define poppler_BUILD
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(poppler_PATCHES))))/poppler-mingw-std-threads.patch)
 
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
         -DENABLE_TESTS=OFF \
         -DENABLE_ZLIB=ON \
         -DENABLE_LIBTIFF=ON \
@@ -579,9 +577,7 @@ endef
 # the zlib configure is a bit basic, so use cmake for shared
 # builds
 define zlib_BUILD_SHARED
-    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
-        '$(SOURCE_DIR)'
+    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 
@@ -758,7 +754,6 @@ define openexr_BUILD
     $(MAKE) -C '$(BUILD_DIR)/native/IlmImf' -j '$(JOBS)'
 
     cd '$(BUILD_DIR)/cross' && $(TARGET)-cmake \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
         -DOPENEXR_CXX_STANDARD=14 \
         -DOPENEXR_INSTALL_PKG_CONFIG=ON \
         -DNATIVE_OPENEXR_BUILD_DIR='$(BUILD_DIR)/native' \
@@ -779,7 +774,6 @@ define ilmbase_BUILD
     $(MAKE) -C '$(BUILD_DIR)/native/Half' -j '$(JOBS)'
 
     cd '$(BUILD_DIR)/cross' && $(TARGET)-cmake \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
         $(if $(findstring win32,$(TARGET)), -DILMBASE_FORCE_CXX03=ON) \
         -DOPENEXR_CXX_STANDARD=14 \
         -DNATIVE_ILMBASE_BUILD_DIR='$(BUILD_DIR)/native' \
@@ -793,7 +787,6 @@ endef
 
 define cfitsio_BUILD_SHARED
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
         -DBUILD_SHARED_LIBS=ON \
         '$(SOURCE_DIR)'
 
@@ -834,7 +827,6 @@ define hdf5_BUILD
 
     # H5_HAVE_IOEO=1 requires WINVER >= 0x600
     cd '$(BUILD_DIR)/cross' && '$(TARGET)-cmake' \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
         -DONLY_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
         -DH5_ENABLE_SHARED_LIB=$(CMAKE_SHARED_BOOL) \
         -DH5_ENABLE_STATIC_LIB=$(CMAKE_STATIC_BOOL) \
@@ -872,7 +864,6 @@ define x265_BUILD
 
     # 12 bit
     cd '$(BUILD_DIR)/12bit' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
         -DHIGH_BIT_DEPTH=ON \
         -DEXPORT_C_API=OFF \
         -DENABLE_SHARED=OFF \
@@ -886,7 +877,6 @@ define x265_BUILD
 
     # 10 bit
     cd '$(BUILD_DIR)/10bit' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
         -DHIGH_BIT_DEPTH=ON \
         -DEXPORT_C_API=OFF \
         -DENABLE_SHARED=OFF \
@@ -899,7 +889,6 @@ define x265_BUILD
 
     # 8bit
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
-        $(if $(findstring posix,$(TARGET)), -DCMAKE_C_STANDARD_LIBRARIES="") \
         -DHIGH_BIT_DEPTH=OFF \
         -DEXPORT_C_API=ON \
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
