@@ -15,9 +15,9 @@ RUN apt-get update \
 # Install Ninja and Meson
 RUN pip3 install meson
 
-# TODO: Remove when https://github.com/mesonbuild/meson/pull/5912 is merged
+# TODO: This patch needs to be incorporated upstream
 RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
-  && curl -L https://gist.github.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/c99122daaee097430aef0df88b87d449a0b36999/meson-llvm-mingw.patch | git apply -v
+  && curl -L https://gist.github.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/4c21efb83c005df61f91cd51ddefdb145d9afa76/meson-llvm-mingw.patch | git apply -v
 
 ARG ARCH=x86_64
 

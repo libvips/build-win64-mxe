@@ -21,15 +21,13 @@ target="${2:-x86_64-w64-mingw32.shared.win32}"
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="11e79ce1057fb9564eb842013c2efdc67bdcd24c"
-initialize=false
+revision="31a4a4d3cdac108679b2ae8cbe4402ee4c335914"
 
 if [ -f "$mxe_dir/Makefile" ]; then
   echo "Skip cloning, MXE already exists at $mxe_dir"
   cd $mxe_dir && git fetch
 else
   git clone https://github.com/mxe/mxe && cd $mxe_dir
-  initialize=true
 fi
 
 curr_revision=$(git rev-parse HEAD)
@@ -37,24 +35,17 @@ curr_revision=$(git rev-parse HEAD)
 # Is our branch up-to-date?
 if [ ! "$curr_revision" = "$revision" ]; then
   git pull && git reset --hard $revision
-  initialize=true
-fi
-
-if [ "$initialize" = true ] ; then
-  # Copy our customized tool
-  cp -f $work_dir/tools/make-shared-from-static $mxe_dir/tools
 fi
 
 # The 'plugins' variable controls which plugins are in use.
 if [ "$LLVM" = "true" ]; then
-  echo "llvm-mingw plugin enabled"
   plugins="$work_dir/plugins/llvm-mingw"
 
   # Copy LLVM settings
   cp -f $work_dir/settings/llvm.mk $mxe_dir/settings.mk
   cp -f $work_dir/settings/meson-llvm.in $mxe_dir/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
 else
-  # Build with GCC 9.2
+  # Build with GCC 9.3
   plugins="plugins/gcc9"
 
   # Copy GCC settings
@@ -66,7 +57,6 @@ fi
 plugins+=" plugins/meson-wrapper $work_dir"
 
 if [ "$MOZJPEG" = "true" ]; then
-  echo "MozJPEG plugin enabled"
   plugins+=" $work_dir/plugins/mozjpeg"
 fi
 
@@ -74,7 +64,9 @@ fi
 mkdir -p $mxe_prefix/$target.$deps/mingw/{bin,include,lib}
 
 # Build pe-util, handy for copying DLL dependencies.
-make pe-util MXE_TARGETS=`$mxe_dir/ext/config.guess`
+make pe-util \
+  IGNORE_SETTINGS=yes \
+  MXE_TARGETS=`$mxe_dir/ext/config.guess`
 
 # Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc), 
 # gendef (a tool for generating def files from DLLs)

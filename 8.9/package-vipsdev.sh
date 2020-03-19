@@ -29,16 +29,12 @@ fi
 rm -rf $repackage_dir
 mkdir -p $repackage_dir/bin
 
-# Copy libvips-cpp-42.dll by default
+# Copy libvips-cpp-42.dll
 target_dll="libvips-cpp-42.dll"
 
 zip_suffix=""
 
 if [ "$type" = "static" ]; then
-  # Static build? Copy libvips-42.dll
-  # TODO(kleisauke): sharp needs libvips-cpp-42.dll
-  target_dll="libvips-42.dll"
-
   zip_suffix="-static"
 fi
 
@@ -94,12 +90,10 @@ find $repackage_dir/share/locale -mindepth 1 -maxdepth 1 -type d ! -name "en_GB"
 # Remove those .gitkeep files
 rm $repackage_dir/{include/.gitkeep,lib/.gitkeep,share/.gitkeep}
 
-if [ "$type" = "shared" ]; then
-  echo "Copying vips executables"
+echo "Copying vips executables"
 
-  # We still need to copy the vips executables
-  cp $mxe_prefix/$target.$deps/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
-fi
+# We still need to copy the vips executables
+cp $mxe_prefix/$target.$deps/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
 
 echo "Strip unneeded symbols"
 

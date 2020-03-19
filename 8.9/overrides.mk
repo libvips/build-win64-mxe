@@ -10,19 +10,20 @@ mingw-w64-headers_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw'
 common_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw' \
 --with-sysroot='$(PREFIX)/$(TARGET)/mingw' \
 CPPFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include' \
-CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -O3 -ffast-math' \
-CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -O3 -ffast-math' \
+CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include' \
+CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include' \
 LDFLAGS='-L$(PREFIX)/$(TARGET)/mingw/lib' \
 RCFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include'
 
 # Override GCC patches with our own patches
 gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gcc-[0-9]*.patch)))
 
-# Point native system header dir to /mingw/include and
-# compile without some optimizations / stripping
-gcc_CONFIGURE_OPTS=--with-native-system-header-dir='/mingw/include' \
-CFLAGS='-s -O3 -ffast-math' \
-CXXFLAGS='-s -O3 -ffast-math' \
+# Point native system header dir to /mingw/include
+# and compile without optimizations / stripping
+gcc_CONFIGURE_OPTS=--with-build-sysroot='$(PREFIX)/$(TARGET)' \
+--with-native-system-header-dir='/mingw/include' \
+CFLAGS='' \
+CXXFLAGS='' \
 LDFLAGS=''
 
 # The trick here is to symlink all files from /mingw/{bin,lib,include}/
@@ -30,21 +31,21 @@ LDFLAGS=''
 # This ensures that all files are found during linking and that we
 # can clean up those unnecessary files afterwards
 define gcc_BUILD_x86_64-w64-mingw32
-    $(subst # build rest of gcc, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
-    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* $(PREFIX)/$(TARGET)/lib && \
-    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* $(PREFIX)/$(TARGET)/include, \
     $(subst @gcc-crt-config-opts@,--disable-lib32 $(common_CONFIGURE_OPTS), \
     $(subst winpthreads/configure' $(MXE_CONFIGURE_OPTS),winpthreads/configure' $(MXE_CONFIGURE_OPTS) $(common_CONFIGURE_OPTS), \
-    $(gcc_BUILD_mingw-w64))))
+    $(gcc_BUILD_mingw-w64)))
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/bin/'* '$(PREFIX)/$(TARGET)/bin'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include'
 endef
 
 define gcc_BUILD_i686-w64-mingw32
-    $(subst # build rest of gcc, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
-    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib' && \
-    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include', \
     $(subst @gcc-crt-config-opts@,--disable-lib64 $(common_CONFIGURE_OPTS), \
     $(subst winpthreads/configure' $(MXE_CONFIGURE_OPTS),winpthreads/configure' $(MXE_CONFIGURE_OPTS) $(common_CONFIGURE_OPTS), \
-    $(gcc_BUILD_mingw-w64))))
+    $(gcc_BUILD_mingw-w64)))
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/bin/'* '$(PREFIX)/$(TARGET)/bin'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include'
 endef
 
 define llvm-mingw_BUILD_x86_64-w64-mingw32
@@ -106,8 +107,8 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.47.3
-librsvg_CHECKSUM := bf8b970f5e72edb66be79e11df2b20f180abff5029c90e94d6c254476b0ba5fa
+librsvg_VERSION  := 2.48.0
+librsvg_CHECKSUM := 4a348b76cf4c52838e9c337ca767a38fe7f742db40ccccf8ac99f1946872cda6
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -124,11 +125,11 @@ pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERS
 # upstream version is 1.0.5
 # cannot use GH_CONF:
 # fribidi_GH_CONF  := fribidi/fribidi/releases,v
-fribidi_VERSION  := 1.0.8
-fribidi_CHECKSUM := 94c7b68d86ad2a9613b4dcffe7bbeb03523d63b5b37918bdf2e4ef34195c1e6c
+fribidi_VERSION  := 1.0.9
+fribidi_CHECKSUM := c5e47ea9026fb60da1944da9888b4e0a18854a0e2410bbfe7ad90a054d36e0c7
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
-fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.bz2
+fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 1.0.3
@@ -140,8 +141,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.63.5
-glib_CHECKSUM := 851a4725a2ae401c1a4e49cf2138920cf87e028f033a2af33f5a16d159a3b78c
+glib_VERSION  := 2.64.1
+glib_CHECKSUM := 17967603bcb44b6dbaac47988d80c29a3d28519210b28157c2bd10997595bbc7
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -218,9 +219,10 @@ hdf5_URL      := https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$(call SHOR
 
 ## Patches that we override with our own
 
-libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+fftw_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fftw-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
@@ -298,6 +300,7 @@ define libffi_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-multi-os-directory \
+        $(if $(BUILD_STATIC), --disable-raw-api) \
         $(if $(findstring posix,$(TARGET)), --disable-symvers)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
@@ -333,6 +336,18 @@ define harfbuzz_BUILD
      echo 'Libs: -L$${libdir} -lharfbuzz'; \
      echo 'Cflags: -I$${includedir}/harfbuzz';) \
      > '$(PREFIX)/$(TARGET)/lib/pkgconfig/$(PKG).pc'
+endef
+
+define freetype_BUILD
+    # alias libharfbuzz and libfreetype to satisfy circular dependence
+    # libfreetype should already have been created by freetype-bootstrap.mk
+    $(if $(BUILD_STATIC), \
+        ln -sf libharfbuzz.a '$(PREFIX)/$(TARGET)/lib/libharfbuzz_too.a' \
+        && ln -sf libfreetype.a '$(PREFIX)/$(TARGET)/lib/libfreetype_too.a',)
+    $($(PKG)_BUILD_COMMON)
+    # remove circular dependencies from pc file
+    $(if $(BUILD_STATIC), \
+        $(SED) -i '/^Libs.private:/s/\-lharfbuzz_too -lfreetype_too//g' '$(PREFIX)/$(TARGET)/lib/pkgconfig/freetype2.pc')
 endef
 
 # exclude bz2 and gdk-pixbuf
@@ -624,8 +639,7 @@ define cairo_BUILD
         --disable-ps \
         --disable-script \
         --disable-pdf \
-        $(if $(BUILD_STATIC), \
-            --disable-svg') \
+        $(if $(BUILD_STATIC), --disable-svg) \
         --disable-win32 \
         --disable-win32-font \
         --disable-interpreter \

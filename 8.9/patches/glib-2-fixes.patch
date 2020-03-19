@@ -25,7 +25,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1808,7 +1808,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
+@@ -1815,7 +1815,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
  # available in the actual runtime environment. On Windows, we always use
  # the built-in implementation
  iconv_opt = get_option('iconv')
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
    libiconv = []
    # We have a #include "win_iconv.c" in gconvert.c on Windows, so we don't need
    # any external library for it
-@@ -1897,17 +1897,24 @@ endif
+@@ -1904,17 +1904,24 @@ endif
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.
@@ -78,7 +78,7 @@ diff --git a/gio/tests/meson.build b/gio/tests/meson.build
 index 1111111..2222222 100644
 --- a/gio/tests/meson.build
 +++ b/gio/tests/meson.build
-@@ -436,7 +436,7 @@ gdbus_example_objectmanager_sources = files(
+@@ -435,7 +435,7 @@ gdbus_example_objectmanager_sources = files(
    'gdbus-example-objectmanager-server.c',
  )
  
@@ -87,9 +87,9 @@ index 1111111..2222222 100644
    test_extra_programs += {
      # These three are manual-run tests because they need a session bus but don't bring one up themselves
      # FIXME: these build but don't seem to work!
-@@ -549,7 +549,7 @@ foreach memory_monitor_test : memory_monitor_tests
-   )
- endforeach
+@@ -548,7 +548,7 @@ if installed_tests_enabled
+   endforeach
+ endif
  
 -if not meson.is_cross_build() or meson.has_exe_wrapper()
 +if not (meson.is_cross_build() or meson.has_exe_wrapper()) and host_machine.system() != 'windows'
@@ -201,7 +201,7 @@ index 1111111..2222222 100644
  
    /* When building for UWP, load app asset DLLs instead of filesystem DLLs.
     * Needs MSVC, Windows 8 and newer, and is only usable from apps. */
-@@ -118,7 +119,7 @@ _g_module_close (gpointer handle,
+@@ -117,7 +118,7 @@ _g_module_close (gpointer handle,
  {
    if (handle != null_module_handle)
      if (!FreeLibrary (handle))
@@ -210,7 +210,7 @@ index 1111111..2222222 100644
  }
  
  static gpointer
-@@ -177,7 +178,7 @@ _g_module_symbol (gpointer     handle,
+@@ -176,7 +177,7 @@ _g_module_symbol (gpointer     handle,
      p = GetProcAddress (handle, symbol_name);
  
    if (!p)

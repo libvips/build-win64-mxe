@@ -9,11 +9,11 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [expat]         | 2.2.9     | MIT Licence                     |
 | [fontconfig]    | 2.13.92   | [fontconfig Licence] (BSD-like) |
 | [freetype]      | 2.10.1    | [freetype Licence] (BSD-like)   |
-| [fribidi]       | 1.0.8     | LGPLv3                          |
+| [fribidi]       | 1.0.9     | LGPLv3                          |
 | [gdk-pixbuf]    | 2.40.0    | LGPLv3                          |
 | [gettext]       | 0.20.1    | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
-| [glib]          | 2.63.5    | LGPLv3                          |
+| [glib]          | 2.64.1    | LGPLv3                          |
 | [harfbuzz]      | 2.6.4     | MIT Licence                     |
 | [lcms]          | 2.9       | MIT Licence                     |
 | [libexif]       | 0.6.21    | LGPLv3                          |
@@ -22,7 +22,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libiconv]      | 1.16      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.4     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
-| [librsvg]       | 2.47.3    | LGPLv3                          |
+| [librsvg]       | 2.48.0    | LGPLv3                          |
 | [libtiff]       | 4.1.0     | [libtiff License] (BSD-like)    |
 | [libvips]       | 8.9.1     | LGPLv3                          |
 | [libwebp]       | 1.1.0     | New BSD License                 |
@@ -82,7 +82,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 2.4.1     | BSD 3-Clause                     |
 | [openjpeg]      | 2.3.1     | BSD 2-Clause                     |
 | [openslide]     | 3.4.1     | LGPLv3                           |
-| [poppler]       | 0.85.0    | GPLv2                            |
+| [poppler]       | 0.86.1    | GPLv2                            |
 | [sqlite]        | 3.31.1    | Public domain                    |
 | [x265]          | 3.2.1     | GPLv2                            |
 

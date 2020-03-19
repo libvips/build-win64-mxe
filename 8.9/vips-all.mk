@@ -64,6 +64,7 @@ endef
 
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
+
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
