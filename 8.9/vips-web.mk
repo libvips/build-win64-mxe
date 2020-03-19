@@ -75,7 +75,13 @@ define $(PKG)_BUILD
         --without-radiance \
         --without-imagequant \
         --disable-introspection \
-        $(if $(findstring posix,$(TARGET)), CXXFLAGS="$(CXXFLAGS) -Wno-incompatible-ms-struct")
+        $(if $(findstring posix,$(TARGET)), CXXFLAGS="$(CXXFLAGS) -Wno-incompatible-ms-struct") \
+        $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all")
+
+    # libtool should automatically generate a list
+    # of exported symbols, even for "static" builds
+    $(if $(BUILD_STATIC), \
+        $(SED) -i 's/^always_export_symbols=no/always_export_symbols=yes/g' '$(BUILD_DIR)/libtool')
 
     # remove -nostdlib from linker commandline options
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
@@ -84,9 +90,4 @@ define $(PKG)_BUILD
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-
-    $(if $(BUILD_STATIC), \
-        $(MAKE_SHARED_FROM_STATIC) --libprefix 'lib' --libsuffix '-42' \
-        '$(PREFIX)/$(TARGET)/lib/libvips.a' \
-        `$(TARGET)-pkg-config --libs-only-l vips` -luserenv -lcairo-gobject -lgif)
 endef

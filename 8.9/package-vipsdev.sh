@@ -33,16 +33,12 @@ fi
 rm -rf $repackage_dir
 mkdir -p $repackage_dir/bin
 
-# Copy libvips-cpp-42.dll by default
+# Copy libvips-cpp-42.dll
 target_dll="libvips-cpp-42.dll"
 
 zip_suffix=""
 
 if [ "$type" = "static" ]; then
-  # Static build? Copy libvips-42.dll
-  # TODO(kleisauke): sharp needs libvips-cpp-42.dll
-  target_dll="libvips-42.dll"
-
   zip_suffix="-static"
 fi
 

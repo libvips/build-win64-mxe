@@ -21,7 +21,7 @@ target="${2:-x86_64-w64-mingw32.shared.win32}"
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="11e79ce1057fb9564eb842013c2efdc67bdcd24c"
+revision="31a4a4d3cdac108679b2ae8cbe4402ee4c335914"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -41,9 +41,6 @@ if [ ! "$curr_revision" = "$revision" ]; then
 fi
 
 if [ "$initialize" = true ] ; then
-  # Copy our customized tool
-  cp -f $work_dir/tools/make-shared-from-static $mxe_dir/tools
-
   # Patch MXE to support the ARM/ARM64 targets
   git apply $work_dir/plugins/llvm-mingw/patches/mxe-fixes.patch
 fi
@@ -56,7 +53,7 @@ if [ "$LLVM" = "true" ]; then
   cp -f $work_dir/settings/llvm.mk $mxe_dir/settings.mk
   cp -f $work_dir/settings/meson-llvm.in $mxe_dir/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
 else
-  # Build with GCC 9.2
+  # Build with GCC 9.3
   plugins="plugins/gcc9"
 
   # Copy GCC settings

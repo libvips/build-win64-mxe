@@ -89,7 +89,7 @@ diff --git a/poppler/GlobalParams.h b/poppler/GlobalParams.h
 index 1111111..2222222 100644
 --- a/poppler/GlobalParams.h
 +++ b/poppler/GlobalParams.h
-@@ -45,7 +45,11 @@
+@@ -46,7 +46,11 @@
  #include <unordered_map>
  #include <string>
  #include <memory>
@@ -105,7 +105,7 @@ diff --git a/poppler/PDFDoc.h b/poppler/PDFDoc.h
 index 1111111..2222222 100644
 --- a/poppler/PDFDoc.h
 +++ b/poppler/PDFDoc.h
-@@ -41,7 +41,11 @@
+@@ -42,7 +42,11 @@
  #ifndef PDFDOC_H
  #define PDFDOC_H
  
@@ -121,10 +121,10 @@ diff --git a/poppler/Page.h b/poppler/Page.h
 index 1111111..2222222 100644
 --- a/poppler/Page.h
 +++ b/poppler/Page.h
-@@ -33,7 +33,11 @@
- #ifndef PAGE_H
+@@ -35,7 +35,11 @@
  #define PAGE_H
  
+ #include <memory>
 +#ifdef _WIN32
 +#include "mingw.mutex.h"
 +#else
