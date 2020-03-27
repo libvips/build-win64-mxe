@@ -64,12 +64,11 @@ if ! type docker > /dev/null; then
   exit 1
 fi
 
-# Ensure latest Debian stable base image, inherit from 
-# the Rust toolchain because librsvg needs it.
-docker pull rust:stretch
+# Ensure latest Debian stable base image.
+docker pull buildpack-deps:stretch
 
 # Create a machine image with all the required build tools pre-installed.
-docker build --build-arg ARCH=$arch -t libvips-build-win-mxe container
+docker build -t libvips-build-win-mxe container
 
 # Run build scripts inside container
 # - inheriting the current uid and gid

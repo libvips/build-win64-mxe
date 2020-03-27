@@ -3,13 +3,13 @@
 PKG             := libcxx
 $(PKG)_WEBSITE  := https://libcxx.llvm.org/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 9.0.1
-$(PKG)_CHECKSUM := 0981ff11b862f4f179a13576ab0a2f5530f46bd3b6b4a90f568ccc6a62914b34
+$(PKG)_VERSION  := 10.0.0
+$(PKG)_CHECKSUM := 270f8a3f176f1981b0f6ab8aa556720988872ec2b48ed3b605d0ced8d09156c7
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libcxx-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION).src
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).src.tar.xz
-$(PKG)_DEPS     := llvm-mingw compiler-rt libunwind libcxxabi
+$(PKG)_DEPS     := llvm-mingw compiler-rt-builtins libunwind libcxxabi
 
 define $(PKG)_BUILD
     $(call PREPARE_PKG_SOURCE,libcxxabi,$(BUILD_DIR))
@@ -65,7 +65,7 @@ define $(PKG)_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install/strip
 
-    $(if $(BUILD_STATIC),\
+    $(if $(BUILD_STATIC), \
         $(TARGET)-ar qcsL \
             '$(PREFIX)/$(TARGET)/lib/libc++.a' \
             '$(PREFIX)/$(TARGET)/lib/libunwind.a' \

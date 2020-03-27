@@ -3,8 +3,8 @@
 PKG             := libcxxabi
 $(PKG)_WEBSITE  := https://libcxxabi.llvm.org/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 9.0.1
-$(PKG)_CHECKSUM := e8f978aa4cfae2d7a0b4d89275637078557cca74b35c31b7283d4786948a8aac
+$(PKG)_VERSION  := 10.0.0
+$(PKG)_CHECKSUM := e71bac75a88c9dde455ad3f2a2b449bf745eafd41d2d8432253b2964e0ca14e1
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libcxxabi-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION).src

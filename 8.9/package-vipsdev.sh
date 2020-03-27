@@ -82,9 +82,10 @@ echo "Generating import files"
 echo "Cleaning unnecessary files / directories"
 
 # TODO Do we need to keep /share/doc and /share/gtk-doc?
-rm -rf $repackage_dir/share/{aclocal,bash-completion,clang,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,opt-viewer,scan-build,scan-view,thumbnailers,xml}
+rm -rf $repackage_dir/share/{aclocal,bash-completion,clang,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,opt-viewer,scan-build,scan-view,thumbnailers,xml,zsh}
 rm -rf $repackage_dir/include/{cairo,clang-c,c++,llvm-c}
-rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,clang,ldscripts}
+rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,clang,ldscripts,rustlib}
+rm -rf $repackage_dir/etc/bash_completion.d
 
 find $repackage_dir/lib -name "*.la" -exec rm -f {} \;
 

@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://api.github.com/repos/mstorsjo/llvm-mingw/tarball/130bbed69556ba817fca0f1f1c791e86c72700f8
-$(PKG)_VERSION  := 130bbed
-$(PKG)_CHECKSUM := 9c768d52a41d7886a2693562cfce94d987383e32f293af655799414cd8fc847c
+# https://api.github.com/repos/mstorsjo/llvm-mingw/tarball/ca303864baec8f7f9d86768a10f813395d049086
+$(PKG)_VERSION  := ca30386
+$(PKG)_CHECKSUM := 48f3b9cd1322762a93b17efc61cfe895e21a0da36a75551d3e6e879fb5e013af
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := llvm mingw-w64
@@ -16,6 +16,9 @@ $(PKG)_DEPS     := llvm mingw-w64
 # https://github.com/mstorsjo/llvm-mingw/commit/dcf34a9a35ee3d490a85bdec02999cf96615d406
 # https://github.com/mstorsjo/llvm-mingw/blob/master/build-mingw-w64.sh#L5-L6
 define $(PKG)_BUILD_mingw-w64
+    # install the usual wrappers
+    $($(PKG)_PRE_BUILD)
+
     # install mingw-w64 headers
     $(call PREPARE_PKG_SOURCE,mingw-w64,$(BUILD_DIR))
     mkdir '$(BUILD_DIR).headers'
@@ -36,20 +39,12 @@ define $(PKG)_BUILD_mingw-w64
         --host='$(TARGET)' \
         --prefix='$(PREFIX)/$(TARGET)' \
         --with-default-msvcrt=ucrt \
-        @mingw-crt-config-opts@ \
-        CC='$(PREFIX)/$(TARGET)/bin/clang' \
-        STRIP='$(PREFIX)/$(TARGET)/bin/llvm-strip' \
-        AR='$(PREFIX)/$(TARGET)/bin/llvm-ar' \
-        RANLIB='$(PREFIX)/$(TARGET)/bin/llvm-ranlib' \
-        DLLTOOL='$(PREFIX)/$(TARGET)/bin/llvm-dlltool'
+        @mingw-crt-config-opts@
     $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)' || $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).crt' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
-
-    # install the usual wrappers
-    $($(PKG)_POST_BUILD)
 endef
 
-define $(PKG)_POST_BUILD
+define $(PKG)_PRE_BUILD
     $(foreach EXEC, clang-target dlltool ld objdump, \
         $(SED) -i -e 's|^DEFAULT_TARGET=.*|DEFAULT_TARGET=$(TARGET)|' \
                   -e 's|^DIR=.*|DIR="$(PREFIX)/$(TARGET)/bin"|' '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh'; \
@@ -77,7 +72,7 @@ endef
 
 $(PKG)_BUILD_x86_64-w64-mingw32 = $(subst @mingw-crt-config-opts@,--disable-lib32 --enable-lib64,$($(PKG)_BUILD_mingw-w64))
 $(PKG)_BUILD_i686-w64-mingw32   = $(subst @mingw-crt-config-opts@,--enable-lib32 --disable-lib64,$($(PKG)_BUILD_mingw-w64))
-
-# TODO: These targets needs to be tested
 $(PKG)_BUILD_armv7-w64-mingw32   = $(subst @mingw-crt-config-opts@,--disable-lib32 --disable-lib64 --enable-libarm32,$($(PKG)_BUILD_mingw-w64))
+
+# TODO: This target needs to be tested
 $(PKG)_BUILD_aarch64-w64-mingw32 = $(subst @mingw-crt-config-opts@,--disable-lib32 --disable-lib64 --enable-libarm64,$($(PKG)_BUILD_mingw-w64))

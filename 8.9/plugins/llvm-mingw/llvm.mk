@@ -5,8 +5,8 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the clang, lld, lldb, compiler-rt, libunwind, libcxx and libcxxabi packages
-$(PKG)_VERSION  := 9.0.1
-$(PKG)_CHECKSUM := 00a1ee1f389f81e9979f3a640a01c431b3021de0d42278f6508391a2f0b81c9a
+$(PKG)_VERSION  := 10.0.0
+$(PKG)_CHECKSUM := df83a44b3a9a71029049ec101fb0077ecbbdf5fe41e395215025779099a98fdf
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION).src
@@ -48,9 +48,6 @@ define $(PKG)_BUILD
         -DLLVM_INCLUDE_GO_TESTS=OFF \
         -DLLVM_INCLUDE_TESTS=OFF \
         -DLLVM_INCLUDE_UTILS=OFF \
-        -DLLDB_DISABLE_LIBEDIT=ON \
-        -DLLDB_DISABLE_PYTHON=ON \
-        -DLLDB_DISABLE_CURSES=ON \
         -DLLDB_ENABLE_LIBEDIT=OFF \
         -DLLDB_ENABLE_PYTHON=OFF \
         -DLLDB_ENABLE_CURSES=OFF \

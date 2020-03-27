@@ -75,7 +75,7 @@ define $(PKG)_BUILD
         --without-radiance \
         --without-imagequant \
         --disable-introspection \
-        $(if $(findstring posix,$(TARGET)), CXXFLAGS="$(CXXFLAGS) -Wno-incompatible-ms-struct") \
+        $(if $(IS_LLVM), CXXFLAGS="$(CXXFLAGS) -Wno-incompatible-ms-struct") \
         $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all")
 
     # libtool should automatically generate a list
@@ -84,9 +84,10 @@ define $(PKG)_BUILD
         $(SED) -i 's/^always_export_symbols=no/always_export_symbols=yes/g' '$(BUILD_DIR)/libtool')
 
     # remove -nostdlib from linker commandline options
+    # (i.e. archive_cmds and archive_expsym_cmds)
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
-    $(if $(findstring posix,$(TARGET)), \
-        $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(BUILD_DIR)/libtool')
+    $(if $(IS_LLVM), \
+        $(SED) -i 's/\-shared \-nostdlib/\-shared/g' '$(BUILD_DIR)/libtool')
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install

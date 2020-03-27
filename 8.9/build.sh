@@ -83,6 +83,13 @@ make meson-wrapper gendef vips-$deps \
   MXE_PLUGIN_DIRS="$plugins" \
   MXE_TARGETS=$target.$deps
 
+# Build and bundle llvm-mingw tests
+if [ "$LLVM" = "true" ]; then
+  make test-llvm-mingw \
+    MXE_PLUGIN_DIRS="$plugins" \
+    MXE_TARGETS=$target.$deps
+fi
+
 cd $work_dir
 
 # Packaging

@@ -3,13 +3,13 @@
 PKG             := libunwind
 $(PKG)_WEBSITE  := https://clang.llvm.org/docs/Toolchain.html
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 9.0.1
-$(PKG)_CHECKSUM := 535a106a700889274cc7b2f610b2dcb8fc4b0ea597c3208602d7d037141460f1
+$(PKG)_VERSION  := 10.0.0
+$(PKG)_CHECKSUM := 09dc5ecc4714809ecf62908ae8fe8635ab476880455287036a2730966833c626
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libunwind-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION).src
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).src.tar.xz
-$(PKG)_DEPS     := llvm-mingw compiler-rt
+$(PKG)_DEPS     := llvm-mingw compiler-rt-builtins
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \

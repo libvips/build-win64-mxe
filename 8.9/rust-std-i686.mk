@@ -1,0 +1,10 @@
+PKG             := rust-std-i686
+$(PKG)_WEBSITE  := https://www.rust-lang.org/
+$(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
+$(PKG)_IGNORE   :=
+$(PKG)_VERSION  := 1.42.0
+$(PKG)_CHECKSUM := 4f82487b879762f56ac6d9dfde41f3e6f265ab47975ff646cf73537d086041e0
+$(PKG)_SUBDIR   := rust-$($(PKG)_VERSION)-i686-pc-windows-gnu/rust-std-i686-pc-windows-gnu
+$(PKG)_FILE     := rust-$($(PKG)_VERSION)-i686-pc-windows-gnu.tar.gz
+$(PKG)_URL      := https://static.rust-lang.org/dist/$($(PKG)_FILE)
+$(PKG)_TYPE     := source-only

@@ -1,5 +1,4 @@
-# Rust toolchain is needed for librsvg
-FROM rust:stretch
+FROM buildpack-deps:stretch
 
 RUN apt-get update \
   && apt-get install -y \
@@ -12,18 +11,12 @@ RUN apt-get update \
     # needed for Meson
     ninja-build python3-pip
 
-# Install Ninja and Meson
+# Install Meson
 RUN pip3 install meson
 
 # TODO: This patch needs to be incorporated upstream
 RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
   && curl -L https://gist.github.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/4c21efb83c005df61f91cd51ddefdb145d9afa76/meson-llvm-mingw.patch | git apply -v
-
-ARG ARCH=x86_64
-
-# Add Windows target for cross-compilation
-# TODO: the armv7-pc-windows-gnu and aarch64-pc-windows-gnu Rust targets are not yet supported
-RUN if [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "i686" ]; then rustup target add $ARCH-pc-windows-gnu; else echo Rust MinGW target CPU architecture $ARCH is not supported; fi
 
 # gas-preprocessor.pl is required for the ARM/ARM64 builds of libjpeg-turbo
 RUN curl -L https://github.com/libav/gas-preprocessor/raw/master/gas-preprocessor.pl -o /usr/bin/gas-preprocessor.pl \
