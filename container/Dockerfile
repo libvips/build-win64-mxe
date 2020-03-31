@@ -1,5 +1,5 @@
 # Rust toolchain is needed for librsvg
-FROM rust:stretch
+FROM rust:buster
 
 RUN apt-get update \
   && apt-get install -y \
@@ -17,7 +17,7 @@ RUN pip3 install meson
 
 # TODO: This patch needs to be incorporated upstream
 RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
-  && curl -L https://gist.github.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/4c21efb83c005df61f91cd51ddefdb145d9afa76/meson-llvm-mingw.patch | git apply -v
+  && curl -L https://gist.github.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/31a930cc40fd17b7a69fb551668d7205313aee55/meson-llvm-mingw.patch | git apply -v
 
 ARG ARCH=x86_64
 

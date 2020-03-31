@@ -18,11 +18,11 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [lcms]          | 2.9       | MIT Licence                     |
 | [libexif]       | 0.6.21    | LGPLv3                          |
 | [libffi]        | 3.3       | MIT Licence                     |
-| [libgsf]        | 1.14.46   | LGPLv3                          |
+| [libgsf]        | 1.14.47   | LGPLv3                          |
 | [libiconv]      | 1.16      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.4     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
-| [librsvg]       | 2.48.0    | LGPLv3                          |
+| [librsvg]       | 2.48.1    | LGPLv3                          |
 | [libtiff]       | 4.1.0     | [libtiff License] (BSD-like)    |
 | [libvips]       | 8.9.1     | LGPLv3                          |
 | [libwebp]       | 1.1.0     | New BSD License                 |
@@ -82,7 +82,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 2.4.1     | BSD 3-Clause                     |
 | [openjpeg]      | 2.3.1     | BSD 2-Clause                     |
 | [openslide]     | 3.4.1     | LGPLv3                           |
-| [poppler]       | 0.86.1    | GPLv2                            |
+| [poppler]       | 0.87.0    | GPLv2                            |
 | [sqlite]        | 3.31.1    | Public domain                    |
 | [x265]          | 3.2.1     | GPLv2                            |
 

@@ -61,7 +61,7 @@ fi
 
 # Ensure latest Debian stable base image, inherit from 
 # the Rust toolchain because librsvg needs it.
-docker pull rust:stretch
+docker pull rust:buster
 
 # Create a machine image with all the required build tools pre-installed.
 docker build --build-arg ARCH=$arch -t libvips-build-win-mxe container
