@@ -25,9 +25,7 @@ define $(PKG)_BUILD_mingw-w64
     cd '$(BUILD_DIR).headers' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-headers/configure' \
         --host='$(TARGET)' \
         --prefix='$(PREFIX)/$(TARGET)' \
-        --enable-sdk=all \
         --enable-idl \
-        --enable-secure-api \
         --with-default-msvcrt=ucrt \
         --with-default-win32-winnt=0x601 \
         $(mingw-w64-headers_CONFIGURE_OPTS)
@@ -40,7 +38,7 @@ define $(PKG)_BUILD_mingw-w64
         --prefix='$(PREFIX)/$(TARGET)' \
         --with-default-msvcrt=ucrt \
         @mingw-crt-config-opts@
-    $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)' || $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).crt' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
 endef
 

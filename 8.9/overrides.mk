@@ -10,8 +10,8 @@ mingw-w64-headers_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw'
 common_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw' \
 --with-sysroot='$(PREFIX)/$(TARGET)/mingw' \
 CPPFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include' \
-CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -O3 -ffast-math' \
-CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -O3 -ffast-math' \
+CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -O3' \
+CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -O3' \
 LDFLAGS='-L$(PREFIX)/$(TARGET)/mingw/lib' \
 RCFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include'
 
@@ -544,8 +544,6 @@ define librsvg_BUILD
     # to link against this symbol by default.
     # Note: this can probably be removed when the standard library of
     # Rust is build with the latest mingw-w64 version (> v7.0.0).
-    # TODO: Could we use this instead?:
-    # LDFLAGS='$(LDFLAGS) -Wl,-u,___mingw_vsnprintf -Wl,--defsym,___ms_vsnprintf=___mingw_vsnprintf'
     $(if $(IS_LLVM), \
         $(SED) -i 's/^\(Libs:.*\)/\1 -lmsvcrt-os/' '$(SOURCE_DIR)/librsvg.pc.in')
 

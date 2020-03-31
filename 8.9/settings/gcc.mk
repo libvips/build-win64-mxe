@@ -9,10 +9,8 @@
 # use https://github.com/rainers/cv2pdb as workaround.
 
 # Special flags for compiler.
-export CFLAGS   := -s -O3 -ffast-math -fdata-sections -ffunction-sections \
-                   -fPIC
-export CXXFLAGS := -s -O3 -ffast-math -fdata-sections -ffunction-sections \
-                   -fPIC
+export CFLAGS   := -s -O3 -fdata-sections -ffunction-sections -fPIC
+export CXXFLAGS := -s -O3 -fdata-sections -ffunction-sections -fPIC
 export LDFLAGS  := -Wl,--gc-sections -Wl,--strip-all -Wl,--as-needed
 
 # Special flags for Rust.

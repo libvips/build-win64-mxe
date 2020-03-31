@@ -6,8 +6,8 @@
   - [x] Not sure about `librsvg`, because v2.42.0+ requires the Rust toolchain.
 - [ ] Try to test the binaries with the Python test suite on Wine.
 - [ ] Incorporate the llvm-mingw toolchain plugin into MXE (see [mxe/mxe#2330](https://github.com/mxe/mxe/issues/2330)).
-  - [ ] Test the `armv7-w64-mingw32` target on a Raspberry Pi 3 with Windows 10 IoT.
-    - [ ] Compiling with `-O3 -ffast-math` throws a stack overflow exception (`0xC00000FD`) at runtime. Removing the `-ffast-math` flag seems to resolve this.
+  - [x] Test the `armv7-w64-mingw32` target on a Raspberry Pi 3 with Windows 10 IoT.
+    - [x] Compiling with `-O3 -ffast-math` throws a stack overflow exception (`0xC00000FD`) at runtime. Removing the `-ffast-math` flag seems to resolve this.
   - [ ] Test the `aarch64-w64-mingw32` target. Perhaps there's a VM to test this architecture?
   - [ ] The VIPS test suite should be able to run successfully on ARM/ARM64.
   - [x] Build LLVM for the target architecture (`-DLLVM_TARGETS_TO_BUILD=`) instead of constantly building all four architectures (i686, x86_64, armv7 and arm64).
