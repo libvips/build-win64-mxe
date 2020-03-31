@@ -65,7 +65,7 @@ if ! type docker > /dev/null; then
 fi
 
 # Ensure latest Debian stable base image.
-docker pull buildpack-deps:stretch
+docker pull buildpack-deps:buster
 
 # Create a machine image with all the required build tools pre-installed.
 docker build -t libvips-build-win-mxe container

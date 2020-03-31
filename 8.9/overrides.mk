@@ -121,8 +121,8 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.48.0
-librsvg_CHECKSUM := 4a348b76cf4c52838e9c337ca767a38fe7f742db40ccccf8ac99f1946872cda6
+librsvg_VERSION  := 2.48.1
+librsvg_CHECKSUM := 91d7630cffbbe006c989ca575b404257abc2a4a636f0571ffb4607d69fd58f3a
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -163,8 +163,8 @@ glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 1.14.30
-libgsf_VERSION  := 1.14.46
-libgsf_CHECKSUM := ea36959b1421fc8e72caa222f30ec3234d0ed95990e2bf28943a85f33eadad2d
+libgsf_VERSION  := 1.14.47
+libgsf_CHECKSUM := d188ebd3787b5375a8fd38ee6f761a2007de5e98fa0cf5623f271daa67ba774d
 libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libgsf-[0-9]*.patch)))
 libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
@@ -323,6 +323,7 @@ define gettext_BUILD
 endef
 
 # disable version script on llvm-mingw
+# make the raw api unavailable when building a statically linked binary
 define libffi_BUILD
     # build and install the library
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
@@ -655,8 +656,12 @@ endef
 # disable the PostScript backend
 # ensure the FontConfig backend is enabled
 define cairo_BUILD
-    $(SED) -i 's,libpng12,libpng16,g'                        '$(SOURCE_DIR)/configure'
+    $(SED) -i 's,libpng12,libpng16,g'                        '$(SOURCE_DIR)/configure.ac'
     $(SED) -i 's,^\(Libs:.*\),\1 @CAIRO_NONPKGCONFIG_LIBS@,' '$(SOURCE_DIR)/src/cairo.pc.in'
+
+    # configure script is ancient so regenerate
+    cd '$(SOURCE_DIR)' && autoreconf -fi
+
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gl \
