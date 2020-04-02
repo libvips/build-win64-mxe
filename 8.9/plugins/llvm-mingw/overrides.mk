@@ -15,10 +15,10 @@ rust_BUILD_aarch64-w64-mingw32 =
 gcc_BUILD_armv7-w64-mingw32   =
 gcc_BUILD_aarch64-w64-mingw32 =
 
-# Update MinGW-w64 to 823bc20
-# https://github.com/mirror/mingw-w64/commit/823bc20b3c9aea724acbd60400a923c35757b08c
-mingw-w64_VERSION  := 823bc20
-mingw-w64_CHECKSUM := 8109b0ca197e27fe9801389e48feeb95386548b7d81f4ca1e2d9cba00c7b6e8c
+# Update MinGW-w64 to 0d54333
+# https://github.com/mirror/mingw-w64/commit/0d543332e3153cf32986f7274f819022eceac6ff
+mingw-w64_VERSION  := 0d54333
+mingw-w64_CHECKSUM := a28923ac3a432ccc91c36833174ae36aaaa958860286b145c346288fc7a3f3d5
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mirror-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-$(mingw-w64_VERSION).tar.gz

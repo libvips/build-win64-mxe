@@ -9,10 +9,9 @@ RUN apt-get update \
     # needed when building libvips from git
     gobject-introspection gtk-doc-tools \
     # needed for Meson
-    ninja-build python3-pip
-
-# Install Meson
-RUN pip3 install meson
+    ninja-build python3-pip \
+  # install Meson
+  && pip3 install meson
 
 # TODO: This patch needs to be incorporated upstream
 RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
