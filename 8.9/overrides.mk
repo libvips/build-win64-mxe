@@ -106,14 +106,14 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.10-92
-imagemagick_CHECKSUM := 170cff8a401e958692513d19290b12bb63a7af48d19a2f7640fbfe7dede60f3a
+imagemagick_VERSION  := 6.9.11-6
+imagemagick_CHECKSUM := 6ba3248c43a7b5391a6638c7fbe08de2032db78458e58ee7f770efbe36c23ddd
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.4
-x265_VERSION  := 3.2.1
-x265_CHECKSUM := fb9badcf92364fd3567f8b5aa0e5e952aeea7a39a2b864387cec31e3b58cbbcc
+x265_VERSION  := 3.3
+x265_CHECKSUM := f26e148ed1f4dfb33fd1eb3ff5e60e08078d1b2017e88bcbb045b3fb58300b9c
 x265_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
 x265_SUBDIR   := x265_$(x265_VERSION)
 x265_FILE     := x265_$(x265_VERSION).tar.gz
@@ -121,8 +121,8 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.48.1
-librsvg_CHECKSUM := 91d7630cffbbe006c989ca575b404257abc2a4a636f0571ffb4607d69fd58f3a
+librsvg_VERSION  := 2.48.4
+librsvg_CHECKSUM := 28b63af85ced557383d3d3ece6e1f6938720dee1ecfa40d926bf1de4747c956e
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -155,8 +155,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.64.1
-glib_CHECKSUM := 17967603bcb44b6dbaac47988d80c29a3d28519210b28157c2bd10997595bbc7
+glib_VERSION  := 2.64.2
+glib_CHECKSUM := 9a2f21ed8f13b9303399de13a0252b7cbcede593d26971378ec6cb90e87f2277
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -208,8 +208,8 @@ cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsi
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
 # upstream version is 0.33.6
-pixman_VERSION  := 0.38.4
-pixman_CHECKSUM := da66d6fd6e40aee70f7bd02e4f8f76fc3f006ec879d346bae6a723025cfbdde7
+pixman_VERSION  := 0.40.0
+pixman_CHECKSUM := 6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc
 pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pixman-[0-9]*.patch)))
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
