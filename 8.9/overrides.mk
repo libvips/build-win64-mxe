@@ -10,8 +10,8 @@ mingw-w64-headers_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw'
 common_CONFIGURE_OPTS=--prefix='$(PREFIX)/$(TARGET)/mingw' \
 --with-sysroot='$(PREFIX)/$(TARGET)/mingw' \
 CPPFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include' \
-CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include' \
-CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include' \
+CFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -O3' \
+CXXFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include -s -O3' \
 LDFLAGS='-L$(PREFIX)/$(TARGET)/mingw/lib' \
 RCFLAGS='-I$(PREFIX)/$(TARGET)/mingw/include'
 
@@ -49,17 +49,31 @@ define gcc_BUILD_i686-w64-mingw32
 endef
 
 define llvm-mingw_BUILD_x86_64-w64-mingw32
-    $(subst # install the usual wrappers, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
-    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib' && \
-    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include', \
-    $(subst @mingw-crt-config-opts@,--disable-lib32 --enable-lib64 $(common_CONFIGURE_OPTS), $(llvm-mingw_BUILD_mingw-w64)))
+    $(subst @mingw-crt-config-opts@,--disable-lib32 --enable-lib64 $(common_CONFIGURE_OPTS),$(llvm-mingw_BUILD_mingw-w64))
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/bin/'* '$(PREFIX)/$(TARGET)/bin'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include'
 endef
 
 define llvm-mingw_BUILD_i686-w64-mingw32
-    $(subst # install the usual wrappers, ln -sf $(PREFIX)/$(TARGET)/mingw/bin/* $(PREFIX)/$(TARGET)/bin && \
-    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib' && \
-    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include', \
-    $(subst @mingw-crt-config-opts@,--enable-lib32 --disable-lib64 $(common_CONFIGURE_OPTS), $(llvm-mingw_BUILD_mingw-w64)))
+    $(subst @mingw-crt-config-opts@,--enable-lib32 --disable-lib64 $(common_CONFIGURE_OPTS),$(llvm-mingw_BUILD_mingw-w64))
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/bin/'* '$(PREFIX)/$(TARGET)/bin'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include'
+endef
+
+define llvm-mingw_BUILD_armv7-w64-mingw32
+    $(subst @mingw-crt-config-opts@,--disable-lib32 --disable-lib64 --enable-libarm32 $(common_CONFIGURE_OPTS),$(llvm-mingw_BUILD_mingw-w64))
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/bin/'* '$(PREFIX)/$(TARGET)/bin'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include'
+endef
+
+define llvm-mingw_BUILD_aarch64-w64-mingw32
+    $(subst @mingw-crt-config-opts@,--disable-lib32 --disable-lib64 --enable-libarm64 $(common_CONFIGURE_OPTS),$(llvm-mingw_BUILD_mingw-w64))
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/bin/'* '$(PREFIX)/$(TARGET)/bin'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/lib/'* '$(PREFIX)/$(TARGET)/lib'
+    ln -sf '$(PREFIX)/$(TARGET)/mingw/include/'* '$(PREFIX)/$(TARGET)/include'
 endef
 
 ## Update dependencies
@@ -262,7 +276,7 @@ zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 #  Added: mingw-std-threads, libjpeg-turbo, lcms
 # librsvg:
 #  Removed: libcroco, libgsf
-#  Added: libxml2
+#  Added: libxml2, rust
 # libwebp:
 #  Added: gettext
 # Cairo:
@@ -286,13 +300,27 @@ openexr_DEPS            := cc ilmbase zlib $(BUILD)~cmake
 ilmbase_DEPS            := cc $(BUILD)~cmake
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc mingw-std-threads cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
-librsvg_DEPS            := cc cairo gdk-pixbuf glib pango libxml2
+librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust
 libwebp_DEPS            := $(libwebp_DEPS) gettext
 cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
-hdf5_DEPS               := cc zlib $(BUILD)~cmake
-x265_DEPS               := cc $(BUILD)~nasm
+hdf5_DEPS               := $(filter-out pthreads ,$(hdf5_DEPS)) $(BUILD)~cmake
+x265_DEPS               := $(subst yasm,$(BUILD)~nasm,$(x265_DEPS))
 
 ## Override build scripts
+
+# libasprintf isn't needed, so build with --disable-libasprintf
+define gettext_BUILD
+    cd '$(SOURCE_DIR)' && autoreconf -fi
+    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/gettext-runtime/configure' \
+        $(MXE_CONFIGURE_OPTS) \
+        --enable-threads=win32 \
+        --without-libexpat-prefix \
+        --without-libxml2-prefix \
+        --disable-libasprintf \
+        CONFIG_SHELL=$(SHELL)
+    $(MAKE) -C '$(BUILD_DIR)/intl' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)/intl' -j 1 install
+endef
 
 # disable version script on llvm-mingw
 # make the raw api unavailable when building a statically linked binary
@@ -302,10 +330,15 @@ define libffi_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --disable-multi-os-directory \
         $(if $(BUILD_STATIC), --disable-raw-api) \
-        $(if $(findstring posix,$(TARGET)), --disable-symvers)
+        $(if $(IS_LLVM), --disable-symvers)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+
+    '$(TARGET)-gcc' \
+        -W -Wall -Werror -std=c99 -pedantic \
+        '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-libffi.exe' \
+        `'$(TARGET)-pkg-config' libffi --cflags --libs`
 endef
 
 # icu will pull in standard linux headers, which we don't want,
@@ -435,23 +468,14 @@ define lcms_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
 
-define imagemagick_REVISION
-    $(SED) -n 's/MAGICK_GIT_REVISION=\(.*\)/\1/p' $(SOURCE_DIR)/configure
-endef
-
 # disable largefile support, we rely on vips for that and ImageMagick's
 # detection does not work when cross-compiling
 # build with jpeg-turbo and without lzma
 # disable POSIX threads with --without-threads, use Win32 threads instead
 # exclude deprecated methods in MagickCore API
 define imagemagick_BUILD
-    $(SED) -i "s|\(\[MAGICK_GIT_REVISION\],\).*\]|\1['$(shell $(imagemagick_REVISION))']|" $(SOURCE_DIR)/configure.ac
-
     # avoid linking against -lgdi32, see: https://github.com/kleisauke/net-vips/issues/61
-    $(SED) -i 's,-lgdi32,,g' $(SOURCE_DIR)/configure.ac
-
-    # need to regenerate the configure script
-    cd '$(SOURCE_DIR)' && autoreconf -fi
+    $(SED) -i 's,-lgdi32,,g' $(SOURCE_DIR)/configure
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
@@ -514,13 +538,25 @@ endef
 
 # compile with the Rust toolchain
 define librsvg_BUILD
+    # We need to explicitly link against msvcrt-os after commit ae95d7c
+    # on the mingw-w64 repo. Otherwise the __ms_vsnprintf symbol is
+    # undefined during linking. The standard library of Rust appears
+    # to link against this symbol by default.
+    # Note: this can probably be removed when the standard library of
+    # Rust is build with the latest mingw-w64 version (> v7.0.0).
+    $(if $(IS_LLVM), \
+        $(SED) -i 's/^\(Libs:.*\)/\1 -lmsvcrt-os/' '$(SOURCE_DIR)/librsvg.pc.in')
+
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-gtk-doc \
         --disable-introspection \
         --disable-tools \
-        RUST_TARGET=$(firstword $(subst -, ,$(TARGET)))-pc-windows-gnu
+        RUST_TARGET='$(PROCESSOR)-pc-windows-gnu' \
+        CARGO='$(TARGET)-cargo' \
+        RUSTC='$(TARGET)-rustc' \
+        $(if $(IS_LLVM), LIBS='-lmsvcrt-os -lucrt')
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
@@ -685,7 +721,7 @@ define libxml2_BUILD
         --without-debug \
         --without-python \
         --without-threads \
-        $(if $(findstring posix,$(TARGET)), --disable-ld-version-script)
+        $(if $(IS_LLVM), --disable-ld-version-script)
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
     ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
@@ -827,7 +863,7 @@ define hdf5_BUILD
         -DH5_LLONG_TO_LDOUBLE_CORRECT=ON \
         -DH5_DISABLE_SOME_LDOUBLE_CONV=OFF \
         -DH5_NO_ALIGNMENT_RESTRICTIONS=ON \
-        -DH5_HAVE_IOEO=$(if $(findstring posix,$(TARGET)),1,0) \
+        -DH5_HAVE_IOEO=$(if $(IS_LLVM),1,0) \
         -DTEST_LFS_WORKS_RUN=0 \
         -DHDF5_ENABLE_THREADSAFE=ON \
         -DHDF5_USE_PREGEN=ON \

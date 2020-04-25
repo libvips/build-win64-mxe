@@ -39,6 +39,11 @@ if [[ "$*" == *--with-llvm* ]]; then
   # threading API.
   threads="posix"
   with_llvm=true
+elif [ "$arch" = "aarch64" ] || [ "$arch" = "armv7" ]; then
+  # Force the LLVM toolchain for the ARM/ARM64 targets,
+  # GCC does not support Windows on ARM.
+  threads="posix"
+  with_llvm=true
 else
   # Use native Win32 threading functions when compiling with
   # GCC because POSIX threads functionality is significantly
@@ -59,12 +64,11 @@ if ! type docker > /dev/null; then
   exit 1
 fi
 
-# Ensure latest Debian stable base image, inherit from 
-# the Rust toolchain because librsvg needs it.
-docker pull rust:buster
+# Ensure latest Debian stable base image.
+docker pull buildpack-deps:buster
 
 # Create a machine image with all the required build tools pre-installed.
-docker build --build-arg ARCH=$arch -t libvips-build-win-mxe container
+docker build -t libvips-build-win-mxe container
 
 # Run build scripts inside container
 # - inheriting the current uid and gid

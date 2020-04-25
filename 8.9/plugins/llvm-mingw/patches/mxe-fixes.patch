@@ -1,0 +1,108 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 14 Feb 2020 15:20:00 +0100
+Subject: [PATCH 1/1] Add support for targeting ARM/ARM64
+
+See: mxe/mxe#2330
+
+diff --git a/Makefile b/Makefile
+index 1111111..2222222 100644
+--- a/Makefile
++++ b/Makefile
+@@ -8,7 +8,8 @@ EXT_DIR  := $(TOP_DIR)/ext
+ # See docs/gmsl.html for further information
+ include $(EXT_DIR)/gmsl
+ 
+-MXE_TRIPLETS       := i686-w64-mingw32 x86_64-w64-mingw32
++MXE_TRIPLETS       := i686-w64-mingw32 x86_64-w64-mingw32 \
++                      armv7-w64-mingw32 aarch64-w64-mingw32
+ MXE_LIB_TYPES      := static shared
+ MXE_TARGET_LIST    := $(strip $(foreach TRIPLET,$(MXE_TRIPLETS),\
+                           $(addprefix $(TRIPLET).,$(MXE_LIB_TYPES))))
+@@ -774,8 +775,10 @@ build-only-$(1)_$(3): BUILD_$(if $(findstring shared,$(3)),SHARED,STATIC) = TRUE
+ build-only-$(1)_$(3): BUILD_$(if $(call seq,$(TARGET),$(BUILD)),NATIVE,CROSS) = TRUE
+ build-only-$(1)_$(3): $(if $(findstring win32,$(TARGET)),WIN32,POSIX)_THREADS = TRUE
+ build-only-$(1)_$(3): LIB_SUFFIX = $(if $(findstring shared,$(3)),dll,a)
+-build-only-$(1)_$(3): BITS = $(if $(findstring x86_64,$(3)),64,32)
++build-only-$(1)_$(3): BITS = $(if $(or $(findstring x86_64,$(3)),$(findstring aarch64,$(3))),64,32)
+ build-only-$(1)_$(3): PROCESSOR = $(firstword $(call split,-,$(3)))
++build-only-$(1)_$(3): IS_X86 = $(or $(findstring x86_64,$(3)),$(findstring i686,$(3)))
++build-only-$(1)_$(3): IS_ARM = $(or $(findstring armv7,$(3)),$(findstring aarch64,$(3)))
+ build-only-$(1)_$(3): BUILD_TYPE = $(if $(findstring debug,$(3) $($(1)_CONFIGURE_OPTS)),debug,release)
+ build-only-$(1)_$(3): BUILD_TYPE_SUFFIX = $(if $(findstring debug,$(3) $($(1)_CONFIGURE_OPTS)),d)
+ build-only-$(1)_$(3): INSTALL_STRIP_TOOLCHAIN = install$(if $(STRIP_TOOLCHAIN),-strip)
+diff --git a/plugins/meson-wrapper/meson-wrapper.mk b/plugins/meson-wrapper/meson-wrapper.mk
+index 1111111..2222222 100644
+--- a/plugins/meson-wrapper/meson-wrapper.mk
++++ b/plugins/meson-wrapper/meson-wrapper.mk
+@@ -16,11 +16,10 @@ define $(PKG)_BUILD
+         -DTARGET=$(TARGET) \
+         -DBUILD=$(BUILD) \
+         -DCPU_FAMILY=$(strip \
+-             $(if $(findstring x86_64,$(TARGET)),x86_64,\
+-             $(if $(findstring i686,$(TARGET)),x86))) \
+-        -DCPU=$(strip \
+-             $(if $(findstring x86_64,$(TARGET)),x86_64,\
+-             $(if $(findstring i686,$(TARGET)),i686))) \
++            $(if $(findstring armv7,$(PROCESSOR)),arm, \
++            $(if $(findstring i686,$(PROCESSOR)),x86, \
++            $(PROCESSOR)))) \
++        -DCPU=$(PROCESSOR) \
+         -DINPUT='$(PWD)/plugins/meson-wrapper/conf/mxe-crossfile.meson.in' \
+         -DOUTPUT='$(PREFIX)/$(TARGET)/share/meson/mxe-crossfile.meson'
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 3 Mar 2020 15:00:00 +0100
+Subject: [PATCH 2/2] Update libffi test
+
+See:
+http://www.chiark.greenend.org.uk/doc/libffi-dev/html/Simple-Example.html#Simple-Example
+
+diff --git a/src/libffi-test.c b/src/libffi-test.c
+index 1111111..2222222 100644
+--- a/src/libffi-test.c
++++ b/src/libffi-test.c
+@@ -5,26 +5,30 @@
+ #include <stdio.h>
+ #include <ffi.h>
+ 
+-int main(int argc, char *argv[])
++int main()
+ {
+     ffi_cif cif;
+     ffi_type *args[1];
+     void *values[1];
+     char *s;
+-    int rc;
+-
+-    (void)argc;
+-    (void)argv;
++    ffi_arg rc;
+ 
++    /* Initialize the argument info vectors */    
+     args[0] = &ffi_type_pointer;
+     values[0] = &s;
+ 
+-    if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
+-                           &ffi_type_uint, args) == FFI_OK)
++    /* Initialize the cif */
++    if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1, 
++                           &ffi_type_sint, args) == FFI_OK)
+     {
+         s = "Hello World!";
+         ffi_call(&cif, FFI_FN(puts), &rc, values);
+-        s = "Goodbye!";
++        /* rc now holds the result of the call to puts */
++
++        /* values holds a pointer to the function's arg, so to 
++           call puts() again all we need to do is change the 
++           value of s */
++        s = "This is cool!";
+         ffi_call(&cif, FFI_FN(puts), &rc, values);
+     }
+ 

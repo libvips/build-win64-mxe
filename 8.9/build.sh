@@ -22,12 +22,14 @@ target="${2:-x86_64-w64-mingw32.shared.win32}"
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
 revision="169c1da1e70307258cf763cd41f50a18071587c2"
+initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
   echo "Skip cloning, MXE already exists at $mxe_dir"
   cd $mxe_dir && git fetch
 else
   git clone https://github.com/mxe/mxe && cd $mxe_dir
+  initialize=true
 fi
 
 curr_revision=$(git rev-parse HEAD)
@@ -35,6 +37,12 @@ curr_revision=$(git rev-parse HEAD)
 # Is our branch up-to-date?
 if [ ! "$curr_revision" = "$revision" ]; then
   git pull && git reset --hard $revision
+  initialize=true
+fi
+
+if [ "$initialize" = true ] ; then
+  # Patch MXE to support the ARM/ARM64 targets
+  git apply $work_dir/plugins/llvm-mingw/patches/mxe-fixes.patch
 fi
 
 # The 'plugins' variable controls which plugins are in use.
@@ -74,6 +82,13 @@ make pe-util \
 make meson-wrapper gendef vips-$deps \
   MXE_PLUGIN_DIRS="$plugins" \
   MXE_TARGETS=$target.$deps
+
+# Build and bundle llvm-mingw tests
+if [ "$LLVM" = "true" ]; then
+  make test-llvm-mingw \
+    MXE_PLUGIN_DIRS="$plugins" \
+    MXE_TARGETS=$target.$deps
+fi
 
 cd $work_dir
 

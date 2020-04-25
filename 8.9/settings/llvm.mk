@@ -13,18 +13,12 @@
 # (see: https://github.com/mstorsjo/llvm-mingw/blob/master/README.md#pdb-support)
 
 # Special flags for compiler.
-export CFLAGS   := -s -O3 -ffast-math
-export CXXFLAGS := -s -O3 -ffast-math
+export CFLAGS   := -s -O3
+export CXXFLAGS := -s -O3
 export LDFLAGS  := -Wl,-s
 
-# Environment variables needed by Rust.
-#export RUSTUP_HOME := /home/kleisauke/.rustup
-#export CARGO_HOME  := /home/kleisauke/.cargo
-#export PATH        := /home/kleisauke/.cargo/bin:$(PATH)
-export RUSTUP_HOME := /usr/local/rustup
-export RUSTFLAGS   := -C opt-level=s -C lto=on -C codegen-units=1 -C incremental=false -C panic=abort
-export CARGO_HOME  := /usr/local/cargo
-export PATH        := /usr/local/cargo/bin:$(PATH)
+# Special flags for Rust.
+export RUSTFLAGS := -Copt-level=s -Clto=on -Ccodegen-units=1 -Cincremental=false -Cpanic=abort
 
 # We don't need debugging symbols.
 # For e.g. this commit:
@@ -32,5 +26,5 @@ export PATH        := /usr/local/cargo/bin:$(PATH)
 # adds ~26 MB to the librsvg DLL if we don't install-strip it.
 STRIP_LIB := $(true)
 
-# Disable ccache, it won't work with llvm-mingw
+# Disable ccache
 MXE_USE_CCACHE := $(false)

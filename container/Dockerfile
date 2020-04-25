@@ -1,5 +1,4 @@
-# Rust toolchain is needed for librsvg
-FROM rust:buster
+FROM buildpack-deps:buster
 
 RUN apt-get update \
   && apt-get install -y \
@@ -10,19 +9,17 @@ RUN apt-get update \
     # needed when building libvips from git
     gobject-introspection gtk-doc-tools \
     # needed for Meson
-    ninja-build python3-pip
-
-# Install Ninja and Meson
-RUN pip3 install meson
+    ninja-build python3-pip \
+  # install Meson
+  && pip3 install meson
 
 # TODO: This patch needs to be incorporated upstream
 RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
   && curl -L https://gist.github.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/31a930cc40fd17b7a69fb551668d7205313aee55/meson-llvm-mingw.patch | git apply -v
 
-ARG ARCH=x86_64
-
-# Add Windows target for cross-compilation
-RUN rustup target add $ARCH-pc-windows-gnu
+# gas-preprocessor.pl is required for the ARM/ARM64 builds of libjpeg-turbo
+RUN curl -L https://github.com/libav/gas-preprocessor/raw/master/gas-preprocessor.pl -o /usr/bin/gas-preprocessor.pl \
+  && chmod +x /usr/bin/gas-preprocessor.pl
 
 # The versioned build dir is mounted at /data, so this runs the build script
 # in that
