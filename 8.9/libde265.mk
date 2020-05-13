@@ -9,11 +9,11 @@ $(PKG)_GH_CONF  := strukturag/libde265/releases,v
 $(PKG)_DEPS     := cc mingw-std-threads
 
 define $(PKG)_BUILD
-    $(if $(findstring win32,$(TARGET)),\
+    $(if $(WIN32_THREADS),\
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(libde265_PATCHES))))/libde265-mingw-std-threads.patch)
 
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
-        $(if $(findstring win32,$(TARGET)), \
+        $(if $(WIN32_THREADS),\
             -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads') \
         -DDISABLE_SIMD=OFF
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'

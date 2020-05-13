@@ -15,13 +15,13 @@ rust_BUILD_aarch64-w64-mingw32 =
 gcc_BUILD_armv7-w64-mingw32   =
 gcc_BUILD_aarch64-w64-mingw32 =
 
-# Update MinGW-w64 to df36f5d
-# https://github.com/mirror/mingw-w64/commit/df36f5deda23192d0ee99ffd661ea36df924e667
-mingw-w64_VERSION  := df36f5d
-mingw-w64_CHECKSUM := 15c40d0d22b7dc813b5f0efd0969dc1b3aab708554cd3a45b834e3029c8ce2d0
+# Update MinGW-w64 to 04eb1d4
+# https://github.com/mirror/mingw-w64/commit/04eb1d4f49830904e200299a04d52b0d1d6c60d2
+mingw-w64_VERSION  := 04eb1d4
+mingw-w64_CHECKSUM := cf4ada671217c87ca6ca63943621dfdc81b8505472e69d49308a0bd1a171acd4
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mirror-mingw-w64-$(mingw-w64_VERSION)
-mingw-w64_FILE     := mingw-w64-$(mingw-w64_VERSION).tar.gz
+mingw-w64_FILE     := mirror-mingw-w64-$(mingw-w64_VERSION).tar.gz
 mingw-w64_URL      := https://github.com/mirror/mingw-w64/tarball/$(mingw-w64_VERSION)/$($(PKG)_FILE)
 
 # Do not build pthreads

@@ -2,7 +2,7 @@
 # available CPU cores. This variable can limit this.
 #DEFAULT_MAX_JOBS := 4
 
-# Turn on debugging (see also mxe-crossfile.meson.in)
+# Turn on debugging
 #export CFLAGS   := -g
 #export CXXFLAGS := -g
 # Clang produces debug info in DWARF format by default.

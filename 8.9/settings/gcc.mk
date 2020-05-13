@@ -2,16 +2,16 @@
 # available CPU cores. This variable can limit this.
 #DEFAULT_MAX_JOBS := 4
 
-# Turn on debugging (see also mxe-crossfile.meson.in)
+# Turn on debugging
 #export CFLAGS   := -g
 #export CXXFLAGS := -g
 # GCC doesn't support generating debug info in the PDB format,
 # use https://github.com/rainers/cv2pdb as workaround.
 
 # Special flags for compiler.
-export CFLAGS   := -s -O3 -fdata-sections -ffunction-sections -fPIC
-export CXXFLAGS := -s -O3 -fdata-sections -ffunction-sections -fPIC
-export LDFLAGS  := -Wl,--gc-sections -Wl,--strip-all -Wl,--as-needed
+export CFLAGS   := -s -O3 -fPIC
+export CXXFLAGS := -s -O3 -fPIC
+export LDFLAGS  := -Wl,-s -Wl,--as-needed
 
 # Special flags for Rust.
 export RUSTFLAGS := -Copt-level=s -Clto=on -Ccodegen-units=1 -Cincremental=false -Cpanic=abort

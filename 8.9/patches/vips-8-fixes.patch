@@ -1,0 +1,31 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: John Cupitt <jcupitt@gmail.com>
+Date: Fri, 13 Mar 2020 16:44:57 +0000
+Subject: [PATCH 1/1] hist_local was missing a seq hint
+
+
+diff --git a/libvips/histogram/hist_local.c b/libvips/histogram/hist_local.c
+index 1111111..2222222 100644
+--- a/libvips/histogram/hist_local.c
++++ b/libvips/histogram/hist_local.c
+@@ -346,6 +346,7 @@ vips_hist_local_class_init( VipsHistLocalClass *class )
+ {
+ 	GObjectClass *gobject_class = G_OBJECT_CLASS( class );
+ 	VipsObjectClass *object_class = (VipsObjectClass *) class;
++	VipsOperationClass *operation_class = VIPS_OPERATION_CLASS( class );
+ 
+ 	gobject_class->set_property = vips_object_set_property;
+ 	gobject_class->get_property = vips_object_get_property;
+@@ -354,6 +355,8 @@ vips_hist_local_class_init( VipsHistLocalClass *class )
+ 	object_class->description = _( "local histogram equalisation" );
+ 	object_class->build = vips_hist_local_build;
+ 
++	operation_class->flags = VIPS_OPERATION_SEQUENTIAL;
++
+ 	VIPS_ARG_IMAGE( class, "in", 1, 
+ 		_( "Input" ), 
+ 		_( "Input image" ),

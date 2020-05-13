@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 18 Apr 2019 16:00:00 +0200
-Subject: [PATCH 1/1] Fix symbol visibility with MinGW-w64 / static library
+Subject: [PATCH 1/2] Fix symbol visibility with MinGW-w64 / static library
 
 
 diff --git a/meson.build b/meson.build
@@ -68,3 +68,40 @@ index 1111111..2222222 100644
  #define ORC_API_IMPORT __declspec(dllimport) extern
  #else
  #define ORC_API_IMPORT extern
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 13 May 2020 13:30:16 +0200
+Subject: [PATCH 2/2] Don't misdetect posix_memalign on windows platforms on gcc
+
+See https://github.com/mesonbuild/meson/issues/3672 and
+https://github.com/mesonbuild/meson/issues/5628 for explanations
+of cases where meson misdetects functions due to gcc builtins (that
+always are available, regardless of whether the platform actually
+provides them).
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -124,7 +124,19 @@ int main() {
+ '''
+ cdata.set('HAVE_MONOTONIC_CLOCK', cc.compiles(monotonic_test))
+ cdata.set('HAVE_GETTIMEOFDAY', cc.has_function('gettimeofday'))
+-cdata.set('HAVE_POSIX_MEMALIGN', cc.has_function('posix_memalign', prefix : '#include <stdlib.h>'))
++
++# Check that posix_memalign() is usable; must use header.
++# cc.has_function() in some cases (clang, gcc 10+) assumes that if the
++# compiler provides a builtin of the same name that the function exists, while
++# it's in fact not provided by any header or library. This is true for
++# posix_memalign() on Windows using gcc as well as stpcpy() using clang
++# on Windows. Skip these checks on Windows for now to avoid false positives.
++# See https://github.com/mesonbuild/meson/pull/7116,
++# https://github.com/mesonbuild/meson/issues/3672 and
++# https://github.com/mesonbuild/meson/issues/5628.
++# FIXME: Once meson no longer returns success for posix_memalign()
++# on Windows using GCC we can remove this.
++cdata.set('HAVE_POSIX_MEMALIGN', host_os != 'windows' and cc.has_function('posix_memalign', prefix : '#include <stdlib.h>'))
+ cdata.set('HAVE_MMAP', cc.has_function('mmap'))
+ 
+ cdata.set('HAVE_SYS_TIME_H', cc.has_header('sys/time.h'))
