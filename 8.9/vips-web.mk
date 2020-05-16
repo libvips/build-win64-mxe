@@ -25,7 +25,6 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "freetype": "$(freetype_VERSION)",\n'; \
      printf '  "fribidi": "$(fribidi_VERSION)",\n'; \
      printf '  "gdkpixbuf": "$(gdk-pixbuf_VERSION)",\n'; \
-     printf '  "gettext": "$(gettext_VERSION)",\n'; \
      printf '  "gif": "$(giflib_VERSION)",\n'; \
      printf '  "glib": "$(glib_VERSION)",\n'; \
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \

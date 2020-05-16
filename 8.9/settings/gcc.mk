@@ -11,7 +11,7 @@
 # Special flags for compiler.
 export CFLAGS   := -s -O3 -fPIC
 export CXXFLAGS := -s -O3 -fPIC
-export LDFLAGS  := -Wl,-s -Wl,--as-needed
+export LDFLAGS  := -Wl,-s
 
 # Special flags for Rust.
 export RUSTFLAGS := -Copt-level=s -Clto=on -Ccodegen-units=1 -Cincremental=false -Cpanic=abort

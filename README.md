@@ -11,7 +11,6 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [freetype]      | 2.10.1    | [freetype Licence] (BSD-like)   |
 | [fribidi]       | 1.0.9     | LGPLv3                          |
 | [gdk-pixbuf]    | 2.40.0    | LGPLv3                          |
-| [gettext]       | 0.20.2    | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
 | [glib]          | 2.64.2    | LGPLv3                          |
 | [harfbuzz]      | 2.6.5     | MIT Licence                     |

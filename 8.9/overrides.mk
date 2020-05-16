@@ -177,7 +177,7 @@ fftw_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
-zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
+zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
 ## Override sub-dependencies
 # HarfBuzz:
@@ -207,11 +207,11 @@ zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 # Pango:
 #  Added: fribidi
 # Poppler:
-#  Removed: curl, qtbase, libwebp
 #  Added: mingw-std-threads, libjpeg-turbo, lcms
+#  Removed: curl, qtbase, libwebp
 # librsvg:
-#  Removed: libcroco, libgsf
 #  Added: libxml2, rust
+#  Removed: libcroco, libgsf
 # Cairo:
 #  Removed: lzo zlib
 # hdf5:
@@ -223,6 +223,8 @@ zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 #  Replaced: yasm with $(BUILD)~nasm
 # libxml2:
 #  Removed: xz
+# Fontconfig:
+#  Removed: gettext
 
 harfbuzz_DEPS           := $(filter-out icu4c,$(harfbuzz_DEPS))
 libgsf_DEPS             := $(filter-out bzip2 ,$(libgsf_DEPS))
@@ -242,6 +244,7 @@ hdf5_DEPS               := $(filter-out pthreads ,$(hdf5_DEPS)) $(BUILD)~cmake
 x265_DEPS               := $(subst yasm,$(BUILD)~nasm,$(x265_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
 libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
+fontconfig_DEPS         := $(filter-out  gettext,$(fontconfig_DEPS))
 
 ## Override build scripts
 
@@ -298,14 +301,20 @@ define gcc_BUILD_mingw-w64
 endef
 
 # libasprintf isn't needed, so build with --disable-libasprintf
+# this definition is for reference purposes only, we use the
+# proxy-libintl plugin instead.
 define gettext_BUILD
     cd '$(SOURCE_DIR)' && autoreconf -fi
     cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/gettext-runtime/configure' \
         $(MXE_CONFIGURE_OPTS) \
+        --disable-java \
+        --disable-native-java \
+        --disable-csharp \
         --enable-threads=win32 \
         --without-libexpat-prefix \
         --without-libxml2-prefix \
         --disable-libasprintf \
+        --disable-nls \
         CONFIG_SHELL=$(SHELL)
     $(MAKE) -C '$(BUILD_DIR)/intl' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)/intl' -j 1 install
@@ -382,12 +391,13 @@ define libgsf_BUILD
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
-        --disable-nls \
         --without-gdk-pixbuf \
-        --disable-gtk-doc \
         --without-python \
         --without-bz2 \
         --with-zlib \
+        --disable-nls \
+        --without-libiconv-prefix \
+        --without-libintl-prefix \
         PKG_CONFIG='$(PREFIX)/bin/$(TARGET)-pkg-config'
     $(MAKE) -C '$(BUILD_DIR)'     -j '$(JOBS)' install-pkgconfigDATA $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)/gsf' -j 1 install $(MXE_DISABLE_PROGRAMS)
@@ -406,6 +416,9 @@ define gdk-pixbuf_BUILD
         -Dbuiltin_loaders='jpeg,png,tiff' \
         -Dgir=false \
         -Dx11=false \
+        $(if $(IS_INTL_DUMMY), \
+            -Dc_args='-DG_INTL_STATIC_COMPILATION' \
+            -Dc_link_args='-lintl') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -537,13 +550,18 @@ define librsvg_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
-        --disable-gtk-doc \
         --disable-introspection \
         --disable-tools \
         --disable-nls \
+        --without-libiconv-prefix \
+        --without-libintl-prefix \
         RUST_TARGET='$(PROCESSOR)-pc-windows-gnu' \
         CARGO='$(TARGET)-cargo' \
-        RUSTC='$(TARGET)-rustc'
+        RUSTC='$(TARGET)-rustc' \
+        $(if $(IS_INTL_DUMMY), \
+            LIBS="-lintl" \
+            CFLAGS="$(CFLAGS) -DG_INTL_STATIC_COMPILATION" \
+            lt_cv_deplibs_check_method="pass_all")
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
@@ -626,6 +644,7 @@ define libwebp_BUILD
         --disable-jpeg \
         --disable-tiff \
         --disable-gif \
+        --disable-nls \
         --enable-libwebpmux \
         --enable-libwebpdemux
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
@@ -648,8 +667,6 @@ define cairo_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gl \
-        --disable-lto \
-        --disable-gtk-doc \
         --disable-test-surfaces \
         --disable-gcov \
         --disable-xlib \
@@ -704,6 +721,7 @@ define libxml2_BUILD
         --with-zlib='$(PREFIX)/$(TARGET)/lib' \
         --without-lzma \
         --without-debug \
+        --without-iconv \
         --without-python \
         --without-threads \
         $(if $(IS_LLVM), --disable-ld-version-script)
@@ -738,10 +756,15 @@ define glib_BUILD
         -Dforce_posix_threads=false \
         -Dinternal_pcre=true \
         -Diconv='external' \
+        $(if $(IS_INTL_DUMMY), -Dc_args='-DG_INTL_STATIC_COMPILATION') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
     ninja -C '$(BUILD_DIR)' install
+
+    # remove static dummy dependency from pc file
+    $(if $(IS_INTL_DUMMY), \
+        $(SED) -i '/^Libs:/s/\-lintl//g' '$(PREFIX)/$(TARGET)/lib/pkgconfig/glib-2.0.pc')
 endef
 
 # build with CMake.

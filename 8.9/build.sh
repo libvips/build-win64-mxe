@@ -66,6 +66,15 @@ if [ "$MOZJPEG" = "true" ]; then
   plugins+=" $work_dir/plugins/mozjpeg"
 fi
 
+# Avoid shipping the gettext DLL (libintl-8.dll),
+# use a statically build dummy implementation instead.
+# This intentionally disables the i18n features of (GNU)
+# gettext, which are probably not needed within Windows.
+# See:
+# https://github.com/frida/proxy-libintl
+# https://github.com/libvips/libvips/issues/1637
+plugins+=" $work_dir/plugins/proxy-libintl"
+
 # Build pe-util, handy for copying DLL dependencies.
 make pe-util \
   IGNORE_SETTINGS=yes \
