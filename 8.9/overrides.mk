@@ -43,8 +43,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.11-11
-imagemagick_CHECKSUM := 1fa7bacedb0f5ff69d874263803932f6aec962ff2552db60459dada59e4f1aaa
+imagemagick_VERSION  := 6.9.11-12
+imagemagick_CHECKSUM := c544fd280b9f7484669bd486c15589765fe29bb3a9d3d2c641e15aa06b2e1c04
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -118,8 +118,8 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 2.5.0
-openexr_CHECKSUM := ea1d786806045682461df1882dd36667d868bb7b41bb5307f8b87ff314328bcb
+openexr_VERSION  := 2.5.1
+openexr_CHECKSUM := 11f806bf256453e39fc33bd1cf1fa576a54f144cedcdd3e6935a177e5a89d02e
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -756,6 +756,7 @@ define glib_BUILD
         -Dforce_posix_threads=false \
         -Dinternal_pcre=true \
         -Diconv='external' \
+        -Dnls=disabled \
         $(if $(IS_INTL_DUMMY), -Dc_args='-DG_INTL_STATIC_COMPILATION') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
