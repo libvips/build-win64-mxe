@@ -10,7 +10,7 @@ $(PKG)_DEPS     :=
 
 
 define $(PKG)_BUILD
-    $(if $(findstring win32,$(TARGET)),\
+    $(if $(WIN32_THREADS),\
         $(INSTALL) -d '$(PREFIX)/$(TARGET)/include/$(PKG)'; \
         $(INSTALL) -m644 '$(SOURCE_DIR)/'*.h '$(PREFIX)/$(TARGET)/include/$(PKG)')
 endef

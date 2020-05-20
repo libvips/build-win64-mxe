@@ -31,7 +31,7 @@ define $(PKG)_BUILD
         '$(TARGET)-clang' \
             $(CFLAGS) \
             '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).c' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST).exe';)
-   
+
     $(foreach TEST, $($(PKG)_TESTS_C_DLL), \
         '$(TARGET)-clang' \
             $(CFLAGS) -shared \

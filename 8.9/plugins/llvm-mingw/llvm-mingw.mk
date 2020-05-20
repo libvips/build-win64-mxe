@@ -11,10 +11,15 @@ $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := llvm mingw-w64
 
-# Note that the minimum Windows version we support is Windows 7, as libc++ uses
+# The minimum Windows version we support is Windows 7, as libc++ uses
 # TryAcquireSRWLockExclusive which didn't exist until Windows 7. See:
 # https://github.com/mstorsjo/llvm-mingw/commit/dcf34a9a35ee3d490a85bdec02999cf96615d406
 # https://github.com/mstorsjo/llvm-mingw/blob/master/build-mingw-w64.sh#L5-L6
+# Install the headers in $(PREFIX)/$(TARGET)/mingw since
+# we need to distribute the /include and /lib directories
+# Note: Building with --with-default-msvcrt=ucrt breaks 
+# compatibility with the prebuilt Rust binaries that 
+# is built in msvcrt mode.
 define $(PKG)_BUILD_mingw-w64
     # install the usual wrappers
     $($(PKG)_PRE_BUILD)
@@ -24,9 +29,9 @@ define $(PKG)_BUILD_mingw-w64
     mkdir '$(BUILD_DIR).headers'
     cd '$(BUILD_DIR).headers' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-headers/configure' \
         --host='$(TARGET)' \
-        --prefix='$(PREFIX)/$(TARGET)' \
+        --prefix='$(PREFIX)/$(TARGET)/mingw' \
         --enable-idl \
-        --with-default-msvcrt=ucrt \
+        --with-default-msvcrt=msvcrt \
         --with-default-win32-winnt=0x601 \
         $(mingw-w64-headers_CONFIGURE_OPTS)
     $(MAKE) -C '$(BUILD_DIR).headers' install
@@ -35,8 +40,8 @@ define $(PKG)_BUILD_mingw-w64
     mkdir '$(BUILD_DIR).crt'
     cd '$(BUILD_DIR).crt' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-crt/configure' \
         --host='$(TARGET)' \
-        --prefix='$(PREFIX)/$(TARGET)' \
-        --with-default-msvcrt=ucrt \
+        --prefix='$(PREFIX)/$(TARGET)/mingw' \
+        --with-default-msvcrt=msvcrt \
         @mingw-crt-config-opts@
     $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).crt' -j 1 $(INSTALL_STRIP_TOOLCHAIN)

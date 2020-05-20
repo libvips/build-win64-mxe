@@ -8,18 +8,16 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [cairo]         | 1.17.2    | Mozilla Public License 2.0      |
 | [expat]         | 2.2.9     | MIT Licence                     |
 | [fontconfig]    | 2.13.92   | [fontconfig Licence] (BSD-like) |
-| [freetype]      | 2.10.1    | [freetype Licence] (BSD-like)   |
+| [freetype]      | 2.10.2    | [freetype Licence] (BSD-like)   |
 | [fribidi]       | 1.0.9     | LGPLv3                          |
 | [gdk-pixbuf]    | 2.40.0    | LGPLv3                          |
-| [gettext]       | 0.20.2    | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
 | [glib]          | 2.64.2    | LGPLv3                          |
-| [harfbuzz]      | 2.6.5     | MIT Licence                     |
+| [harfbuzz]      | 2.6.6     | MIT Licence                     |
 | [lcms]          | 2.9       | MIT Licence                     |
-| [libexif]       | 0.6.21    | LGPLv3                          |
+| [libexif]       | 0.6.22    | LGPLv3                          |
 | [libffi]        | 3.3       | MIT Licence                     |
 | [libgsf]        | 1.14.47   | LGPLv3                          |
-| [libiconv]      | 1.16      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.4     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
 | [librsvg]       | 2.48.4    | LGPLv3                          |
@@ -40,7 +38,6 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 [freetype Licence]: https://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/FTL.TXT
 [fribidi]: https://github.com/fribidi/fribidi
 [gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
-[gettext]: https://git.savannah.gnu.org/cgit/gettext.git
 [giflib]: https://sourceforge.net/projects/giflib/
 [glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
@@ -48,7 +45,6 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 [libexif]: https://github.com/libexif/libexif
 [libffi]: https://github.com/libffi/libffi
 [libgsf]: https://gitlab.gnome.org/GNOME/libgsf
-[libiconv]: https://git.savannah.gnu.org/cgit/libiconv.git
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
 [libpng]: https://github.com/glennrp/libpng
@@ -74,15 +70,15 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.470     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.10.6    | BSD-like                         |
-| [imagemagick]   | 6.9.11-6  | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.11-12 | [ImageMagick License] (GPL-like) |
 | [libde265]      | 1.0.5     | LGPLv3                           |
 | [libheif]       | 1.6.2     | LGPLv3                           |
 | [matio]         | 1.5.17    | BSD 2-Clause                     |
 | [nifticlib]     | 2.0.0     | Public domain                    |
-| [openexr]       | 2.4.1     | BSD 3-Clause                     |
+| [openexr]       | 2.5.1     | BSD 3-Clause                     |
 | [openjpeg]      | 2.3.1     | BSD 2-Clause                     |
 | [openslide]     | 3.4.1     | LGPLv3                           |
-| [poppler]       | 0.87.0    | GPLv2                            |
+| [poppler]       | 0.88.0    | GPLv2                            |
 | [sqlite]        | 3.31.1    | Public domain                    |
 | [x265]          | 3.3       | GPLv2                            |
 

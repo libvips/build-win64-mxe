@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 14 Feb 2020 15:20:00 +0100
-Subject: [PATCH 1/1] Add support for targeting ARM/ARM64
+Subject: [PATCH 1/2] Add support for targeting ARM/ARM64
 
 See: mxe/mxe#2330
 
@@ -35,11 +35,37 @@ index 1111111..2222222 100644
  build-only-$(1)_$(3): BUILD_TYPE = $(if $(findstring debug,$(3) $($(1)_CONFIGURE_OPTS)),debug,release)
  build-only-$(1)_$(3): BUILD_TYPE_SUFFIX = $(if $(findstring debug,$(3) $($(1)_CONFIGURE_OPTS)),d)
  build-only-$(1)_$(3): INSTALL_STRIP_TOOLCHAIN = install$(if $(STRIP_TOOLCHAIN),-strip)
+diff --git a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in b/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
+index 1111111..2222222 100644
+--- a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
++++ b/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
+@@ -1,8 +1,8 @@
+ # This file is part of MXE. See LICENSE.md for licensing information.
+ 
+ [binaries]
+-c = '@PREFIX@/bin/@TARGET@-gcc'
+-cpp = '@PREFIX@/bin/@TARGET@-g++'
++c = '@PREFIX@/bin/@TARGET@-@CC@'
++cpp = '@PREFIX@/bin/@TARGET@-@CXX@'
+ ar = '@PREFIX@/bin/@TARGET@-ar'
+ ranlib = '@PREFIX@/bin/@TARGET@-ranlib'
+ ld = '@PREFIX@/bin/@TARGET@-ld'
+@@ -10,6 +10,10 @@ strip = '@PREFIX@/bin/@TARGET@-strip'
+ windres = '@PREFIX@/bin/@TARGET@-windres'
+ windmc = '@PREFIX@/bin/@TARGET@-windmc'
+ pkgconfig = '@PREFIX@/bin/@TARGET@-pkg-config'
++glib-mkenums = '@PREFIX@/@TARGET@/bin/glib-mkenums'
++glib-genmarshal = '@PREFIX@/@TARGET@/bin/glib-genmarshal'
++glib-compile-schemas = '@PREFIX@/@TARGET@/bin/glib-compile-schemas'
++glib-compile-resources = '@PREFIX@/@TARGET@/bin/glib-compile-resources'
+ # MXE forbids this
+ # exe_wrapper = 'wine'
+ 
 diff --git a/plugins/meson-wrapper/meson-wrapper.mk b/plugins/meson-wrapper/meson-wrapper.mk
 index 1111111..2222222 100644
 --- a/plugins/meson-wrapper/meson-wrapper.mk
 +++ b/plugins/meson-wrapper/meson-wrapper.mk
-@@ -16,11 +16,10 @@ define $(PKG)_BUILD
+@@ -16,11 +16,12 @@ define $(PKG)_BUILD
          -DTARGET=$(TARGET) \
          -DBUILD=$(BUILD) \
          -DCPU_FAMILY=$(strip \
@@ -52,6 +78,8 @@ index 1111111..2222222 100644
 +            $(if $(findstring i686,$(PROCESSOR)),x86, \
 +            $(PROCESSOR)))) \
 +        -DCPU=$(PROCESSOR) \
++        -DCC=$(if $(IS_LLVM),clang,gcc) \
++        -DCXX=$(if $(IS_LLVM),clang++,g++) \
          -DINPUT='$(PWD)/plugins/meson-wrapper/conf/mxe-crossfile.meson.in' \
          -DOUTPUT='$(PREFIX)/$(TARGET)/share/meson/mxe-crossfile.meson'
  
@@ -106,3 +134,24 @@ index 1111111..2222222 100644
          ffi_call(&cif, FFI_FN(puts), &rc, values);
      }
  
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Mark Brand <mabrand@mabrand.nl>
+Date: Sun, 17 Nov 2019 00:48:31 +0100
+Subject: [PATCH 2/2] update mingw-w64 to 7.0.0
+
+
+diff --git a/src/mingw-w64.mk b/src/mingw-w64.mk
+index 1111111..2222222 100644
+--- a/src/mingw-w64.mk
++++ b/src/mingw-w64.mk
+@@ -4,8 +4,8 @@ PKG             := mingw-w64
+ $(PKG)_WEBSITE  := https://mingw-w64.sourceforge.io/
+ $(PKG)_DESCR    := MinGW-w64 Runtime
+ $(PKG)_IGNORE   :=
+-$(PKG)_VERSION  := 6.0.0
+-$(PKG)_CHECKSUM := 805e11101e26d7897fce7d49cbb140d7bac15f3e085a91e0001e80b2adaf48f0
++$(PKG)_VERSION  := 7.0.0
++$(PKG)_CHECKSUM := aa20dfff3596f08a7f427aab74315a6cb80c2b086b4a107ed35af02f9496b628
+ $(PKG)_SUBDIR   := $(PKG)-v$($(PKG)_VERSION)
+ $(PKG)_FILE     := $(PKG)-v$($(PKG)_VERSION).tar.bz2
+ $(PKG)_URL      := https://$(SOURCEFORGE_MIRROR)/project/$(PKG)/$(PKG)/$(PKG)-release/$($(PKG)_FILE)

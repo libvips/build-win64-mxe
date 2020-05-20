@@ -14,7 +14,7 @@ fi
 
 deps="${1:-web}"
 target="${2:-x86_64-w64-mingw32.shared.win32}"
-arch=${target%%-*}
+arch="${target%%-*}"
 type="${target#*.}"
 type="${type%%.*}"
 build_os=`$mxe_dir/ext/config.guess`
@@ -36,10 +36,10 @@ mkdir -p $repackage_dir/bin
 # Copy libvips-cpp-42.dll
 target_dll="libvips-cpp-42.dll"
 
-zip_suffix=""
+zip_suffix="${vips_pre_version:+-$vips_pre_version}"
 
 if [ "$type" = "static" ]; then
-  zip_suffix="-static"
+  zip_suffix+="-static"
 fi
 
 if [ "$MOZJPEG" = "true" ]; then
@@ -69,31 +69,34 @@ $mxe_prefix/$build_os/bin/peldd \
 
 echo "Copying install area $mxe_prefix/$target.$deps/"
 
-# Follow symlinks when copying /share and /etc
-cp -Lr $mxe_prefix/$target.$deps/{share,etc} $repackage_dir
-
-# Copy everything from /lib and /include, then delete the symlinks
-cp -r $mxe_prefix/$target.$deps/{lib,include} $repackage_dir
-find $repackage_dir/{lib,include} -type l -exec rm -f {} \;
+# Follow symlinks when copying /share, /etc, /lib and /include
+cp -Lr $mxe_prefix/$target.$deps/{share,etc,lib,include} $repackage_dir
 
 echo "Generating import files"
 ./gendeflibs.sh $target.$deps
 
 echo "Cleaning unnecessary files / directories"
 
-# TODO Do we need to keep /share/doc and /share/gtk-doc?
-rm -rf $repackage_dir/share/{aclocal,bash-completion,clang,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,opt-viewer,scan-build,scan-view,thumbnailers,xml,zsh}
-rm -rf $repackage_dir/include/{cairo,clang-c,c++,llvm-c}
-rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,clang,ldscripts,rustlib}
+# Unnecessary LLVM files
+if [ "$LLVM" = "true" ]; then
+  rm -rf $repackage_dir/share/clang
+  rm -rf $repackage_dir/include/{clang-c,c++,fuzzer,llvm-c,profile,sanitizer,xray}
+  rm -rf $repackage_dir/lib/clang
+fi
+
+rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,opt-viewer,scan-build,scan-view,thumbnailers,xml,zsh}
+rm -rf $repackage_dir/include/cairo
+rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,ldscripts,rustlib,xml2Conf.sh}
 rm -rf $repackage_dir/etc/bash_completion.d
 
 find $repackage_dir/lib -name "*.la" -exec rm -f {} \;
 
-# We only support GB and de locales
-find $repackage_dir/share/locale -mindepth 1 -maxdepth 1 -type d ! -name "en_GB" ! -name "de" -exec rm -rf {} \;
+# We intentionally disabled the i18n features of (GNU) gettext,
+# so the locales are not needed.
+rm -rf $repackage_dir/share/locale
 
 # Remove those .gitkeep files
-rm $repackage_dir/{include/.gitkeep,lib/.gitkeep,share/.gitkeep}
+rm $repackage_dir/{share,lib,include}/.gitkeep
 
 echo "Copying vips executables"
 

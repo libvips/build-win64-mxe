@@ -3,75 +3,337 @@ This file is part of MXE. See LICENSE.md for licensing information.
 Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sat, 2 Feb 2019 15:00:00 +0200
-Subject: [PATCH 1/5] Add missing -liconv and -lintl to linker
+From: James Le Cuirot <chewi@gentoo.org>
+Date: Mon, 13 Apr 2020 14:51:18 +0100
+Subject: [PATCH 1/10] meson: Remove transitive dep workaround now we require
+ newer Meson
 
+https://github.com/mesonbuild/meson/issues/1426 was fixed in 0.48.0
+but we require 0.49.2.
 
 diff --git a/glib/meson.build b/glib/meson.build
 index 1111111..2222222 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -365,7 +365,7 @@ libglib_dep = declare_dependency(
+@@ -363,9 +363,7 @@ libglib = library('glib-2.0',
+ 
+ libglib_dep = declare_dependency(
    link_with : libglib,
-   # thread_dep doesn't get pulled in from libglib atm,
-   # see https://github.com/mesonbuild/meson/issues/1426
+-  # thread_dep doesn't get pulled in from libglib atm,
+-  # see https://github.com/mesonbuild/meson/issues/1426
 -  dependencies : [thread_dep, libintl],
-+  dependencies : [thread_dep, libintl, libiconv],
++  dependencies : libintl,
    # We sadly need to export configinc here because everyone includes <glib/*.h>
    include_directories : [configinc, glibinc])
  
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Sat, 25 Apr 2020 21:10:15 +0300
+Subject: [PATCH 2/10] meson: Fix the gnulib checks for isnan* functions
+
+The gnulib math code uses __builtin_isnanf and __builtin_isnanl
+within the __GNUC__ >= 4 ifdef, and clang doesn't provide those
+builtins, only the one without a suffix. Make the meson check
+match the code it controls, using the exactly right builtins.
+
+Set REPLACE_ISNAN to 1 if either of the have_isnan* functions failed,
+this matches how gnulib's m4 routines does it (in gnulib/m4/isnan.m4).
+
+This fixes the isnan functions in the gnulib math header replacement
+work on Clang.
+
+diff --git a/glib/gnulib/meson.build b/glib/gnulib/meson.build
+index 1111111..2222222 100644
+--- a/glib/gnulib/meson.build
++++ b/glib/gnulib/meson.build
+@@ -182,7 +182,7 @@ endforeach
+ nan_tmpl = '''#include <math.h>
+               #if __GNUC__ >= 4
+               # undef @0@
+-              # define @0@(x) __builtin_isnan ((@1@)(x))
++              # define @0@(x) @2@ ((@1@)(x))
+               #else
+               # undef @0@
+               # define @0@(x) isnan ((@1@)(x))
+@@ -191,18 +191,29 @@ nan_tmpl = '''#include <math.h>
+               int main () {return @0@ (x);}
+            '''
+ 
+-links = cc.links (nan_tmpl.format ('isnand', 'double'),
++links = cc.links (nan_tmpl.format ('isnan', 'double', '__builtin_isnan'),
+                   dependencies : [libm])
++math_h_config.set ('HAVE_ISNAN', links ? 1 : 0)
++math_h_config.set ('HAVE_ISNAN_IN_LIBC', links ? 1 : 0)
++set_variable ('have_isnan', links)
+ math_h_config.set ('HAVE_ISNAND', links ? 1 : 0)
+ math_h_config.set ('HAVE_ISNAND_IN_LIBC', links ? 1 : 0)
+ set_variable ('have_isnand', links)
+ 
+-links = cc.links (nan_tmpl.format ('isnanl', 'long double'),
++links = cc.links (nan_tmpl.format ('isnanf', 'float', '__builtin_isnanf'),
++                  dependencies : [libm])
++math_h_config.set ('HAVE_ISNANF', links ? 1 : 0)
++math_h_config.set ('HAVE_ISNANF_IN_LIBC', links ? 1 : 0)
++set_variable ('have_isnanf', links)
++
++links = cc.links (nan_tmpl.format ('isnanl', 'long double', '__builtin_isnanl'),
+                   dependencies : [libm])
+ math_h_config.set ('HAVE_ISNANL', links ? 1 : 0)
+ math_h_config.set ('HAVE_ISNANL_IN_LIBC', links ? 1 : 0)
+ set_variable ('have_isnanl', links)
+ 
++math_h_config.set ('REPLACE_ISNAN', (have_isnand and have_isnanf and have_isnanl) ? 0 : 1)
++
+ links = cc.links ('''#include <math.h>
+                      double x;
+                      int y;
+@@ -303,7 +314,7 @@ inf_tmpl = '''#include <math.h>
+ 
+ other_needed_math_sources = []
+ # Some compilers may not have isfinite, isinf available
+-foreach f: ['isfinite', 'isinf', 'isnan', 'isnanf', 'signbit']
++foreach f: ['isfinite', 'isinf', 'signbit']
+   links = cc.links (inf_tmpl.format('@0@'.format(f)),
+                     dependencies : [libm])
+   math_h_config.set ('HAVE_@0@'.format(f.to_upper()), links ? 1 : 0)
+@@ -313,7 +321,7 @@ foreach f: ['isfinite', 'isinf', 'isnan', 'isnanf', 'signbit']
+   if not links
+     if f == 'signbit'
+       other_needed_math_sources += [ 'signbitd.c', 'signbitf.c', 'signbitl.c' ]
+-    elif f != 'isfinite' and f != 'isnan'
++    elif f != 'isfinite'
+       other_needed_math_sources += [ '@0@.c'.format(f) ]
+     endif
+   endif
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Mon, 27 Apr 2020 16:19:35 +0300
+Subject: [PATCH 3/10] meson: Add -Wno-format-zero-length for gcc/clang builds
+
+Zero length format strings isn't something that needs to be warned
+about.
+
 diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1815,7 +1815,7 @@ glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
- # available in the actual runtime environment. On Windows, we always use
- # the built-in implementation
- iconv_opt = get_option('iconv')
--if host_system == 'windows'
-+if host_system == 'windows' and not meson.is_cross_build()
-   libiconv = []
-   # We have a #include "win_iconv.c" in gconvert.c on Windows, so we don't need
-   # any external library for it
-@@ -1904,17 +1904,24 @@ endif
- # proxy-libintl subproject.
- # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
- # implementations. This could be extended if issues are found in some platforms.
--if cc.has_function('ngettext')
--  libintl = []
--  have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset')
-+# On Windows, just always use libintl.
-+if host_system == 'windows'
-+  libintl = [cc.find_library('intl')]
-+  have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset',
-+                                                 dependencies : libintl)
- else
--  libintl = cc.find_library('intl', required : false)
--  if not libintl.found()
--    libintl = subproject('proxy-libintl').get_variable('intl_dep')
--    have_bind_textdomain_codeset = true  # proxy-libintl supports it
-+  if cc.has_function('ngettext')
-+    libintl = []
-+    have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset')
-   else
--    have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset',
--                                                   dependencies : libintl)
-+    libintl = cc.find_library('intl', required : false)
-+    if not libintl.found()
-+      libintl = subproject('proxy-libintl').get_variable('intl_dep')
-+      have_bind_textdomain_codeset = true  # proxy-libintl supports it
-+    else
-+      have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset',
-+                                                     dependencies : libintl)
-+    endif
+@@ -374,6 +374,8 @@ if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
+     # Due to function casts through (void*) we cannot support -Wpedantic:
+     # https://wiki.gnome.org/Projects/GLib/CompilerRequirements#Function_pointer_conversions.
+     '-Wno-pedantic',
++    # A zero-length format string shouldn't be considered an issue.
++    '-Wno-format-zero-length',
+     '-Werror=declaration-after-statement',
+     '-Werror=format=2',
+     '-Werror=implicit-function-declaration',
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Sun, 5 Apr 2020 00:05:36 +0300
+Subject: [PATCH 4/10] gregistrysettings: Fix a mismatched error format string
+
+
+diff --git a/gio/gregistrysettingsbackend.c b/gio/gregistrysettingsbackend.c
+index 1111111..2222222 100644
+--- a/gio/gregistrysettingsbackend.c
++++ b/gio/gregistrysettingsbackend.c
+@@ -312,7 +312,7 @@ handle_read_error (LONG         result,
+ {
+   /* file not found means key value not set, this isn't an error for us. */
+   if (result != ERROR_FILE_NOT_FOUND)
+-    g_message_win32_error (result, "Unable to query value %s/%s: %s.\n",
++    g_message_win32_error (result, "Unable to query value %s/%s",
+                            path_name, value_name);
+ }
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Sun, 5 Apr 2020 00:06:37 +0300
+Subject: [PATCH 5/10] Silence clang errors about -Wformat-nonliteral due to
+ missing intermediate attributes
+
+By default, meson builds glib with -Werror=format=2, which
+implies -Werror=format-nonliteral. With these flags, clang errors
+out on e.g. the g_message_win32_error function, due to "format
+string is not a string literal". This function takes a format
+string, and passes the va_list of the arguments onwards to
+g_strdup_vprintf, which is annotated with printf attributes.
+
+When passing a string+va_list to another function, GCC doesn't warn
+with -Wformat-nonliteral. Clang however does warn, unless the
+functions themselves (g_message_win32_error and set_error) are decorated
+with similar printf attributes (to force the same checks upon the
+caller) - see
+https://clang.llvm.org/docs/AttributeReference.html#format
+for reference.
+
+Adding these attributes revealed one existing mismatched format string
+(fixed in the preceding commit).
+
+diff --git a/gio/gregistrysettingsbackend.c b/gio/gregistrysettingsbackend.c
+index 1111111..2222222 100644
+--- a/gio/gregistrysettingsbackend.c
++++ b/gio/gregistrysettingsbackend.c
+@@ -201,7 +201,7 @@ trace (const char *format,
+  * equivalent function for g_warning because none of the registry errors can
+  * result from programmer error (Microsoft programmers don't count), instead
+  * they will mostly occur from people messing with the registry by hand. */
+-static void
++static void G_GNUC_PRINTF (2, 3)
+ g_message_win32_error (DWORD        result_code,
+                        const gchar *format,
+                       ...)
+diff --git a/gmodule/gmodule-win32.c b/gmodule/gmodule-win32.c
+index 1111111..2222222 100644
+--- a/gmodule/gmodule-win32.c
++++ b/gmodule/gmodule-win32.c
+@@ -39,7 +39,7 @@
+ #include <sys/cygwin.h>
+ #endif
+ 
+-static void
++static void G_GNUC_PRINTF (1, 2)
+ set_error (const gchar *format,
+ 	   ...)
+ {
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Mon, 27 Apr 2020 21:59:47 +0300
+Subject: [PATCH 6/10] glib: Sync the local modification to glib/valgrind.h to what
+ was upstreamed
+
+The local change from af0e0cb9950569828 in glib ended upstreamed
+as 7359c5fd9f312cddd62146896558d8c9bd2bd4cf in valgrind, with
+a few minor adjustments requested from there.
+
+Sync this local modification to what ended up upstreamed, to avoid
+any doubt regarding it for future syncs of the whole header.
+
+diff --git a/glib/valgrind.h b/glib/valgrind.h
+index 1111111..2222222 100644
+--- a/glib/valgrind.h
++++ b/glib/valgrind.h
+@@ -134,8 +134,9 @@
+       || defined(__CYGWIN32__) \
+       || (defined(_WIN32) && defined(_M_IX86))
+ #  define PLAT_x86_win32 1
+-#elif (defined(__MINGW64__) && defined(__x86_64__)) \
+-      || (defined(_WIN64) && defined(_M_X64))
++#elif (defined(__MINGW32__) && defined(__x86_64__)) \
++      || (defined(_WIN32) && defined(_M_X64))
++/* __MINGW32__ and _WIN32 are defined in 64 bit mode as well. */
+ #  define PLAT_amd64_win64 1
+ #elif defined(__linux__) && defined(__i386__)
+ #  define PLAT_x86_linux 1
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Tue, 31 Mar 2020 23:11:05 +0300
+Subject: [PATCH 7/10] Don't fall back to raise(SIGTRAP) on Windows
+
+When targeting mingw on architectures other than x86, the earlier cases
+don't apply, and the final fallback, raise(SIGTRAP) isn't usable there.
+
+GCC and Clang both support __builtin_trap(), so in case we have no
+other alternatives, and are on windows (where raise() isn't available),
+we can resort to this.
+
+diff --git a/glib/gbacktrace.h b/glib/gbacktrace.h
+index 1111111..2222222 100644
+--- a/glib/gbacktrace.h
++++ b/glib/gbacktrace.h
+@@ -61,7 +61,7 @@ void g_on_error_stack_trace (const gchar *prg_name);
+ #  define G_BREAKPOINT()        G_STMT_START{ __debugbreak(); }G_STMT_END
+ #elif defined (__alpha__) && !defined(__osf__) && defined (__GNUC__) && __GNUC__ >= 2
+ #  define G_BREAKPOINT()        G_STMT_START{ __asm__ __volatile__ ("bpt"); }G_STMT_END
+-#elif defined (__APPLE__)
++#elif defined (__APPLE__) || (defined(_WIN32) && (defined(__clang__) || defined(__GNUC__)))
+ #  define G_BREAKPOINT()        G_STMT_START{ __builtin_trap(); }G_STMT_END
+ #else   /* !__i386__ && !__alpha__ */
+ #  define G_BREAKPOINT()        G_STMT_START{ raise (SIGTRAP); }G_STMT_END
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Tue, 31 Mar 2020 23:54:17 +0300
+Subject: [PATCH 8/10] meson: Don't misdetect stpcpy on windows platforms on clang
+
+See https://github.com/mesonbuild/meson/issues/3672 and
+https://github.com/mesonbuild/meson/issues/5628 for explanations
+of cases where meson misdetects functions due to clang builtins (that
+always are available, regardless of whether the platform actually
+provides them).
+
+The same also happens on GCC 10, which added support for __has_builtin.
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -532,13 +532,23 @@ foreach f : functions
    endif
+ endforeach
+ 
+-# Check that stpcpy() is usable; must use header
+-if cc.has_function('stpcpy', prefix : '#include <string.h>')
++# Check that stpcpy() is usable; must use header.
++# cc.has_function() in some cases (clang, gcc 10+) assumes that if the
++# compiler provides a builtin of the same name that the function exists, while
++# it's in fact not provided by any header or library. This is true for
++# stpcpy() on Windows using clang and gcc as well as posix_memalign() using
++# gcc on Windows. Skip these checks on Windows for now to avoid false
++# positives. See https://github.com/mesonbuild/meson/pull/7116,
++# https://github.com/mesonbuild/meson/issues/3672 and
++# https://github.com/mesonbuild/meson/issues/5628.
++# FIXME: Once meson no longer returns success for stpcpy() and
++# posix_memalign() on Windows using GCC and clang we can remove this.
++if host_system != 'windows' and cc.has_function('stpcpy', prefix : '#include <string.h>')
+   glib_conf.set('HAVE_STPCPY', 1)
+ endif
+ 
+ # Check that posix_memalign() is usable; must use header
+-if cc.has_function('posix_memalign', prefix : '#include <stdlib.h>')
++if host_system != 'windows' and cc.has_function('posix_memalign', prefix : '#include <stdlib.h>')
+   glib_conf.set('HAVE_POSIX_MEMALIGN', 1)
  endif
  
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Timm=20B=C3=A4der?= <mail@baedert.org>
+Date: Fri, 28 Feb 2020 08:59:23 +0100
+Subject: [PATCH 9/10] macros: Define G_GNUC_FALLTHROUGH for more compilers
+
+Some compilers have __GNUC__ defined as a value less than 6, but do
+support implicit-fallthrough via __attribute__((fallthrough)). Define
+G_GNUC_FALLTHROUGH for those that support __has_attribute.
+
+diff --git a/glib/gmacros.h b/glib/gmacros.h
+index 1111111..2222222 100644
+--- a/glib/gmacros.h
++++ b/glib/gmacros.h
+@@ -532,7 +532,7 @@
+ /**
+  * G_GNUC_FALLTHROUGH:
+  *
+- * Expands to the GNU C `fallthrough` statement attribute if the compiler is gcc.
++ * Expands to the GNU C `fallthrough` statement attribute if the compiler supports it.
+  * This allows declaring case statement to explicitly fall through in switch
+  * statements. To enable this feature, use `-Wimplicit-fallthrough` during
+  * compilation.
+@@ -559,6 +559,8 @@
+  */
+ #if    __GNUC__ > 6
+ #define G_GNUC_FALLTHROUGH __attribute__((fallthrough))
++#elif g_macro__has_attribute (fallthrough)
++#define G_GNUC_FALLTHROUGH __attribute__((fallthrough))
+ #else
+ #define G_GNUC_FALLTHROUGH
+ #endif /* __GNUC__ */
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 13 May 2019 18:00:00 +0200
-Subject: [PATCH 2/5] Disable some tests
+Subject: [PATCH 10/10] Disable some tests
 
 
 diff --git a/gio/tests/meson.build b/gio/tests/meson.build
@@ -96,146 +358,3 @@ index 1111111..2222222 100644
  
    plugin_resources_c = custom_target('plugin-resources.c',
      input : 'test4.gresource.xml',
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Mon, 25 Nov 2019 00:20:00 +0100
-Subject: [PATCH 3/5] Fix build error with llvm-mingw
-
-
-diff --git a/glib/gnulib/meson.build b/glib/gnulib/meson.build
-index 1111111..2222222 100644
---- a/glib/gnulib/meson.build
-+++ b/glib/gnulib/meson.build
-@@ -182,7 +182,7 @@ endforeach
- nan_tmpl = '''#include <math.h>
-               #if __GNUC__ >= 4
-               # undef @0@
--              # define @0@(x) __builtin_isnan ((@1@)(x))
-+              # define @0@(x) __builtin_@0@ ((@1@)(x))
-               #else
-               # undef @0@
-               # define @0@(x) isnan ((@1@)(x))
-@@ -203,6 +203,14 @@ math_h_config.set ('HAVE_ISNANL', links ? 1 : 0)
- math_h_config.set ('HAVE_ISNANL_IN_LIBC', links ? 1 : 0)
- set_variable ('have_isnanl', links)
- 
-+links = cc.links (nan_tmpl.format ('isnanf', 'float'),
-+                  dependencies : [libm])
-+math_h_config.set ('HAVE_ISNANF', links ? 1 : 0)
-+math_h_config.set ('HAVE_ISNANF_IN_LIBC', links ? 1 : 0)
-+set_variable ('have_isnanf', links)
-+
-+math_h_config.set ('REPLACE_ISNAN', have_isnand and have_isnanl and have_isnanf ? 0 : 1)
-+
- links = cc.links ('''#include <math.h>
-                      double x;
-                      int y;
-@@ -303,7 +311,7 @@ inf_tmpl = '''#include <math.h>
- 
- other_needed_math_sources = []
- # Some compilers may not have isfinite, isinf available
--foreach f: ['isfinite', 'isinf', 'isnan', 'isnanf', 'signbit']
-+foreach f: ['isfinite', 'isinf', 'signbit']
-   links = cc.links (inf_tmpl.format('@0@'.format(f)),
-                     dependencies : [libm])
-   math_h_config.set ('HAVE_@0@'.format(f.to_upper()), links ? 1 : 0)
-@@ -313,7 +321,7 @@ foreach f: ['isfinite', 'isinf', 'isnan', 'isnanf', 'signbit']
-   if not links
-     if f == 'signbit'
-       other_needed_math_sources += [ 'signbitd.c', 'signbitf.c', 'signbitl.c' ]
--    elif f != 'isfinite' and f != 'isnan'
-+    elif f != 'isfinite'
-       other_needed_math_sources += [ '@0@.c'.format(f) ]
-     endif
-   endif
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Mon, 25 Nov 2019 10:10:00 +0100
-Subject: [PATCH 4/5] Fix non-literal format string issues
-
-Clang errors out when using -Werror=format-nonliteral since the definition of
-g_strdup_vprintf() uses va_list. Clang warns for this whereas GCC doesn't do
-that for va_list arguments.
-
-diff --git a/gio/gregistrysettingsbackend.c b/gio/gregistrysettingsbackend.c
-index 1111111..2222222 100644
---- a/gio/gregistrysettingsbackend.c
-+++ b/gio/gregistrysettingsbackend.c
-@@ -201,6 +201,7 @@ trace (const char *format,
-  * equivalent function for g_warning because none of the registry errors can
-  * result from programmer error (Microsoft programmers don't count), instead
-  * they will mostly occur from people messing with the registry by hand. */
-+G_GNUC_PRINTF (2, 3)
- static void
- g_message_win32_error (DWORD        result_code,
-                        const gchar *format,
-@@ -312,7 +313,7 @@ handle_read_error (LONG         result,
- {
-   /* file not found means key value not set, this isn't an error for us. */
-   if (result != ERROR_FILE_NOT_FOUND)
--    g_message_win32_error (result, "Unable to query value %s/%s: %s.\n",
-+    g_message_win32_error (result, "Unable to query value %s: %s.\n",
-                            path_name, value_name);
- }
- 
-diff --git a/gmodule/gmodule-win32.c b/gmodule/gmodule-win32.c
-index 1111111..2222222 100644
---- a/gmodule/gmodule-win32.c
-+++ b/gmodule/gmodule-win32.c
-@@ -39,6 +39,7 @@
- #include <sys/cygwin.h>
- #endif
- 
-+G_GNUC_PRINTF (1, 2)
- static void
- set_error (const gchar *format,
- 	   ...)
-@@ -83,7 +84,7 @@ _g_module_open (const gchar *file_name,
-   /* suppress error dialog */
-   success = SetThreadErrorMode (SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS, &old_mode);
-   if (!success)
--    set_error ("");
-+    set_error ("%s", "");
- 
-   /* When building for UWP, load app asset DLLs instead of filesystem DLLs.
-    * Needs MSVC, Windows 8 and newer, and is only usable from apps. */
-@@ -117,7 +118,7 @@ _g_module_close (gpointer handle,
- {
-   if (handle != null_module_handle)
-     if (!FreeLibrary (handle))
--      set_error ("");
-+      set_error ("%s", "");
- }
- 
- static gpointer
-@@ -176,7 +177,7 @@ _g_module_symbol (gpointer     handle,
-     p = GetProcAddress (handle, symbol_name);
- 
-   if (!p)
--    set_error ("");
-+    set_error ("%s", "");
- 
-   return p;
- }
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sat, 15 Feb 2020 19:00:00 +0100
-Subject: [PATCH 5/5] Fixes for the llvm-mingw ARM/ARM64 build
-
-
-diff --git a/glib/gbacktrace.h b/glib/gbacktrace.h
-index 1111111..2222222 100644
---- a/glib/gbacktrace.h
-+++ b/glib/gbacktrace.h
-@@ -61,7 +61,7 @@ void g_on_error_stack_trace (const gchar *prg_name);
- #  define G_BREAKPOINT()        G_STMT_START{ __debugbreak(); }G_STMT_END
- #elif defined (__alpha__) && !defined(__osf__) && defined (__GNUC__) && __GNUC__ >= 2
- #  define G_BREAKPOINT()        G_STMT_START{ __asm__ __volatile__ ("bpt"); }G_STMT_END
--#elif defined (__APPLE__)
-+#elif g_macro__has_builtin(__builtin_trap)
- #  define G_BREAKPOINT()        G_STMT_START{ __builtin_trap(); }G_STMT_END
- #else   /* !__i386__ && !__alpha__ */
- #  define G_BREAKPOINT()        G_STMT_START{ raise (SIGTRAP); }G_STMT_END

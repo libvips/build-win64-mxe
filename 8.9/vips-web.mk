@@ -25,12 +25,10 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "freetype": "$(freetype_VERSION)",\n'; \
      printf '  "fribidi": "$(fribidi_VERSION)",\n'; \
      printf '  "gdkpixbuf": "$(gdk-pixbuf_VERSION)",\n'; \
-     printf '  "gettext": "$(gettext_VERSION)",\n'; \
      printf '  "gif": "$(giflib_VERSION)",\n'; \
      printf '  "glib": "$(glib_VERSION)",\n'; \
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
-     printf '  "iconv": "$(libiconv_VERSION)",\n'; \
      printf '  "jpeg": "$(libjpeg-turbo_VERSION)",\n'; \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      printf '  "orc": "$(orc_VERSION)",\n'; \

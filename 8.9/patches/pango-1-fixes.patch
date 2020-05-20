@@ -3,59 +3,82 @@ This file is part of MXE. See LICENSE.md for licensing information.
 Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Tue, 24 Mar 2020 18:42:57 +0100
-Subject: [PATCH 1/1] Properly define fallthrough
+From: =?UTF-8?q?Timm=20B=C3=A4der?= <tbaeder@redhat.com>
+Date: Tue, 14 Apr 2020 16:24:02 +0200
+Subject: [PATCH 1/2] build: Require glib 2.60
 
-Fixes build with LLVM 10.
+So we can use G_GNUC_FALLTHROUGH
 
-(Perhaps Pango should not be compiled with -Werror?)
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -190,7 +190,7 @@ endif
+ # Dependencies
+ pango_deps = []
+ 
+-glib_req_version = '>= 2.59.2'
++glib_req_version = '>= 2.60'
+ fribidi_req_version = '>= 0.19.7'
+ libthai_req_version = '>= 0.1.9'
+ harfbuzz_req_version = '>= 2.0.0'
 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Timm=20B=C3=A4der?= <tbaeder@redhat.com>
+Date: Tue, 14 Apr 2020 16:31:58 +0200
+Subject: [PATCH 2/2] Replace fallthrough comments with G_GNUC_FALLTHROUGH
+
+
+diff --git a/examples/cairotwisted.c b/examples/cairotwisted.c
+index 1111111..2222222 100644
+--- a/examples/cairotwisted.c
++++ b/examples/cairotwisted.c
+@@ -234,7 +234,7 @@ parametrize_path (cairo_path_t *path)
+     case CAIRO_PATH_CLOSE_PATH:
+ 	/* Make it look like it's a line_to to last_move_to */
+ 	data = (&last_move_to) - 1;
+-	/* fall through */
++      G_GNUC_FALLTHROUGH;
+     case CAIRO_PATH_LINE_TO:
+ 	parametrization[i] = two_points_distance (&current_point, &data[1]);
+ 	current_point = data[1];
+@@ -361,7 +361,7 @@ point_on_path (parametrized_path_t *param,
+   case CAIRO_PATH_CLOSE_PATH:
+       /* Make it look like it's a line_to to last_move_to */
+       data = (&last_move_to) - 1;
+-      /* fall through */
++    G_GNUC_FALLTHROUGH;
+   case CAIRO_PATH_LINE_TO:
+       {
+ 	ratio = the_x / parametrization[i];
 diff --git a/pango/break.c b/pango/break.c
 index 1111111..2222222 100644
 --- a/pango/break.c
 +++ b/pango/break.c
-@@ -31,6 +31,16 @@
- #define PARAGRAPH_SEPARATOR 0x2029
- #define PARAGRAPH_SEPARATOR_STRING "\xE2\x80\xA9"
- 
-+#ifndef __has_attribute
-+#define __has_attribute(x) 0
-+#endif
-+
-+#if __has_attribute(__fallthrough__)
-+# define FALL_THROUGH __attribute__ ((fallthrough))
-+#else
-+# define FALL_THROUGH ((void)0)  /* fall through */
-+#endif
-+
- /* See http://www.unicode.org/unicode/reports/tr14/ if you hope
-  * to understand the line breaking code.
-  */
-@@ -405,7 +415,7 @@ pango_default_break (const gchar   *text,
+@@ -405,7 +405,7 @@ pango_default_break (const gchar   *text,
                  GB_type = GB_Prepend;
                  break;
                }
 -	    /* fall through */
-+	    FALL_THROUGH;
++       G_GNUC_FALLTHROUGH;
  	  case G_UNICODE_CONTROL:
  	  case G_UNICODE_LINE_SEPARATOR:
  	  case G_UNICODE_PARAGRAPH_SEPARATOR:
-@@ -421,7 +431,7 @@ pango_default_break (const gchar   *text,
+@@ -421,7 +421,7 @@ pango_default_break (const gchar   *text,
  		GB_type = GB_ControlCRLF;
  		break;
  	      }
 -	    /* fall through */
-+	    FALL_THROUGH;
++       G_GNUC_FALLTHROUGH;
  
  	  case G_UNICODE_OTHER_LETTER:
  	    if (makes_hangul_syllable)
-@@ -594,7 +604,7 @@ pango_default_break (const gchar   *text,
+@@ -594,7 +594,7 @@ pango_default_break (const gchar   *text,
  		case G_UNICODE_CONTROL:
  		  if (wc != 0x000D && wc != 0x000A && wc != 0x000B && wc != 0x000C && wc != 0x0085)
  		    break;
 -		  /* fall through */
-+		  FALL_THROUGH;
++         G_GNUC_FALLTHROUGH;
  		case G_UNICODE_LINE_SEPARATOR:
  		case G_UNICODE_PARAGRAPH_SEPARATOR:
  		  WB_type = WB_NewlineCRLF; /* CR, LF, Newline */
@@ -63,29 +86,12 @@ diff --git a/pango/pango-renderer.c b/pango/pango-renderer.c
 index 1111111..2222222 100644
 --- a/pango/pango-renderer.c
 +++ b/pango/pango-renderer.c
-@@ -31,6 +31,16 @@
- #define PANGO_IS_RENDERER_FAST(renderer) (renderer != NULL)
- #define IS_VALID_PART(part) ((guint)part < N_RENDER_PARTS)
- 
-+#ifndef __has_attribute
-+#define __has_attribute(x) 0
-+#endif
-+
-+#if __has_attribute(__fallthrough__)
-+# define FALL_THROUGH __attribute__ ((fallthrough))
-+#else
-+# define FALL_THROUGH ((void)0)  /* fall through */
-+#endif
-+
- typedef struct _LineState LineState;
- typedef struct _Point Point;
- 
-@@ -222,7 +232,7 @@ draw_underline (PangoRenderer *renderer,
+@@ -227,7 +227,7 @@ draw_underline (PangoRenderer *renderer,
  				     rect->y + 2 * rect->height,
  				     rect->width,
  				     rect->height);
 -      /* Fall through */
-+      FALL_THROUGH;
++      G_GNUC_FALLTHROUGH;
      case PANGO_UNDERLINE_SINGLE:
      case PANGO_UNDERLINE_LOW:
        pango_renderer_draw_rectangle (renderer,
@@ -93,29 +99,12 @@ diff --git a/tests/testboundaries_ucd.c b/tests/testboundaries_ucd.c
 index 1111111..2222222 100644
 --- a/tests/testboundaries_ucd.c
 +++ b/tests/testboundaries_ucd.c
-@@ -25,6 +25,16 @@
- #include <string.h>
- #include <locale.h>
- 
-+#ifndef __has_attribute
-+#define __has_attribute(x) 0
-+#endif
-+
-+#if __has_attribute(__fallthrough__)
-+# define FALL_THROUGH __attribute__ ((fallthrough))
-+#else
-+# define FALL_THROUGH ((void)0)  /* fall through */
-+#endif
-+
- static gboolean failed = FALSE;
- 
- /* PangoLogAttr has to be the same size as guint or this hack breaks */
-@@ -104,7 +114,7 @@ parse_line (gchar *line,
+@@ -104,7 +104,7 @@ parse_line (gchar *line,
          {
          case 0x00f7: /* DIVISION SIGN: boundary here */
            temp_attr.bits |= bits.bits;
 -          /* fall through */
-+          FALL_THROUGH;
++          G_GNUC_FALLTHROUGH;
  
          case 0x00d7: /* MULTIPLICATION SIGN: no boundary here */
            break;

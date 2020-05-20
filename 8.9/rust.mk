@@ -33,5 +33,5 @@ define $(PKG)_BUILD
     # Prefer the {,dll}crt2.o libraries from our
     # mingw-w64 to avoid any compatibility issues.
     $(foreach FILE, crt2.o dllcrt2.o, \
-        cp -f '$(PREFIX)/$(TARGET)/lib/$(FILE)' '$(PREFIX)/$(TARGET)/lib/rustlib/$(PROCESSOR)-pc-windows-gnu/lib';)
+        cp -f '$(PREFIX)/$(TARGET)/mingw/lib/$(FILE)' '$(PREFIX)/$(TARGET)/lib/rustlib/$(PROCESSOR)-pc-windows-gnu/lib';)
 endef

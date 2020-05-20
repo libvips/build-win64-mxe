@@ -3,37 +3,9 @@ This file is part of MXE. See LICENSE.md for licensing information.
 Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kimball Thurston <kdt3rd@gmail.com>
-Date: Tue, 5 Nov 2019 21:42:45 +1300
-Subject: [PATCH 1/9] Fix #595 and others, issue with pkgconfig generation under
- cmake
-
-autoconf seems to automatically insert the ${prefix} variable reference
-when emitting the pkg-config file. Make cmake rules conform to that
-pattern.
-
-diff --git a/IlmBase/config/CMakeLists.txt b/IlmBase/config/CMakeLists.txt
-index 1111111..2222222 100644
---- a/IlmBase/config/CMakeLists.txt
-+++ b/IlmBase/config/CMakeLists.txt
-@@ -71,9 +71,9 @@ if(ILMBASE_INSTALL_PKG_CONFIG)
-   # use a helper function to avoid variable pollution, but pretty simple
-   function(ilmbase_pkg_config_help pcinfile)
-     set(prefix ${CMAKE_INSTALL_PREFIX})
--    set(exec_prefix ${CMAKE_INSTALL_BINDIR})
--    set(libdir ${CMAKE_INSTALL_LIBDIR})
--    set(includedir ${CMAKE_INSTALL_INCLUDEDIR})
-+    set(exec_prefix "\${prefix}")
-+    set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
-+    set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
-     set(LIB_SUFFIX_DASH ${ILMBASE_LIB_SUFFIX})
-     if(TARGET Threads::Threads)
-       # hrm, can't use properties as they end up as generator expressions
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 1 Oct 2019 13:00:00 +0200
-Subject: [PATCH 2/9] Make libraries private within the pkg-config file
+Subject: [PATCH 1/4] Make libraries private within the pkg-config file
 
 Assuming that IlmBase is built statically, this ensures that the
 libraries are not exposed during linking.
@@ -51,1167 +23,9 @@ index 1111111..2222222 100644
  Cflags: @PTHREAD_CFLAGS@ -I${includedir} -I${includedir}/OpenEXR
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Gregorio Litenstein <g.litenstein@gmail.com>
-Date: Fri, 11 Oct 2019 22:18:02 -0300
-Subject: [PATCH 3/9] Check for eLut.h and toFloat.h before making them
-
-From: https://github.com/openexr/openexr/pull/597
-
-diff --git a/IlmBase/Half/CMakeLists.txt b/IlmBase/Half/CMakeLists.txt
-index 1111111..2222222 100644
---- a/IlmBase/Half/CMakeLists.txt
-+++ b/IlmBase/Half/CMakeLists.txt
-@@ -1,21 +1,44 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright Contributors to the OpenEXR Project.
- 
--add_executable(eLut eLut.cpp)
--target_compile_features(eLut PUBLIC cxx_std_${OPENEXR_CXX_STANDARD})
-+check_include_files(${CMAKE_CURRENT_BINARY_DIR}/eLut.h HAVE_ELUT_H)
-+check_include_files(${CMAKE_CURRENT_BINARY_DIR}/toFloat.h HAVE_TOFLOAT_H)
- 
--
--add_executable(toFloat toFloat.cpp)
--target_compile_features(toFloat PUBLIC cxx_std_${OPENEXR_CXX_STANDARD})
--
--add_custom_command(
--  OUTPUT
--    ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
--    ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
--  COMMAND $<TARGET_FILE:toFloat> ARGS > ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
--  COMMAND $<TARGET_FILE:eLut> ARGS > ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
--  DEPENDS eLut toFloat
--)
-+if((NOT HAVE_ELUT_H) OR (NOT HAVE_TOFLOAT_H))
-+  if(CMAKE_CROSSCOMPILING)
-+    message(STATUS "We're cross-compiling; will use native executables from a previous build to generate toFloat.h and eLut.h")
-+    set(NATIVE_ILMBASE_BUILD_DIR "NATIVE_ILMBASE-NOTFOUND" CACHE FILEPATH "Point it to the build folder of a native build.")
-+    if (NATIVE_ILMBASE_BUILD_DIR)
-+      set (toFloat_PATH "${NATIVE_ILMBASE_BUILD_DIR}/bin/toFloat")
-+      set (eLut_PATH "${NATIVE_ILMBASE_BUILD_DIR}/bin/eLut")
-+    else()
-+      message(FATAL_ERROR "Missing path to native build directory.")
-+    endif()
-+   else()
-+    add_executable(eLut eLut.cpp)
-+    target_compile_features(eLut PUBLIC cxx_std_${OPENEXR_CXX_STANDARD})
-+    set_target_properties(eLut PROPERTIES
-+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-+    )
-+    
-+    add_executable(toFloat toFloat.cpp)
-+    target_compile_features(toFloat PUBLIC cxx_std_${OPENEXR_CXX_STANDARD})
-+    set_target_properties(toFloat PROPERTIES
-+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-+    )
-+    set (toFloat_PATH "$<TARGET_FILE:toFloat>")
-+    set (eLut_PATH "$<TARGET_FILE:eLut>")
-+   endif()
-+    add_custom_command(
-+      OUTPUT
-+        ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
-+        ${CMAKE_CURRENT_BINARY_DIR}/eLut.h
-+      COMMAND "${toFloat_PATH}" ARGS > "${CMAKE_CURRENT_BINARY_DIR}/toFloat.h"
-+      COMMAND "${eLut_PATH}" ARGS > "${CMAKE_CURRENT_BINARY_DIR}/eLut.h"
-+      DEPENDS $<$<NOT:$<BOOL:${CMAKE_CROSSCOMPILING}>>:eLut>
-+      DEPENDS $<$<NOT:$<BOOL:${CMAKE_CROSSCOMPILING}>>:toFloat>
-+    )
-+endif()
- 
- ### Now define the real library
- 
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Gregorio Litenstein <g.litenstein@gmail.com>
-Date: Tue, 22 Oct 2019 15:25:39 -0300
-Subject: [PATCH 4/9] Support for MinGW-W64 with pthreads
-
-From: https://github.com/openexr/openexr/pull/591
-
-diff --git a/IlmBase/IlmThread/CMakeLists.txt b/IlmBase/IlmThread/CMakeLists.txt
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/CMakeLists.txt
-+++ b/IlmBase/IlmThread/CMakeLists.txt
-@@ -21,6 +21,7 @@ ilmbase_define_library(IlmThread
-     IlmThreadPool.h
-     IlmThread.h
-     IlmThreadSemaphore.h
-+    IlmThreadMinGWThread.h
-     IlmThreadMutex.h
-     IlmThreadNamespace.h
-     IlmThreadExport.h
-diff --git a/IlmBase/IlmThread/IlmThread.h b/IlmBase/IlmThread/IlmThread.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThread.h
-+++ b/IlmBase/IlmThread/IlmThread.h
-@@ -94,8 +94,12 @@
- #include "IlmThreadExport.h"
- #include "IlmThreadNamespace.h"
- 
-+#if (defined(_WIN32) || defined(_WIN64))
-+#include <IlmThreadMinGWThread.h>
-+#endif
-+
- #ifdef ILMBASE_FORCE_CXX03
--#   if defined _WIN32 || defined _WIN64
-+#   if ((defined _WIN32 || defined _WIN64) && !defined(HAVE_PTHREAD))
- #       ifdef NOMINMAX
- #          undef NOMINMAX
- #       endif
-@@ -132,7 +136,7 @@ class Thread
-   private:
- 
- #ifdef ILMBASE_FORCE_CXX03
--#   if defined _WIN32 || defined _WIN64
-+#   if ((defined _WIN32 || defined _WIN64) && !defined(HAVE_PTHREAD))
- 	HANDLE _thread;
- #   elif HAVE_PTHREAD
- 	pthread_t _thread;
-diff --git a/IlmBase/IlmThread/IlmThreadMinGWThread.h b/IlmBase/IlmThread/IlmThreadMinGWThread.h
-new file mode 100644
-index 1111111..2222222
---- /dev/null
-+++ b/IlmBase/IlmThread/IlmThreadMinGWThread.h
-@@ -0,0 +1,63 @@
-+///////////////////////////////////////////////////////////////////////////
-+//
-+// Copyright (c) 2005-2012, Industrial Light & Magic, a division of Lucas
-+// Digital Ltd. LLC
-+// 
-+// All rights reserved.
-+// 
-+// Redistribution and use in source and binary forms, with or without
-+// modification, are permitted provided that the following conditions are
-+// met:
-+// *       Redistributions of source code must retain the above copyright
-+// notice, this list of conditions and the following disclaimer.
-+// *       Redistributions in binary form must reproduce the above
-+// copyright notice, this list of conditions and the following disclaimer
-+// in the documentation and/or other materials provided with the
-+// distribution.
-+// *       Neither the name of Industrial Light & Magic nor the names of
-+// its contributors may be used to endorse or promote products derived
-+// from this software without specific prior written permission. 
-+// 
-+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+//
-+///////////////////////////////////////////////////////////////////////////
-+
-+#ifndef INCLUDED_ILM_THREAD_MINGW_THREAD_H
-+#define INCLUDED_ILM_THREAD_MINGW_THREAD_H
-+
-+//-----------------------------------------------------------------------------
-+//
-+//  This file is just some boilerplate to ensure macros are correctly defined
-+//  in order to compile against MinGW-W64's implementation of posix threads
-+//  and semaphores.
-+//
-+//-----------------------------------------------------------------------------
-+
-+#if defined(_WIN32) || defined(_WIN64)
-+# ifdef NOMINMAX
-+#   undef NOMINMAX
-+# endif
-+# define NOMINMAX
-+# include <windows.h>
-+# if defined(__MINGW64_VERSION_MAJOR)
-+#   include <pthread_unistd.h>
-+#   if (defined(_POSIX_SEMAPHORES) && !defined(HAVE_POSIX_SEMAPHORES))
-+#     define HAVE_POSIX_SEMAPHORES
-+#   endif
-+#   if (defined(_POSIX_THREADS) && !defined(HAVE_PTHREAD))
-+#     define HAVE_PTHREAD
-+#   endif
-+# endif
-+#endif
-+
-+#endif // INCLUDED_ILM_THREAD_MINGW_THREAD_H
-\ No newline at end of file
-diff --git a/IlmBase/IlmThread/IlmThreadMutex.cpp b/IlmBase/IlmThread/IlmThreadMutex.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutex.cpp
-+++ b/IlmBase/IlmThread/IlmThreadMutex.cpp
-@@ -42,7 +42,7 @@
- #include "IlmBaseConfig.h"
- 
- #ifdef ILMBASE_FORCE_CXX03
--#   if !defined (_WIN32) && !(_WIN64) && !(HAVE_PTHREAD)
-+#   if !defined(_WIN32) && !defined(_WIN64) && !(HAVE_PTHREAD)
- #      include "IlmThreadMutex.h"
- 
- ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_ENTER
-diff --git a/IlmBase/IlmThread/IlmThreadMutex.h b/IlmBase/IlmThread/IlmThreadMutex.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutex.h
-+++ b/IlmBase/IlmThread/IlmThreadMutex.h
-@@ -70,8 +70,12 @@
- #include "IlmBaseConfig.h"
- #include "IlmThreadNamespace.h"
- 
-+#if (defined(_WIN32) || defined(_WIN64))
-+#include <IlmThreadMinGWThread.h>
-+#endif
-+
- #ifdef ILMBASE_FORCE_CXX03
--#   if defined _WIN32 || defined _WIN64
-+#   if (defined _WIN32 || defined _WIN64)
- #      ifdef NOMINMAX
- #         undef NOMINMAX
- #      endif
-@@ -116,7 +120,7 @@ class ILMTHREAD_EXPORT Mutex
-     void	lock () const;
-     void	unlock () const;
- 
--    #if defined _WIN32 || defined _WIN64
-+    #if (defined _WIN32 || defined _WIN64)
- 	mutable CRITICAL_SECTION _mutex;
-     #elif HAVE_PTHREAD
- 	mutable pthread_mutex_t _mutex;
-diff --git a/IlmBase/IlmThread/IlmThreadMutexPosix.cpp b/IlmBase/IlmThread/IlmThreadMutexPosix.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutexPosix.cpp
-+++ b/IlmBase/IlmThread/IlmThreadMutexPosix.cpp
-@@ -41,6 +41,10 @@
- 
- #include "IlmBaseConfig.h"
- 
-+#if (defined(_WIN32) || defined(_WIN64))
-+#include <IlmThreadMinGWThread.h>
-+#endif
-+
- #ifdef ILMBASE_FORCE_CXX03
- #   if HAVE_PTHREAD
- 
-diff --git a/IlmBase/IlmThread/IlmThreadMutexWin32.cpp b/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
-+++ b/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
-@@ -40,9 +40,12 @@
- 
- #include "IlmBaseConfig.h"
- 
--#ifdef ILMBASE_FORCE_CXX03
--#    ifdef _WIN32
-+#if (defined(_WIN32) || defined(_WIN64))
-+#include <IlmThreadMinGWThread.h>
-+#endif
- 
-+#ifdef ILMBASE_FORCE_CXX03
-+#    if ((defined _WIN32 || defined _WIN64) && !defined(__MINGW64_VERSION_MAJOR))
- #        include "IlmThreadMutex.h"
- #        include "Iex.h"
- 
-diff --git a/IlmBase/IlmThread/IlmThreadPosix.cpp b/IlmBase/IlmThread/IlmThreadPosix.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadPosix.cpp
-+++ b/IlmBase/IlmThread/IlmThreadPosix.cpp
-@@ -41,6 +41,10 @@
- 
- #include "IlmBaseConfig.h"
- 
-+#if (defined(_WIN32) || defined(_WIN64))
-+#include <IlmThreadMinGWThread.h>
-+#endif
-+
- #if HAVE_PTHREAD
- #ifdef ILMBASE_FORCE_CXX03
- 
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.cpp b/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-@@ -41,6 +41,10 @@
- 
- #include "IlmBaseConfig.h"
- 
-+#if (defined(_WIN32) || defined(_WIN64))
-+#include <IlmThreadMinGWThread.h>
-+#endif
-+
- #if !defined (_WIN32) && !(_WIN64) && !(HAVE_PTHREAD)
- #include "IlmThreadSemaphore.h"
- 
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.h b/IlmBase/IlmThread/IlmThreadSemaphore.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphore.h
-+++ b/IlmBase/IlmThread/IlmThreadSemaphore.h
-@@ -46,24 +46,24 @@
- #include "IlmThreadExport.h"
- #include "IlmThreadNamespace.h"
- 
--#if defined _WIN32 || defined _WIN64
--#   ifdef NOMINMAX
--#      undef NOMINMAX
--#   endif
--#   define NOMINMAX
--#   include <windows.h>
--#elif defined(HAVE_POSIX_SEMAPHORES)
--#   include <semaphore.h>
--#elif defined(__APPLE__)
--#   include <dispatch/dispatch.h>
--#else
--#   ifdef ILMBASE_FORCE_CXX03
--#      if HAVE_PTHREAD
--#         include <pthread.h>
--#      endif
-+#if (defined(_WIN32) || defined(_WIN64))
-+#include <IlmThreadMinGWThread.h>
-+#endif
-+
-+#if (!(defined(_WIN32) || defined(_WIN64)) || defined(__MINGW64_VERSION_MAJOR))
-+#   if defined(HAVE_POSIX_SEMAPHORES)
-+#       include <semaphore.h>
-+#   elif defined(__APPLE__)
-+#       include <dispatch/dispatch.h>
- #   else
--#      include <mutex>
--#      include <condition_variable>
-+#       ifdef ILMBASE_FORCE_CXX03
-+#           if HAVE_PTHREAD
-+#               include <pthread.h>
-+#           endif
-+#       else
-+#           include <mutex>
-+#           include <condition_variable>
-+#       endif
- #   endif
- #endif
- 
-@@ -84,7 +84,7 @@ class ILMTHREAD_EXPORT Semaphore
- 
-   private:
- 
--#if defined _WIN32 || defined _WIN64
-+#if ((defined _WIN32 || defined _WIN64) && !defined(HAVE_POSIX_SEMAPHORES))
- 
- 	mutable HANDLE _semaphore;
- 
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp b/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp
-@@ -41,6 +41,10 @@
- 
- #include "IlmBaseConfig.h"
- 
-+#if (defined(_WIN32) || defined(_WIN64))
-+#include <IlmThreadMinGWThread.h>
-+#endif
-+
- #if HAVE_PTHREAD && HAVE_POSIX_SEMAPHORES
- 
- #include "IlmThreadSemaphore.h"
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
-@@ -41,7 +41,11 @@
- 
- #include "IlmBaseConfig.h"
- 
--#if (!HAVE_POSIX_SEMAPHORES) && !defined (_WIN32) && ! defined (_WIN64) && ! defined (__APPLE__)
-+#if (defined(_WIN32) || defined(_WIN64))
-+#include <IlmThreadMinGWThread.h>
-+#endif
-+
-+#if (!defined(HAVE_POSIX_SEMAPHORES)) && (!defined (_WIN32) && !defined (_WIN64) || defined(__MINGW64_VERSION_MAJOR)) && !defined (__APPLE__)
- 
- #include "IlmThreadSemaphore.h"
- #include "Iex.h"
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp b/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
-@@ -37,8 +37,11 @@
- //	class Semaphore -- implementation for Windows
- //
- //-----------------------------------------------------------------------------
-+#if (defined(_WIN32) || defined(_WIN64))
-+#include <IlmThreadMinGWThread.h>
-+#endif
- 
--#ifdef _WIN32
-+#if (defined _WIN32 || defined _WIN64) && !defined(HAVE_POSIX_SEMAPHORES)
- 
- #include "IlmThreadSemaphore.h"
- #include "Iex.h"
-diff --git a/IlmBase/IlmThread/IlmThreadWin32.cpp b/IlmBase/IlmThread/IlmThreadWin32.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadWin32.cpp
-+++ b/IlmBase/IlmThread/IlmThreadWin32.cpp
-@@ -42,7 +42,7 @@
- #include "IlmBaseConfig.h"
- 
- #ifdef ILMBASE_FORCE_CXX03
--#ifdef _WIN32
-+#if ((defined _WIN32 || defined _WIN64) && !defined(__MINGW64_VERSION_MAJOR))
- 
- #include "IlmThread.h"
- #include "Iex.h"
-diff --git a/IlmBase/config/CMakeLists.txt b/IlmBase/config/CMakeLists.txt
-index 1111111..2222222 100644
---- a/IlmBase/config/CMakeLists.txt
-+++ b/IlmBase/config/CMakeLists.txt
-@@ -29,8 +29,12 @@ if(Threads_FOUND)
- 
-   # we have threads, but do we have posix semaphores for sem_init?
-   # should be in pthreads
--  if(NOT (APPLE OR WIN32))
--    check_include_files(semaphore.h ILMBASE_HAVE_SEMAPHORE_H)
-+  if(NOT (APPLE OR (WIN32 AND NOT MINGW)))
-+    if(MINGW)
-+      check_include_files(pthread_unistd.h ILMBASE_HAVE_SEMAPHORE_H)
-+    else()
-+      check_include_files(semaphore.h ILMBASE_HAVE_SEMAPHORE_H)
-+    endif()
-     if(ILMBASE_HAVE_SEMAPHORE_H AND ILMBASE_HAVE_PTHREAD)
-       # should just be in libc, so no need for check_library_exists
-       set(CMAKE_REQUIRED_FLAGS ${CMAKE_THREAD_LIBS_INIT})
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Gregorio Litenstein <g.litenstein@gmail.com>
-Date: Sat, 19 Oct 2019 12:01:05 -0300
-Subject: [PATCH 5/9] Fix symlink creation on windows.
-
-
-diff --git a/IlmBase/config/LibraryDefine.cmake b/IlmBase/config/LibraryDefine.cmake
-index 1111111..2222222 100644
---- a/IlmBase/config/LibraryDefine.cmake
-+++ b/IlmBase/config/LibraryDefine.cmake
-@@ -98,12 +98,20 @@ function(ILMBASE_DEFINE_LIBRARY libname)
-       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${ILMBASE_OUTPUT_SUBDIR}
-   )
-   if(BUILD_SHARED_LIBS AND (NOT "${ILMBASE_LIB_SUFFIX}" STREQUAL ""))
--    set(verlibname ${CMAKE_SHARED_LIBRARY_PREFIX}${libname}${ILMBASE_LIB_SUFFIX}${CMAKE_SHARED_LIBRARY_SUFFIX})
--    set(baselibname ${CMAKE_SHARED_LIBRARY_PREFIX}${libname}${CMAKE_SHARED_LIBRARY_SUFFIX})
--    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E chdir \$ENV\{DESTDIR\}${CMAKE_INSTALL_FULL_LIBDIR} ${CMAKE_COMMAND} -E create_symlink ${verlibname} ${baselibname})")
--    install(CODE "message(\"-- Creating symlink in ${CMAKE_INSTALL_FULL_LIBDIR} ${baselibname} -> ${verlibname}\")")
-+    set(verlibname ${CMAKE_SHARED_LIBRARY_PREFIX}${libname}${ILMBASE_LIB_SUFFIX})
-+    set(baselibname ${CMAKE_SHARED_LIBRARY_PREFIX}${libname})
-+    if (WIN32)
-+      set(fullinstallpath "${CMAKE_INSTALL_FULL_BINDIR}")
-+      install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E chdir \$ENV\{DESTDIR\}${CMAKE_INSTALL_FULL_LIBDIR} ${CMAKE_COMMAND} -E create_symlink ${verlibname}${CMAKE_IMPORT_LIBRARY_SUFFIX} ${baselibname}${CMAKE_IMPORT_LIBRARY_SUFFIX})")
-+      install(CODE "message(\"-- Creating symlink in ${CMAKE_INSTALL_FULL_LIBDIR} ${baselibname}${CMAKE_IMPORT_LIBRARY_SUFFIX} -> ${verlibname}${CMAKE_IMPORT_LIBRARY_SUFFIX}\")")
-+    else()
-+      set(fullinstallpath "${CMAKE_INSTALL_FULL_LIBDIR}")
-+    endif()
-+    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E chdir ${fullinstallpath} ${CMAKE_COMMAND} -E create_symlink ${verlibname}${CMAKE_SHARED_LIBRARY_SUFFIX} ${baselibname}${CMAKE_SHARED_LIBRARY_SUFFIX})")
-+    install(CODE "message(\"-- Creating symlink in ${fullinstallpath} ${baselibname}${CMAKE_SHARED_LIBRARY_SUFFIX} -> ${verlibname}${CMAKE_SHARED_LIBRARY_SUFFIX}\")")
-     set(verlibname)
-     set(baselibname)
-+    set(fullinstallpath)
-   endif()
- 
-   if(ILMBASE_BUILD_BOTH_STATIC_SHARED)
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Gregorio Litenstein <g.litenstein@gmail.com>
-Date: Tue, 22 Oct 2019 15:11:01 -0300
-Subject: [PATCH 6/9] Homogenize usage of #ifdef/#ifndef/#if defined
-
-
-diff --git a/IlmBase/IlmThread/IlmThread.cpp b/IlmBase/IlmThread/IlmThread.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThread.cpp
-+++ b/IlmBase/IlmThread/IlmThread.cpp
-@@ -80,7 +80,7 @@ Thread::start ()
- }
- 
- #else
--#   if !defined (_WIN32) &&!(_WIN64) && !(HAVE_PTHREAD)
-+#   if (!defined(_WIN32) && !defined(_WIN64) && !defined(HAVE_PTHREAD))
- //-----------------------------------------------------------------------------
- // OPENEXR_FORCE_CXX03 with no windows / pthread support
- //-----------------------------------------------------------------------------
-diff --git a/IlmBase/IlmThread/IlmThread.h b/IlmBase/IlmThread/IlmThread.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThread.h
-+++ b/IlmBase/IlmThread/IlmThread.h
-@@ -99,13 +99,13 @@
- #endif
- 
- #ifdef ILMBASE_FORCE_CXX03
--#   if ((defined _WIN32 || defined _WIN64) && !defined(HAVE_PTHREAD))
--#       ifdef NOMINMAX
--#          undef NOMINMAX
--#       endif
--#       define NOMINMAX
--#       include <windows.h>
--#       include <process.h>
-+#   if ((defined(_WIN32) || defined(_WIN64)) && !defined(HAVE_PTHREAD))
-+#     ifdef NOMINMAX
-+#        undef NOMINMAX
-+#     endif
-+#     define NOMINMAX
-+#     include <windows.h>
-+#     include <process.h>
- #   elif HAVE_PTHREAD
- #      include <pthread.h>
- #   endif
-@@ -136,7 +136,7 @@ class Thread
-   private:
- 
- #ifdef ILMBASE_FORCE_CXX03
--#   if ((defined _WIN32 || defined _WIN64) && !defined(HAVE_PTHREAD))
-+#   if ((defined(_WIN32) || defined(_WIN64)) && !defined(HAVE_PTHREAD))
- 	HANDLE _thread;
- #   elif HAVE_PTHREAD
- 	pthread_t _thread;
-diff --git a/IlmBase/IlmThread/IlmThreadExport.h b/IlmBase/IlmThread/IlmThreadExport.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadExport.h
-+++ b/IlmBase/IlmThread/IlmThreadExport.h
-@@ -32,9 +32,9 @@
- //
- ///////////////////////////////////////////////////////////////////////////
- 
--#if defined(OPENEXR_DLL)
--    #if defined(ILMTHREAD_EXPORTS)
--	    #define ILMTHREAD_EXPORT __declspec(dllexport)
-+#ifdef OPENEXR_DLL
-+    #ifdef ILMTHREAD_EXPORTS
-+        #define ILMTHREAD_EXPORT __declspec(dllexport)
-         #define ILMTHREAD_EXPORT_CONST extern __declspec(dllexport)
-     #else
- 	    #define ILMTHREAD_EXPORT __declspec(dllimport)
-diff --git a/IlmBase/IlmThread/IlmThreadMinGWThread.h b/IlmBase/IlmThread/IlmThreadMinGWThread.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMinGWThread.h
-+++ b/IlmBase/IlmThread/IlmThreadMinGWThread.h
-@@ -49,7 +49,7 @@
- # endif
- # define NOMINMAX
- # include <windows.h>
--# if defined(__MINGW64_VERSION_MAJOR)
-+# ifdef __MINGW64_VERSION_MAJOR
- #   include <pthread_unistd.h>
- #   if (defined(_POSIX_SEMAPHORES) && !defined(HAVE_POSIX_SEMAPHORES))
- #     define HAVE_POSIX_SEMAPHORES
-diff --git a/IlmBase/IlmThread/IlmThreadMutex.cpp b/IlmBase/IlmThread/IlmThreadMutex.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutex.cpp
-+++ b/IlmBase/IlmThread/IlmThreadMutex.cpp
-@@ -42,7 +42,7 @@
- #include "IlmBaseConfig.h"
- 
- #ifdef ILMBASE_FORCE_CXX03
--#   if !defined(_WIN32) && !defined(_WIN64) && !(HAVE_PTHREAD)
-+#   if !defined(_WIN32) && !defined(_WIN64) && !defined(HAVE_PTHREAD)
- #      include "IlmThreadMutex.h"
- 
- ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_ENTER
-diff --git a/IlmBase/IlmThread/IlmThreadMutex.h b/IlmBase/IlmThread/IlmThreadMutex.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutex.h
-+++ b/IlmBase/IlmThread/IlmThreadMutex.h
-@@ -75,13 +75,14 @@
- #endif
- 
- #ifdef ILMBASE_FORCE_CXX03
--#   if (defined _WIN32 || defined _WIN64)
-+#   if (defined(_WIN32) || defined(_WIN64))
- #      ifdef NOMINMAX
- #         undef NOMINMAX
- #      endif
- #      define NOMINMAX
- #      include <windows.h>
--#   elif HAVE_PTHREAD
-+#   endif
-+#   ifdef HAVE_PTHREAD
- #      include <pthread.h>
- #   endif
- #else
-@@ -120,7 +121,7 @@ class ILMTHREAD_EXPORT Mutex
-     void	lock () const;
-     void	unlock () const;
- 
--    #if (defined _WIN32 || defined _WIN64)
-+    #if (defined(_WIN32) || defined(_WIN64)) && !defined(HAVE_PTHREAD)
- 	mutable CRITICAL_SECTION _mutex;
-     #elif HAVE_PTHREAD
- 	mutable pthread_mutex_t _mutex;
-diff --git a/IlmBase/IlmThread/IlmThreadMutexPosix.cpp b/IlmBase/IlmThread/IlmThreadMutexPosix.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutexPosix.cpp
-+++ b/IlmBase/IlmThread/IlmThreadMutexPosix.cpp
-@@ -46,7 +46,7 @@
- #endif
- 
- #ifdef ILMBASE_FORCE_CXX03
--#   if HAVE_PTHREAD
-+#   ifdef HAVE_PTHREAD
- 
- #      include "IlmThreadMutex.h"
- #      include "Iex.h"
-diff --git a/IlmBase/IlmThread/IlmThreadPool.cpp b/IlmBase/IlmThread/IlmThreadPool.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadPool.cpp
-+++ b/IlmBase/IlmThread/IlmThreadPool.cpp
-@@ -507,7 +507,7 @@ TaskGroup::Data::addTask ()
-     // extra lock but for c++98, to add the ability for custom thread
-     // pool we add the lock here
-     //
--#if ILMBASE_FORCE_CXX03
-+#ifdef ILMBASE_FORCE_CXX03
-     Lock lock (dtorMutex);
- #endif
-     if (numPending++ == 0)
-@@ -860,7 +860,7 @@ unsigned
- ThreadPool::estimateThreadCountForFileIO ()
- {
- #ifdef ILMBASE_FORCE_CXX03
--#    if defined(_WIN32)
-+#    if (defined(_WIN32) || defined(_WIN64))
-     SYSTEM_INFO sysinfo;
-     GetSystemInfo (&sysinfo);
-     return static_cast<unsigned> (sysinfo.dwNumberOfProcessors);
-diff --git a/IlmBase/IlmThread/IlmThreadPosix.cpp b/IlmBase/IlmThread/IlmThreadPosix.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadPosix.cpp
-+++ b/IlmBase/IlmThread/IlmThreadPosix.cpp
-@@ -45,7 +45,7 @@
- #include <IlmThreadMinGWThread.h>
- #endif
- 
--#if HAVE_PTHREAD
-+#ifdef HAVE_PTHREAD
- #ifdef ILMBASE_FORCE_CXX03
- 
- #include "IlmThread.h"
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.cpp b/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-@@ -45,7 +45,7 @@
- #include <IlmThreadMinGWThread.h>
- #endif
- 
--#if !defined (_WIN32) && !(_WIN64) && !(HAVE_PTHREAD)
-+#if (!defined(_WIN32) && !defined(_WIN64) && !defined(HAVE_PTHREAD))
- #include "IlmThreadSemaphore.h"
- 
- ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_ENTER
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.h b/IlmBase/IlmThread/IlmThreadSemaphore.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphore.h
-+++ b/IlmBase/IlmThread/IlmThreadSemaphore.h
-@@ -50,14 +50,14 @@
- #include <IlmThreadMinGWThread.h>
- #endif
- 
--#if (!(defined(_WIN32) || defined(_WIN64)) || defined(__MINGW64_VERSION_MAJOR))
--#   if defined(HAVE_POSIX_SEMAPHORES)
-+#if ((!defined(_WIN32) && !defined(_WIN64)) || defined(__MINGW64_VERSION_MAJOR))
-+#   ifdef HAVE_POSIX_SEMAPHORES
- #       include <semaphore.h>
- #   elif defined(__APPLE__)
- #       include <dispatch/dispatch.h>
- #   else
- #       ifdef ILMBASE_FORCE_CXX03
--#           if HAVE_PTHREAD
-+#           ifdef HAVE_PTHREAD
- #               include <pthread.h>
- #           endif
- #       else
-@@ -84,7 +84,7 @@ class ILMTHREAD_EXPORT Semaphore
- 
-   private:
- 
--#if ((defined _WIN32 || defined _WIN64) && !defined(HAVE_POSIX_SEMAPHORES))
-+#if ((defined(_WIN32) || defined(_WIN64)) && !defined(HAVE_POSIX_SEMAPHORES))
- 
- 	mutable HANDLE _semaphore;
- 
-@@ -105,8 +105,8 @@ class ILMTHREAD_EXPORT Semaphore
- 	{
- 	    unsigned int count;
- 	    unsigned long numWaiting;
--#   if ILMBASE_FORCE_CXX03
--#      if HAVE_PTHREAD
-+#   ifdef ILMBASE_FORCE_CXX03
-+#      ifdef HAVE_PTHREAD
- 	    pthread_mutex_t mutex;
- 	    pthread_cond_t nonZero;
- #      else
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphoreOSX.cpp b/IlmBase/IlmThread/IlmThreadSemaphoreOSX.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphoreOSX.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphoreOSX.cpp
-@@ -39,7 +39,7 @@
- //
- //-----------------------------------------------------------------------------
- 
--#if defined(__APPLE__)
-+#ifdef __APPLE__
- 
- #include "IlmThreadSemaphore.h"
- #include "Iex.h"
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp b/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp
-@@ -45,7 +45,7 @@
- #include <IlmThreadMinGWThread.h>
- #endif
- 
--#if HAVE_PTHREAD && HAVE_POSIX_SEMAPHORES
-+#if defined(HAVE_PTHREAD) && defined(HAVE_POSIX_SEMAPHORES)
- 
- #include "IlmThreadSemaphore.h"
- #include "Iex.h"
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
-@@ -45,7 +45,8 @@
- #include <IlmThreadMinGWThread.h>
- #endif
- 
--#if (!defined(HAVE_POSIX_SEMAPHORES)) && (!defined (_WIN32) && !defined (_WIN64) || defined(__MINGW64_VERSION_MAJOR)) && !defined (__APPLE__)
-+#if (!defined(HAVE_POSIX_SEMAPHORES) && !defined(__APPLE__))
-+#if ((!defined(_WIN32) && !defined(_WIN64)) || (defined(__MINGW64_VERSION_MAJOR) && defined(ILMBASE_FORCE_CXX03)))
- 
- #include "IlmThreadSemaphore.h"
- #include "Iex.h"
-@@ -53,7 +54,7 @@
- 
- ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_ENTER
- 
--#if ILMBASE_FORCE_CXX03 && HAVE_PTHREAD
-+#if (defined(ILMBASE_FORCE_CXX03) && defined(HAVE_PTHREAD))
- Semaphore::Semaphore (unsigned int value)
- {
-     if (int error = ::pthread_mutex_init (&_semaphore.mutex, 0))
-@@ -227,4 +228,5 @@ Semaphore::value () const
- 
- ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_EXIT
- 
--#endif
-+#endif // _WIN32
-+#endif // HAVE_POSIX_SEMAPHORES
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp b/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
-@@ -41,7 +41,7 @@
- #include <IlmThreadMinGWThread.h>
- #endif
- 
--#if (defined _WIN32 || defined _WIN64) && !defined(HAVE_POSIX_SEMAPHORES)
-+#if (defined(_WIN32) || defined(_WIN64)) && !defined(HAVE_POSIX_SEMAPHORES)
- 
- #include "IlmThreadSemaphore.h"
- #include "Iex.h"
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Gregorio Litenstein <g.litenstein@gmail.com>
-Date: Tue, 22 Oct 2019 09:03:25 -0300
-Subject: [PATCH 7/9] Fix autoconf and CMake tests for semaphores.
-
-This should eliminate the need for IlmThreadMinGWThread.h entirely.
-
-diff --git a/IlmBase/config/CMakeLists.txt b/IlmBase/config/CMakeLists.txt
-index 1111111..2222222 100644
---- a/IlmBase/config/CMakeLists.txt
-+++ b/IlmBase/config/CMakeLists.txt
-@@ -29,9 +29,9 @@ if(Threads_FOUND)
- 
-   # we have threads, but do we have posix semaphores for sem_init?
-   # should be in pthreads
--  if(NOT (APPLE OR (WIN32 AND NOT MINGW)))
-+  if(NOT (APPLE OR (WIN32 AND (NOT MINGW))))
-     if(MINGW)
--      check_include_files(pthread_unistd.h ILMBASE_HAVE_SEMAPHORE_H)
-+      check_include_files("pthread_unistd.h;semaphore.h" ILMBASE_HAVE_SEMAPHORE_H)
-     else()
-       check_include_files(semaphore.h ILMBASE_HAVE_SEMAPHORE_H)
-     endif()
-diff --git a/IlmBase/m4/threads.m4 b/IlmBase/m4/threads.m4
-index 1111111..2222222 100644
---- a/IlmBase/m4/threads.m4
-+++ b/IlmBase/m4/threads.m4
-@@ -258,25 +258,46 @@ if test "${enable_posix_sem:-yes}" != "no"; then
-     AC_CHECK_HEADERS([semaphore.h], [
- 	AC_SEARCH_LIBS(sem_init, [posix4 pthread], [
- 	    AC_MSG_CHECKING([whether to use POSIX unnamed semaphores])
--	    AC_RUN_IFELSE([
--		AC_LANG_PROGRAM([#include <semaphore.h>], [
--		    sem_t mysem;
--		    if (sem_init (&mysem, 1, 1) == 0)
--		    {
--			if (sem_wait (&mysem) == 0)
--			{
--			    sem_post (&mysem);
--			    sem_destroy (&mysem);
--			    return 0;
--			}
--		    }
--		    return 1;
--		])
--		], [
--		AC_MSG_RESULT([yes])
--		am_posix_sem_ok=yes], [
--		AC_MSG_RESULT([no (pshared not usable)])], [
--		AC_MSG_RESULT([no (cannot check usability when cross compiling)])])
-+		if test "${cross_compiling}" == "yes"; then
-+			AC_LINK_IFELSE([
-+			AC_LANG_PROGRAM([#include <semaphore.h>], [
-+				sem_t mysem;
-+				if (sem_init (&mysem, 1, 1) == 0)
-+				{
-+				if (sem_wait (&mysem) == 0)
-+				{
-+					sem_post (&mysem);
-+					sem_destroy (&mysem);
-+					return 0;
-+				}
-+				}
-+				return 1;
-+			])
-+			], [
-+			AC_MSG_RESULT([yes])
-+			am_posix_sem_ok=yes], [
-+			AC_MSG_RESULT([no (pshared not usable)])])
-+		else
-+			AC_RUN_IFELSE([
-+			AC_LANG_PROGRAM([#include <semaphore.h>], [
-+				sem_t mysem;
-+				if (sem_init (&mysem, 1, 1) == 0)
-+				{
-+				if (sem_wait (&mysem) == 0)
-+				{
-+					sem_post (&mysem);
-+					sem_destroy (&mysem);
-+					return 0;
-+				}
-+				}
-+				return 1;
-+			])
-+			], [
-+			AC_MSG_RESULT([yes])
-+			am_posix_sem_ok=yes], [
-+			AC_MSG_RESULT([no (pshared not usable)])], [
-+			AC_MSG_RESULT([no (we're cross-compiling, and this test should have only tried to link, not run.))])])
-+		fi
- 	])
-     ])
- fi
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Gregorio Litenstein <g.litenstein@gmail.com>
-Date: Tue, 22 Oct 2019 15:05:06 -0300
-Subject: [PATCH 8/9] Remove IlmThreadMinGWThread.h
-
-
-diff --git a/IlmBase/IlmThread/CMakeLists.txt b/IlmBase/IlmThread/CMakeLists.txt
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/CMakeLists.txt
-+++ b/IlmBase/IlmThread/CMakeLists.txt
-@@ -21,7 +21,6 @@ ilmbase_define_library(IlmThread
-     IlmThreadPool.h
-     IlmThread.h
-     IlmThreadSemaphore.h
--    IlmThreadMinGWThread.h
-     IlmThreadMutex.h
-     IlmThreadNamespace.h
-     IlmThreadExport.h
-diff --git a/IlmBase/IlmThread/IlmThread.h b/IlmBase/IlmThread/IlmThread.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThread.h
-+++ b/IlmBase/IlmThread/IlmThread.h
-@@ -94,10 +94,6 @@
- #include "IlmThreadExport.h"
- #include "IlmThreadNamespace.h"
- 
--#if (defined(_WIN32) || defined(_WIN64))
--#include <IlmThreadMinGWThread.h>
--#endif
--
- #ifdef ILMBASE_FORCE_CXX03
- #   if ((defined(_WIN32) || defined(_WIN64)) && !defined(HAVE_PTHREAD))
- #     ifdef NOMINMAX
-diff --git a/IlmBase/IlmThread/IlmThreadMinGWThread.h b/IlmBase/IlmThread/IlmThreadMinGWThread.h
-deleted file mode 100644
-index 1111111..2222222
---- a/IlmBase/IlmThread/IlmThreadMinGWThread.h
-+++ /dev/null
-@@ -1,63 +0,0 @@
--///////////////////////////////////////////////////////////////////////////
--//
--// Copyright (c) 2005-2012, Industrial Light & Magic, a division of Lucas
--// Digital Ltd. LLC
--// 
--// All rights reserved.
--// 
--// Redistribution and use in source and binary forms, with or without
--// modification, are permitted provided that the following conditions are
--// met:
--// *       Redistributions of source code must retain the above copyright
--// notice, this list of conditions and the following disclaimer.
--// *       Redistributions in binary form must reproduce the above
--// copyright notice, this list of conditions and the following disclaimer
--// in the documentation and/or other materials provided with the
--// distribution.
--// *       Neither the name of Industrial Light & Magic nor the names of
--// its contributors may be used to endorse or promote products derived
--// from this software without specific prior written permission. 
--// 
--// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
--// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
--// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
--// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
--// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
--// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
--// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
--// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
--// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
--// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
--// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
--//
--///////////////////////////////////////////////////////////////////////////
--
--#ifndef INCLUDED_ILM_THREAD_MINGW_THREAD_H
--#define INCLUDED_ILM_THREAD_MINGW_THREAD_H
--
--//-----------------------------------------------------------------------------
--//
--//  This file is just some boilerplate to ensure macros are correctly defined
--//  in order to compile against MinGW-W64's implementation of posix threads
--//  and semaphores.
--//
--//-----------------------------------------------------------------------------
--
--#if defined(_WIN32) || defined(_WIN64)
--# ifdef NOMINMAX
--#   undef NOMINMAX
--# endif
--# define NOMINMAX
--# include <windows.h>
--# ifdef __MINGW64_VERSION_MAJOR
--#   include <pthread_unistd.h>
--#   if (defined(_POSIX_SEMAPHORES) && !defined(HAVE_POSIX_SEMAPHORES))
--#     define HAVE_POSIX_SEMAPHORES
--#   endif
--#   if (defined(_POSIX_THREADS) && !defined(HAVE_PTHREAD))
--#     define HAVE_PTHREAD
--#   endif
--# endif
--#endif
--
--#endif // INCLUDED_ILM_THREAD_MINGW_THREAD_H
-\ No newline at end of file
-diff --git a/IlmBase/IlmThread/IlmThreadMutex.h b/IlmBase/IlmThread/IlmThreadMutex.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutex.h
-+++ b/IlmBase/IlmThread/IlmThreadMutex.h
-@@ -70,10 +70,6 @@
- #include "IlmBaseConfig.h"
- #include "IlmThreadNamespace.h"
- 
--#if (defined(_WIN32) || defined(_WIN64))
--#include <IlmThreadMinGWThread.h>
--#endif
--
- #ifdef ILMBASE_FORCE_CXX03
- #   if (defined(_WIN32) || defined(_WIN64))
- #      ifdef NOMINMAX
-diff --git a/IlmBase/IlmThread/IlmThreadMutexPosix.cpp b/IlmBase/IlmThread/IlmThreadMutexPosix.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutexPosix.cpp
-+++ b/IlmBase/IlmThread/IlmThreadMutexPosix.cpp
-@@ -41,10 +41,6 @@
- 
- #include "IlmBaseConfig.h"
- 
--#if (defined(_WIN32) || defined(_WIN64))
--#include <IlmThreadMinGWThread.h>
--#endif
--
- #ifdef ILMBASE_FORCE_CXX03
- #   ifdef HAVE_PTHREAD
- 
-diff --git a/IlmBase/IlmThread/IlmThreadMutexWin32.cpp b/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
-+++ b/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
-@@ -40,13 +40,10 @@
- 
- #include "IlmBaseConfig.h"
- 
--#if (defined(_WIN32) || defined(_WIN64))
--#include <IlmThreadMinGWThread.h>
--#endif
-+#include "IlmThreadMutex.h" // We need to have windows.h before checking for __MINGW64_VERSION_MAJOR
- 
- #ifdef ILMBASE_FORCE_CXX03
- #    if ((defined _WIN32 || defined _WIN64) && !defined(__MINGW64_VERSION_MAJOR))
--#        include "IlmThreadMutex.h"
- #        include "Iex.h"
- 
- ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_ENTER
-diff --git a/IlmBase/IlmThread/IlmThreadPosix.cpp b/IlmBase/IlmThread/IlmThreadPosix.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadPosix.cpp
-+++ b/IlmBase/IlmThread/IlmThreadPosix.cpp
-@@ -41,10 +41,6 @@
- 
- #include "IlmBaseConfig.h"
- 
--#if (defined(_WIN32) || defined(_WIN64))
--#include <IlmThreadMinGWThread.h>
--#endif
--
- #ifdef HAVE_PTHREAD
- #ifdef ILMBASE_FORCE_CXX03
- 
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.cpp b/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-@@ -41,10 +41,6 @@
- 
- #include "IlmBaseConfig.h"
- 
--#if (defined(_WIN32) || defined(_WIN64))
--#include <IlmThreadMinGWThread.h>
--#endif
--
- #if (!defined(_WIN32) && !defined(_WIN64) && !defined(HAVE_PTHREAD))
- #include "IlmThreadSemaphore.h"
- 
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.h b/IlmBase/IlmThread/IlmThreadSemaphore.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphore.h
-+++ b/IlmBase/IlmThread/IlmThreadSemaphore.h
-@@ -47,24 +47,26 @@
- #include "IlmThreadNamespace.h"
- 
- #if (defined(_WIN32) || defined(_WIN64))
--#include <IlmThreadMinGWThread.h>
-+#   ifdef NOMINMAX
-+#      undef NOMINMAX
-+#   endif
-+#   define NOMINMAX
-+#   include <windows.h>
- #endif
- 
--#if ((!defined(_WIN32) && !defined(_WIN64)) || defined(__MINGW64_VERSION_MAJOR))
--#   ifdef HAVE_POSIX_SEMAPHORES
--#       include <semaphore.h>
--#   elif defined(__APPLE__)
--#       include <dispatch/dispatch.h>
--#   else
--#       ifdef ILMBASE_FORCE_CXX03
--#           ifdef HAVE_PTHREAD
--#               include <pthread.h>
--#           endif
--#       else
--#           include <mutex>
--#           include <condition_variable>
--#       endif
--#   endif
-+#ifdef HAVE_POSIX_SEMAPHORES
-+#  include <semaphore.h>
-+#elif defined(__APPLE__)
-+#  include <dispatch/dispatch.h>
-+#else
-+#  ifdef ILMBASE_FORCE_CXX03
-+#    ifdef HAVE_PTHREAD
-+#      include <pthread.h>
-+#    endif
-+#  else
-+#    include <mutex>
-+#    include <condition_variable>
-+#  endif
- #endif
- 
- ILMTHREAD_INTERNAL_NAMESPACE_HEADER_ENTER
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp b/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphorePosix.cpp
-@@ -41,10 +41,6 @@
- 
- #include "IlmBaseConfig.h"
- 
--#if (defined(_WIN32) || defined(_WIN64))
--#include <IlmThreadMinGWThread.h>
--#endif
--
- #if defined(HAVE_PTHREAD) && defined(HAVE_POSIX_SEMAPHORES)
- 
- #include "IlmThreadSemaphore.h"
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
-@@ -40,15 +40,11 @@
- //-----------------------------------------------------------------------------
- 
- #include "IlmBaseConfig.h"
--
--#if (defined(_WIN32) || defined(_WIN64))
--#include <IlmThreadMinGWThread.h>
--#endif
-+#include "IlmThreadSemaphore.h" // We need to have windows.h before checking for __MINGW64_VERSION_MAJOR
- 
- #if (!defined(HAVE_POSIX_SEMAPHORES) && !defined(__APPLE__))
- #if ((!defined(_WIN32) && !defined(_WIN64)) || (defined(__MINGW64_VERSION_MAJOR) && defined(ILMBASE_FORCE_CXX03)))
- 
--#include "IlmThreadSemaphore.h"
- #include "Iex.h"
- #include <assert.h>
- 
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp b/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphoreWin32.cpp
-@@ -37,9 +37,8 @@
- //	class Semaphore -- implementation for Windows
- //
- //-----------------------------------------------------------------------------
--#if (defined(_WIN32) || defined(_WIN64))
--#include <IlmThreadMinGWThread.h>
--#endif
-+
-+#include "IlmBaseConfig.h"
- 
- #if (defined(_WIN32) || defined(_WIN64)) && !defined(HAVE_POSIX_SEMAPHORES)
- 
-diff --git a/IlmBase/IlmThread/IlmThreadWin32.cpp b/IlmBase/IlmThread/IlmThreadWin32.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadWin32.cpp
-+++ b/IlmBase/IlmThread/IlmThreadWin32.cpp
-@@ -38,13 +38,13 @@
- //
- //-----------------------------------------------------------------------------
-
--
- #include "IlmBaseConfig.h"
-
-+#include "IlmThread.h"  // We need to have windows.h before checking for __MINGW64_VERSION_MAJOR
-+
- #ifdef ILMBASE_FORCE_CXX03
- #if ((defined _WIN32 || defined _WIN64) && !defined(__MINGW64_VERSION_MAJOR))
-
--#include "IlmThread.h"
- #include "Iex.h"
- #include <iostream>
- #include <assert.h>
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 1 Oct 2019 14:20:00 +0200
-Subject: [PATCH 9/9] Add ILMBASE_FORCE_CXX03 to IlmBaseConfig.h.in_cmake
+Subject: [PATCH 2/4] Add ILMBASE_FORCE_CXX03 to IlmBaseConfig.h.in_cmake
 
 
 diff --git a/IlmBase/config/IlmBaseConfig.h.in_cmake b/IlmBase/config/IlmBaseConfig.h.in_cmake
@@ -1231,3 +45,167 @@ index 1111111..2222222 100644
  //////////////////////
  //
  // C++ namespace configuration / options
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 7 May 2020 17:50:37 +0200
+Subject: [PATCH 3/4] Fix build errors on MinGW-w64
+
+
+diff --git a/IlmBase/IlmThread/IlmThreadMutexWin32.cpp b/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
++++ b/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
+@@ -42,7 +42,7 @@
+ #include "IlmThreadMutex.h"
+ 
+ #ifdef ILMBASE_FORCE_CXX03
+-#    if ((defined _WIN32 || defined _WIN64) && !defined(__MINGW64_VERSION_MAJOR))
++#    if ((defined _WIN32 || defined _WIN64) && !defined(HAVE_PTHREAD))
+ #        include "Iex.h"
+ 
+ ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_ENTER
+diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.cpp b/IlmBase/IlmThread/IlmThreadSemaphore.cpp
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadSemaphore.cpp
++++ b/IlmBase/IlmThread/IlmThreadSemaphore.cpp
+@@ -41,7 +41,7 @@
+ 
+ #include "IlmBaseConfig.h"
+ 
+-#if !defined (_WIN32) && !(_WIN64) && !(HAVE_PTHREAD)
++#if !defined (_WIN32) && !defined (_WIN64) && !defined (HAVE_PTHREAD)
+ #include "IlmThreadSemaphore.h"
+ 
+ ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_ENTER
+diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.h b/IlmBase/IlmThread/IlmThreadSemaphore.h
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadSemaphore.h
++++ b/IlmBase/IlmThread/IlmThreadSemaphore.h
+@@ -107,8 +107,8 @@ class ILMTHREAD_EXPORT Semaphore
+ 	{
+ 	    unsigned int count;
+ 	    unsigned long numWaiting;
+-#   if ILMBASE_FORCE_CXX03
+-#      if HAVE_PTHREAD
++#   ifdef ILMBASE_FORCE_CXX03
++#      ifdef HAVE_PTHREAD
+ 	    pthread_mutex_t mutex;
+ 	    pthread_cond_t nonZero;
+ #      else
+diff --git a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
++++ b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
+@@ -43,7 +43,7 @@
+ #include "IlmThreadSemaphore.h"
+ 
+ #if !defined (HAVE_POSIX_SEMAPHORES) && !defined (__APPLE__)
+-#if (!defined (_WIN32) && !defined (_WIN64)) || defined (__MINGW64_VERSION_MAJOR)
++#if (!defined (_WIN32) && !defined (_WIN64)) || (defined (__MINGW64_VERSION_MAJOR) && defined (ILMBASE_FORCE_CXX03))
+ 
+ #include "Iex.h"
+ #include <assert.h>
+@@ -157,7 +157,7 @@ Semaphore::value () const
+     ::pthread_mutex_unlock (&_semaphore.mutex);
+     return value;
+ }
+-#else
++#elif !defined(ILMBASE_FORCE_CXX03)
+ Semaphore::Semaphore (unsigned int value)
+ {
+     _semaphore.count = value;
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 7 May 2020 20:00:00 +0200
+Subject: [PATCH 4/4] Prefer native win32 threading functionality
+
+
+diff --git a/IlmBase/IlmThread/CMakeLists.txt b/IlmBase/IlmThread/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/IlmBase/IlmThread/CMakeLists.txt
++++ b/IlmBase/IlmThread/CMakeLists.txt
+@@ -27,5 +27,4 @@ ilmbase_define_library(IlmThread
+     IlmThreadForward.h
+   DEPENDENCIES
+     IlmBase::Iex
+-    Threads::Threads
+   )
+diff --git a/IlmBase/config/CMakeLists.txt b/IlmBase/config/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/IlmBase/config/CMakeLists.txt
++++ b/IlmBase/config/CMakeLists.txt
+@@ -19,35 +19,6 @@ if(ILMBASE_HAVE_UCONTEXT_H)
+   endif()
+ endif()
+ 
+-###check_include_files(pthread.h ILMBASE_HAVE_PTHREAD)
+-if(Threads_FOUND)
+-  if(CMAKE_HAVE_PTHREAD_H OR CMAKE_USE_PTHREADS_INIT OR CMAKE_HP_PTHREAD_INIT)
+-    set(ILMBASE_HAVE_PTHREAD ON)
+-    # TODO: remove this once we cleanly have ILMBASE_ prefix on all #defines
+-    set(HAVE_PTHREAD ON)
+-  endif()
+-
+-  # we have threads, but do we have posix semaphores for sem_init?
+-  # should be in pthreads
+-  if(NOT (APPLE OR (WIN32 AND (NOT MINGW))))
+-    if(MINGW)
+-      check_include_files("pthread_unistd.h;semaphore.h" ILMBASE_HAVE_SEMAPHORE_H)
+-    else()
+-      check_include_files(semaphore.h ILMBASE_HAVE_SEMAPHORE_H)
+-    endif()
+-    if(ILMBASE_HAVE_SEMAPHORE_H AND ILMBASE_HAVE_PTHREAD)
+-      # should just be in libc, so no need for check_library_exists
+-      set(CMAKE_REQUIRED_FLAGS ${CMAKE_THREAD_LIBS_INIT})
+-      check_library_exists(pthread sem_init "" ILMBASE_HAVE_POSIX_SEMAPHORES)
+-      # TODO: remove this once we cleanly have ILMBASE_ prefix on all #defines
+-      if(ILMBASE_HAVE_POSIX_SEMAPHORES)
+-        set(HAVE_POSIX_SEMAPHORES ON)
+-      endif()
+-      set(CMAKE_REQUIRED_FLAGS)
+-    endif()
+-  endif()
+-endif()
+-
+ if (ILMBASE_ENABLE_LARGE_STACK)
+   set(ILMBASE_HAVE_LARGE_STACK ON)
+ endif()
+@@ -79,14 +50,6 @@ if(ILMBASE_INSTALL_PKG_CONFIG)
+     set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
+     set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+     set(LIB_SUFFIX_DASH ${ILMBASE_LIB_SUFFIX})
+-    if(TARGET Threads::Threads)
+-      # hrm, can't use properties as they end up as generator expressions
+-      # which don't seem to evaluate
+-      if(THREADS_HAVE_PTHREAD_ARG)
+-        set(PTHREAD_CFLAGS "-pthread")
+-      endif()
+-      set(PTHREAD_LIBS ${CMAKE_THREAD_LIBS_INIT})
+-    endif()
+     string(REPLACE ".in" "" pcout ${pcinfile})
+     configure_file(${pcinfile} ${CMAKE_CURRENT_BINARY_DIR}/${pcout} @ONLY)
+     install(
+diff --git a/IlmBase/config/IlmBaseSetup.cmake b/IlmBase/config/IlmBaseSetup.cmake
+index 1111111..2222222 100644
+--- a/IlmBase/config/IlmBaseSetup.cmake
++++ b/IlmBase/config/IlmBaseSetup.cmake
+@@ -124,17 +124,3 @@ if(OPENEXR_USE_CLANG_TIDY)
+     -checks=*;
+   )
+ endif()
+-
+-###############################
+-# Dependent libraries
+-
+-# so we know how to link / use threads and don't have to have a -pthread
+-# everywhere...
+-if(NOT TARGET Threads::Threads)
+-  set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+-  set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+-  find_package(Threads)
+-  if(NOT Threads_FOUND)
+-    message(FATAL_ERROR "Unable to find a threading library which is required for IlmThread")
+-  endif()
+-endif()
