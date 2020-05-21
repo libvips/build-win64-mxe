@@ -2,14 +2,13 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.9.2
-$(PKG)_CHECKSUM := ae8491b1156cd2eb9cbbaa2fd6caa1dc9ed3ded0b70443d28cd7fea798ab2a27
+# https://github.com/libvips/libvips/tarball/c2165671e25981a0e06925c36ddeb1e66610a9c1
+$(PKG)_VERSION  := c216567
+$(PKG)_CHECKSUM := 1460884ad919e77b36ec241f4c0bf58ad256398a78d0f3a2e021bbbd41c627cf
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
+$(PKG)_GH_CONF  := libvips/libvips/branches/libspng-experiment
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
-                   libjpeg-turbo tiff lcms libexif libpng orc
+                   libjpeg-turbo tiff lcms libexif libspng orc
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -36,6 +35,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "pixman": "$(pixman_VERSION)",\n'; \
      printf '  "png": "$(libpng_VERSION)",\n'; \
      printf '  "svg": "$(librsvg_VERSION)",\n'; \
+     printf '  "spng": "$(libspng_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
      printf '  "vips": "$(vips-web_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
@@ -48,9 +48,11 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
+    $(SED) -i 's/$$\*/"$$@"/g' '$(SOURCE_DIR)/autogen.sh'
+ 
     # Always build as shared library, we need
     # libvips-42.dll for the language bindings.
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+    cd '$(SOURCE_DIR)' && ./autogen.sh \
         --host='$(TARGET)' \
         --build='$(BUILD)' \
         --prefix='$(PREFIX)/$(TARGET)' \
@@ -79,14 +81,14 @@ define $(PKG)_BUILD
     # libtool should automatically generate a list
     # of exported symbols, even for "static" builds
     $(if $(BUILD_STATIC), \
-        $(SED) -i 's/^always_export_symbols=no/always_export_symbols=yes/g' '$(BUILD_DIR)/libtool')
+        $(SED) -i 's/^always_export_symbols=no/always_export_symbols=yes/g' '$(SOURCE_DIR)/libtool')
 
     # remove -nostdlib from linker commandline options
     # (i.e. archive_cmds and archive_expsym_cmds)
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
     $(if $(IS_LLVM), \
-        $(SED) -i 's/\-shared \-nostdlib/\-shared/g' '$(BUILD_DIR)/libtool')
+        $(SED) -i 's/\-shared \-nostdlib/\-shared/g' '$(SOURCE_DIR)/libtool')
 
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+    $(MAKE) -C '$(SOURCE_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(SOURCE_DIR)' -j 1 install
 endef

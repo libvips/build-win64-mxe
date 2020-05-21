@@ -1,0 +1,124 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 20 May 2020 20:20:00 +0200
+Subject: [PATCH 1/1] Fix build errors on MinGW-w64
+
+When building a statically-linked DLL, `SPNG_API` needs to
+be defined as `extern` instead of `__declspec(dllimport)`.
+
+The meson logic is based on:
+https://gitlab.gnome.org/GNOME/glib/-/blob/8f291487fe3a41cce3e765dd26912c87ae2a9ada/meson.build#L174-189
+
+Ideally, the `configure_file` thing should also be done
+within the CMake build.
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -2,8 +2,12 @@ project('libspng', 'c', version : '0.6.0-rc1', license : 'bsd', default_options
+ 
+ cc = meson.get_compiler('c')
+ 
++add_project_arguments('-DHAVE_CONFIG_H', language : 'c')
++
+ spng_inc = include_directories('.')
+ 
++cdata = configuration_data()      # config.h
++
+ if cc.get_define('__ANDROID__') != ''
+     zlib_dep = cc.find_library('z')
+ else
+@@ -16,27 +20,47 @@ spng_deps = [ zlib_dep, m_dep ]
+ 
+ if get_option('multithreading') == true
+     spng_deps += dependency('threads')
+-    add_project_arguments('-DSPNG_MULTITHREADING', language : 'c')
++    cdata.set('SPNG_MULTITHREADING', true)
+ endif
+ 
+ if get_option('enable_opt') == false
+-    add_project_arguments('-DSPNG_DISABLE_OPT', language : 'c')
++    cdata.set('SPNG_DISABLE_OPT', true)
+ endif
+ 
+ static_subproject = false
++
++# Detect and set symbol visibility
++export_define = 'extern'
+ if get_option('default_library') == 'static'
+     static_subproject = meson.is_subproject()
+-    add_project_arguments('-DSPNG_STATIC', language : 'c')
++elif
++    host_system = host_machine.system()
++    if host_system == 'windows' or host_system == 'cygwin'
++        if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
++            export_define = '__declspec(dllexport) extern'
++        elif cc.has_argument('-fvisibility=hidden')
++            add_project_arguments('-fvisibility=hidden', language: 'c')
++            export_define = '__attribute__((visibility("default"))) __declspec(dllexport) extern'
++        endif
++    elif cc.has_argument('-fvisibility=hidden')
++        add_project_arguments('-fvisibility=hidden', language: 'c')
++        export_define = '__attribute__((visibility("default"))) extern'
++    endif
+ endif
+ 
++# Passing this through the command line would be too messy
++cdata.set('SPNG_API', export_define)
++
+ if host_machine.cpu_family() == 'x86_64'
+-# clang evaluates __has_attribute(target_clones) to true but issues a warning
+-# about not supporting it when it's used.
++    # clang evaluates __has_attribute(target_clones) to true but issues a warning
++    # about not supporting it when it's used.
+     if cc.get_id() != 'clang' and cc.compiles('__attribute__((target_clones("default,avx2"))) int f(int x){return x + 3;}int main(){}', name : 'have target_clones')
+-        add_project_arguments('-DSPNG_ENABLE_TARGET_CLONES', language : 'c')
++        cdata.set('SPNG_ENABLE_TARGET_CLONES', true)
+     endif
+ endif
+ 
++configure_file(output : 'config.h', configuration : cdata)
++
+ spng_src = files('spng.c')
+ 
+ spng_lib = library(
+diff --git a/spng.h b/spng.h
+index 1111111..2222222 100644
+--- a/spng.h
++++ b/spng.h
+@@ -2,18 +2,24 @@
+ #ifndef SPNG_H
+ #define SPNG_H
+ 
++#ifdef HAVE_CONFIG_H
++    #include <config.h>
++#endif
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+ 
+-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__CYGWIN__)
+-    #ifndef SPNG_STATIC
+-        #define SPNG_API __declspec(dllexport)
++#ifndef SPNG_API
++    #if defined(_MSC_VER) || defined(__MINGW32__) || defined(__CYGWIN__)
++        #ifndef SPNG_STATIC
++            #define SPNG_API __declspec(dllexport)
++        #else
++            #define SPNG_API __declspec(dllimport)
++        #endif
+     #else
+-        #define SPNG_API __declspec(dllimport)
++        #define SPNG_API
+     #endif
+-#else
+-    #define SPNG_API
+ #endif
+ 
+ #include <stdlib.h>

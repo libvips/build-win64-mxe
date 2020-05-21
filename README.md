@@ -21,16 +21,23 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libjpeg-turbo] | 2.0.4     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
 | [librsvg]       | 2.48.4    | LGPLv3                          |
+| [libspng]       | 5ee9bdf¹  | [BSD 2-Clause, libpng License]  |
 | [libtiff]       | 4.1.0     | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.9.2     | LGPLv3                          |
+| [libvips]       | c216567²  | LGPLv3                          |
 | [libwebp]       | 1.1.0     | New BSD License                 |
 | [libxml2]       | 2.9.10    | MIT Licence                     |
 | [orc]           | 0.4.31    | [orc License] (BSD-like)        |
 | [pango]         | 1.44.7    | LGPLv3                          |
 | [pixman]        | 0.40.0    | MIT Licence                     |
-| [zlib-ng]       | 641491a¹  | [zlib-ng Licence]               |
+| [zlib-ng]       | 641491a³  | [zlib-ng Licence]               |
 
-¹ zlib-ng is built from the develop branch because there's no release available (yet), see:
+¹ libspng is built from the [`master`](https://github.com/randy408/libspng/tree/master) branch because v0.6.0-rc1 is broken, see:
+https://github.com/randy408/libspng/releases/tag/v0.6.0-rc1
+
+² libvips is built from the [`libspng-experiment`](https://github.com/libvips/libvips/tree/libspng-experiment) branch, see:
+https://github.com/libvips/libvips/issues/1403
+
+³ zlib-ng is built from the [`develop`](https://github.com/zlib-ng/zlib-ng/tree/develop) branch because there's no release available (yet), see:
 https://github.com/zlib-ng/zlib-ng/issues/64
 
 [cairo]: https://gitlab.freedesktop.org/cairo/cairo
@@ -53,6 +60,8 @@ https://github.com/zlib-ng/zlib-ng/issues/64
 [libpng]: https://github.com/glennrp/libpng
 [libpng License version 2]: https://github.com/glennrp/libpng/blob/master/LICENSE
 [librsvg]: https://gitlab.gnome.org/GNOME/librsvg
+[libspng]: https://github.com/randy408/libspng
+[BSD 2-Clause, libpng License]: https://github.com/randy408/libspng/blob/master/LICENSE
 [libtiff]: https://gitlab.com/libtiff/libtiff
 [libtiff License]: https://libtiff.gitlab.io/libtiff/misc.html
 [libvips]: https://github.com/libvips/libvips
@@ -113,9 +122,9 @@ argument. For example:
 
 | Dependency      | Version   | Used under the terms of          |
 |-----------------|-----------|----------------------------------|
-| [mozjpeg]       | 6d95c51²  | [zlib License, IJG License]      |
+| [mozjpeg]       | 6d95c51⁴  | [zlib License, IJG License]      |
 
-² MozJPEG is built from master to maintain binary compatibility with libjpeg-turbo.
+⁴ MozJPEG is built from master to maintain binary compatibility with libjpeg-turbo.
 
 [mozjpeg]: https://github.com/mozilla/mozjpeg
 
