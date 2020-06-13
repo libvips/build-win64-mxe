@@ -1,0 +1,68 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 12 Jun 2020 11:20:00 +0200
+Subject: [PATCH 1/1] Fixes for the llvm-mingw ARM64 build
+
+
+diff --git a/source/CMakeLists.txt b/source/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/source/CMakeLists.txt
++++ b/source/CMakeLists.txt
+@@ -239,11 +239,12 @@ if(GCC)
+         endif()
+     endif()
+     if(ARM AND CROSS_COMPILE_ARM)
+-        if(ARM64)
+-            set(ARM_ARGS -fPIC)
+-        else()
+-            set(ARM_ARGS -march=armv6 -mfloat-abi=soft -mfpu=vfp -marm -fPIC)
++        if(NOT ARM64)
++            set(ARM_ARGS -march=armv6 -mfloat-abi=soft -mfpu=vfp -marm)
+         endif()
++        if(ENABLE_PIC)
++            set(ARM_ARGS ${ARM_ARGS} -fPIC)
++        endif(ENABLE_PIC)
+         message(STATUS "cross compile arm")
+     elseif(ARM)
+         if(ARM64)
+diff --git a/source/common/cpu.cpp b/source/common/cpu.cpp
+index 1111111..2222222 100644
+--- a/source/common/cpu.cpp
++++ b/source/common/cpu.cpp
+@@ -42,6 +42,14 @@
+ #if X265_ARCH_ARM && !defined(HAVE_NEON)
+ #include <signal.h>
+ #include <setjmp.h>
++
++#ifdef __MINGW32__
++// Windows does not have sigjmp_buf and siglongjmp, its
++// functionality is provided by plain jmp_buf and longjmp.
++#define sigjmp_buf jmp_buf
++#define siglongjmp(env, val) longjmp(env, val)
++#endif
++
+ static sigjmp_buf jmpbuf;
+ static volatile sig_atomic_t canjump = 0;
+ 
+diff --git a/source/dynamicHDR10/CMakeLists.txt b/source/dynamicHDR10/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/source/dynamicHDR10/CMakeLists.txt
++++ b/source/dynamicHDR10/CMakeLists.txt
+@@ -43,7 +43,12 @@ if(GCC)
+         endif()
+     endif()
+     if(ARM AND CROSS_COMPILE_ARM)
+-        set(ARM_ARGS -march=armv6 -mfloat-abi=soft -mfpu=vfp -marm -fPIC)
++        if(NOT ARM64)
++            set(ARM_ARGS -march=armv6 -mfloat-abi=soft -mfpu=vfp -marm)
++        endif()
++        if(ENABLE_PIC)
++            set(ARM_ARGS ${ARM_ARGS} -fPIC)
++        endif(ENABLE_PIC)
+     elseif(ARM)
+         find_package(Neon)
+         if(CPU_HAS_NEON)

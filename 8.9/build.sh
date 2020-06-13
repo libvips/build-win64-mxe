@@ -21,7 +21,7 @@ target="${2:-x86_64-w64-mingw32.shared.win32}"
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="8b637cf11dcaacc9415a0e56c28a2ebcf69520af"
+revision="1ee37f8e0a949f033603a9657f32d81aa1a56e52"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -40,7 +40,7 @@ if [ ! "$curr_revision" = "$revision" ]; then
   initialize=true
 fi
 
-if [ "$initialize" = true ] ; then
+if [ "$initialize" = true ]; then
   # Patch MXE to support the ARM/ARM64 targets
   git apply $work_dir/patches/mxe-fixes.patch
 fi

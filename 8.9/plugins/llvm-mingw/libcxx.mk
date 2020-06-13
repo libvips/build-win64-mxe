@@ -20,8 +20,8 @@ define $(PKG)_BUILD
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DLLVM_COMPILER_CHECKED=TRUE \
-        -DCMAKE_AR='$(PREFIX)/$(TARGET)/bin/llvm-ar' \
-        -DCMAKE_RANLIB='$(PREFIX)/$(TARGET)/bin/llvm-ranlib' \
+        -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
+        -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
         -DLIBCXXABI_USE_COMPILER_RT=ON \
         -DLIBCXXABI_ENABLE_EXCEPTIONS=ON \
         -DLIBCXXABI_ENABLE_THREADS=ON \
@@ -39,8 +39,8 @@ define $(PKG)_BUILD
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DLLVM_COMPILER_CHECKED=TRUE \
-        -DCMAKE_AR='$(PREFIX)/$(TARGET)/bin/llvm-ar' \
-        -DCMAKE_RANLIB='$(PREFIX)/$(TARGET)/bin/llvm-ranlib' \
+        -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
+        -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
         -DLIBCXX_USE_COMPILER_RT=ON \
         -DLIBCXX_INSTALL_HEADERS=ON \
         -DLIBCXX_ENABLE_EXCEPTIONS=ON \

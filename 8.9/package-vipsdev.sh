@@ -79,12 +79,10 @@ echo "Cleaning unnecessary files / directories"
 
 # Unnecessary LLVM files
 if [ "$LLVM" = "true" ]; then
-  rm -rf $repackage_dir/share/clang
-  rm -rf $repackage_dir/include/{clang-c,c++,fuzzer,llvm-c,profile,sanitizer,xray}
-  rm -rf $repackage_dir/lib/clang
+  rm -rf $repackage_dir/include/{c++,fuzzer,profile,sanitizer,xray}
 fi
 
-rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,opt-viewer,scan-build,scan-view,thumbnailers,xml,zsh}
+rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
 rm -rf $repackage_dir/include/cairo
 rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,ldscripts,rustlib,xml2Conf.sh}
 rm -rf $repackage_dir/etc/bash_completion.d

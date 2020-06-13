@@ -33,7 +33,7 @@ diff --git a/Cargo.toml b/Cargo.toml
 index 1111111..2222222 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -6,4 +6,4 @@ members = [
+@@ -7,4 +7,4 @@ members = [
  ]
  
  [profile.release]
@@ -42,8 +42,29 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 9 Jun 2020 18:50:00 +0200
+Subject: [PATCH 3/4] Remove rlib from the C API crate type
+
+Since LTO optimization does not work for staticlib+rlib compilation.
+
+diff --git a/librsvg/Cargo.toml b/librsvg/Cargo.toml
+index 1111111..2222222 100644
+--- a/librsvg/Cargo.toml
++++ b/librsvg/Cargo.toml
+@@ -8,7 +8,7 @@ edition = "2018"
+ [lib]
+ name = "rsvg_c_api"
+ path = "lib.rs"
+-crate-type = [ "staticlib", "rlib" ]
++crate-type = [ "staticlib" ]
+ 
+ [dependencies]
+ bitflags = "1.0"
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 17 May 2019 13:00:00 +0200
-Subject: [PATCH 3/4] Disable Cairo script features
+Subject: [PATCH 4/4] Disable Cairo script features
 
 Our Cairo was build with `--disable-script`.
 

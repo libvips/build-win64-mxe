@@ -1,0 +1,92 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 10 Jun 2020 13:15:00 +0200
+Subject: [PATCH 1/3] Ensure DLLs are installed in the bin directory
+
+
+diff --git a/build/cmake/aom_install.cmake b/build/cmake/aom_install.cmake
+index 1111111..2222222 100644
+--- a/build/cmake/aom_install.cmake
++++ b/build/cmake/aom_install.cmake
+@@ -81,16 +81,21 @@ macro(setup_aom_install_targets)
+     # Setup the install rules.
+     install(
+       FILES ${AOM_INSTALL_INCS}
+-      DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/aom")
++      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aom)
+     install(
+       FILES "${AOM_PKG_CONFIG_FILE}"
+-      DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+-    install(TARGETS ${AOM_INSTALL_LIBS} DESTINATION
+-                    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+-
++      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
++    install(TARGETS ${AOM_INSTALL_LIBS}
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    )
+     if(ENABLE_EXAMPLES)
+-      install(TARGETS ${AOM_INSTALL_BINS} DESTINATION
+-                      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}")
++      install(TARGETS ${AOM_INSTALL_BINS}
++		  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++		  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++		  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++      )
+     endif()
+   endif()
+ endmacro()
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 10 Jun 2020 14:50:00 +0200
+Subject: [PATCH 2/3] Prefer native win32 threading functionality
+
+
+diff --git a/build/cmake/aom_configure.cmake b/build/cmake/aom_configure.cmake
+index 1111111..2222222 100644
+--- a/build/cmake/aom_configure.cmake
++++ b/build/cmake/aom_configure.cmake
+@@ -218,6 +218,12 @@ aom_get_inline("INLINE")
+ # Don't just check for pthread.h, but use the result of the full pthreads
+ # including a linking check in FindThreads above.
+ set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
++
++# Prefer native win32 threading functionality.
++if(CMAKE_USE_WIN32_THREADS_INIT)
++  set(HAVE_PTHREAD_H 0)
++endif()
++
+ aom_check_source_compiles("unistd_check" "#include <unistd.h>" HAVE_UNISTD_H)
+ 
+ if(NOT MSVC)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 10 Jun 2020 21:00:00 +0200
+Subject: [PATCH 3/3] Disable version script on llvm-mingw
+
+
+diff --git a/build/cmake/exports.cmake b/build/cmake/exports.cmake
+index 1111111..2222222 100644
+--- a/build/cmake/exports.cmake
++++ b/build/cmake/exports.cmake
+@@ -54,11 +54,11 @@ function(setup_exports_target)
+                  APPEND_STRING
+                  PROPERTY LINK_FLAGS "-exported_symbols_list ${aom_sym_file}")
+   elseif(WIN32)
+-    if(NOT MSVC)
++    if(CMAKE_C_COMPILER_ID MATCHES GNU)
+       set_property(TARGET aom
+                    APPEND_STRING
+                    PROPERTY LINK_FLAGS "-Wl,--version-script ${aom_sym_file}")
+-    else()
++    elseif(MSVC)
+       set_property(TARGET aom
+                    APPEND_STRING
+                    PROPERTY LINK_FLAGS "/DEF:${aom_sym_file}")

@@ -21,7 +21,7 @@ libffi_CHECKSUM := 72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652
 libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
 libffi_SUBDIR   := libffi-$(libffi_VERSION)
 libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
-libffi_URL      := https://www.mirrorservice.org/sites/sourceware.org/pub/libffi/$(libffi_FILE)
+libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
 libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
 # upstream version is 2.32.3
@@ -43,14 +43,14 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.11-12
-imagemagick_CHECKSUM := c544fd280b9f7484669bd486c15589765fe29bb3a9d3d2c641e15aa06b2e1c04
+imagemagick_VERSION  := 6.9.11-19
+imagemagick_CHECKSUM := a3114ba17b5abcd4d086ac9194c32f0e8a66573182bf5a0f575a7c86405e508e
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.4
-x265_VERSION  := 3.3
-x265_CHECKSUM := f26e148ed1f4dfb33fd1eb3ff5e60e08078d1b2017e88bcbb045b3fb58300b9c
+x265_VERSION  := 3.4
+x265_CHECKSUM := c2047f23a6b729e5c70280d23223cb61b57bfe4ad4e8f1471eeee2a61d148672
 x265_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
 x265_SUBDIR   := x265_$(x265_VERSION)
 x265_FILE     := x265_$(x265_VERSION).tar.gz
@@ -58,16 +58,16 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.48.4
-librsvg_CHECKSUM := 28b63af85ced557383d3d3ece6e1f6938720dee1ecfa40d926bf1de4747c956e
+librsvg_VERSION  := 2.49.2
+librsvg_CHECKSUM := 082b4caab7d11da9e0d6805ca54578c4684620d716b9e8444fe70b683def52ce
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.44.7
-pango_CHECKSUM := 66a5b6cc13db73efed67b8e933584509f8ddb7b10a8a40c3850ca4a985ea1b1f
+pango_VERSION  := 1.45.2
+pango_CHECKSUM := 4402960e510039f8efd92153831a056e3a7e03c249205523d36ca8eaccb2b8b4
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -92,8 +92,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.64.2
-glib_CHECKSUM := 9a2f21ed8f13b9303399de13a0252b7cbcede593d26971378ec6cb90e87f2277
+glib_VERSION  := 2.64.3
+glib_CHECKSUM := fe9cbc97925d14c804935f067a3ad77ef55c0bbe9befe68962318f5a767ceb22
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -879,7 +879,9 @@ define x265_BUILD
         -DENABLE_CLI=OFF \
         -DWINXP_SUPPORT=ON \
         -DENABLE_HDR10_PLUS=ON \
-        -DMAIN12=ON
+        -DMAIN12=ON \
+        $(if $(IS_ARM), -DCROSS_COMPILE_ARM=ON)
+
     $(MAKE) -C '$(BUILD_DIR)/12bit' -j '$(JOBS)'
     cp '$(BUILD_DIR)/12bit/libx265.a' '$(BUILD_DIR)/libx265_main12.a'
 
@@ -891,7 +893,9 @@ define x265_BUILD
         -DENABLE_ASSEMBLY=$(if $(findstring x86_64,$(TARGET)),ON,OFF) \
         -DENABLE_CLI=OFF \
         -DWINXP_SUPPORT=ON \
-        -DENABLE_HDR10_PLUS=ON
+        -DENABLE_HDR10_PLUS=ON \
+        $(if $(IS_ARM), -DCROSS_COMPILE_ARM=ON)
+
     $(MAKE) -C '$(BUILD_DIR)/10bit' -j '$(JOBS)'
     cp '$(BUILD_DIR)/10bit/libx265.a' '$(BUILD_DIR)/libx265_main10.a'
 
@@ -907,7 +911,8 @@ define x265_BUILD
         -DEXTRA_LIB='x265_main10.a;x265_main12.a' \
         -DEXTRA_LINK_FLAGS=-L'$(BUILD_DIR)' \
         -DLINKED_10BIT=ON \
-        -DLINKED_12BIT=ON
+        -DLINKED_12BIT=ON \
+        $(if $(IS_ARM), -DCROSS_COMPILE_ARM=ON)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' install
     $(if $(BUILD_SHARED),rm -f '$(PREFIX)/$(TARGET)/lib/libx265.a',\

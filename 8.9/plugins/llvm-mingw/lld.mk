@@ -10,3 +10,4 @@ $(PKG)_GH_CONF  := llvm/llvm-project/releases,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION).src
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).src.tar.xz
 $(PKG)_TYPE     := source-only
+$(PKG)_TARGETS  := $(BUILD)

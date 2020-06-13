@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://api.github.com/repos/mstorsjo/llvm-mingw/tarball/ca303864baec8f7f9d86768a10f813395d049086
-$(PKG)_VERSION  := ca30386
-$(PKG)_CHECKSUM := 48f3b9cd1322762a93b17efc61cfe895e21a0da36a75551d3e6e879fb5e013af
+# https://api.github.com/repos/mstorsjo/llvm-mingw/tarball/26e56ed5f6f4bc918884b9303a55cfa1dc92bba8
+$(PKG)_VERSION  := 26e56ed
+$(PKG)_CHECKSUM := 8355ed7a9dbd1c16b6e45f28b5efdd3f52c851451cfa241ddb1176cec7991ab1
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := llvm mingw-w64
@@ -59,15 +59,6 @@ define $(PKG)_PRE_BUILD
     $(BUILD_CC) $(SOURCE_DIR)/wrappers/windres-wrapper.c \
         -o '$(PREFIX)/bin/$(TARGET)-windres' \
         -O2 -Wl,-s -DLLVM_RC="\"rc\"" -DLLVM_CVTRES="\"cvtres\"" -DDEFAULT_TARGET="\"$(TARGET)\""
-
-    # Can't symlink here, it will break the basename detection of LLVM. See:
-    # sys::path::stem("x86_64-w64-mingw32.shared-ranlib"); -> x86_64-w64-mingw32
-    # https://github.com/llvm/llvm-project/blob/9a432161c68774e6c717616e3d688142e89bbb42/llvm/tools/llvm-ar/llvm-ar.cpp#L1181-L1192
-    $(foreach EXEC, addr2line ar cvtres nm objcopy ranlib rc strings strip, \
-        (echo '#!/bin/sh'; \
-         echo 'exec "$(PREFIX)/$(TARGET)/bin/llvm-$(EXEC)" "$$@"') \
-                 > '$(PREFIX)/bin/$(TARGET)-$(EXEC)'; \
-        chmod 0755 '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
 
     $(foreach EXEC, dlltool ld objdump, \
         ln -sf '$(PREFIX)/$(TARGET)/bin/$(EXEC)-wrapper.sh' '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)

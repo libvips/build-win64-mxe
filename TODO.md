@@ -7,9 +7,7 @@
 - [ ] Try to test the binaries with the Python test suite on Wine.
 - [ ] Incorporate the llvm-mingw toolchain plugin into MXE (see [mxe/mxe#2330](https://github.com/mxe/mxe/issues/2330)).
   - [x] Test the `armv7-w64-mingw32` target on a Raspberry Pi 3 with Windows 10 IoT.
-    - [x] Compiling with `-O3 -ffast-math` throws a stack overflow exception (`0xC00000FD`) at runtime. Removing the `-ffast-math` flag seems to resolve this.
-  - [ ] Test the `aarch64-w64-mingw32` target. Perhaps there's a VM to test this architecture?
+  - [ ] Test the `aarch64-w64-mingw32` target. Perhaps we could install Windows 10 ARM64 on a Raspberry Pi 4B?
   - [ ] The VIPS test suite should be able to run successfully on ARM/ARM64.
-  - [x] Build LLVM for the target architecture (`-DLLVM_TARGETS_TO_BUILD=`) instead of constantly building all four architectures (i686, x86_64, armv7 and arm64).
   - [ ] [`libffi`](8.9/patches/libffi-3-fixes.patch), [`openslide`](8.9/patches/openslide-3-fixes.patch) ([mstorsjo/llvm-mingw#67](https://github.com/mstorsjo/llvm-mingw/issues/67)), [`hdf5`](8.9/patches/hdf5-1-fixes.patch) and [`glib`](8.9/patches/glib-2-fixes.patch) needs llvm-mingw specific patches. Fix them upstream or within LLVM.
   - [ ] The Rust MinGW-w64 ARM/ARM64 targets are not yet supported, is there an alternative way to build librsvg for these architectures?

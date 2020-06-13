@@ -15,8 +15,8 @@ define $(PKG)_BUILD
     $(call PREPARE_PKG_SOURCE,compiler-rt,$(BUILD_DIR))
 
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(BUILD_DIR)/$(compiler-rt_SUBDIR)' \
-        -DCMAKE_AR='$(PREFIX)/$(TARGET)/bin/llvm-ar' \
-        -DCMAKE_RANLIB='$(PREFIX)/$(TARGET)/bin/llvm-ranlib' \
+        -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
+        -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DCMAKE_C_COMPILER_TARGET='$(BUILD_ARCH_NAME)-windows-gnu' \
@@ -25,12 +25,12 @@ define $(PKG)_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' install-compiler-rt-headers -j 1
 
-    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/clang/$($(PKG)_VERSION)/lib/windows'
+    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/clang/$($(PKG)_VERSION)/lib/windows'
 
     $(foreach FILE,asan-preinit asan asan_cxx asan_dll_thunk asan_dynamic_runtime_thunk ubsan_standalone ubsan_standalone_cxx, \
-        cp '$(BUILD_DIR)/lib/windows/libclang_rt.$(FILE)-$(BUILD_ARCH_NAME).a' '$(PREFIX)/$(TARGET)/lib/clang/$($(PKG)_VERSION)/lib/windows';)
+        cp '$(BUILD_DIR)/lib/windows/libclang_rt.$(FILE)-$(BUILD_ARCH_NAME).a' '$(PREFIX)/$(BUILD)/lib/clang/$($(PKG)_VERSION)/lib/windows';)
 
-    cp '$(BUILD_DIR)/lib/windows/libclang_rt.asan_dynamic-$(BUILD_ARCH_NAME).dll.a' '$(PREFIX)/$(TARGET)/lib/clang/$($(PKG)_VERSION)/lib/windows'
+    cp '$(BUILD_DIR)/lib/windows/libclang_rt.asan_dynamic-$(BUILD_ARCH_NAME).dll.a' '$(PREFIX)/$(BUILD)/lib/clang/$($(PKG)_VERSION)/lib/windows'
     cp '$(BUILD_DIR)/lib/windows/libclang_rt.asan_dynamic-$(BUILD_ARCH_NAME).dll' '$(PREFIX)/$(TARGET)/bin'
 endef
 
