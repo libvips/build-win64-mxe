@@ -1,0 +1,27 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 9 Jul 2023 13:30:00 +0200
+Subject: [PATCH 1/1] Ensure symbols from GLib and GObject are exposed
+
+i.e. when libvips is build as a single shared library.
+
+Upstream-Status: Inappropriate [libvips specific]
+This is specific to libvips.
+
+diff --git a/tools/gen-visibility-macros.py b/tools/gen-visibility-macros.py
+index 1111111..2222222 100755
+--- a/tools/gen-visibility-macros.py
++++ b/tools/gen-visibility-macros.py
+@@ -95,7 +95,7 @@ def gen_visibility_macros(args, current_minor_version):
+             #  define _{ns}_EXPORT __declspec(dllexport)
+             #  define _{ns}_IMPORT __declspec(dllimport)
+             #elif __GNUC__ >= 4
+-            #  define _{ns}_EXPORT __attribute__((visibility("default")))
++            #  define _{ns}_EXPORT __attribute__((visibility("default"))){" __declspec(dllexport)" if ns == "GLIB" or ns == "GOBJECT" else ""}
+             #  define _{ns}_IMPORT
+             #else
+             #  define _{ns}_EXPORT

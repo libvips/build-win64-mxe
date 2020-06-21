@@ -67,6 +67,10 @@ if [ "$type" = "static" ]; then
   zip_suffix+="-static"
 fi
 
+if [ "$FFI_COMPAT" = "true" ]; then
+  zip_suffix+="-ffi"
+fi
+
 if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
 fi
@@ -173,6 +177,11 @@ rm -rf $repackage_dir/share/locale
 
 # Remove those .gitkeep files
 rm $repackage_dir/{share,lib,include}/.gitkeep
+
+# Allow sharp to import GLib symbols from libvips-42.dll
+sed -i -e 's|#define GLIB_STATIC_COMPILATION 1|/* #undef GLIB_STATIC_COMPILATION */|' \
+       -e 's|#define GOBJECT_STATIC_COMPILATION 1|/* #undef GOBJECT_STATIC_COMPILATION */|' \
+       $repackage_dir/lib/glib-2.0/include/glibconfig.h
 
 echo "Copying vips executables"
 

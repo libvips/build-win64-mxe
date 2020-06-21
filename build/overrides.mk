@@ -788,14 +788,14 @@ define glib_BUILD
     ln -sf '$(PREFIX)/$(BUILD)/bin/glib-compile-schemas'   '$(PREFIX)/$(TARGET)/bin/'
     ln -sf '$(PREFIX)/$(BUILD)/bin/glib-compile-resources' '$(PREFIX)/$(TARGET)/bin/'
 
-    $(if $(BUILD_STATIC), \
+    $(if $(findstring .ffi,$(TARGET)), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(glib_PATCHES))))/glib-static.patch)
 
-    # Build as shared library, since we need `libgobject-2.0-0.dll`
-    # and `libglib-2.0-0.dll` for the language bindings.
+    # Build as shared library when `--with-ffi-compat` is passed, since we
+    # need `libgobject-2.0-0.dll` and `libglib-2.0-0.dll` for these bindings.
     # Enable networking to allow gvdb to be downloaded from WrapDB
     MXE_ENABLE_NETWORK=1 $(MXE_MESON_WRAPPER) \
-        --default-library=shared \
+        $(if $(findstring .ffi,$(TARGET)), --default-library=shared) \
         --force-fallback-for=gvdb \
         -Dnls=disabled \
         -Dtests=false \

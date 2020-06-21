@@ -12,6 +12,7 @@ OPTIONS:
 	-r, --ref <REF>		The branch or tag to build libvips from
 	--tmpdir <DIR>		Where intermediate files should be stored (default in /var/tmp/mxe)
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
+	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaries without optimizations to improve debuggability
 	--without-llvm		Build binaries with GCC
@@ -53,6 +54,7 @@ EOF
 git_commit=""
 git_ref=""
 tmpdir="/var/tmp/mxe"
+with_ffi_compat=false
 with_hevc=false
 with_debug=false
 with_llvm=true
@@ -69,6 +71,7 @@ while [ $# -gt 0 ]; do
     -r|--ref) git_ref="$2"; shift ;;
     --tmpdir) tmpdir="$2"; shift ;;
     --nightly) git_ref="master" ;;
+    --with-ffi-compat) with_ffi_compat=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --without-llvm) with_llvm=false ;;
@@ -130,6 +133,11 @@ if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
   exit 1
 fi
 
+if [ "$type" = "shared" ] && [ "$with_ffi_compat" = "true" ]; then
+  echo "WARNING: The --with-ffi-compat option makes only sense when building static binaries." >&2
+  with_ffi_compat=false
+fi
+
 if [ -n "$git_commit" ] && [ -n "$git_ref" ]; then
   echo "ERROR: The --commit and --ref options are mutually exclusive." >&2
   exit 1
@@ -147,6 +155,10 @@ fi
 git_commit="${git_commit:0:7}"
 
 target="$arch-w64-mingw32.$type.$threads${unwind:+.$unwind}"
+
+if [ "$with_ffi_compat" = "true" ]; then
+  target+=".ffi"
+fi
 
 if [ "$with_debug" = "true" ]; then
   target+=".debug"
@@ -180,6 +192,7 @@ $oci_runtime run --rm -t \
   -v $PWD/build:/data \
   -v $tmpdir:/var/tmp:z \
   -e "GIT_COMMIT=$git_commit" \
+  -e "FFI_COMPAT=$with_ffi_compat" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "LLVM=$with_llvm" \
