@@ -38,7 +38,6 @@ addons:
 
 env:
   global:
-    - VIPS_VERSION=8.6
     - MXE_DIR=/usr/lib/mxe
     - MXE_TARGET=x86_64-w64-mingw32.shared
     - MXE_INCLUDE_PATH=$MXE_DIR/usr/$MXE_TARGET/include
@@ -47,4 +46,4 @@ env:
 script:
     - cd $MXE_DIR
     # TODO: Wait for https://github.com/mxe/mxe/issues/2021
-    # - sudo make vips-web MXE_TARGETS=$MXE_TARGET MXE_PLUGIN_DIRS=$TRAVIS_BUILD_DIR/$VIPS_VERSION
+    # - sudo make vips-web MXE_TARGETS=$MXE_TARGET MXE_PLUGIN_DIRS=$TRAVIS_BUILD_DIR/build

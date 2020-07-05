@@ -21,9 +21,8 @@ RUN \
 RUN \
     rustup target add x86_64-pc-windows-gnu
 
-# the versioned build dir is mounted at /data, so this runs the build script
-# in that
+# The build dir is mounted at /data, so this runs the build script in that
 ENTRYPOINT ["/bin/bash", "/data/build.sh"]
 
-# The versioned subdirectory is mounted here
+# The build dir is mounted here
 WORKDIR /data

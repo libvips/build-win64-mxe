@@ -1,9 +1,8 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-  echo "Usage: $0 VERSION [DEPS]"
+  echo "Usage: $0 [DEPS]"
   echo "Build libvips for win64 in a Docker container"
-  echo "VERSION is the name of a versioned subdirectory, e.g. 8.1"
   echo "DEPS is the group of dependencies to build libvips with,"
   echo "    defaults to 'all'"
   exit 1
@@ -14,8 +13,9 @@ if [ x$(whoami) == x"root" ]; then
   exit 1
 fi
 
-version="$1"
-deps="${2:-all}"
+. $PWD/build/variables.sh
+
+deps="${1:-all}"
 
 # Note: When 32-bit is needed, also change the Docker rustup target (see TODO).
 # ARCH='i686'
@@ -40,13 +40,13 @@ docker pull rust:stretch
 docker build -t libvips-build-win-mxe container
 
 # Run build scripts inside container
-docker run --rm -t -u $(id -u):$(id -g) -v $PWD/$version:/data \
+docker run --rm -t -u $(id -u):$(id -g) -v $PWD/build:/data \
   libvips-build-win-mxe $deps $target
 
 # test outside the container ... saves us having to install wine inside docker
 if type wine > /dev/null; then
   echo -n "testing build ... "
-  wine $version/vips-dev-$version/bin/vips.exe --help > /dev/null
+  wine $PWD/build/$repackage_dir/bin/vips.exe --help > /dev/null
   if [ "$?" -ne "0" ]; then
     echo WARNING: vips.exe failed to run
   else
