@@ -21,7 +21,7 @@ target="${2:-x86_64-w64-mingw32.shared}"
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="86079641c83083425742d3ed2659fd9ff3621a04"
+revision="cc31b9bfd913cb412b4e401e219a880254fd4bb0"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -57,7 +57,7 @@ mkdir -p $mxe_prefix/$target.$deps/mingw/{bin,include,lib}
 # Build pe-util, handy for copying DLL dependencies.
 make pe-util MXE_TARGETS=`$mxe_dir/ext/config.guess`
 
-# Build MXE's meson-wrapper (needed by pango, GDK-PixBuf and GLib), 
+# Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc), 
 # gendef (a tool for generating def files from DLLs)
 # and libvips (+ dependencies).
 make meson-wrapper gendef vips-$deps \

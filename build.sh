@@ -1,9 +1,8 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-  echo "Usage: $0 VERSION [DEPS] [ARCH] [TYPE]"
+  echo "Usage: $0 [DEPS] [ARCH] [TYPE]"
   echo "Build libvips for Windows in a Docker container"
-  echo "VERSION is the name of a versioned subdirectory, e.g. 8.7"
   echo "DEPS is the group of dependencies to build libvips with,"
   echo "    defaults to 'web'"
   echo "ARCH is the architecture name to build libvips with,"
@@ -18,10 +17,11 @@ if [ x$(whoami) == x"root" ]; then
   exit 1
 fi
 
-version="$1"
-deps="${2:-web}"
-arch="${3:-x86_64}"
-type="${4:-shared}"
+. $PWD/build/variables.sh
+
+deps="${1:-web}"
+arch="${2:-x86_64}"
+type="${3:-shared}"
 
 if [ "$type" = "static" ] && [ "$deps" == "all" ]; then
   echo "WARNING: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
@@ -44,13 +44,13 @@ docker pull rust:stretch
 docker build --build-arg ARCH=$arch -t libvips-build-win-mxe container
 
 # Run build scripts inside container
-docker run --rm -t -u $(id -u):$(id -g) -v $PWD/$version:/data \
+docker run --rm -t -u $(id -u):$(id -g) -v $PWD/build:/data \
   libvips-build-win-mxe $deps $target
 
 # test outside the container ... saves us having to install wine inside docker
 if [ -x "$(command -v wine)" ]; then
   echo -n "testing build ... "
-  wine $version/vips-dev-$version/bin/vips.exe --help > /dev/null
+  wine $PWD/build/$repackage_dir/bin/vips.exe --help > /dev/null
   if [ "$?" -ne "0" ]; then
     echo WARNING: vips.exe failed to run
   else

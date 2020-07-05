@@ -13,24 +13,24 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [gdk-pixbuf]    | 2.38.1    | LGPLv3                          |
 | [gettext]       | 0.19.8.1  | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
-| [glib]          | 2.60.0    | LGPLv3                          |
+| [glib]          | 2.61.0    | LGPLv3                          |
 | [harfbuzz]      | 2.4.0     | MIT Licence                     |
 | [lcms]          | 2.9       | MIT Licence                     |
-| [libcroco]      | 0.6.12    | LGPLv3                          |
+| [libcroco]      | 0.6.13    | LGPLv3                          |
 | [libexif]       | 0.6.21    | LGPLv3                          |
 | [libffi]        | 3.2.1     | MIT Licence                     |
 | [libgsf]        | 1.14.45   | LGPLv3                          |
 | [libiconv]      | 1.15      | LGPLv3                          |
 | [libjpeg-turbo] | 2.0.2     | [zlib License, IJG License]     |
-| [libpng]        | 1.6.36    | [libpng License version 2]      |
+| [libpng]        | 1.6.37    | [libpng License version 2]      |
 | [librsvg]       | 2.45.5    | LGPLv3                          |
 | [libtiff]       | 4.0.10    | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.7.4     | LGPLv3                          |
+| [libvips]       | 8.8.0-rc1 | LGPLv3                          |
 | [libwebp]       | 1.0.2     | New BSD License                 |
 | [libxml2]       | 2.9.9     | MIT Licence                     |
-| [orc]           | 0.4.28    | BSD 2-Clause                    |
+| [orc]           | 0.4.29    | BSD 2-Clause                    |
 | [pango]         | 1.43.0    | LGPLv3                          |
-| [pixman]        | 0.38.0    | MIT Licence                     |
+| [pixman]        | 0.38.4    | MIT Licence                     |
 | [zlib]          | 1.2.11    | [zlib Licence]                  |
 
 [cairo]: https://cairographics.org/
@@ -75,19 +75,24 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.450     | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.8.12    | BSD-like                         |
-| [imagemagick]   | 6.9.10-37 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.10-42 | [ImageMagick License] (GPL-like) |
+| [libde265]      | 1.0.3     | LGPLv3                           |
+| [libheif]       | 1.4.0     | LGPLv3                           |
 | [matio]         | 1.5.15    | BSD 2-Clause                     |
 | [nifticlib]     | 2.0.0     | Public domain                    |
 | [openexr]       | 2.3.0     | BSD 3-Clause                     |
-| [openjpeg]      | 2.3.0     | BSD 2-Clause                     |
+| [openjpeg]      | 2.3.1     | BSD 2-Clause                     |
 | [openslide]     | 3.4.1     | LGPLv3                           |
-| [poppler]       | 0.75.0    | GPLv2                            |
-| [sqlite]        | 3.27.2    | Public domain                    |
+| [poppler]       | 0.76.0    | GPLv2                            |
+| [sqlite]        | 3.28.0    | Public domain                    |
+| [x265]          | 2.4       | GPLv2                            |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [hdf5]: https://www.hdfgroup.org/solutions/hdf5/
 [fftw]: https://github.com/FFTW/fftw3
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
+[libde265]: https://github.com/strukturag/libde265
+[libheif]: https://github.com/strukturag/libheif
 [ImageMagick License]: https://www.imagemagick.org/script/license.php
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://nifti.nimh.nih.gov/
@@ -96,3 +101,4 @@ Same as libvips-web + these extra dependencies:
 [openslide]: https://github.com/openslide/openslide
 [poppler]: https://poppler.freedesktop.org/
 [sqlite]: https://www.sqlite.org/
+[x265]: http://x265.org/

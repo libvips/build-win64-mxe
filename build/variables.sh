@@ -1,10 +1,10 @@
 # included by all scripts
 
 vips_package=vips
-vips_version=8.6
-vips_micro_version=5
+vips_version=8.7
+vips_micro_version=4
 
-# build-win64/x.xx dir we are building
+# build-win64-mxe/build dir we are building
 work_dir=$(pwd)
 
 # MXE specific
