@@ -9,5 +9,5 @@
   - [x] Test the `armv7-w64-mingw32` target on a Raspberry Pi 3 with Windows 10 IoT.
   - [ ] Test the `aarch64-w64-mingw32` target. Perhaps we could install Windows 10 ARM64 on a Raspberry Pi 4B?
   - [ ] The VIPS test suite should be able to run successfully on ARM/ARM64.
-  - [ ] [`libffi`](8.9/patches/libffi-3-fixes.patch), [`openslide`](8.9/patches/openslide-3-fixes.patch) ([mstorsjo/llvm-mingw#67](https://github.com/mstorsjo/llvm-mingw/issues/67)), [`hdf5`](8.9/patches/hdf5-1-fixes.patch) and [`glib`](8.9/patches/glib-2-fixes.patch) needs llvm-mingw specific patches. Fix them upstream or within LLVM.
+  - [ ] [`libffi`](build/patches/libffi-3-fixes.patch), [`openslide`](build/patches/openslide-3-fixes.patch) ([mstorsjo/llvm-mingw#67](https://github.com/mstorsjo/llvm-mingw/issues/67)), [`hdf5`](build/patches/hdf5-1-fixes.patch) and [`glib`](build/patches/glib-2-fixes.patch) needs llvm-mingw specific patches. Fix them upstream or within LLVM.
   - [ ] The Rust MinGW-w64 ARM/ARM64 targets are not yet supported, is there an alternative way to build librsvg for these architectures?

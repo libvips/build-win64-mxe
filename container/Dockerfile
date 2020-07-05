@@ -21,9 +21,8 @@ RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
 RUN curl -L https://github.com/libav/gas-preprocessor/raw/master/gas-preprocessor.pl -o /usr/bin/gas-preprocessor.pl \
   && chmod +x /usr/bin/gas-preprocessor.pl
 
-# The versioned build dir is mounted at /data, so this runs the build script
-# in that
+# The build dir is mounted at /data, so this runs the build script in that
 ENTRYPOINT ["/bin/bash", "/data/build.sh"]
 
-# The versioned subdirectory is mounted here
+# The build dir is mounted here
 WORKDIR /data

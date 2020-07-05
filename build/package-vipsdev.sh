@@ -1,12 +1,37 @@
 #!/usr/bin/env bash
 
-if [ $# -lt 1 ]; then
-  echo "Usage: $0 [DEPS] [TARGET]"
-  echo "Package libvips in mxe/usr/TARGET/"
-  echo "DEPS is the group of dependencies to build libvips with,"
-  echo "    defaults to 'web'"
-  echo "TARGET is the binary target, defaults to x86_64-w64-mingw32.shared.win32"
+if [[ "$*" == *--help* ]]; then
+  cat <<EOF
+Usage: $(basename "$0") [OPTIONS] [DEPS] [TARGET]
+Package libvips in mxe/usr/TARGET/
 
+OPTIONS:
+	--help	Show the help and exit
+
+DEPS:
+	The group of dependencies to build libvips with,
+	    defaults to 'web'
+	Possible values are:
+	    - web
+	    - all
+
+TARGET:
+	The binary target,
+	    defaults to 'x86_64-w64-mingw32.shared.win32'
+	Possible values are:
+		- aarch64-w64-mingw32.shared.posix
+		- aarch64-w64-mingw32.static.posix
+		- armv7-w64-mingw32.shared.posix
+		- armv7-w64-mingw32.static.posix
+		- i686-w64-mingw32.shared.posix
+		- i686-w64-mingw32.shared.win32
+		- i686-w64-mingw32.static.posix
+		- i686-w64-mingw32.static.win32
+		- x86_64-w64-mingw32.shared.posix
+		- x86_64-w64-mingw32.shared.win32
+		- x86_64-w64-mingw32.static.posix
+		- x86_64-w64-mingw32.static.win32
+EOF
   exit 1
 fi
 
@@ -73,7 +98,7 @@ echo "Copying install area $mxe_prefix/$target.$deps/"
 cp -Lr $mxe_prefix/$target.$deps/{share,etc,lib,include} $repackage_dir
 
 echo "Generating import files"
-./gendeflibs.sh $target.$deps
+./gendeflibs.sh $deps $target
 
 echo "Cleaning unnecessary files / directories"
 

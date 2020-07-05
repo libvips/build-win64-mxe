@@ -3,13 +3,38 @@
 # exit on error
 set -e
 
-if [ $# -lt 1 ]; then
-  echo "Usage: $0 [DEPS] [TARGET]"
-  echo "Build libvips for win"
-  echo "DEPS is the group of dependencies to build libvips with,"
-  echo "    defaults to 'web'"
-  echo "TARGET is the binary target,"
-  echo "    defaults to 'x86_64-w64-mingw32.shared.win32'"
+if [[ "$*" == *--help* ]]; then
+  cat <<EOF
+Usage: $(basename "$0") [OPTIONS] [DEPS] [TARGET]
+Build libvips for Windows
+
+OPTIONS:
+	--help	Show the help and exit
+
+DEPS:
+	The group of dependencies to build libvips with,
+	    defaults to 'web'
+	Possible values are:
+	    - web
+	    - all
+
+TARGET:
+	The binary target,
+	    defaults to 'x86_64-w64-mingw32.shared.win32'
+	Possible values are:
+		- aarch64-w64-mingw32.shared.posix
+		- aarch64-w64-mingw32.static.posix
+		- armv7-w64-mingw32.shared.posix
+		- armv7-w64-mingw32.static.posix
+		- i686-w64-mingw32.shared.posix
+		- i686-w64-mingw32.shared.win32
+		- i686-w64-mingw32.static.posix
+		- i686-w64-mingw32.static.win32
+		- x86_64-w64-mingw32.shared.posix
+		- x86_64-w64-mingw32.shared.win32
+		- x86_64-w64-mingw32.static.posix
+		- x86_64-w64-mingw32.static.win32
+EOF
   exit 1
 fi
 
@@ -17,6 +42,11 @@ fi
 
 deps="${1:-web}"
 target="${2:-x86_64-w64-mingw32.shared.win32}"
+
+if [[ "$target" == *.static* ]] && [ "$deps" = "all" ]; then
+  echo "WARNING: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
+  exit 1
+fi
 
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.

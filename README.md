@@ -107,7 +107,7 @@ with MozJPEG instead of libjpeg-turbo. This can be turned on with the `--with-mo
 argument. For example:
 
 ```bash
-./build.sh 8.9 --with-mozjpeg
+./build.sh --with-mozjpeg
 ```
 
 | Dependency      | Version   | Used under the terms of          |

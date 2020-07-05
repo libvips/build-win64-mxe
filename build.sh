@@ -1,15 +1,38 @@
 #!/usr/bin/env bash
 
-if [ $# -lt 1 ]; then
-  echo "Usage: $0 VERSION [DEPS] [ARCH] [TYPE]"
-  echo "Build libvips for Windows in a Docker container"
-  echo "VERSION is the name of a versioned subdirectory, e.g. 8.9"
-  echo "DEPS is the group of dependencies to build libvips with,"
-  echo "    defaults to 'web'"
-  echo "ARCH is the architecture name to build libvips with,"
-  echo "    defaults to 'x86_64'"
-  echo "TYPE specifies the type of binary to be created,"
-  echo "    defaults to 'shared'"
+if [[ "$*" == *--help* ]]; then
+  cat <<EOF
+Usage: $(basename "$0") [OPTIONS] [DEPS] [ARCH] [TYPE]
+Build libvips for Windows in a Docker container
+
+OPTIONS:
+	--help		Show the help and exit
+	--with-mozjpeg	Built with MozJPEG instead of libjpeg-turbo
+	--with-llvm	Built with llvm-mingw
+
+DEPS:
+	The group of dependencies to build libvips with,
+	    defaults to 'web'
+	Possible values are:
+	    - web
+	    - all
+
+ARCH:
+	The Windows architecture to target,
+	    defaults to 'x86_64'
+	Possible values are:
+	    - x86_64
+	    - i686
+	    - aarch64
+	    - armv7
+
+TYPE:
+	Specifies the type of binary to be created,
+	    defaults to 'shared'
+	Possible values are:
+	    - shared
+	    - static
+EOF
   exit 1
 fi
 
@@ -18,10 +41,11 @@ if [ x$(whoami) == x"root" ]; then
   exit 1
 fi
 
-version="$1"
-deps="${2:-web}"
-arch="${3:-x86_64}"
-type="${4:-shared}"
+. $PWD/build/variables.sh
+
+deps="${1:-web}"
+arch="${2:-x86_64}"
+type="${3:-shared}"
 
 if [[ "$*" == *--with-mozjpeg* ]]; then
   with_mozjpeg=true
@@ -73,10 +97,10 @@ docker build -t libvips-build-win-mxe container
 
 # Run build scripts inside container
 # - inheriting the current uid and gid
-# - versioned subdirectory mounted at /data
+# - build dir mounted at /data
 docker run --rm -t \
   -u $(id -u):$(id -g) \
-  -v $PWD/$version:/data \
+  -v $PWD/build:/data \
   -e "MOZJPEG=$with_mozjpeg" \
   -e "LLVM=$with_llvm" \
   libvips-build-win-mxe \
@@ -86,7 +110,7 @@ docker run --rm -t \
 # test outside the container ... saves us having to install wine inside docker
 if [ -x "$(command -v wine)" ]; then
   echo -n "testing build ... "
-  wine $version/vips-dev-$version/bin/vips.exe --help > /dev/null
+  wine $PWD/build/$repackage_dir/bin/vips.exe --help > /dev/null
   if [ "$?" -ne "0" ]; then
     echo "WARNING: vips.exe failed to run"
   else
