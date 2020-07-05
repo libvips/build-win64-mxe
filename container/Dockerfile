@@ -25,9 +25,8 @@ ARG ARCH=x86_64
 # Add Windows target for cross-compilation
 RUN rustup target add $ARCH-pc-windows-gnu
 
-# The versioned build dir is mounted at /data, so this runs the build script
-# in that
+# The build dir is mounted at /data, so this runs the build script in that
 ENTRYPOINT ["/bin/bash", "/data/build.sh"]
 
-# The versioned subdirectory is mounted here
+# The build dir is mounted here
 WORKDIR /data

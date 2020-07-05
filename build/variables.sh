@@ -4,7 +4,7 @@ vips_package=vips
 vips_version=8.8
 vips_patch_version=4
 
-# build-win64/x.xx dir we are building
+# build-win64-mxe/build dir we are building
 work_dir=$(pwd)
 
 # MXE specific
