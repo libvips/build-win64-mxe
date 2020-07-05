@@ -59,7 +59,8 @@ fi
 
 target="$arch-w64-mingw32.$type.$threads"
 
-if ! type docker > /dev/null; then
+# Is docker available?
+if ! [ -x "$(command -v docker)" ]; then
   echo "Please install docker"
   exit 1
 fi

@@ -1,0 +1,23 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 20 Jun 2020 12:50:00 +0200
+Subject: [PATCH 1/1] Don't use __declspec(dllexport) for static builds
+
+
+diff --git a/pixman/meson.build b/pixman/meson.build
+index 1111111..2222222 100644
+--- a/pixman/meson.build
++++ b/pixman/meson.build
+@@ -31,7 +31,7 @@ version_h = configure_file(
+ )
+ 
+ libpixman_extra_cargs = []
+-if cc.has_function_attribute('dllexport')
++if get_option('default_library') != 'static' and cc.has_function_attribute('dllexport')
+   libpixman_extra_cargs = ['-DPIXMAN_API=__declspec(dllexport)']
+ endif
+ 

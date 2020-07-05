@@ -79,13 +79,13 @@ define $(PKG)_BUILD
     # libtool should automatically generate a list
     # of exported symbols, even for "static" builds
     $(if $(BUILD_STATIC), \
-        $(SED) -i 's/^always_export_symbols=no/always_export_symbols=yes/g' '$(BUILD_DIR)/libtool')
+        $(SED) -i '/^always_export_symbols=/s/=no/=yes/' '$(BUILD_DIR)/libtool')
 
     # remove -nostdlib from linker commandline options
     # (i.e. archive_cmds and archive_expsym_cmds)
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
     $(if $(IS_LLVM), \
-        $(SED) -i 's/\-shared \-nostdlib/\-shared/g' '$(BUILD_DIR)/libtool')
+        $(SED) -i '/\-shared /s/ \-nostdlib//' '$(BUILD_DIR)/libtool')
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install

@@ -7,7 +7,7 @@ gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/
 
 # We do not need OpenMP, so build with --disable-libgomp
 # and compile without optimizations / stripping.
-gcc_CONFIGURE_OPTS=--with-build-sysroot='$(PREFIX)/$(TARGET)' \
+_gcc_CONFIGURE_OPTS=--with-build-sysroot='$(PREFIX)/$(TARGET)' \
 --disable-libgomp \
 CFLAGS='' \
 CXXFLAGS='' \
@@ -43,8 +43,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.11-19
-imagemagick_CHECKSUM := a3114ba17b5abcd4d086ac9194c32f0e8a66573182bf5a0f575a7c86405e508e
+imagemagick_VERSION  := 6.9.11-22
+imagemagick_CHECKSUM := 1dd6efedc624738bc38a27611b509c299fc958dc6138370abd34864c0af8cfa0
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -58,16 +58,16 @@ x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.49.2
-librsvg_CHECKSUM := 082b4caab7d11da9e0d6805ca54578c4684620d716b9e8444fe70b683def52ce
+librsvg_VERSION  := 2.49.3
+librsvg_CHECKSUM := 963b06f62dd5aa2e947e83b29dfc682d601e24f7c69eb0764304853cea22db96
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.45.2
-pango_CHECKSUM := 4402960e510039f8efd92153831a056e3a7e03c249205523d36ca8eaccb2b8b4
+pango_VERSION  := 1.45.3
+pango_CHECKSUM := 1f75c1ebab3d298bb0c18f420440b507a95ce4b98905274f4af80831ff7ee67d
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -92,8 +92,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.64.3
-glib_CHECKSUM := fe9cbc97925d14c804935f067a3ad77ef55c0bbe9befe68962318f5a767ceb22
+glib_VERSION  := 2.65.0
+glib_CHECKSUM := b041e63cd0ac1fccb486374022ade040d907aad29b278e27d9e43e9294a6e7a3
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -118,8 +118,8 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 2.5.1
-openexr_CHECKSUM := 11f806bf256453e39fc33bd1cf1fa576a54f144cedcdd3e6935a177e5a89d02e
+openexr_VERSION  := 2.5.2
+openexr_CHECKSUM := 5da8dff448d0c4a529e52c97daf238a461d01cd233944f75095668d6d7528761
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -136,8 +136,8 @@ ilmbase_FILE     := $(openexr_FILE)
 ilmbase_URL      := $(openexr_URL)
 
 # upstream version is 3410
-cfitsio_VERSION  := 3.47
-cfitsio_CHECKSUM := 418516f10ee1e0f1b520926eeca6b77ce639bed88804c7c545e74f26b3edf4ef
+cfitsio_VERSION  := 3.48
+cfitsio_CHECKSUM := 91b48ffef544eb8ea3908543052331072c99bf09ceb139cb3c6977fc3e47aac1
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
@@ -225,6 +225,10 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: xz
 # Fontconfig:
 #  Removed: gettext
+# GCC:
+#  Removed: $(BUILD)~zstd
+# CFITSIO:
+#  Added: zlib
 
 harfbuzz_DEPS           := $(filter-out icu4c,$(harfbuzz_DEPS))
 libgsf_DEPS             := $(filter-out bzip2 ,$(libgsf_DEPS))
@@ -245,6 +249,8 @@ x265_DEPS               := $(subst yasm,$(BUILD)~nasm,$(x265_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
 libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
 fontconfig_DEPS         := $(filter-out  gettext,$(fontconfig_DEPS))
+gcc_DEPS                := $(filter-out $(BUILD)~zstd,$(gcc_DEPS))
+cfitsio_DEPS            := cc zlib
 
 ## Override build scripts
 
@@ -340,34 +346,25 @@ define libffi_BUILD
 endef
 
 # icu will pull in standard linux headers, which we don't want,
-# build with CMake.
+# build with Meson.
 define harfbuzz_BUILD
-    # mman-win32 is only a partial implementation
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-        -DHB_HAVE_GLIB=ON \
-        -DHB_HAVE_FREETYPE=ON \
-        -DHB_HAVE_ICU=OFF \
-        -DHAVE_SYS_MMAN_H=OFF \
-        -DHB_BUILD_UTILS=OFF \
-        -DHB_BUILD_TESTS=OFF \
-        '$(SOURCE_DIR)'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+    '$(TARGET)-meson' \
+        --buildtype=release \
+        --strip \
+        --libdir='lib' \
+        --bindir='bin' \
+        --libexecdir='bin' \
+        --includedir='include' \
+        -Dicu=disabled \
+        -Dtests=disabled \
+        -Dintrospection=disabled \
+        -Dgtk_doc=disabled \
+        -Dbenchmark=disabled \
+        $(if $(IS_LLVM), -Dcpp_args='-Wno-incompatible-ms-struct') \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
 
-    # create pkg-config file, see:
-    # https://github.com/harfbuzz/harfbuzz/issues/896
-    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/pkgconfig'
-    (echo 'prefix=$(PREFIX)/$(TARGET)'; \
-     echo 'exec_prefix=$${prefix}'; \
-     echo 'libdir=$${exec_prefix}/lib'; \
-     echo 'includedir=$${prefix}/include'; \
-     echo ''; \
-     echo 'Name: $(PKG)'; \
-     echo 'Version: $($(PKG)_VERSION)'; \
-     echo 'Description: HarfBuzz text shaping library'; \
-     echo 'Libs: -L$${libdir} -lharfbuzz'; \
-     echo 'Cflags: -I$${includedir}/harfbuzz';) \
-     > '$(PREFIX)/$(TARGET)/lib/pkgconfig/$(PKG).pc'
+    ninja -C '$(BUILD_DIR)' install
 endef
 
 define freetype_BUILD
@@ -377,9 +374,11 @@ define freetype_BUILD
         ln -sf libharfbuzz.a '$(PREFIX)/$(TARGET)/lib/libharfbuzz_too.a' \
         && ln -sf libfreetype.a '$(PREFIX)/$(TARGET)/lib/libfreetype_too.a',)
     $($(PKG)_BUILD_COMMON)
-    # remove circular dependencies from pc file
     $(if $(BUILD_STATIC), \
-        $(SED) -i '/^Libs.private:/s/\-lharfbuzz_too -lfreetype_too//g' '$(PREFIX)/$(TARGET)/lib/pkgconfig/freetype2.pc')
+        # remove circular dependencies from pc file
+        $(SED) -i '/^Libs.private:/s/\-lharfbuzz_too -lfreetype_too//g' '$(PREFIX)/$(TARGET)/lib/pkgconfig/freetype2.pc' \
+        # avoid self-dependence within pc file
+        $(SED) -i '/^Libs.private:/s/\-lfreetype//g' '$(PREFIX)/$(TARGET)/lib/pkgconfig/freetype2.pc')
 endef
 
 # exclude bz2 and gdk-pixbuf
@@ -557,14 +556,10 @@ define librsvg_BUILD
         --without-libintl-prefix \
         RUST_TARGET='$(PROCESSOR)-pc-windows-gnu' \
         CARGO='$(TARGET)-cargo' \
-        RUSTC='$(TARGET)-rustc' \
-        $(if $(IS_INTL_DUMMY), \
-            LIBS="-lintl" \
-            CFLAGS="$(CFLAGS) -DG_INTL_STATIC_COMPILATION" \
-            lt_cv_deplibs_check_method="pass_all")
+        RUSTC='$(TARGET)-rustc'
 
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef
 
 # compile with CMake and with libjpeg-turbo
@@ -755,7 +750,6 @@ define glib_BUILD
         --includedir='include' \
         -Dforce_posix_threads=false \
         -Dinternal_pcre=true \
-        -Diconv='external' \
         -Dnls=disabled \
         $(if $(IS_INTL_DUMMY), -Dc_args='-DG_INTL_STATIC_COMPILATION') \
         '$(SOURCE_DIR)' \
@@ -800,13 +794,6 @@ define cfitsio_BUILD_SHARED
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-
-    # create pkg-config files
-    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/pkgconfig'
-    (echo 'Name: $(PKG)'; \
-     echo 'Version: $($(PKG)_VERSION)'; \
-     echo 'Libs: -l$(PKG)';) \
-     > '$(PREFIX)/$(TARGET)/lib/pkgconfig/$(PKG).pc'
 
     '$(TARGET)-gcc' \
         -W -Wall -Werror -ansi \

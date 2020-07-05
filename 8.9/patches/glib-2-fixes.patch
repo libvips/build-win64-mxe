@@ -3,201 +3,92 @@ This file is part of MXE. See LICENSE.md for licensing information.
 Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: James Le Cuirot <chewi@gentoo.org>
-Date: Mon, 13 Apr 2020 14:51:18 +0100
-Subject: [PATCH 1/6] meson: Remove transitive dep workaround now we require
- newer Meson
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 1 Jul 2020 12:30:21 +0200
+Subject: [PATCH 1/2] Revert "meson: Fix underlinking of static libintl by trying
+ iconv and pthread"
 
-https://github.com/mesonbuild/meson/issues/1426 was fixed in 0.48.0
-but we require 0.49.2.
+This reverts commit 56271ff27119f0b6b7dc6cc0c081d64bec06b473 as it causes
+issues with a statically built libintl on MinGW-w64.
 
 diff --git a/glib/meson.build b/glib/meson.build
 index 1111111..2222222 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -363,9 +363,7 @@ libglib = library('glib-2.0',
+@@ -357,19 +357,19 @@ libglib = library('glib-2.0',
+   # intl.lib is not compatible with SAFESEH
+   link_args : [noseh_link_args, glib_link_flags, win32_ldflags],
+   include_directories : configinc,
+-  dependencies : pcre_deps + [thread_dep, librt] + libintl_deps + libiconv + platform_deps + gnulib_libm_dependency,
++  dependencies : pcre_deps + [thread_dep, libintl, librt] + libiconv + platform_deps + gnulib_libm_dependency,
+   c_args : glib_c_args,
+   objc_args : glib_c_args,
+ )
  
  libglib_dep = declare_dependency(
    link_with : libglib,
--  # thread_dep doesn't get pulled in from libglib atm,
--  # see https://github.com/mesonbuild/meson/issues/1426
--  dependencies : [thread_dep, libintl],
+-  dependencies : libintl_deps,
 +  dependencies : libintl,
    # We sadly need to export configinc here because everyone includes <glib/*.h>
    include_directories : [configinc, glibinc])
  
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
-Date: Sat, 25 Apr 2020 21:10:15 +0300
-Subject: [PATCH 2/6] meson: Fix the gnulib checks for isnan* functions
-
-The gnulib math code uses __builtin_isnanf and __builtin_isnanl
-within the __GNUC__ >= 4 ifdef, and clang doesn't provide those
-builtins, only the one without a suffix. Make the meson check
-match the code it controls, using the exactly right builtins.
-
-Set REPLACE_ISNAN to 1 if either of the have_isnan* functions failed,
-this matches how gnulib's m4 routines does it (in gnulib/m4/isnan.m4).
-
-This fixes the isnan functions in the gnulib math header replacement
-work on Clang.
-
-diff --git a/glib/gnulib/meson.build b/glib/gnulib/meson.build
+ pkg.generate(libglib,
+-  libraries : [libintl_deps],
++  libraries : [libintl],
+   libraries_private : [osx_ldflags, win32_ldflags],
+   subdirs : ['glib-2.0'],
+   extra_cflags : ['-I${libdir}/glib-2.0/include'] + win32_cflags,
+diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
---- a/glib/gnulib/meson.build
-+++ b/glib/gnulib/meson.build
-@@ -182,7 +182,7 @@ endforeach
- nan_tmpl = '''#include <math.h>
-               #if __GNUC__ >= 4
-               # undef @0@
--              # define @0@(x) __builtin_isnan ((@1@)(x))
-+              # define @0@(x) @2@ ((@1@)(x))
-               #else
-               # undef @0@
-               # define @0@(x) isnan ((@1@)(x))
-@@ -191,18 +191,29 @@ nan_tmpl = '''#include <math.h>
-               int main () {return @0@ (x);}
-            '''
- 
--links = cc.links (nan_tmpl.format ('isnand', 'double'),
-+links = cc.links (nan_tmpl.format ('isnan', 'double', '__builtin_isnan'),
-                   dependencies : [libm])
-+math_h_config.set ('HAVE_ISNAN', links ? 1 : 0)
-+math_h_config.set ('HAVE_ISNAN_IN_LIBC', links ? 1 : 0)
-+set_variable ('have_isnan', links)
- math_h_config.set ('HAVE_ISNAND', links ? 1 : 0)
- math_h_config.set ('HAVE_ISNAND_IN_LIBC', links ? 1 : 0)
- set_variable ('have_isnand', links)
- 
--links = cc.links (nan_tmpl.format ('isnanl', 'long double'),
-+links = cc.links (nan_tmpl.format ('isnanf', 'float', '__builtin_isnanf'),
-+                  dependencies : [libm])
-+math_h_config.set ('HAVE_ISNANF', links ? 1 : 0)
-+math_h_config.set ('HAVE_ISNANF_IN_LIBC', links ? 1 : 0)
-+set_variable ('have_isnanf', links)
-+
-+links = cc.links (nan_tmpl.format ('isnanl', 'long double', '__builtin_isnanl'),
-                   dependencies : [libm])
- math_h_config.set ('HAVE_ISNANL', links ? 1 : 0)
- math_h_config.set ('HAVE_ISNANL_IN_LIBC', links ? 1 : 0)
- set_variable ('have_isnanl', links)
- 
-+math_h_config.set ('REPLACE_ISNAN', (have_isnand and have_isnanf and have_isnanl) ? 0 : 1)
-+
- links = cc.links ('''#include <math.h>
-                      double x;
-                      int y;
-@@ -303,7 +314,7 @@ inf_tmpl = '''#include <math.h>
- 
- other_needed_math_sources = []
- # Some compilers may not have isfinite, isinf available
--foreach f: ['isfinite', 'isinf', 'isnan', 'isnanf', 'signbit']
-+foreach f: ['isfinite', 'isinf', 'signbit']
-   links = cc.links (inf_tmpl.format('@0@'.format(f)),
-                     dependencies : [libm])
-   math_h_config.set ('HAVE_@0@'.format(f.to_upper()), links ? 1 : 0)
-@@ -313,7 +321,7 @@ foreach f: ['isfinite', 'isinf', 'isnan', 'isnanf', 'signbit']
-   if not links
-     if f == 'signbit'
-       other_needed_math_sources += [ 'signbitd.c', 'signbitf.c', 'signbitl.c' ]
--    elif f != 'isfinite' and f != 'isnan'
-+    elif f != 'isfinite'
-       other_needed_math_sources += [ '@0@.c'.format(f) ]
-     endif
+--- a/meson.build
++++ b/meson.build
+@@ -1954,40 +1954,17 @@ endif
+ # proxy-libintl subproject.
+ # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
+ # implementations. This could be extended if issues are found in some platforms.
+-libintl_deps = []
+ if cc.has_function('ngettext')
++  libintl = []
+   have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset')
+ else
+-  # First just find the bare library.
+   libintl = cc.find_library('intl', required : false)
+-  # The bare library probably won't link without help if it's static.
+-  if libintl.found() and not cc.has_function('ngettext', dependencies : libintl)
+-     libintl_iconv = cc.find_library('iconv', required : false)
+-     # libintl supports different threading APIs, which may not
+-     # require additional flags, but it defaults to using pthreads if
+-     # found. Meson's "threads" dependency does not allow you to
+-     # prefer pthreads. We may not be using pthreads for glib itself
+-     # either so just link the library to satisfy libintl rather than
+-     # also defining the macros with the -pthread flag.
+-     libintl_pthread = cc.find_library('pthread', required : false)
+-     # Try linking with just libiconv.
+-     if libintl_iconv.found() and cc.has_function('ngettext', dependencies : [libintl, libintl_iconv])
+-       libintl_deps += [libintl_iconv]
+-     # Then also try linking with pthreads.
+-     elif libintl_iconv.found() and libintl_pthread.found() and cc.has_function('ngettext', dependencies : [libintl, libintl_iconv, libintl_pthread])
+-       libintl_deps += [libintl_iconv, libintl_pthread]
+-     else
+-       libintl = disabler()
+-     endif
+-  endif
+   if not libintl.found()
+     libintl = subproject('proxy-libintl').get_variable('intl_dep')
+-    libintl_deps = [libintl] + libintl_deps
+     have_bind_textdomain_codeset = true  # proxy-libintl supports it
+   else
+-    libintl_deps = [libintl] + libintl_deps
+     have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset',
+-                                                   dependencies : libintl_deps)
++                                                   dependencies : libintl)
    endif
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
-Date: Mon, 27 Apr 2020 21:59:47 +0300
-Subject: [PATCH 3/6] glib: Sync the local modification to glib/valgrind.h to what
- was upstreamed
-
-The local change from af0e0cb9950569828 in glib ended upstreamed
-as 7359c5fd9f312cddd62146896558d8c9bd2bd4cf in valgrind, with
-a few minor adjustments requested from there.
-
-Sync this local modification to what ended up upstreamed, to avoid
-any doubt regarding it for future syncs of the whole header.
-
-diff --git a/glib/valgrind.h b/glib/valgrind.h
-index 1111111..2222222 100644
---- a/glib/valgrind.h
-+++ b/glib/valgrind.h
-@@ -134,8 +134,9 @@
-       || defined(__CYGWIN32__) \
-       || (defined(_WIN32) && defined(_M_IX86))
- #  define PLAT_x86_win32 1
--#elif (defined(__MINGW64__) && defined(__x86_64__)) \
--      || (defined(_WIN64) && defined(_M_X64))
-+#elif (defined(__MINGW32__) && defined(__x86_64__)) \
-+      || (defined(_WIN32) && defined(_M_X64))
-+/* __MINGW32__ and _WIN32 are defined in 64 bit mode as well. */
- #  define PLAT_amd64_win64 1
- #elif defined(__linux__) && defined(__i386__)
- #  define PLAT_x86_linux 1
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
-Date: Tue, 31 Mar 2020 23:11:05 +0300
-Subject: [PATCH 4/6] Don't fall back to raise(SIGTRAP) on Windows
-
-When targeting mingw on architectures other than x86, the earlier cases
-don't apply, and the final fallback, raise(SIGTRAP) isn't usable there.
-
-GCC and Clang both support __builtin_trap(), so in case we have no
-other alternatives, and are on windows (where raise() isn't available),
-we can resort to this.
-
-diff --git a/glib/gbacktrace.h b/glib/gbacktrace.h
-index 1111111..2222222 100644
---- a/glib/gbacktrace.h
-+++ b/glib/gbacktrace.h
-@@ -61,7 +61,7 @@ void g_on_error_stack_trace (const gchar *prg_name);
- #  define G_BREAKPOINT()        G_STMT_START{ __debugbreak(); }G_STMT_END
- #elif defined (__alpha__) && !defined(__osf__) && defined (__GNUC__) && __GNUC__ >= 2
- #  define G_BREAKPOINT()        G_STMT_START{ __asm__ __volatile__ ("bpt"); }G_STMT_END
--#elif defined (__APPLE__)
-+#elif defined (__APPLE__) || (defined(_WIN32) && (defined(__clang__) || defined(__GNUC__)))
- #  define G_BREAKPOINT()        G_STMT_START{ __builtin_trap(); }G_STMT_END
- #else   /* !__i386__ && !__alpha__ */
- #  define G_BREAKPOINT()        G_STMT_START{ raise (SIGTRAP); }G_STMT_END
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Timm=20B=C3=A4der?= <mail@baedert.org>
-Date: Fri, 28 Feb 2020 08:59:23 +0100
-Subject: [PATCH 5/6] macros: Define G_GNUC_FALLTHROUGH for more compilers
-
-Some compilers have __GNUC__ defined as a value less than 6, but do
-support implicit-fallthrough via __attribute__((fallthrough)). Define
-G_GNUC_FALLTHROUGH for those that support __has_attribute.
-
-diff --git a/glib/gmacros.h b/glib/gmacros.h
-index 1111111..2222222 100644
---- a/glib/gmacros.h
-+++ b/glib/gmacros.h
-@@ -532,7 +532,7 @@
- /**
-  * G_GNUC_FALLTHROUGH:
-  *
-- * Expands to the GNU C `fallthrough` statement attribute if the compiler is gcc.
-+ * Expands to the GNU C `fallthrough` statement attribute if the compiler supports it.
-  * This allows declaring case statement to explicitly fall through in switch
-  * statements. To enable this feature, use `-Wimplicit-fallthrough` during
-  * compilation.
-@@ -559,6 +559,8 @@
-  */
- #if    __GNUC__ > 6
- #define G_GNUC_FALLTHROUGH __attribute__((fallthrough))
-+#elif g_macro__has_attribute (fallthrough)
-+#define G_GNUC_FALLTHROUGH __attribute__((fallthrough))
- #else
- #define G_GNUC_FALLTHROUGH
- #endif /* __GNUC__ */
-
+ endif
+ 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 13 May 2019 18:00:00 +0200
-Subject: [PATCH 6/6] Disable some tests
+Subject: [PATCH 2/2] Disable some tests
 
 
 diff --git a/gio/tests/meson.build b/gio/tests/meson.build

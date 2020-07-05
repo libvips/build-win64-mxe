@@ -84,7 +84,7 @@ fi
 
 rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
 rm -rf $repackage_dir/include/cairo
-rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,ldscripts,rustlib,xml2Conf.sh}
+rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,*_too.a,ldscripts,rustlib,xml2Conf.sh}
 rm -rf $repackage_dir/etc/bash_completion.d
 
 find $repackage_dir/lib -name "*.la" -exec rm -f {} \;

@@ -275,27 +275,22 @@ index 1111111..2222222 100644
  		 * On i86, we could access directly, but Alphas require
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sun, 29 Mar 2020 12:40:00 +0200
-Subject: [PATCH 4/4] Avoid having multiple -exported-symbols arguments on win32
+From: Morten Welinder <terra@gnome.org>
+Date: Sat, 2 May 2020 21:24:12 -0400
+Subject: [PATCH 4/4] Compilation: fix win32 build
 
-More than one -exported-symbols argument is not allowed.
 
 diff --git a/gsf/Makefile.am b/gsf/Makefile.am
 index 1111111..2222222 100644
 --- a/gsf/Makefile.am
 +++ b/gsf/Makefile.am
-@@ -16,10 +16,12 @@ INTROSPECTION_COMPILER_ARGS = \
- EXTRA_DIST = libgsf.syms
- 
+@@ -18,8 +18,7 @@ EXTRA_DIST = libgsf.syms
  libgsf_1_la_LIBADD  = $(LIBGSF_LIBS) $(Z_LIBS) $(BZ2_LIBS)
--libgsf_1_la_LDFLAGS = -version-info $(VERSION_INFO) -export-symbols $(srcdir)/libgsf.syms
-+libgsf_1_la_LDFLAGS = -version-info $(VERSION_INFO)
+ libgsf_1_la_LDFLAGS = -version-info $(VERSION_INFO) -export-symbols $(srcdir)/libgsf.syms
  if WITH_WIN32
-   libgsf_1_la_DEPENDENCIES = lib.def
-   libgsf_1_la_LDFLAGS += -no-undefined -export-symbols lib.def
-+else
-+  libgsf_1_la_LDFLAGS += -export-symbols $(srcdir)/libgsf.syms
+-  libgsf_1_la_DEPENDENCIES = lib.def
+-  libgsf_1_la_LDFLAGS += -no-undefined -export-symbols lib.def
++  libgsf_1_la_LDFLAGS += -no-undefined
  endif
  
  libgsf_1_la_SOURCES =		\
