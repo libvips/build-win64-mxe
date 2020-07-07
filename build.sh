@@ -7,8 +7,8 @@ Build libvips for Windows in a Docker container
 
 OPTIONS:
 	--help		Show the help and exit
-	--with-mozjpeg	Built with MozJPEG instead of libjpeg-turbo
-	--with-llvm	Built with llvm-mingw
+	--with-mozjpeg	Build with MozJPEG instead of libjpeg-turbo
+	--with-llvm	Build with llvm-mingw
 
 DEPS:
 	The group of dependencies to build libvips with,

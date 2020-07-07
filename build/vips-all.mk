@@ -2,15 +2,17 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.9.2
-$(PKG)_CHECKSUM := ae8491b1156cd2eb9cbbaa2fd6caa1dc9ed3ded0b70443d28cd7fea798ab2a27
+$(PKG)_VERSION  := 8.10.0
+$(PKG)_CHECKSUM := 067ab5d87487f78f0c33cc627444deeb03b8278f489b80b0c7629d3e49d5056b
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,-beta1,,,-beta1.tar.gz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
+$(PKG)_FILE     := vips-$($(PKG)_VERSION)-beta1.tar.gz
+# https://github.com/libvips/libvips/pull/1708
+$(PKG)_URL      := https://kleisauke.nl/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
                    libgsf libjpeg-turbo tiff openslide lcms libexif libheif \
-                   imagemagick libpng openexr cfitsio nifticlib orc
+                   imagemagick libpng libspng openexr cfitsio nifticlib orc
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -50,6 +52,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "poppler": "$(poppler_VERSION)",\n'; \
      printf '  "sqlite": "$(sqlite_VERSION)",\n'; \
      printf '  "svg": "$(librsvg_VERSION)",\n'; \
+     printf '  "spng": "$(libspng_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
      printf '  "vips": "$(vips-all_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
@@ -69,6 +72,7 @@ define $(PKG)_BUILD
         --without-pdfium \
         --without-imagequant \
         --disable-introspection \
+        --disable-deprecated \
         $(if $(IS_LLVM), CXXFLAGS="$(CXXFLAGS) -Wno-incompatible-ms-struct")
 
     # remove -nostdlib from linker commandline options

@@ -2,14 +2,16 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.9.2
-$(PKG)_CHECKSUM := ae8491b1156cd2eb9cbbaa2fd6caa1dc9ed3ded0b70443d28cd7fea798ab2a27
+$(PKG)_VERSION  := 8.10.0
+$(PKG)_CHECKSUM := 067ab5d87487f78f0c33cc627444deeb03b8278f489b80b0c7629d3e49d5056b
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,-beta1,,,-beta1.tar.gz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
+$(PKG)_FILE     := vips-$($(PKG)_VERSION)-beta1.tar.gz
+# https://github.com/libvips/libvips/pull/1708
+$(PKG)_URL      := https://kleisauke.nl/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
-                   libjpeg-turbo tiff lcms libexif libpng orc
+                   libjpeg-turbo tiff lcms libexif libpng libspng orc
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -36,6 +38,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "pixman": "$(pixman_VERSION)",\n'; \
      printf '  "png": "$(libpng_VERSION)",\n'; \
      printf '  "svg": "$(librsvg_VERSION)",\n'; \
+     printf '  "spng": "$(libspng_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
      printf '  "vips": "$(vips-web_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
@@ -73,6 +76,7 @@ define $(PKG)_BUILD
         --without-radiance \
         --without-imagequant \
         --disable-introspection \
+        --disable-deprecated \
         $(if $(IS_LLVM), CXXFLAGS="$(CXXFLAGS) -Wno-incompatible-ms-struct") \
         $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all")
 

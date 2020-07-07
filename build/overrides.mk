@@ -213,7 +213,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: libxml2, rust
 #  Removed: libcroco, libgsf
 # Cairo:
-#  Removed: lzo zlib
+#  Removed: lzo
 # hdf5:
 #  Added: $(BUILD)~cmake
 #  Removed: pthreads
@@ -243,7 +243,7 @@ openexr_DEPS            := cc ilmbase zlib
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc mingw-std-threads cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust
-cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
+cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman zlib
 hdf5_DEPS               := $(filter-out pthreads ,$(hdf5_DEPS)) $(BUILD)~cmake
 x265_DEPS               := $(subst yasm,$(BUILD)~nasm,$(x265_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
@@ -415,9 +415,7 @@ define gdk-pixbuf_BUILD
         -Dbuiltin_loaders='jpeg,png,tiff' \
         -Dgir=false \
         -Dx11=false \
-        $(if $(IS_INTL_DUMMY), \
-            -Dc_args='-DG_INTL_STATIC_COMPILATION' \
-            -Dc_link_args='-lintl') \
+        $(if $(IS_INTL_DUMMY), -Dc_link_args='-lintl') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -519,6 +517,19 @@ define libjpeg-turbo_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
+# build with --disable-nls
+define fontconfig_BUILD
+    cd '$(SOURCE_DIR)' && autoreconf -fi
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS) \
+        --with-arch='$(TARGET)' \
+        --with-expat='$(PREFIX)/$(TARGET)' \
+        --disable-docs \
+        --disable-nls
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
+endef
+
 # disable GObject introspection
 # build with the Meson build system
 # force FontConfig since the Win32 font backend within Cairo is disabled
@@ -595,26 +606,15 @@ define poppler_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
-# the zlib configure is a bit basic, so use cmake for shared
-# builds
-define zlib_BUILD_SHARED
-    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' '$(SOURCE_DIR)'
+# the zlib configure is a bit basic, so we'll use cmake
+define zlib_BUILD
+    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DSKIP_BUILD_EXAMPLES=ON \
+        -DINSTALL_PKGCONFIG_DIR='$(PREFIX)/$(TARGET)/lib/pkgconfig' \
+        '$(SOURCE_DIR)'
+
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-
-    # create pkg-config file
-    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/pkgconfig'
-    (echo 'prefix=$(PREFIX)/$(TARGET)'; \
-     echo 'exec_prefix=$${prefix}'; \
-     echo 'libdir=$${exec_prefix}/lib'; \
-     echo 'includedir=$${prefix}/include'; \
-     echo ''; \
-     echo 'Name: $(PKG)'; \
-     echo 'Version: $($(PKG)_VERSION)'; \
-     echo 'Description: $(PKG) compression library'; \
-     echo 'Libs: -L$${libdir} -lz'; \
-     echo 'Cflags: -I$${includedir}';) \
-     > '$(PREFIX)/$(TARGET)/lib/pkgconfig/$(PKG).pc'
 endef
 
 # disable the C++ API for now, we don't use it anyway
@@ -751,7 +751,6 @@ define glib_BUILD
         -Dforce_posix_threads=false \
         -Dinternal_pcre=true \
         -Dnls=disabled \
-        $(if $(IS_INTL_DUMMY), -Dc_args='-DG_INTL_STATIC_COMPILATION') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

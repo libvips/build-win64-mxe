@@ -66,7 +66,7 @@ From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 17 May 2019 13:00:00 +0200
 Subject: [PATCH 4/4] Disable Cairo script features
 
-Our Cairo was build with `--disable-script`.
+Our Cairo was built with `--disable-script`.
 
 Reported here: https://github.com/gtk-rs/cairo/issues/259
 
