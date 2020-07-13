@@ -25,7 +25,7 @@ diff --git a/poppler/Annot.h b/poppler/Annot.h
 index 1111111..2222222 100644
 --- a/poppler/Annot.h
 +++ b/poppler/Annot.h
-@@ -44,7 +44,11 @@
+@@ -45,7 +45,11 @@
  
  #include <memory>
  #include <atomic>
@@ -105,7 +105,7 @@ diff --git a/poppler/PDFDoc.h b/poppler/PDFDoc.h
 index 1111111..2222222 100644
 --- a/poppler/PDFDoc.h
 +++ b/poppler/PDFDoc.h
-@@ -42,7 +42,11 @@
+@@ -43,7 +43,11 @@
  #ifndef PDFDOC_H
  #define PDFDOC_H
  
@@ -121,7 +121,7 @@ diff --git a/poppler/Page.h b/poppler/Page.h
 index 1111111..2222222 100644
 --- a/poppler/Page.h
 +++ b/poppler/Page.h
-@@ -35,7 +35,11 @@
+@@ -36,7 +36,11 @@
  #define PAGE_H
  
  #include <memory>
