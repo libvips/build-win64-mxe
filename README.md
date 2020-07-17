@@ -21,9 +21,9 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libjpeg-turbo] | 2.0.5     | [zlib License, IJG License]     |
 | [libpng]        | 1.6.37    | [libpng License version 2]      |
 | [librsvg]       | 2.49.3    | LGPLv3                          |
-| [libspng]       | 9a08896¹  | [BSD 2-Clause, libpng License]  |
+| [libspng]       | 0.6.0     | [BSD 2-Clause, libpng License]  |
 | [libtiff]       | 4.1.0     | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.10.0²   | LGPLv3                          |
+| [libvips]       | 8.10.0¹   | LGPLv3                          |
 | [libwebp]       | 1.1.0     | New BSD License                 |
 | [libxml2]       | 2.9.10    | MIT Licence                     |
 | [orc]           | 0.4.31    | [orc License] (BSD-like)        |
@@ -31,10 +31,8 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [pixman]        | 0.40.0    | MIT Licence                     |
 | [zlib]          | 1.2.11    | [zlib Licence]                  |
 
-¹ libspng is built from the [`master`](https://github.com/randy408/libspng/tree/master) branch because v0.6.0 hasn't been released yet.
-
-² libvips is built from the [`v8.10.0-beta2`](https://github.com/libvips/libvips/tree/v8.10.0-beta2) tag, see:
-https://github.com/libvips/libvips/releases/tag/v8.10.0-beta2
+¹ libvips is built from the [`v8.10.0-rc1`](https://github.com/libvips/libvips/tree/v8.10.0-rc1) tag, see:
+https://github.com/libvips/libvips/releases/tag/v8.10.0-rc1
 
 [cairo]: https://gitlab.freedesktop.org/cairo/cairo
 [expat]: https://github.com/libexpat/libexpat
@@ -120,8 +118,8 @@ argument. For example:
 
 | Dependency      | Version   | Used under the terms of          |
 |-----------------|-----------|----------------------------------|
-| [mozjpeg]       | 6d95c51³  | [zlib License, IJG License]      |
+| [mozjpeg]       | 6d95c51²  | [zlib License, IJG License]      |
 
-³ MozJPEG is built from master to maintain binary compatibility with libjpeg-turbo.
+² MozJPEG is built from the [`master`](https://github.com/mozilla/mozjpeg/tree/master) branch to maintain binary compatibility with libjpeg-turbo.
 
 [mozjpeg]: https://github.com/mozilla/mozjpeg

@@ -3,11 +3,11 @@ $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 8.10.0
-$(PKG)_CHECKSUM := 28465cf2cdc63e15da5c252455fbd38c12f0dabf4bc255ff9a92c976a4cacb83
+$(PKG)_CHECKSUM := e5083ccee8fb615c82ec7017459132122877c45688169e6e43cbaa5e3fa77286
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,-beta2,,,-beta2.tar.gz
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,-rc1,,,-rc1.tar.gz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION)-beta2.tar.gz
+$(PKG)_FILE     := vips-$($(PKG)_VERSION)-rc1.tar.gz
 $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
                    libgsf libjpeg-turbo tiff openslide lcms libexif libheif \
                    imagemagick libpng libspng openexr cfitsio nifticlib orc
@@ -15,7 +15,7 @@ $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
     mkdir -p $(TOP_DIR)/vips-packaging
-    $(foreach f,COPYING ChangeLog README.md AUTHORS, mv '$(SOURCE_DIR)/$f' '$(TOP_DIR)/vips-packaging';)
+    $(foreach f,COPYING ChangeLog README.md AUTHORS, cp '$(SOURCE_DIR)/$f' '$(TOP_DIR)/vips-packaging';)
 
     (printf '{\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
