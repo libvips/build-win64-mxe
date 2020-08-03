@@ -66,8 +66,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.45.3
-pango_CHECKSUM := 1f75c1ebab3d298bb0c18f420440b507a95ce4b98905274f4af80831ff7ee67d
+pango_VERSION  := 1.45.4
+pango_CHECKSUM := 3843c2eda760a4dfa998cc9c12db25da1da26ae01e8d847a9afeba684b7bde7b
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -168,9 +168,9 @@ hdf5_SUBDIR   := hdf5-$(hdf5_VERSION)
 hdf5_FILE     := hdf5-$(hdf5_VERSION).tar.bz2
 hdf5_URL      := https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$(call SHORT_PKG_VERSION,hdf5)/hdf5-$(hdf5_VERSION)/src/$(hdf5_FILE)
 
-# upstream version is 0.90.0
-poppler_VERSION  := 0.90.1
-poppler_CHECKSUM := 984d82e72e91418d280885298c8bdc855a2fd92665fd52a1345b27235e0c71c4
+# upstream version is 0.90.1
+poppler_VERSION  := 20.08.0
+poppler_CHECKSUM := ae65fef04bbf63259a6352e7b620719115d4fb97f5079b0b8b00a8eb0c86eca5
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz

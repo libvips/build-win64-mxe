@@ -18,7 +18,12 @@ export CXXFLAGS := -s -O3
 export LDFLAGS  := -Wl,-s
 
 # Special flags for Rust.
-export RUSTFLAGS := -Copt-level=s -Clto=on -Ccodegen-units=1 -Cincremental=false -Cpanic=abort
+export CARGO_PROFILE_RELEASE_DEBUG         := false
+export CARGO_PROFILE_RELEASE_CODEGEN_UNITS := 1
+export CARGO_PROFILE_RELEASE_INCREMENTAL   := false
+export CARGO_PROFILE_RELEASE_LTO           := true
+export CARGO_PROFILE_RELEASE_OPT_LEVEL     := s
+export CARGO_PROFILE_RELEASE_PANIC         := abort
 
 # We don't need debugging symbols.
 # For e.g. this commit:

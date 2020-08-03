@@ -4,14 +4,16 @@ PKG             := llvm
 $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
-# This version needs to be in-sync with the clang, lld, lldb, compiler-rt, libunwind, libcxx and libcxxabi packages
-$(PKG)_VERSION  := 10.0.0
-$(PKG)_CHECKSUM := df83a44b3a9a71029049ec101fb0077ecbbdf5fe41e395215025779099a98fdf
+# This version needs to be in-sync with the clang, lld, lldb, compiler-rt, libunwind, libcxxabi and libcxx packages
+$(PKG)_VERSION  := 11.0.0-rc1
+$(PKG)_CHECKSUM := 039fef64c7eda73e4db49d4c29fc92522087e17231bbf447b65e78e657a8de86
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
-$(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION).src
-$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).src.tar.xz
-$(PKG)_DEPS     := $(BUILD)~$(PKG)
+$(PKG)_SUBDIR   := $(PKG)-$(subst -,,$($(PKG)_VERSION)).src
+$(PKG)_FILE     := $($(PKG)_SUBDIR).tar.xz
+# This is needed to properly override: https://github.com/mxe/mxe/blob/master/src/llvm.mk#L11
+$(PKG)_URL      := https://github.com/llvm/llvm-project/releases/download/llvmorg-$($(PKG)_VERSION)/$($(PKG)_FILE)
+$(PKG)_DEPS     := $(BUILD)~$(PKG) llvm-mingw compiler-rt-builtins libunwind libcxxabi libcxx 
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
 $(PKG)_DEPS_$(BUILD) := cmake clang lld lldb
@@ -53,18 +55,109 @@ define $(PKG)_BUILD_$(BUILD)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install/strip
 endef
 
-define $(PKG)_BUILD
-    # setup symlinks
-    $(foreach EXEC, clang clang++ ld.lld llvm-dlltool llvm-objdump, \
-        ln -sf '$(PREFIX)/$(BUILD)/bin/$(EXEC)' '$(PREFIX)/$(TARGET)/bin/$(EXEC)';)
+# llvm requires being built in a monorepo layout with 
+# libunwind, libcxxabi and libcxx available
+define $(PKG)_PRE_CONFIGURE
+    $(call PREPARE_PKG_SOURCE,libunwind,$(BUILD_DIR))
+    rm -rf '$(SOURCE_DIR)/libunwind'
+    mv '$(BUILD_DIR)/$(libunwind_SUBDIR)' '$(SOURCE_DIR)/libunwind'
 
-    # setup target wrappers
-    # Can't symlink here, it will break the basename detection of LLVM. See:
-    # sys::path::stem("x86_64-w64-mingw32.shared-ranlib"); -> x86_64-w64-mingw32
-    # https://github.com/llvm/llvm-project/blob/9a432161c68774e6c717616e3d688142e89bbb42/llvm/tools/llvm-ar/llvm-ar.cpp#L1181-L1192
-    $(foreach EXEC, addr2line ar cvtres nm objcopy ranlib rc strings strip, \
-        (echo '#!/bin/sh'; \
-         echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-$(EXEC)" "$$@"') \
-                 > '$(PREFIX)/bin/$(TARGET)-$(EXEC)'; \
-        chmod 0755 '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
+    $(call PREPARE_PKG_SOURCE,libcxxabi,$(BUILD_DIR))
+    rm -rf '$(SOURCE_DIR)/libcxxabi'
+    mv '$(BUILD_DIR)/$(libcxxabi_SUBDIR)' '$(SOURCE_DIR)/libcxxabi'
+
+    $(call PREPARE_PKG_SOURCE,libcxx,$(BUILD_DIR))
+    rm -rf '$(SOURCE_DIR)/libcxx'
+    mv '$(BUILD_DIR)/$(libcxx_SUBDIR)' '$(SOURCE_DIR)/libcxx'
+endef
+
+define $(PKG)_BUILD
+    $($(PKG)_PRE_CONFIGURE)
+
+    mkdir '$(BUILD_DIR).libunwind'
+    cd '$(BUILD_DIR).libunwind' && $(TARGET)-cmake '$(SOURCE_DIR)/libunwind' \
+        -DCMAKE_CROSSCOMPILING=TRUE \
+        -DCMAKE_C_COMPILER_WORKS=TRUE \
+        -DCMAKE_CXX_COMPILER_WORKS=TRUE \
+        -DLLVM_PATH='$(SOURCE_DIR)' \
+        -DLLVM_COMPILER_CHECKED=TRUE \
+        -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
+        -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
+        -DCXX_SUPPORTS_CXX11=TRUE \
+        -DCXX_SUPPORTS_CXX_STD=TRUE \
+        -DLIBUNWIND_USE_COMPILER_RT=TRUE \
+        -DLIBUNWIND_ENABLE_THREADS=TRUE \
+        -DLIBUNWIND_ENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
+        -DLIBUNWIND_ENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
+        -DLIBUNWIND_ENABLE_CROSS_UNWINDING=FALSE \
+        -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -Wno-dll-attribute-on-redeclaration' \
+        -DCMAKE_C_FLAGS='$(CFLAGS) -Wno-dll-attribute-on-redeclaration'
+    $(MAKE) -C '$(BUILD_DIR).libunwind' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR).libunwind' -j 1 install/strip
+
+    $(if $(BUILD_SHARED), \
+        cp '$(BUILD_DIR).libunwind/lib/libunwind.dll' '$(PREFIX)/$(TARGET)/bin')
+
+    mkdir '$(BUILD_DIR).libcxxabi'
+    cd '$(BUILD_DIR).libcxxabi' && $(TARGET)-cmake '$(SOURCE_DIR)/libcxxabi' \
+        -DCMAKE_CROSSCOMPILING=TRUE \
+        -DCMAKE_C_COMPILER_WORKS=TRUE \
+        -DCMAKE_CXX_COMPILER_WORKS=TRUE \
+        -DLLVM_PATH='$(SOURCE_DIR)' \
+        -DLLVM_COMPILER_CHECKED=TRUE \
+        -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
+        -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
+        -DLIBCXXABI_USE_COMPILER_RT=ON \
+        -DLIBCXXABI_ENABLE_EXCEPTIONS=ON \
+        -DLIBCXXABI_ENABLE_THREADS=ON \
+        -DLIBCXXABI_TARGET_TRIPLE=$(TARGET) \
+        -DLIBCXXABI_ENABLE_SHARED=OFF \
+        -DLIBCXXABI_LIBCXX_INCLUDES='$(SOURCE_DIR)/libcxx/include' \
+        -DLIBCXXABI_LIBDIR_SUFFIX='' \
+        -DLIBCXXABI_ENABLE_NEW_DELETE_DEFINITIONS=OFF \
+        -DCXX_SUPPORTS_CXX_STD=TRUE \
+        -DCMAKE_CXX_FLAGS='$(CXXFLAGS) $(if $(BUILD_SHARED),-D_LIBCPP_BUILDING_LIBRARY= -U_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS,-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS) -D_LIBCPP_HAS_THREAD_API_WIN32'
+    $(MAKE) -C '$(BUILD_DIR).libcxxabi' -j '$(JOBS)'
+
+    mkdir '$(BUILD_DIR).libcxx'
+    cd '$(BUILD_DIR).libcxx' && $(TARGET)-cmake '$(SOURCE_DIR)/libcxx' \
+        -DCMAKE_CROSSCOMPILING=TRUE \
+        -DCMAKE_C_COMPILER_WORKS=TRUE \
+        -DCMAKE_CXX_COMPILER_WORKS=TRUE \
+        -DLLVM_PATH='$(SOURCE_DIR)' \
+        -DLLVM_COMPILER_CHECKED=TRUE \
+        -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
+        -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
+        -DLIBCXX_USE_COMPILER_RT=ON \
+        -DLIBCXX_INSTALL_HEADERS=ON \
+        -DLIBCXX_ENABLE_EXCEPTIONS=ON \
+        -DLIBCXX_ENABLE_THREADS=ON \
+        -DLIBCXX_HAS_WIN32_THREAD_API=ON \
+        -DLIBCXX_ENABLE_MONOTONIC_CLOCK=ON \
+        -DLIBCXX_ENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
+        -DLIBCXX_ENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
+        -DLIBCXX_SUPPORTS_STD_EQ_CXX11_FLAG=TRUE \
+        -DLIBCXX_HAVE_CXX_ATOMICS_WITHOUT_LIB=TRUE \
+        -DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF \
+        -DLIBCXX_ENABLE_FILESYSTEM=OFF \
+        -DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=TRUE \
+        -DLIBCXX_CXX_ABI=libcxxabi \
+        -DLIBCXX_CXX_ABI_INCLUDE_PATHS='$(SOURCE_DIR)/libcxxabi/include' \
+        -DLIBCXX_CXX_ABI_LIBRARY_PATH='$(BUILD_DIR).libcxxabi/lib' \
+        -DLIBCXX_LIBDIR_SUFFIX='' \
+        -DLIBCXX_INCLUDE_TESTS=FALSE \
+        -DCMAKE_CXX_FLAGS='$(CXXFLAGS) $(if $(BUILD_SHARED),-D_LIBCXXABI_BUILDING_LIBRARY,-D_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS)' \
+        -DCMAKE_SHARED_LINKER_FLAGS='-lunwind' \
+        -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=FALSE
+    $(MAKE) -C '$(BUILD_DIR).libcxx' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR).libcxx' -j 1 install/strip
+
+    $(if $(BUILD_STATIC), \
+        $(TARGET)-ar qcsL \
+            '$(PREFIX)/$(TARGET)/lib/libc++.a' \
+            '$(PREFIX)/$(TARGET)/lib/libunwind.a' \
+    $(else), \
+        $(TARGET)-ar qcsL \
+            '$(PREFIX)/$(TARGET)/lib/libc++.dll.a' \
+            '$(PREFIX)/$(TARGET)/lib/libunwind.dll.a')
 endef

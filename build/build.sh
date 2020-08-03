@@ -35,7 +35,7 @@ TARGET:
 		- x86_64-w64-mingw32.static.posix
 		- x86_64-w64-mingw32.static.win32
 EOF
-  exit 1
+  exit 0
 fi
 
 . variables.sh
@@ -51,7 +51,7 @@ fi
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="885a03134121f7564bd49313a70e3d372a546192"
+revision="cce10aff094cc8de04866cc3d87f1e94ed2c7f96"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then

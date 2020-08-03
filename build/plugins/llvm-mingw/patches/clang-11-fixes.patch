@@ -13,7 +13,7 @@ diff --git a/lib/Driver/ToolChains/MinGW.cpp b/lib/Driver/ToolChains/MinGW.cpp
 index 1111111..2222222 100644
 --- a/lib/Driver/ToolChains/MinGW.cpp
 +++ b/lib/Driver/ToolChains/MinGW.cpp
-@@ -404,6 +404,7 @@ toolchains::MinGW::MinGW(const Driver &D, const llvm::Triple &Triple,
+@@ -423,6 +423,7 @@ toolchains::MinGW::MinGW(const Driver &D, const llvm::Triple &Triple,
    getFilePaths().push_back(
        (Base + Arch + llvm::sys::path::get_separator() + "lib").str());
    getFilePaths().push_back(Base + "lib");
@@ -21,7 +21,7 @@ index 1111111..2222222 100644
    // openSUSE
    getFilePaths().push_back(Base + Arch + "/sys-root/mingw/lib");
  
-@@ -549,6 +550,7 @@ void toolchains::MinGW::AddClangSystemIncludeArgs(const ArgList &DriverArgs,
+@@ -574,6 +575,7 @@ void toolchains::MinGW::AddClangSystemIncludeArgs(const ArgList &DriverArgs,
    addSystemInclude(DriverArgs, CC1Args,
                     Base + Arch + llvm::sys::path::get_separator() + "include");
    addSystemInclude(DriverArgs, CC1Args, Base + "include");

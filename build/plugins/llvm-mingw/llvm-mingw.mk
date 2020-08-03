@@ -4,12 +4,12 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://api.github.com/repos/mstorsjo/llvm-mingw/tarball/26e56ed5f6f4bc918884b9303a55cfa1dc92bba8
-$(PKG)_VERSION  := 26e56ed
-$(PKG)_CHECKSUM := 8355ed7a9dbd1c16b6e45f28b5efdd3f52c851451cfa241ddb1176cec7991ab1
+# https://github.com/mstorsjo/llvm-mingw/tarball/0fc16eb24db62be3348b0237e31dc2cad4410fdd
+$(PKG)_VERSION  := 0fc16eb
+$(PKG)_CHECKSUM := 32cba59282d3b7184579cbae538e071d0b6fe216347b8e10e912ba270061ed73
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
-$(PKG)_DEPS     := llvm mingw-w64
+$(PKG)_DEPS     := mingw-w64
 
 # The minimum Windows version we support is Windows 7, as libc++ uses
 # TryAcquireSRWLockExclusive which didn't exist until Windows 7. See:
@@ -48,6 +48,20 @@ define $(PKG)_BUILD_mingw-w64
 endef
 
 define $(PKG)_PRE_BUILD
+    # setup symlinks
+    $(foreach EXEC, clang clang++ ld.lld llvm-dlltool llvm-objdump, \
+        ln -sf '$(PREFIX)/$(BUILD)/bin/$(EXEC)' '$(PREFIX)/$(TARGET)/bin/$(EXEC)';)
+
+    # setup target wrappers
+    # Can't symlink here, it will break the basename detection of LLVM. See:
+    # sys::path::stem("x86_64-w64-mingw32.shared-ranlib"); -> x86_64-w64-mingw32
+    # https://github.com/llvm/llvm-project/blob/9a432161c68774e6c717616e3d688142e89bbb42/llvm/tools/llvm-ar/llvm-ar.cpp#L1181-L1192
+    $(foreach EXEC, addr2line ar cvtres nm objcopy ranlib rc strings strip, \
+        (echo '#!/bin/sh'; \
+         echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-$(EXEC)" "$$@"') \
+                 > '$(PREFIX)/bin/$(TARGET)-$(EXEC)'; \
+        chmod 0755 '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
+
     $(foreach EXEC, clang-target dlltool ld objdump, \
         $(SED) -i -e 's|^DEFAULT_TARGET=.*|DEFAULT_TARGET=$(TARGET)|' \
                   -e 's|^DIR=.*|DIR="$(PREFIX)/$(TARGET)/bin"|' '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh'; \

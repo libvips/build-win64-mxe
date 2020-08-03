@@ -4,7 +4,7 @@ PKG             := test-llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw/tree/master/test
 $(PKG)_DESCR    := Tests for llvm-mingw
 $(PKG)_VERSION  := 1
-$(PKG)_DEPS     := llvm-mingw libcxx compiler-rt-sanitizers
+$(PKG)_DEPS     := cc compiler-rt-sanitizers
 $(PKG)_TYPE     := meta
 
 $(PKG)_TESTS_C              := hello hello-tls crt-test setjmp

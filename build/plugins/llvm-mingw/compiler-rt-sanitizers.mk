@@ -2,8 +2,8 @@
 
 PKG             := compiler-rt-sanitizers
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
-$(PKG)_VERSION  := 10.0.0
-$(PKG)_DEPS     := llvm-mingw compiler-rt
+$(PKG)_VERSION  := 11.0.0-rc1
+$(PKG)_DEPS     := compiler-rt
 $(PKG)_TYPE     := meta
 
 # Note: Ubsan includes <typeinfo> from the C++ headers, so
@@ -11,6 +11,9 @@ $(PKG)_TYPE     := meta
 define $(PKG)_BUILD
     # i686 -> i386
     $(eval BUILD_ARCH_NAME := $(if $(findstring i686,$(PROCESSOR)),i386,$(PROCESSOR)))
+
+    # [major].[minor].[patch]-[label] -> [major].[minor].[patch]
+    $(eval CLANG_VERSION := $(firstword $(subst -, ,$($(PKG)_VERSION))))
 
     $(call PREPARE_PKG_SOURCE,compiler-rt,$(BUILD_DIR))
 
@@ -25,12 +28,12 @@ define $(PKG)_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' install-compiler-rt-headers -j 1
 
-    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/clang/$($(PKG)_VERSION)/lib/windows'
+    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows'
 
     $(foreach FILE,asan-preinit asan asan_cxx asan_dll_thunk asan_dynamic_runtime_thunk ubsan_standalone ubsan_standalone_cxx, \
-        cp '$(BUILD_DIR)/lib/windows/libclang_rt.$(FILE)-$(BUILD_ARCH_NAME).a' '$(PREFIX)/$(BUILD)/lib/clang/$($(PKG)_VERSION)/lib/windows';)
+        cp '$(BUILD_DIR)/lib/windows/libclang_rt.$(FILE)-$(BUILD_ARCH_NAME).a' '$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows';)
 
-    cp '$(BUILD_DIR)/lib/windows/libclang_rt.asan_dynamic-$(BUILD_ARCH_NAME).dll.a' '$(PREFIX)/$(BUILD)/lib/clang/$($(PKG)_VERSION)/lib/windows'
+    cp '$(BUILD_DIR)/lib/windows/libclang_rt.asan_dynamic-$(BUILD_ARCH_NAME).dll.a' '$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows'
     cp '$(BUILD_DIR)/lib/windows/libclang_rt.asan_dynamic-$(BUILD_ARCH_NAME).dll' '$(PREFIX)/$(TARGET)/bin'
 endef
 

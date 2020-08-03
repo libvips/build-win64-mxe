@@ -32,7 +32,7 @@ TARGET:
 		- x86_64-w64-mingw32.static.posix
 		- x86_64-w64-mingw32.static.win32
 EOF
-  exit 1
+  exit 0
 fi
 
 . variables.sh

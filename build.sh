@@ -33,10 +33,10 @@ TYPE:
 	    - shared
 	    - static
 EOF
-  exit 1
+  exit 0
 fi
 
-if [ x$(whoami) == x"root" ]; then
+if [ $EUID -eq 0 ]; then
   echo "Please don't run as root -- instead, add yourself to the docker group"
   exit 1
 fi

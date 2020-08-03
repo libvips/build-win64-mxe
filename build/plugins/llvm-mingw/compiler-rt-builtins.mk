@@ -2,8 +2,8 @@
 
 PKG             := compiler-rt-builtins
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
-$(PKG)_VERSION  := 10.0.0
-$(PKG)_DEPS     := llvm-mingw compiler-rt
+$(PKG)_VERSION  := 11.0.0-rc1
+$(PKG)_DEPS     := compiler-rt
 $(PKG)_TYPE     := meta
 
 define $(PKG)_BUILD
@@ -12,6 +12,9 @@ define $(PKG)_BUILD
 
     # armv7 -> arm
     $(eval LIB_ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),arm,$(BUILD_ARCH_NAME)))
+
+    # [major].[minor].[patch]-[label] -> [major].[minor].[patch]
+    $(eval CLANG_VERSION := $(firstword $(subst -, ,$($(PKG)_VERSION))))
 
     $(call PREPARE_PKG_SOURCE,compiler-rt,$(BUILD_DIR))
 
@@ -24,7 +27,7 @@ define $(PKG)_BUILD
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
 
-    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/clang/$($(PKG)_VERSION)/lib/windows'
+    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows'
     cp '$(BUILD_DIR)/lib/windows/libclang_rt.builtins-$(BUILD_ARCH_NAME).a' \
-        '$(PREFIX)/$(BUILD)/lib/clang/$($(PKG)_VERSION)/lib/windows/libclang_rt.builtins-$(LIB_ARCH_NAME).a'
+        '$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows/libclang_rt.builtins-$(LIB_ARCH_NAME).a'
 endef
