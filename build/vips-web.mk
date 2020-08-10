@@ -3,18 +3,18 @@ $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 8.10.0
-$(PKG)_CHECKSUM := 5aec85a5d91f5144b8585658e5512d503bd6ac06a94ec4f96e2a882c23ae879f
+$(PKG)_CHECKSUM := 1299d3a98213ae477f0180817ec79afd36803a5b8434f48068e75a721d23b6f9
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,-rc2,,,-rc2.tar.gz
+$(PKG)_GH_CONF  := libvips/libvips/releases,v
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION)-rc2.tar.gz
+$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libpng libspng orc
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
-    mkdir -p $(TOP_DIR)/vips-packaging
-    $(foreach f,COPYING ChangeLog README.md AUTHORS, cp '$(SOURCE_DIR)/$f' '$(TOP_DIR)/vips-packaging';)
+    mkdir -p $(PREFIX)/$(TARGET)/vips-packaging
+    $(foreach f,COPYING ChangeLog README.md AUTHORS, cp '$(SOURCE_DIR)/$f' '$(PREFIX)/$(TARGET)/vips-packaging';)
 
     (printf '{\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
@@ -43,7 +43,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "xml": "$(libxml2_VERSION)",\n'; \
      printf '  "zlib": "$(zlib_VERSION)"\n'; \
      printf '}';) \
-     > '$(TOP_DIR)/vips-packaging/versions.json'
+     > '$(PREFIX)/$(TARGET)/vips-packaging/versions.json'
 endef
 
 define $(PKG)_BUILD

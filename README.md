@@ -12,7 +12,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [fribidi]       | 1.0.10    | LGPLv3                          |
 | [gdk-pixbuf]    | 2.40.0    | LGPLv3                          |
 | [giflib]        | 5.1.4     | MIT Licence                     |
-| [glib]          | 2.65.0    | LGPLv3                          |
+| [glib]          | 2.65.1    | LGPLv3                          |
 | [harfbuzz]      | 2.7.0     | MIT Licence                     |
 | [lcms]          | 2.11      | MIT Licence                     |
 | [libexif]       | 0.6.22    | LGPLv3                          |
@@ -23,16 +23,13 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [librsvg]       | 2.49.3    | LGPLv3                          |
 | [libspng]       | 0.6.0     | [BSD 2-Clause, libpng License]  |
 | [libtiff]       | 4.1.0     | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.10.0¹   | LGPLv3                          |
+| [libvips]       | 8.10.0    | LGPLv3                          |
 | [libwebp]       | 1.1.0     | New BSD License                 |
 | [libxml2]       | 2.9.10    | MIT Licence                     |
 | [orc]           | 0.4.31    | [orc License] (BSD-like)        |
-| [pango]         | 1.45.4    | LGPLv3                          |
+| [pango]         | 1.45.5    | LGPLv3                          |
 | [pixman]        | 0.40.0    | MIT Licence                     |
 | [zlib]          | 1.2.11    | [zlib Licence]                  |
-
-¹ libvips is built from the [`v8.10.0-rc2`](https://github.com/libvips/libvips/tree/v8.10.0-rc2) tag, see:
-https://github.com/libvips/libvips/releases/tag/v8.10.0-rc2
 
 [cairo]: https://gitlab.freedesktop.org/cairo/cairo
 [expat]: https://github.com/libexpat/libexpat
@@ -77,7 +74,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.48      | BSD-like                         |
 | [fftw]          | 3.3.8     | GPLv2                            |
 | [hdf5]          | 1.10.6    | BSD-like                         |
-| [imagemagick]   | 6.9.11-23 | [ImageMagick License] (GPL-like) |
+| [imagemagick]   | 6.9.11-25 | [ImageMagick License] (GPL-like) |
 | [libde265]      | 1.0.5     | LGPLv3                           |
 | [libheif]       | 1.7.0     | LGPLv3                           |
 | [matio]         | 1.5.17    | BSD 2-Clause                     |
@@ -118,8 +115,8 @@ argument. For example:
 
 | Dependency      | Version   | Used under the terms of          |
 |-----------------|-----------|----------------------------------|
-| [mozjpeg]       | 6d95c51²  | [zlib License, IJG License]      |
+| [mozjpeg]       | 6d95c51¹  | [zlib License, IJG License]      |
 
-² MozJPEG is built from the [`master`](https://github.com/mozilla/mozjpeg/tree/master) branch to maintain binary compatibility with libjpeg-turbo.
+¹ MozJPEG is built from the [`master`](https://github.com/mozilla/mozjpeg/tree/master) branch to maintain binary compatibility with libjpeg-turbo.
 
 [mozjpeg]: https://github.com/mozilla/mozjpeg

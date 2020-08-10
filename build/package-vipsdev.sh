@@ -133,7 +133,7 @@ $mxe_prefix/bin/$target.$deps-strip --strip-unneeded $repackage_dir/bin/*.{exe,d
 
 echo "Copying packaging files"
 
-cp $mxe_dir/vips-packaging/{AUTHORS,ChangeLog,COPYING,README.md,versions.json} $repackage_dir
+cp $mxe_prefix/$target.$deps/vips-packaging/{AUTHORS,ChangeLog,COPYING,README.md,versions.json} $repackage_dir
 
 echo "Creating $zipfile"
 
