@@ -25,7 +25,7 @@ index 1111111..2222222 100644
 +    ILMTHREAD_EXPORTS
    CURDIR ${CMAKE_CURRENT_SOURCE_DIR}
    SOURCES
-     ImfAttribute.cpp
+     b44ExpLogTable.h
 diff --git a/OpenEXR/IlmImfExamples/CMakeLists.txt b/OpenEXR/IlmImfExamples/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/OpenEXR/IlmImfExamples/CMakeLists.txt

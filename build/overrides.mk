@@ -43,8 +43,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.11-25
-imagemagick_CHECKSUM := fbe82c9ea7b589d5d92e5a56c3c661bd575878afd2a3f4bca4bc908ab989c096
+imagemagick_VERSION  := 6.9.11-29
+imagemagick_CHECKSUM := f425e31f64cb481a1416a037d88d04eb44236bef83334e55b7ad692f71c61270
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -55,19 +55,20 @@ x265_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 x265_SUBDIR   := x265_$(x265_VERSION)
 x265_FILE     := x265_$(x265_VERSION).tar.gz
 x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
-x265_URL_2    := ftp://ftp.videolan.org/pub/videolan/x265/$(x265_FILE)
+#x265_URL_2    := https://download.videolan.org/pub/videolan/x265/$(x265_FILE)
+x265_URL_2    := https://ftp.osuosl.org/pub/blfs/conglomeration/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.49.3
-librsvg_CHECKSUM := 963b06f62dd5aa2e947e83b29dfc682d601e24f7c69eb0764304853cea22db96
+librsvg_VERSION  := 2.49.5
+librsvg_CHECKSUM := daa64941bb4732bdf51b902a72c6e04063235cfce6986d910ba0759c76917795
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.45.5
-pango_CHECKSUM := f61dd911de2d3318b43bbc56bd271637a46f9118a1ee4378928c06df8a1c1705
+pango_VERSION  := 1.46.1
+pango_CHECKSUM := fe516b10711bbb6fd75011d66dd08fabfce18f7931aed7415136d53c4aadf1c5
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -92,8 +93,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.65.1
-glib_CHECKSUM := bc63bf6c32713e0ee1dddc28e03f23b4a20c78bcb9a2c5b0f4eea41e46fb9cee
+glib_VERSION  := 2.65.3
+glib_CHECKSUM := efd894e4693068bca945cb20d168b088510fa24d48a577f5edaf3d55912c60c2
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -118,8 +119,8 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 2.5.2
-openexr_CHECKSUM := 5da8dff448d0c4a529e52c97daf238a461d01cd233944f75095668d6d7528761
+openexr_VERSION  := 2.5.3
+openexr_CHECKSUM := 6a6525e6e3907715c6a55887716d7e42d09b54d2457323fcee35a0376960bebf
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -136,8 +137,8 @@ ilmbase_FILE     := $(openexr_FILE)
 ilmbase_URL      := $(openexr_URL)
 
 # upstream version is 3410
-cfitsio_VERSION  := 3.48
-cfitsio_CHECKSUM := 91b48ffef544eb8ea3908543052331072c99bf09ceb139cb3c6977fc3e47aac1
+cfitsio_VERSION  := 3.49
+cfitsio_CHECKSUM := 5b65a20d5c53494ec8f638267fca4a629836b7ac8dd0ef0266834eab270ed4b3
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
@@ -789,6 +790,7 @@ endef
 define cfitsio_BUILD_SHARED
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DBUILD_SHARED_LIBS=ON \
+        -DUseCurl=OFF \
         '$(SOURCE_DIR)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
@@ -863,7 +865,6 @@ define x265_BUILD
         -DENABLE_SHARED=OFF \
         -DENABLE_ASSEMBLY=$(if $(findstring x86_64,$(TARGET)),ON,OFF) \
         -DENABLE_CLI=OFF \
-        -DWINXP_SUPPORT=ON \
         -DENABLE_HDR10_PLUS=ON \
         -DMAIN12=ON \
         $(if $(IS_ARM), -DCROSS_COMPILE_ARM=ON)
@@ -878,7 +879,6 @@ define x265_BUILD
         -DENABLE_SHARED=OFF \
         -DENABLE_ASSEMBLY=$(if $(findstring x86_64,$(TARGET)),ON,OFF) \
         -DENABLE_CLI=OFF \
-        -DWINXP_SUPPORT=ON \
         -DENABLE_HDR10_PLUS=ON \
         $(if $(IS_ARM), -DCROSS_COMPILE_ARM=ON)
 
@@ -892,7 +892,6 @@ define x265_BUILD
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
         -DENABLE_ASSEMBLY=$(if $(findstring x86_64,$(TARGET)),ON,OFF) \
         -DENABLE_CLI=OFF \
-        -DWINXP_SUPPORT=ON \
         -DENABLE_HDR10_PLUS=ON \
         -DEXTRA_LIB='x265_main10.a;x265_main12.a' \
         -DEXTRA_LINK_FLAGS=-L'$(BUILD_DIR)' \

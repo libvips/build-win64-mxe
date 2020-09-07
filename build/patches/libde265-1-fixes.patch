@@ -12,7 +12,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -66,3 +66,12 @@ endif()
+@@ -68,3 +68,12 @@ endif()
  add_subdirectory (libde265)
  add_subdirectory (dec265)
  add_subdirectory (enc265)
@@ -42,16 +42,15 @@ diff --git a/libde265/CMakeLists.txt b/libde265/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/libde265/CMakeLists.txt
 +++ b/libde265/CMakeLists.txt
-@@ -43,6 +43,8 @@ set (libde265_headers
-   bitstream.h
-   cabac.h
+@@ -45,6 +45,7 @@ set (libde265_headers
    configparam.h
-+  de265.h
+   contextmodel.h
+   de265.h
 +  de265-version.h
    deblock.h
    decctx.h
    dpb.h
-@@ -73,7 +73,7 @@ set (libde265_headers
+@@ -75,7 +75,7 @@ set (libde265_headers
    vui.h
  )
  
@@ -60,7 +59,7 @@ index 1111111..2222222 100644
    set (libde265_sources
      ${libde265_sources}
      ../extra/win32cond.c
-@@ -91,6 +91,10 @@ if(SUPPORTS_SSE4_1)
+@@ -93,6 +93,10 @@ if(SUPPORTS_SSE4_1)
  endif()
  
  add_library(${PROJECT_NAME} SHARED ${libde265_sources} ${ENCODER_OBJECTS} ${X86_OBJECTS})
@@ -112,7 +111,7 @@ index 1111111..2222222 100644
 +endif()
  
  # The version number.
- set (NUMERIC_VERSION 0x01000500)
+ set (NUMERIC_VERSION 0x01000600)
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 20011
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -124,7 +123,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -47,8 +47,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
+@@ -50,8 +50,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
    add_definitions(-Wall)
  endif()
  
@@ -168,7 +167,7 @@ diff --git a/libde265/CMakeLists.txt b/libde265/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/libde265/CMakeLists.txt
 +++ b/libde265/CMakeLists.txt
-@@ -90,7 +90,12 @@ if(SUPPORTS_SSE4_1)
+@@ -93,7 +93,12 @@ if(SUPPORTS_SSE4_1)
    add_subdirectory (x86)
  endif()
  

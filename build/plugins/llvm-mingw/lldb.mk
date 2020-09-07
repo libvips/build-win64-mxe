@@ -3,8 +3,8 @@
 PKG             := lldb
 $(PKG)_WEBSITE  := https://lldb.llvm.org/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 11.0.0-rc1
-$(PKG)_CHECKSUM := 70cf7c4157021b3a95f23aafb6ea361913166f12afa8d43f63595f53c672ebef
+$(PKG)_VERSION  := 11.0.0-rc2
+$(PKG)_CHECKSUM := 030be3597d9b445fbdeb42fc04be6a5f4fa061cc359e3f199be376b8a7406541
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lldb-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$(subst -,,$($(PKG)_VERSION)).src
