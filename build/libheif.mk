@@ -6,7 +6,7 @@ $(PKG)_VERSION  := 1.9.1
 $(PKG)_CHECKSUM := 5f65ca2bd2510eed4e13bdca123131c64067e9dd809213d7aef4dc5e37948bca
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := strukturag/libheif/releases,v
-$(PKG)_DEPS     := cc aom libde265 x265
+$(PKG)_DEPS     := cc aom
 
 define $(PKG)_BUILD
     # Disable multithreading when building with Win32 threads to

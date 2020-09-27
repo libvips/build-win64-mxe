@@ -21,7 +21,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "aom": "$(aom_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
      printf '  "cfitsio": "$(cfitsio_VERSION)",\n'; \
-     printf '  "de265": "$(libde265_VERSION)",\n'; \
+     $(if $(IS_HEVC),printf '  "de265": "$(libde265_VERSION)"$(comma)\n';) \
      printf '  "exif": "$(libexif_VERSION)",\n'; \
      printf '  "expat": "$(expat_VERSION)",\n'; \
      printf '  "ffi": "$(libffi_VERSION)",\n'; \
@@ -56,7 +56,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
      printf '  "vips": "$(vips-all_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
-     printf '  "x265": "$(x265_VERSION)",\n'; \
+     $(if $(IS_HEVC),printf '  "x265": "$(x265_VERSION)"$(comma)\n';) \
      printf '  "xml": "$(libxml2_VERSION)",\n'; \
      printf '  "zlib": "$(zlib_VERSION)"\n'; \
      printf '}';) \

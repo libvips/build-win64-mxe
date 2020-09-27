@@ -76,7 +76,6 @@ Same as libvips-web + these extra dependencies:
 | [fftw]          | 3.3.8     | GPLv2                                                        |
 | [hdf5]          | 1.12.0    | BSD-like                                                     |
 | [imagemagick]   | 6.9.11-30 | [ImageMagick License] (GPL-like)                             |
-| [libde265]      | 1.0.7     | LGPLv3                                                       |
 | [libheif]       | 1.9.1     | LGPLv3                                                       |
 | [matio]         | 1.5.18    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
@@ -85,7 +84,6 @@ Same as libvips-web + these extra dependencies:
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
 | [poppler]       | 20.09.0   | GPLv2                                                        |
 | [sqlite]        | 3.33.0    | Public domain                                                |
-| [x265]          | 3.4       | GPLv2                                                        |
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -94,7 +92,6 @@ Same as libvips-web + these extra dependencies:
 [fftw]: https://github.com/FFTW/fftw3
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://www.imagemagick.org/script/license.php
-[libde265]: https://github.com/strukturag/libde265
 [libheif]: https://github.com/strukturag/libheif
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://nifti.nimh.nih.gov/
@@ -103,7 +100,6 @@ Same as libvips-web + these extra dependencies:
 [openslide]: https://github.com/openslide/openslide
 [poppler]: https://gitlab.freedesktop.org/poppler/poppler
 [sqlite]: https://www.sqlite.org/
-[x265]: https://bitbucket.org/multicoreware/x265_git/wiki/Home
 
 ## MozJPEG
 
@@ -124,3 +120,23 @@ argument. For example:
   to maintain binary compatibility with libjpeg-turbo.
 
 [mozjpeg]: https://github.com/mozilla/mozjpeg
+
+## HEVC-related dependencies
+
+The above "all" variant can optionally be built with libde265 and x265 to process
+HEIC/HEIF images. This can be turned on with the `--with-hevc` argument. For example:
+
+```bash
+./build.sh all --with-hevc
+```
+
+These dependencies include HEVC-related logic and are therefore not included in the
+prebuilt binaries while it is patent-encumbered.
+
+| Dependency      | Version   | Used under the terms of                                      |
+|-----------------|-----------|--------------------------------------------------------------|
+| [libde265]      | 1.0.7     | LGPLv3                                                       |
+| [x265]          | 3.4       | GPLv2                                                        |
+
+[libde265]: https://github.com/strukturag/libde265
+[x265]: https://bitbucket.org/multicoreware/x265_git/wiki/Home

@@ -8,6 +8,7 @@ Build libvips for Windows in a Docker container
 OPTIONS:
 	--help		Show the help and exit
 	--with-mozjpeg	Build with MozJPEG instead of libjpeg-turbo
+	--with-hevc	Build libheif with the HEVC-related dependencies
 	--with-llvm	Build with llvm-mingw
 
 DEPS:
@@ -53,6 +54,12 @@ else
   with_mozjpeg=false
 fi
 
+if [[ "$*" == *--with-hevc* ]]; then
+  with_hevc=true
+else
+  with_hevc=false
+fi
+
 if [[ "$*" == *--with-llvm* ]]; then
   # This indicates that we don't need to force C++03
   # compilication for some packages, we can safely use
@@ -74,6 +81,11 @@ else
   # slower than the native Win32 implementation.
   threads="win32"
   with_llvm=false
+fi
+
+if [ "$with_hevc" = "true" ] && [ "$deps" = "web" ]; then
+  echo "ERROR: The HEVC-related dependencies can only be built for the \"all\" variant."
+  exit 1
 fi
 
 if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
@@ -102,6 +114,7 @@ docker run --rm -t \
   -u $(id -u):$(id -g) \
   -v $PWD/build:/data \
   -e "MOZJPEG=$with_mozjpeg" \
+  -e "HEVC=$with_hevc" \
   -e "LLVM=$with_llvm" \
   libvips-build-win-mxe \
   $deps \
