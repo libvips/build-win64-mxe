@@ -552,6 +552,9 @@ define librsvg_BUILD
     $(SED) -i 's/45d980167c6b1a2fd54f045f39e6322a7739be6c4723b8c373716f8252d3778c/f769fd23b7389e684b2f365a9f1038273788eb0f3d5907fe34f7ac5383b0daf0/' '$(SOURCE_DIR)/vendor/cairo-rs/.cargo-checksum.json'
     $(SED) -i 's/d8c54bf5eeba9d035434da591646047329e0cad2c0be93c10409f7b36a0e55ec/b03f53a3c001dcd51fac158e8ca17f0c15299c77edba59444e91b73bc2b2226a/' '$(SOURCE_DIR)/vendor/cairo-sys-rs/.cargo-checksum.json'
 
+    # armv7 -> thumbv7a
+    $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))
+
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
@@ -560,7 +563,7 @@ define librsvg_BUILD
         --disable-nls \
         --without-libiconv-prefix \
         --without-libintl-prefix \
-        RUST_TARGET='$(PROCESSOR)-pc-windows-gnu' \
+        RUST_TARGET='$(ARCH_NAME)-pc-windows-gnu' \
         CARGO='$(TARGET)-cargo' \
         RUSTC='$(TARGET)-rustc'
 

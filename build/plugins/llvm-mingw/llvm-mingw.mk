@@ -17,9 +17,6 @@ $(PKG)_DEPS     := mingw-w64
 # https://github.com/mstorsjo/llvm-mingw/blob/master/build-mingw-w64.sh#L5-L6
 # Install the headers in $(PREFIX)/$(TARGET)/mingw since
 # we need to distribute the /include and /lib directories
-# Note: Building with --with-default-msvcrt=ucrt breaks
-# compatibility with the prebuilt Rust binaries that
-# is built in msvcrt mode.
 define $(PKG)_BUILD_mingw-w64
     # install the usual wrappers
     $($(PKG)_PRE_BUILD)
@@ -31,7 +28,7 @@ define $(PKG)_BUILD_mingw-w64
         --host='$(TARGET)' \
         --prefix='$(PREFIX)/$(TARGET)/mingw' \
         --enable-idl \
-        --with-default-msvcrt=msvcrt \
+        --with-default-msvcrt=ucrt \
         --with-default-win32-winnt=0x601 \
         $(mingw-w64-headers_CONFIGURE_OPTS)
     $(MAKE) -C '$(BUILD_DIR).headers' install
@@ -41,7 +38,7 @@ define $(PKG)_BUILD_mingw-w64
     cd '$(BUILD_DIR).crt' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-crt/configure' \
         --host='$(TARGET)' \
         --prefix='$(PREFIX)/$(TARGET)/mingw' \
-        --with-default-msvcrt=msvcrt \
+        --with-default-msvcrt=ucrt \
         @mingw-crt-config-opts@
     $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).crt' -j 1 $(INSTALL_STRIP_TOOLCHAIN)

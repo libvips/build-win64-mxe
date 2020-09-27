@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 25 Sep 2020 10:30:00 +0200
+Subject: [PATCH 1/1] Fix test failure on ARM-based Windows
+
+The optional parameters of vips_gaussnoise were incorrectly
+passed within vips_fractsurf. This was discovered when running
+the libvips testsuite on Windows 10 IoT (ARM32).
+
+diff --git a/libvips/create/fractsurf.c b/libvips/create/fractsurf.c
+index 1111111..2222222 100644
+--- a/libvips/create/fractsurf.c
++++ b/libvips/create/fractsurf.c
+@@ -74,8 +74,10 @@ vips_fractsurf_build( VipsObject *object )
+ 	if( VIPS_OBJECT_CLASS( vips_fractsurf_parent_class )->build( object ) )
+ 		return( -1 );
+ 
+-	if( vips_gaussnoise( &t[0], 
+-		fractsurf->width, fractsurf->height, 0.0, 1.0, NULL ) || 
++	if( vips_gaussnoise( &t[0], fractsurf->width, fractsurf->height,
++			"mean", 0.0,
++			"sigma", 1.0,
++			NULL ) || 
+ 		vips_mask_fractal( &t[1], fractsurf->width, fractsurf->height, 
+ 			fractsurf->fractal_dimension, NULL ) ||
+ 		vips_freqmult( t[0], t[1], &t[2], NULL ) ||
