@@ -13,8 +13,8 @@
 # (see: https://github.com/mstorsjo/llvm-mingw/blob/master/README.md#pdb-support)
 
 # Special flags for compiler.
-export CFLAGS   := -s -O3
-export CXXFLAGS := -s -O3
+export CFLAGS   := -O3
+export CXXFLAGS := -O3
 export LDFLAGS  := -Wl,-s
 
 # Special flags for Rust.

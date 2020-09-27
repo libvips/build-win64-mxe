@@ -77,7 +77,7 @@ else
 fi
 
 if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
-  echo "WARNING: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
+  echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
   exit 1
 fi
 

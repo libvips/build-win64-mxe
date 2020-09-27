@@ -17,7 +17,7 @@ define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/install.sh \
         --prefix='$(PREFIX)/$(TARGET)' \
         --components='rustc,cargo,rust-std-x86_64-unknown-linux-gnu,rust-std-$(PROCESSOR)-pc-windows-gnu'
- 
+
     # install prefixed wrappers
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
     (echo '#!/usr/bin/env bash'; \

@@ -12,7 +12,7 @@ diff --git a/gio/giomodule.c b/gio/giomodule.c
 index 1111111..2222222 100644
 --- a/gio/giomodule.c
 +++ b/gio/giomodule.c
-@@ -1051,25 +1051,6 @@ extern GType _g_win32_network_monitor_get_type (void);
+@@ -1056,25 +1056,6 @@ extern GType _g_win32_network_monitor_get_type (void);
  
  static HMODULE gio_dll = NULL;
  
@@ -42,7 +42,7 @@ diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -786,7 +786,7 @@ else
+@@ -779,7 +779,7 @@ else
    gio_dtrace_hdr = []
  endif
  

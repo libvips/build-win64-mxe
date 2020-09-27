@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/41f4f3fac6e8c1e797eee5fcba5a4f0820131325
-$(PKG)_VERSION  := 41f4f3f
-$(PKG)_CHECKSUM := 89a88d499f272c02e069e83c0d6af65a59883b10159faa17ea36824cee00a45a
+# https://github.com/mstorsjo/llvm-mingw/tarball/4176511d2448da0a5c5b23fc5609cee892d1b6b7
+$(PKG)_VERSION  := 4176511
+$(PKG)_CHECKSUM := 2ca94aec76b285bd3ee59ff789eba3bed03bb4bf8104688778e5f6eb56ac094c
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := mingw-w64
@@ -17,8 +17,8 @@ $(PKG)_DEPS     := mingw-w64
 # https://github.com/mstorsjo/llvm-mingw/blob/master/build-mingw-w64.sh#L5-L6
 # Install the headers in $(PREFIX)/$(TARGET)/mingw since
 # we need to distribute the /include and /lib directories
-# Note: Building with --with-default-msvcrt=ucrt breaks 
-# compatibility with the prebuilt Rust binaries that 
+# Note: Building with --with-default-msvcrt=ucrt breaks
+# compatibility with the prebuilt Rust binaries that
 # is built in msvcrt mode.
 define $(PKG)_BUILD_mingw-w64
     # install the usual wrappers

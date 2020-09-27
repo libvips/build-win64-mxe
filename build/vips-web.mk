@@ -29,8 +29,9 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "glib": "$(glib_VERSION)",\n'; \
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
-     printf '  "jpeg": "$(libjpeg-turbo_VERSION)",\n'; \
+     $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
+     $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
      printf '  "orc": "$(orc_VERSION)",\n'; \
      printf '  "pango": "$(pango_VERSION)",\n'; \
      printf '  "pixman": "$(pixman_VERSION)",\n'; \
@@ -75,7 +76,6 @@ define $(PKG)_BUILD
         --without-imagequant \
         --disable-introspection \
         --disable-deprecated \
-        $(if $(IS_LLVM), CXXFLAGS="$(CXXFLAGS) -Wno-incompatible-ms-struct") \
         $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all")
 
     # libtool should automatically generate a list

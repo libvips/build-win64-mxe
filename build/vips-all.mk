@@ -37,9 +37,10 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "hdf5": "$(hdf5_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
      printf '  "imagemagick": "$(imagemagick_VERSION)",\n'; \
-     printf '  "jpeg": "$(libjpeg-turbo_VERSION)",\n'; \
+     $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      printf '  "matio": "$(matio_VERSION)",\n'; \
+     $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
      printf '  "nifti": "$(nifticlib_VERSION)",\n'; \
      printf '  "openexr": "$(openexr_VERSION)",\n'; \
      printf '  "openjpeg": "$(openjpeg_VERSION)",\n'; \
@@ -71,8 +72,7 @@ define $(PKG)_BUILD
         --without-pdfium \
         --without-imagequant \
         --disable-introspection \
-        --disable-deprecated \
-        $(if $(IS_LLVM), CXXFLAGS="$(CXXFLAGS) -Wno-incompatible-ms-struct")
+        --disable-deprecated
 
     # remove -nostdlib from linker commandline options
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866

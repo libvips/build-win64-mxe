@@ -12,7 +12,7 @@ diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -1025,38 +1025,61 @@ else ()
+@@ -1087,38 +1087,61 @@ else ()
    endif ()
  endif ()
  
@@ -113,15 +113,14 @@ diff --git a/config/cmake_ext_mod/HDFMacros.cmake b/config/cmake_ext_mod/HDFMacr
 index 1111111..2222222 100644
 --- a/config/cmake_ext_mod/HDFMacros.cmake
 +++ b/config/cmake_ext_mod/HDFMacros.cmake
-@@ -153,16 +153,6 @@ macro (HDF_SET_LIB_OPTIONS libtarget libname libtype)
+@@ -142,15 +142,6 @@ macro (HDF_SET_LIB_OPTIONS libtarget libname libtype)
        )
      endif ()
    endif ()
 -
 -  #----- Use MSVC Naming conventions for Shared Libraries
 -  if (MINGW AND ${libtype} MATCHES "SHARED")
--    set_target_properties (${libtarget}
--        PROPERTIES
+-    set_target_properties (${libtarget} PROPERTIES
 -        IMPORT_SUFFIX ".lib"
 -        IMPORT_PREFIX ""
 -        PREFIX ""
@@ -130,7 +129,7 @@ index 1111111..2222222 100644
  endmacro ()
  
  #-------------------------------------------------------------------------------
-@@ -182,7 +172,7 @@ macro (HDF_IMPORT_SET_LIB_OPTIONS libtarget libname libtype libversion)
+@@ -170,7 +161,7 @@ macro (HDF_IMPORT_SET_LIB_OPTIONS libtarget libname libtype libversion)
      if (WIN32)
        if (MINGW)
          set_target_properties (${libtarget} PROPERTIES
@@ -143,7 +142,7 @@ diff --git a/src/H5system.c b/src/H5system.c
 index 1111111..2222222 100644
 --- a/src/H5system.c
 +++ b/src/H5system.c
-@@ -809,6 +809,10 @@ Wgettimeofday(struct timeval *tv, struct timezone *tz)
+@@ -838,6 +838,10 @@ Wgettimeofday(struct timeval *tv, struct timezone *tz)
   *
   *-------------------------------------------------------------------------
   */

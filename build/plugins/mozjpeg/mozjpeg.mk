@@ -10,7 +10,7 @@ $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 $(PKG)_GH_CONF  := mozilla/mozjpeg/branches/master
 $(PKG)_DEPS     := cc $(BUILD)~nasm
 
-# WITH_TURBOJPEG=OFF turns off a library we don't use (we just use the 
+# WITH_TURBOJPEG=OFF turns off a library we don't use (we just use the
 # libjpeg API)
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \

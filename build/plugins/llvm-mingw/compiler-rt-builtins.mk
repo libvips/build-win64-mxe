@@ -2,7 +2,7 @@
 
 PKG             := compiler-rt-builtins
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
-$(PKG)_VERSION  := 11.0.0-rc2
+$(PKG)_VERSION  := 11.0.0-rc3
 $(PKG)_DEPS     := compiler-rt
 $(PKG)_TYPE     := meta
 
@@ -24,7 +24,9 @@ define $(PKG)_BUILD
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DCMAKE_C_COMPILER_TARGET='$(BUILD_ARCH_NAME)-windows-gnu' \
-        -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE
+        -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE \
+        -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE \
+        -DLLVM_CONFIG_PATH:FILEPATH=''
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
 
     $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows'

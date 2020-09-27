@@ -1,8 +1,6 @@
 $(PLUGIN_HEADER)
 
-# Override libjpeg-turbo version for the versions.json file
-# TODO: Wait for https://github.com/mozilla/mozjpeg/issues/321
-libjpeg-turbo_VERSION := 4.0.0-git
+IS_MOZJPEG := $(true)
 
 # Override sub-dependencies
 gdk-pixbuf_DEPS  := $(subst libjpeg-turbo,mozjpeg,$(gdk-pixbuf_DEPS))

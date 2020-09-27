@@ -3,7 +3,7 @@ FROM buildpack-deps:buster
 RUN apt-get update \
   && apt-get install -y \
     # http://mxe.cc/#requirements-debian
-    autopoint bison flex gettext gperf intltool \ 
+    autopoint bison flex gettext gperf intltool \
     libtool-bin libxml-parser-perl lzip p7zip-full \
     ruby g++-multilib libc6-dev-i386 \
     # needed when building libvips from git

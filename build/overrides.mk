@@ -35,16 +35,16 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 # upstream version is 1.5.2
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.17
-matio_CHECKSUM := 5e455527d370ab297c4abe5a2ab4d599c93ac7c1a0c85d841cc5c22f8221c400
+matio_VERSION  := 1.5.18
+matio_CHECKSUM := 5fad71a63a854d821cc6f4e8c84da837149dd5fb57e1e2baeffd85fa0f28fe25
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.11-29
-imagemagick_CHECKSUM := f425e31f64cb481a1416a037d88d04eb44236bef83334e55b7ad692f71c61270
+imagemagick_VERSION  := 6.9.11-30
+imagemagick_CHECKSUM := 581e861341ec577daec8d0e2e5d69d8cb09b7fbda1e730169f4a0e20b348f6fe
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -54,21 +54,22 @@ x265_CHECKSUM := c2047f23a6b729e5c70280d23223cb61b57bfe4ad4e8f1471eeee2a61d14867
 x265_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
 x265_SUBDIR   := x265_$(x265_VERSION)
 x265_FILE     := x265_$(x265_VERSION).tar.gz
+# https://bitbucket.org/multicoreware/x265_git/issues/553/tarball-for-34-release-not-in-x265_git
 x265_URL      := https://bitbucket.org/multicoreware/x265/downloads/$(x265_FILE)
 #x265_URL_2    := https://download.videolan.org/pub/videolan/x265/$(x265_FILE)
 x265_URL_2    := https://ftp.osuosl.org/pub/blfs/conglomeration/x265/$(x265_FILE)
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.49.5
-librsvg_CHECKSUM := daa64941bb4732bdf51b902a72c6e04063235cfce6986d910ba0759c76917795
+librsvg_VERSION  := 2.50.0
+librsvg_CHECKSUM := b3fadba240f09b9c9898ab20cb7311467243e607cf8f928b7c5f842474ee3df4
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.46.1
-pango_CHECKSUM := fe516b10711bbb6fd75011d66dd08fabfce18f7931aed7415136d53c4aadf1c5
+pango_VERSION  := 1.46.2
+pango_CHECKSUM := d89fab5f26767261b493279b65cfb9eb0955cd44c07c5628d36094609fc51841
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -93,8 +94,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.65.3
-glib_CHECKSUM := efd894e4693068bca945cb20d168b088510fa24d48a577f5edaf3d55912c60c2
+glib_VERSION  := 2.66.0
+glib_CHECKSUM := c5a66bf143065648c135da4c943d2ac23cce15690fc91c358013b2889111156c
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -162,12 +163,20 @@ fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
 
 # upstream version is 1.8.12
-hdf5_VERSION  := 1.10.6
-hdf5_CHECKSUM := 09d6301901685201bb272a73e21c98f2bf7e044765107200b01089104a47c3bd
+hdf5_VERSION  := 1.12.0
+hdf5_CHECKSUM := 97906268640a6e9ce0cde703d5a71c9ac3092eded729591279bf2e3ca9765f61
 hdf5_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/hdf5-[0-9]*.patch)))
 hdf5_SUBDIR   := hdf5-$(hdf5_VERSION)
 hdf5_FILE     := hdf5-$(hdf5_VERSION).tar.bz2
 hdf5_URL      := https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$(call SHORT_PKG_VERSION,hdf5)/hdf5-$(hdf5_VERSION)/src/$(hdf5_FILE)
+
+# upstream version is 2.14.02
+nasm_VERSION  := 2.15.05
+nasm_CHECKSUM := 3caf6729c1073bf96629b57cee31eeb54f4f8129b01902c73428836550b30a3f
+nasm_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/nasm-[0-9]*.patch)))
+nasm_SUBDIR   := nasm-$(nasm_VERSION)
+nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
+nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
 
 ## Patches that we override with our own
 
@@ -260,8 +269,8 @@ cfitsio_DEPS            := cc zlib
 #   --with-default-win32-winnt=0x601 \
 # Install the headers in $(PREFIX)/$(TARGET)/mingw since
 # we need to distribute the /include and /lib directories
-# Note: Building with --with-default-msvcrt=ucrt breaks 
-# compatibility with the prebuilt Rust binaries that 
+# Note: Building with --with-default-msvcrt=ucrt breaks
+# compatibility with the prebuilt Rust binaries that
 # is built in msvcrt mode.
 define gcc_BUILD_mingw-w64
     # install mingw-w64 headers
@@ -361,7 +370,6 @@ define harfbuzz_BUILD
         -Dintrospection=disabled \
         -Ddocs=disabled \
         -Dbenchmark=disabled \
-        $(if $(IS_LLVM), -Dcpp_args='-Wno-incompatible-ms-struct') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -551,7 +559,7 @@ endef
 
 # compile with the Rust toolchain
 define librsvg_BUILD
-    # Update expected Cargo SHA256 hashes for the 
+    # Update expected Cargo SHA256 hashes for the
     # files we have patched in $(librsvg_PATCHES)
     # Note: These replacements can be removed when
     #       the patches have been accepted upstream.
@@ -599,7 +607,6 @@ define poppler_BUILD
         -DBUILD_QT5_TESTS=OFF \
         -DBUILD_CPP_TESTS=OFF \
         -DENABLE_GTK_DOC=OFF \
-        $(if $(IS_LLVM), -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -Wno-incompatible-ms-struct') \
         $(if $(WIN32_THREADS), -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads') \
         '$(SOURCE_DIR)'
 
@@ -858,12 +865,19 @@ endef
 define x265_BUILD
     cd '$(BUILD_DIR)' && mkdir -p 10bit 12bit
 
+    # Fix ARM NEON includes when building the 10/12bit libraries
+    # https://bitbucket.org/multicoreware/x265_git/issues/549/fail-to-build-for-aarch64-and-armhf
+    $(if $(IS_ARM), \
+        $(foreach ARCH,aarch64 arm, \
+            $(SED) -i 's/PFX(\(.*\))/x265_\1/g' '$(SOURCE_DIR)/source/common/$(ARCH)/asm-primitives.cpp';) \
+        $(SED) -i 's/PFX(\(.*_neon\))/x265_\1/g' '$(SOURCE_DIR)/source/common/arm/dct8.h';)
+
     # 12 bit
     cd '$(BUILD_DIR)/12bit' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
         -DHIGH_BIT_DEPTH=ON \
         -DEXPORT_C_API=OFF \
         -DENABLE_SHARED=OFF \
-        -DENABLE_ASSEMBLY=$(if $(findstring x86_64,$(TARGET)),ON,OFF) \
+        -DENABLE_ASSEMBLY=$(if $(call seq,64,$(BITS)),ON,OFF) \
         -DENABLE_CLI=OFF \
         -DENABLE_HDR10_PLUS=ON \
         -DMAIN12=ON \
@@ -877,7 +891,7 @@ define x265_BUILD
         -DHIGH_BIT_DEPTH=ON \
         -DEXPORT_C_API=OFF \
         -DENABLE_SHARED=OFF \
-        -DENABLE_ASSEMBLY=$(if $(findstring x86_64,$(TARGET)),ON,OFF) \
+        -DENABLE_ASSEMBLY=$(if $(call seq,64,$(BITS)),ON,OFF) \
         -DENABLE_CLI=OFF \
         -DENABLE_HDR10_PLUS=ON \
         $(if $(IS_ARM), -DCROSS_COMPILE_ARM=ON)
@@ -890,7 +904,7 @@ define x265_BUILD
         -DHIGH_BIT_DEPTH=OFF \
         -DEXPORT_C_API=ON \
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
-        -DENABLE_ASSEMBLY=$(if $(findstring x86_64,$(TARGET)),ON,OFF) \
+        -DENABLE_ASSEMBLY=$(if $(call seq,64,$(BITS)),ON,OFF) \
         -DENABLE_CLI=OFF \
         -DENABLE_HDR10_PLUS=ON \
         -DEXTRA_LIB='x265_main10.a;x265_main12.a' \
@@ -900,7 +914,11 @@ define x265_BUILD
         $(if $(IS_ARM), -DCROSS_COMPILE_ARM=ON)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' install
-    $(if $(BUILD_SHARED),rm -f '$(PREFIX)/$(TARGET)/lib/libx265.a',\
+
+    $(if $(BUILD_SHARED), \
+        rm -f '$(PREFIX)/$(TARGET)/lib/libx265.a' && \
+        $(SED) -i 's/^\(Cflags:.* \)/\1-DX265_API_IMPORTS=1 /g' '$(PREFIX)/$(TARGET)/lib/pkgconfig/x265.pc' \
+    $(else), \
         $(INSTALL) '$(BUILD_DIR)/libx265_main12.a' '$(PREFIX)/$(TARGET)/lib/libx265_main12.a' && \
         $(INSTALL) '$(BUILD_DIR)/libx265_main10.a' '$(PREFIX)/$(TARGET)/lib/libx265_main10.a' && \
         $(SED) -i 's|-lx265|-lx265 -lx265_main10 -lx265_main12|' '$(PREFIX)/$(TARGET)/lib/pkgconfig/x265.pc')
