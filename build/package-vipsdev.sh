@@ -71,6 +71,10 @@ if [ "$MOZJPEG" = "true" ]; then
   zip_suffix+="-mozjpeg"
 fi
 
+if [ "$HEVC" = "true" ]; then
+  zip_suffix+="-hevc"
+fi
+
 if [ "$LLVM" = "true" ] && [[ "$arch" != "arm"* ]]; then
   zip_suffix+="-llvm"
 fi

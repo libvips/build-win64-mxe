@@ -94,6 +94,10 @@ if [ "$MOZJPEG" = "true" ]; then
   plugins+=" $work_dir/plugins/mozjpeg"
 fi
 
+if [ "$HEVC" = "true" ]; then
+  plugins+=" $work_dir/plugins/hevc"
+fi
+
 # Avoid shipping the gettext DLL (libintl-8.dll),
 # use a statically build dummy implementation instead.
 # This intentionally disables the i18n features of (GNU)
