@@ -3,13 +3,7 @@ $(PLUGIN_HEADER)
 IS_LLVM := $(true)
 
 # Override sub-dependencies
-cc_DEPS := llvm
-
-# TODO: The armv7-pc-windows-gnu and aarch64-pc-windows-gnu Rust targets are not yet supported.
-librsvg_BUILD_aarch64-w64-mingw32 =
-librsvg_BUILD_armv7-w64-mingw32   =
-rust_BUILD_aarch64-w64-mingw32 =
-rust_BUILD_armv7-w64-mingw32   =
+cc_DEPS   := llvm
 
 # GCC does not support Windows on ARM
 gcc_BUILD_aarch64-w64-mingw32 =
