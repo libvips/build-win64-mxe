@@ -6,6 +6,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
+| [aom]           | 2.0.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.2    | Mozilla Public License 2.0                                   |
 | [expat]         | 2.2.9     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.92   | [fontconfig Licence] (BSD-like)                              |
@@ -19,6 +20,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
 | [libffi]        | 3.3       | MIT Licence                                                  |
 | [libgsf]        | 1.14.47   | LGPLv3                                                       |
+| [libheif]       | 1.9.1     | LGPLv3                                                       |
 | [libjpeg-turbo] | 2.0.5     | [zlib License, IJG License]                                  |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
 | [librsvg]       | 2.50.0    | LGPLv3                                                       |
@@ -32,6 +34,8 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [zlib]          | 1.2.11    | [zlib Licence]                                               |
 
+[aom]: https://aomedia.googlesource.com/aom/
+[Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
 [cairo]: https://gitlab.freedesktop.org/cairo/cairo
 [expat]: https://github.com/libexpat/libexpat
 [fontconfig]: https://gitlab.freedesktop.org/fontconfig/fontconfig
@@ -47,6 +51,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 [libexif]: https://github.com/libexif/libexif
 [libffi]: https://github.com/libffi/libffi
 [libgsf]: https://gitlab.gnome.org/GNOME/libgsf
+[libheif]: https://github.com/strukturag/libheif
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
 [libpng]: https://github.com/glennrp/libpng
@@ -71,12 +76,10 @@ Same as libvips-web + these extra dependencies:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 2.0.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.8     | GPLv2                                                        |
 | [hdf5]          | 1.12.0    | BSD-like                                                     |
 | [imagemagick]   | 6.9.11-30 | [ImageMagick License] (GPL-like)                             |
-| [libheif]       | 1.9.1     | LGPLv3                                                       |
 | [matio]         | 1.5.18    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
 | [openexr]       | 2.5.3     | BSD 3-Clause                                                 |
@@ -85,14 +88,11 @@ Same as libvips-web + these extra dependencies:
 | [poppler]       | 20.09.0   | GPLv2                                                        |
 | [sqlite]        | 3.33.0    | Public domain                                                |
 
-[aom]: https://aomedia.googlesource.com/aom/
-[Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [hdf5]: https://www.hdfgroup.org/solutions/hdf5/
 [fftw]: https://github.com/FFTW/fftw3
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://www.imagemagick.org/script/license.php
-[libheif]: https://github.com/strukturag/libheif
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://nifti.nimh.nih.gov/
 [openexr]: https://github.com/AcademySoftwareFoundation/openexr

@@ -18,6 +18,8 @@ define $(PKG)_BUILD
         --disable-gdk-pixbuf \
         --disable-go \
         --disable-examples \
+        $(if $(IS_HEVC),, --disable-libde265) \
+        $(if $(IS_HEVC),, --disable-x265) \
         $(if $(WIN32_THREADS), --disable-multithreading)
 
     # remove -nostdlib from linker commandline options
