@@ -27,6 +27,9 @@ define $(PKG)_BUILD
     $(if $(IS_LLVM), \
         $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(BUILD_DIR)/libtool')
 
+    # https://github.com/strukturag/libheif/pull/354
+    $(SED) -i '/^Requires:/a Requires.private: aom' '$(BUILD_DIR)/libheif.pc'
+
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
