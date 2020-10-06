@@ -10,11 +10,15 @@ $(PKG)_URL      := https://storage.googleapis.com/aom-releases/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc $(BUILD)~nasm
 
 define $(PKG)_BUILD
+    # SSE2 is disabled on i686 due to an access violation, see:
+    # https://github.com/libvips/build-win64-mxe/pull/16#issuecomment-704199362
     cd '$(BUILD_DIR)' && NASM_PATH='$(PREFIX)/$(BUILD)/bin' $(TARGET)-cmake \
         -DENABLE_NASM=ON \
         -DENABLE_TESTS=OFF \
         -DCONFIG_RUNTIME_CPU_DETECT=0 \
-        $(if $(call seq,i686,$(PROCESSOR)), -DAOM_TARGET_CPU='x86') \
+        $(if $(call seq,i686,$(PROCESSOR)), \
+            -DAOM_TARGET_CPU='x86' \
+            -DENABLE_SSE2=0) \
         '$(SOURCE_DIR)'
 
     # parallel build sometimes doesn't work; fallback to -j 1.
