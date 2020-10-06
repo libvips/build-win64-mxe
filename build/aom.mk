@@ -14,6 +14,7 @@ define $(PKG)_BUILD
         -DENABLE_NASM=ON \
         -DENABLE_TESTS=OFF \
         -DCONFIG_RUNTIME_CPU_DETECT=0 \
+        $(if $(call seq,i686,$(PROCESSOR)), -DAOM_TARGET_CPU='x86') \
         '$(SOURCE_DIR)'
 
     # parallel build sometimes doesn't work; fallback to -j 1.
