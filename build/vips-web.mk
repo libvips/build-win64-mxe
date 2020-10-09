@@ -9,7 +9,7 @@ $(PKG)_GH_CONF  := libvips/libvips/releases,v
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
-                   libjpeg-turbo tiff lcms libexif libpng libspng orc
+                   libjpeg-turbo tiff lcms libexif libheif libpng libspng orc
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -17,6 +17,7 @@ define $(PKG)_PRE_CONFIGURE
     $(foreach f,COPYING ChangeLog README.md AUTHORS, cp '$(SOURCE_DIR)/$f' '$(PREFIX)/$(TARGET)/vips-packaging';)
 
     (printf '{\n'; \
+     printf '  "aom": "$(aom_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
      printf '  "exif": "$(libexif_VERSION)",\n'; \
      printf '  "expat": "$(expat_VERSION)",\n'; \
@@ -29,6 +30,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "glib": "$(glib_VERSION)",\n'; \
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
+     printf '  "heif": "$(libheif_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
@@ -62,7 +64,6 @@ define $(PKG)_BUILD
         --enable-debug=no \
         --without-fftw \
         --without-magick \
-        --without-heif \
         --without-openslide \
         --without-pdfium \
         --without-poppler \

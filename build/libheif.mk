@@ -18,12 +18,17 @@ define $(PKG)_BUILD
         --disable-gdk-pixbuf \
         --disable-go \
         --disable-examples \
+        $(if $(IS_HEVC),, --disable-libde265) \
+        $(if $(IS_HEVC),, --disable-x265) \
         $(if $(WIN32_THREADS), --disable-multithreading)
 
     # remove -nostdlib from linker commandline options
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
     $(if $(IS_LLVM), \
         $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(BUILD_DIR)/libtool')
+
+    # https://github.com/strukturag/libheif/pull/354
+    $(SED) -i '/^Requires:/a Requires.private: aom' '$(BUILD_DIR)/libheif.pc'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
