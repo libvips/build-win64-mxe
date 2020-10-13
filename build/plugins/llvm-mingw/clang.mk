@@ -3,8 +3,8 @@
 PKG             := clang
 $(PKG)_WEBSITE  := https://clang.llvm.org/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 11.0.0-rc3
-$(PKG)_CHECKSUM := 8d7b47cca01d1bc07e8d47c0fd1ab7a6d386681631ae8667d056bd9bec269d03
+$(PKG)_VERSION  := 11.0.0
+$(PKG)_CHECKSUM := 0f96acace1e8326b39f220ba19e055ba99b0ab21c2475042dbc6a482649c5209
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/clang-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$(subst -,,$($(PKG)_VERSION)).src

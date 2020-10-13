@@ -5,8 +5,8 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the clang, lld, lldb, compiler-rt, libunwind, libcxxabi and libcxx packages
-$(PKG)_VERSION  := 11.0.0-rc3
-$(PKG)_CHECKSUM := 86f6261a62ea9e7fa2f410a86f292f55f36437e66c9cbc30ef56e4bb67ea31b9
+$(PKG)_VERSION  := 11.0.0
+$(PKG)_CHECKSUM := 913f68c898dfb4a03b397c5e11c6a2f39d0f22ed7665c9cefa87a34423a72469
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$(subst -,,$($(PKG)_VERSION)).src

@@ -14,9 +14,9 @@ index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs
 @@ -0,0 +1,32 @@
-+use crate::spec::{LinkerFlavor, LldFlavor, Target, TargetResult};
++use crate::spec::{LinkerFlavor, LldFlavor, Target};
 +
-+pub fn target() -> TargetResult {
++pub fn target() -> Target {
 +    let mut base = super::windows_gnu_base::opts();
 +
 +    base.cpu = "generic".to_string();
@@ -32,7 +32,7 @@ index 0000000..1111111
 +        .unwrap()
 +        .push("-lclang_rt.builtins-aarch64".to_string());
 +
-+    Ok(Target {
++    Target {
 +        llvm_target: "aarch64-pc-windows-gnu".to_string(),
 +        target_endian: "little".to_string(),
 +        target_pointer_width: "64".to_string(),
@@ -44,13 +44,13 @@ index 0000000..1111111
 +        target_vendor: "pc".to_string(),
 +        linker_flavor: LinkerFlavor::Lld(LldFlavor::Ld),
 +        options: base,
-+    })
++    }
 +}
 diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -609,10 +609,12 @@ supported_targets! {
+@@ -584,10 +584,12 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  
@@ -69,9 +69,9 @@ index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs
 @@ -0,0 +1,32 @@
-+use crate::spec::{LinkerFlavor, LldFlavor, Target, TargetResult};
++use crate::spec::{LinkerFlavor, LldFlavor, Target};
 +
-+pub fn target() -> TargetResult {
++pub fn target() -> Target {
 +    let mut base = super::windows_gnu_base::opts();
 +
 +    base.cpu = "generic".to_string();
@@ -87,7 +87,7 @@ index 0000000..1111111
 +        .unwrap()
 +        .push("-lclang_rt.builtins-arm".to_string());
 +
-+    Ok(Target {
++    Target {
 +        llvm_target: "thumbv7a-pc-windows-gnu".to_string(),
 +        target_endian: "little".to_string(),
 +        target_pointer_width: "32".to_string(),
@@ -99,7 +99,7 @@ index 0000000..1111111
 +        target_vendor: "pc".to_string(),
 +        linker_flavor: LinkerFlavor::Lld(LldFlavor::Ld),
 +        options: base,
-+    })
++    }
 +}
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
@@ -124,7 +124,7 @@ index 1111111..2222222 100644
          "-lmsvcrt".to_string(),
          "-lmingwex".to_string(),
          "-lmingw32".to_string(),
-@@ -34,8 +34,16 @@ pub fn opts() -> TargetOptions {
+@@ -35,16 +35,23 @@ pub fn opts() -> TargetOptions {
          "-luser32".to_string(),
          "-lkernel32".to_string(),
      ];
@@ -143,9 +143,8 @@ index 1111111..2222222 100644
      let dynamic_unwind_libs = vec![
          // If any of our crates are dynamically linked then we need to use
          // the shared libgcc_s-dw2-1.dll. This is required to support
-@@ -44,8 +52,7 @@ pub fn opts() -> TargetOptions {
-         "-lgcc".to_string(),
-         "-lkernel32".to_string(),
+         // unwinding across DLL boundaries.
+         "-lgcc_s".to_string(),
      ];
 -    late_link_args_dynamic.insert(LinkerFlavor::Gcc, dynamic_unwind_libs.clone());
 -    late_link_args_dynamic.insert(LinkerFlavor::Lld(LldFlavor::Ld), dynamic_unwind_libs);
@@ -153,9 +152,9 @@ index 1111111..2222222 100644
      let static_unwind_libs = vec![
          // If all of our crates are statically linked then we can get away
          // with statically linking the libgcc unwinding code. This allows
-@@ -59,8 +66,7 @@ pub fn opts() -> TargetOptions {
-         "-lmsvcrt".to_string(),
-         "-lkernel32".to_string(),
+@@ -54,8 +61,7 @@ pub fn opts() -> TargetOptions {
+         "-lgcc_eh".to_string(),
+         "-l:libpthread.a".to_string(),
      ];
 -    late_link_args_static.insert(LinkerFlavor::Gcc, static_unwind_libs.clone());
 -    late_link_args_static.insert(LinkerFlavor::Lld(LldFlavor::Ld), static_unwind_libs);
@@ -174,7 +173,7 @@ diff --git a/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs b/compiler/ru
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs
 +++ b/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs
-@@ -4,7 +4,8 @@ pub fn target() -> TargetResult {
+@@ -4,7 +4,8 @@ pub fn target() -> Target {
      let mut base = super::windows_gnu_base::opts();
      base.cpu = "pentium4".to_string();
      base.pre_link_args
@@ -184,7 +183,7 @@ index 1111111..2222222 100644
      base.max_atomic_width = Some(64);
      base.eliminate_frame_pointer = false; // Required for backtraces
      base.linker = Some("i686-w64-mingw32-gcc".to_string());
-@@ -16,6 +17,11 @@ pub fn target() -> TargetResult {
+@@ -16,6 +17,11 @@ pub fn target() -> Target {
          .unwrap()
          .push("-Wl,--large-address-aware".to_string());
  
@@ -193,14 +192,14 @@ index 1111111..2222222 100644
 +        .unwrap()
 +        .push("-lclang_rt.builtins-i386".to_string());
 +
-     Ok(Target {
+     Target {
          llvm_target: "i686-pc-windows-gnu".to_string(),
          target_endian: "little".to_string(),
 diff --git a/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
 +++ b/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
-@@ -5,10 +5,16 @@ pub fn target() -> TargetResult {
+@@ -5,10 +5,16 @@ pub fn target() -> Target {
      base.cpu = "x86-64".to_string();
      base.pre_link_args.get_mut(&LinkerFlavor::Gcc).unwrap().push("-m64".to_string());
      base.pre_link_args
@@ -215,7 +214,7 @@ index 1111111..2222222 100644
 +        .unwrap()
 +        .push("-lclang_rt.builtins-x86_64".to_string());
 +
-     Ok(Target {
+     Target {
          llvm_target: "x86_64-pc-windows-gnu".to_string(),
          target_endian: "little".to_string(),
 
@@ -234,7 +233,7 @@ diff --git a/src/bootstrap/dist.rs b/src/bootstrap/dist.rs
 index 1111111..2222222 100644
 --- a/src/bootstrap/dist.rs
 +++ b/src/bootstrap/dist.rs
-@@ -364,7 +364,7 @@ impl Step for Mingw {
+@@ -347,7 +347,7 @@ impl Step for Mingw {
      fn run(self, builder: &Builder<'_>) -> Option<PathBuf> {
          let host = self.host;
  
@@ -327,8 +326,8 @@ index 1111111..2222222 100644
  }
  
  cfg_if::cfg_if! {
--if #[cfg(all(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm"))))] {
-+if #[cfg(all(any(target_os = "ios", target_os = "netbsd", target_os = "windows", not(target_arch = "arm"))))] {
+-if #[cfg(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm")))] {
++if #[cfg(any(target_os = "ios", target_os = "netbsd", target_os = "windows", not(target_arch = "arm")))] {
      // Not ARM EHABI
      #[repr(C)]
      #[derive(Copy, Clone, PartialEq)]

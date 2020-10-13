@@ -43,22 +43,22 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.11-30
-imagemagick_CHECKSUM := 581e861341ec577daec8d0e2e5d69d8cb09b7fbda1e730169f4a0e20b348f6fe
+imagemagick_VERSION  := 6.9.11-34
+imagemagick_CHECKSUM := 6ad724edd690b895740cfc2a3e4d966f68987d52fbb630a14c7bc01c22e4368e
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.50.0
-librsvg_CHECKSUM := b3fadba240f09b9c9898ab20cb7311467243e607cf8f928b7c5f842474ee3df4
+librsvg_VERSION  := 2.50.1
+librsvg_CHECKSUM := 9bd9799322e06cf5db19b9f7afb728edac6efcf0110baafc44f0f96f45df9a09
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.46.2
-pango_CHECKSUM := d89fab5f26767261b493279b65cfb9eb0955cd44c07c5628d36094609fc51841
+pango_VERSION  := 1.47.0
+pango_CHECKSUM := 730db8652fc43188e03218c3374db9d152351f51fc7011b9acae6d0a6c92c367
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -83,8 +83,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.66.0
-glib_CHECKSUM := c5a66bf143065648c135da4c943d2ac23cce15690fc91c358013b2889111156c
+glib_VERSION  := 2.66.1
+glib_CHECKSUM := a269ffe69fbcc3a21ff1acb1b6146b2a5723499d6e2de33ae16ccb6d2438ef60
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -143,6 +143,22 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
+# upstream version is 2.10.2
+freetype_VERSION  := 2.10.3
+freetype_CHECKSUM := c22244bc766b2d8152f22db7370965431dcb1e408260428208c24984f78e6659
+freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
+freetype_SUBDIR   := freetype-$(freetype_VERSION)
+freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
+freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
+
+# upstream version is 2.10.2
+freetype-bootstrap_VERSION  := $(freetype_VERSION)
+freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
+freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
+freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
+freetype-bootstrap_FILE     := $(freetype_FILE)
+freetype-bootstrap_URL      := $(freetype_URL)
+
 # upstream version is 2.13.1
 fontconfig_VERSION  := 2.13.92
 fontconfig_CHECKSUM := 506e61283878c1726550bc94f2af26168f1e9f2106eac77eaaf0b2cdfad66e4e
@@ -166,6 +182,23 @@ nasm_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 nasm_SUBDIR   := nasm-$(nasm_VERSION)
 nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
 nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
+
+# upstream version is 7.0.0
+mingw-w64_VERSION  := 8.0.0
+mingw-w64_CHECKSUM := 44c740ea6ab3924bc3aa169bad11ad3c5766c5c8459e3126d44eabb8735a5762
+mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
+mingw-w64_SUBDIR   := mingw-w64-v$(mingw-w64_VERSION)
+mingw-w64_FILE     := mingw-w64-v$(mingw-w64_VERSION).tar.bz2
+mingw-w64_URL      := https://$(SOURCEFORGE_MIRROR)/project/mingw-w64/mingw-w64/mingw-w64-release/$(mingw-w64_FILE)
+
+# upstream version is 2.28 (released on 2017-03-06)
+binutils_VERSION  := 2.35.1
+binutils_CHECKSUM := 3ced91db9bf01182b7e420eab68039f2083aed0a214c0424e257eae3ddee8607
+binutils_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/binutils-[0-9]*.patch)))
+binutils_SUBDIR   := binutils-$(binutils_VERSION)
+binutils_FILE     := binutils-$(binutils_VERSION).tar.xz
+binutils_URL      := https://ftp.gnu.org/gnu/binutils/$(binutils_FILE)
+binutils_URL_2    := https://ftpmirror.gnu.org/binutils/$(binutils_FILE)
 
 ## Patches that we override with our own
 
