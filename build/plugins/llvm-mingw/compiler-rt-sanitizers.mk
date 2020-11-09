@@ -24,7 +24,8 @@ define $(PKG)_BUILD
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DCMAKE_C_COMPILER_TARGET='$(BUILD_ARCH_NAME)-windows-gnu' \
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE \
-        -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE
+        -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE \
+        -DSANITIZER_CXX_ABI=libc++
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' install-compiler-rt-headers -j 1
 

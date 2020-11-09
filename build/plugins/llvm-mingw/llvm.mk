@@ -97,27 +97,8 @@ define $(PKG)_BUILD
     $(if $(BUILD_SHARED), \
         cp '$(BUILD_DIR).libunwind/lib/libunwind.dll' '$(PREFIX)/$(TARGET)/bin')
 
-    mkdir '$(BUILD_DIR).libcxxabi'
-    cd '$(BUILD_DIR).libcxxabi' && $(TARGET)-cmake '$(SOURCE_DIR)/libcxxabi' \
-        -DCMAKE_CROSSCOMPILING=TRUE \
-        -DCMAKE_C_COMPILER_WORKS=TRUE \
-        -DCMAKE_CXX_COMPILER_WORKS=TRUE \
-        -DLLVM_PATH='$(SOURCE_DIR)' \
-        -DLLVM_COMPILER_CHECKED=TRUE \
-        -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
-        -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
-        -DLIBCXXABI_USE_COMPILER_RT=ON \
-        -DLIBCXXABI_ENABLE_EXCEPTIONS=ON \
-        -DLIBCXXABI_ENABLE_THREADS=ON \
-        -DLIBCXXABI_TARGET_TRIPLE=$(TARGET) \
-        -DLIBCXXABI_ENABLE_SHARED=OFF \
-        -DLIBCXXABI_LIBCXX_INCLUDES='$(SOURCE_DIR)/libcxx/include' \
-        -DLIBCXXABI_LIBDIR_SUFFIX='' \
-        -DLIBCXXABI_ENABLE_NEW_DELETE_DEFINITIONS=OFF \
-        -DCXX_SUPPORTS_CXX_STD=TRUE \
-        -DCMAKE_CXX_FLAGS='$(CXXFLAGS) $(if $(BUILD_SHARED),-D_LIBCPP_BUILDING_LIBRARY= -U_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS,-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS) -D_LIBCPP_HAS_THREAD_API_WIN32'
-    $(MAKE) -C '$(BUILD_DIR).libcxxabi' -j '$(JOBS)'
-
+    # Configure, but don't build, libcxx, so that libcxxabi has
+    # proper headers to refer to
     mkdir '$(BUILD_DIR).libcxx'
     cd '$(BUILD_DIR).libcxx' && $(TARGET)-cmake '$(SOURCE_DIR)/libcxx' \
         -DCMAKE_CROSSCOMPILING=TRUE \
@@ -140,6 +121,7 @@ define $(PKG)_BUILD
         -DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF \
         -DLIBCXX_ENABLE_FILESYSTEM=OFF \
         -DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=TRUE \
+        -DLIBCXX_ENABLE_NEW_DELETE_DEFINITIONS=ON \
         -DLIBCXX_CXX_ABI=libcxxabi \
         -DLIBCXX_CXX_ABI_INCLUDE_PATHS='$(SOURCE_DIR)/libcxxabi/include' \
         -DLIBCXX_CXX_ABI_LIBRARY_PATH='$(BUILD_DIR).libcxxabi/lib' \
@@ -148,6 +130,29 @@ define $(PKG)_BUILD
         -DCMAKE_CXX_FLAGS='$(CXXFLAGS) $(if $(BUILD_SHARED),-D_LIBCXXABI_BUILDING_LIBRARY,-D_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS)' \
         -DCMAKE_SHARED_LINKER_FLAGS='-lunwind' \
         -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=FALSE
+    $(MAKE) -C '$(BUILD_DIR).libcxx' -j '$(JOBS)' generate-cxx-headers
+
+    mkdir '$(BUILD_DIR).libcxxabi'
+    cd '$(BUILD_DIR).libcxxabi' && $(TARGET)-cmake '$(SOURCE_DIR)/libcxxabi' \
+        -DCMAKE_CROSSCOMPILING=TRUE \
+        -DCMAKE_C_COMPILER_WORKS=TRUE \
+        -DCMAKE_CXX_COMPILER_WORKS=TRUE \
+        -DLLVM_PATH='$(SOURCE_DIR)' \
+        -DLLVM_COMPILER_CHECKED=TRUE \
+        -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
+        -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
+        -DLIBCXXABI_USE_COMPILER_RT=ON \
+        -DLIBCXXABI_ENABLE_EXCEPTIONS=ON \
+        -DLIBCXXABI_ENABLE_THREADS=ON \
+        -DLIBCXXABI_TARGET_TRIPLE=$(TARGET) \
+        -DLIBCXXABI_ENABLE_SHARED=OFF \
+        -DLIBCXXABI_LIBCXX_INCLUDES='$(BUILD_DIR).libcxx/include/c++/v1' \
+        -DLIBCXXABI_LIBDIR_SUFFIX='' \
+        -DLIBCXXABI_ENABLE_NEW_DELETE_DEFINITIONS=OFF \
+        -DCXX_SUPPORTS_CXX_STD=TRUE \
+        $(if $(BUILD_SHARED), -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -D_LIBCPP_BUILDING_LIBRARY= -U_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS')
+    $(MAKE) -C '$(BUILD_DIR).libcxxabi' -j '$(JOBS)'
+
     $(MAKE) -C '$(BUILD_DIR).libcxx' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).libcxx' -j 1 install/strip
 

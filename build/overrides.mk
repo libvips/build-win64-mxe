@@ -35,16 +35,16 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 # upstream version is 1.5.2
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.18
-matio_CHECKSUM := 5fad71a63a854d821cc6f4e8c84da837149dd5fb57e1e2baeffd85fa0f28fe25
+matio_VERSION  := 1.5.19
+matio_CHECKSUM := a4fa4d248b0414fc72f3d6155f710c470d5628d3c31af834f8d5ccf06b60286f
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.11-34
-imagemagick_CHECKSUM := 6ad724edd690b895740cfc2a3e4d966f68987d52fbb630a14c7bc01c22e4368e
+imagemagick_VERSION  := 6.9.11-35
+imagemagick_CHECKSUM := d96d4d5bf1722450c36808eb221c55304fe86c640d0eb62b9f54ade5acfad6e1
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -57,8 +57,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.47.0
-pango_CHECKSUM := 730db8652fc43188e03218c3374db9d152351f51fc7011b9acae6d0a6c92c367
+pango_VERSION  := 1.48.0
+pango_CHECKSUM := 391f26f3341c2d7053e0fb26a956bd42360dadd825efe7088b1e9340a65e74e6
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -83,8 +83,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.66.1
-glib_CHECKSUM := a269ffe69fbcc3a21ff1acb1b6146b2a5723499d6e2de33ae16ccb6d2438ef60
+glib_VERSION  := 2.67.0
+glib_CHECKSUM := 0b15e57ab6c2bb90ced4e24a1b0d8d6e9a13af8a70266751aa3a45baffeed7c1
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -143,22 +143,6 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 2.10.2
-freetype_VERSION  := 2.10.3
-freetype_CHECKSUM := c22244bc766b2d8152f22db7370965431dcb1e408260428208c24984f78e6659
-freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
-freetype_SUBDIR   := freetype-$(freetype_VERSION)
-freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
-freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
-
-# upstream version is 2.10.2
-freetype-bootstrap_VERSION  := $(freetype_VERSION)
-freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
-freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
-freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
-freetype-bootstrap_FILE     := $(freetype_FILE)
-freetype-bootstrap_URL      := $(freetype_URL)
-
 # upstream version is 2.13.1
 fontconfig_VERSION  := 2.13.92
 fontconfig_CHECKSUM := 506e61283878c1726550bc94f2af26168f1e9f2106eac77eaaf0b2cdfad66e4e
@@ -174,6 +158,14 @@ hdf5_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 hdf5_SUBDIR   := hdf5-$(hdf5_VERSION)
 hdf5_FILE     := hdf5-$(hdf5_VERSION).tar.bz2
 hdf5_URL      := https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$(call SHORT_PKG_VERSION,hdf5)/hdf5-$(hdf5_VERSION)/src/$(hdf5_FILE)
+
+# upstream version is 20.10.0
+poppler_VERSION  := 20.11.0
+poppler_CHECKSUM := 021557074516492375c2bb4226a413aad431159e9177f9f14dff4159d2723b14
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -203,7 +195,6 @@ binutils_URL_2    := https://ftpmirror.gnu.org/binutils/$(binutils_FILE)
 ## Patches that we override with our own
 
 libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
-poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 fftw_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fftw-[0-9]*.patch)))
 
@@ -459,6 +450,7 @@ define pixman_BUILD
         --bindir='bin' \
         --libexecdir='bin' \
         --includedir='include' \
+        -Dopenmp=disabled \
         -Dgtk=disabled \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
@@ -568,8 +560,8 @@ define pango_BUILD
         --libdir='lib' \
         --libexecdir='bin' \
         --includedir='include' \
-        -Dintrospection=false \
-        -Duse_fontconfig=true \
+        -Dintrospection=disabled \
+        -Dfontconfig=enabled \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

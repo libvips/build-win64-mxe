@@ -13,7 +13,7 @@ new file mode 100644
 index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,27 @@
 +use crate::spec::{LinkerFlavor, LldFlavor, Target};
 +
 +pub fn target() -> Target {
@@ -26,6 +26,7 @@ index 0000000..1111111
 +    base.max_atomic_width = Some(64);
 +    base.has_elf_tls = true;
 +    base.linker = Some("ld.lld".to_string());
++    base.linker_flavor = LinkerFlavor::Lld(LldFlavor::Ld);
 +
 +    base.late_link_args
 +        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
@@ -34,15 +35,9 @@ index 0000000..1111111
 +
 +    Target {
 +        llvm_target: "aarch64-pc-windows-gnu".to_string(),
-+        target_endian: "little".to_string(),
-+        target_pointer_width: "64".to_string(),
-+        target_c_int_width: "32".to_string(),
++        pointer_width: 64,
 +        data_layout: "e-m:w-p:64:64-i32:32-i64:64-i128:128-n32:64-S128".to_string(),
 +        arch: "aarch64".to_string(),
-+        target_os: "windows".to_string(),
-+        target_env: "gnu".to_string(),
-+        target_vendor: "pc".to_string(),
-+        linker_flavor: LinkerFlavor::Lld(LldFlavor::Ld),
 +        options: base,
 +    }
 +}
@@ -50,7 +45,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -584,10 +584,12 @@ supported_targets! {
+@@ -586,10 +586,12 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  
@@ -68,7 +63,7 @@ new file mode 100644
 index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,27 @@
 +use crate::spec::{LinkerFlavor, LldFlavor, Target};
 +
 +pub fn target() -> Target {
@@ -81,6 +76,7 @@ index 0000000..1111111
 +    base.max_atomic_width = Some(64);
 +    base.eliminate_frame_pointer = false; // Required for backtraces
 +    base.linker = Some("ld.lld".to_string());
++    base.linker_flavor = LinkerFlavor::Lld(LldFlavor::Ld);
 +
 +    base.late_link_args
 +        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
@@ -89,15 +85,9 @@ index 0000000..1111111
 +
 +    Target {
 +        llvm_target: "thumbv7a-pc-windows-gnu".to_string(),
-+        target_endian: "little".to_string(),
-+        target_pointer_width: "32".to_string(),
-+        target_c_int_width: "32".to_string(),
++        pointer_width: 32,
 +        data_layout: "e-m:w-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".to_string(),
 +        arch: "arm".to_string(),
-+        target_os: "windows".to_string(),
-+        target_env: "gnu".to_string(),
-+        target_vendor: "pc".to_string(),
-+        linker_flavor: LinkerFlavor::Lld(LldFlavor::Ld),
 +        options: base,
 +    }
 +}
@@ -115,7 +105,7 @@ diff --git a/compiler/rustc_target/src/spec/windows_gnu_base.rs b/compiler/rustc
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/windows_gnu_base.rs
 +++ b/compiler/rustc_target/src/spec/windows_gnu_base.rs
-@@ -19,7 +19,7 @@ pub fn opts() -> TargetOptions {
+@@ -23,7 +23,7 @@ pub fn opts() -> TargetOptions {
      let mut late_link_args_static = LinkArgs::new();
      // Order of `late_link_args*` was found through trial and error to work with various
      // mingw-w64 versions (not tested on the CI). It's expected to change from time to time.
@@ -124,7 +114,7 @@ index 1111111..2222222 100644
          "-lmsvcrt".to_string(),
          "-lmingwex".to_string(),
          "-lmingw32".to_string(),
-@@ -35,16 +35,23 @@ pub fn opts() -> TargetOptions {
+@@ -39,16 +39,23 @@ pub fn opts() -> TargetOptions {
          "-luser32".to_string(),
          "-lkernel32".to_string(),
      ];
@@ -152,7 +142,7 @@ index 1111111..2222222 100644
      let static_unwind_libs = vec![
          // If all of our crates are statically linked then we can get away
          // with statically linking the libgcc unwinding code. This allows
-@@ -54,8 +61,7 @@ pub fn opts() -> TargetOptions {
+@@ -58,8 +65,7 @@ pub fn opts() -> TargetOptions {
          "-lgcc_eh".to_string(),
          "-l:libpthread.a".to_string(),
      ];
@@ -161,7 +151,7 @@ index 1111111..2222222 100644
 +    late_link_args_static.insert(LinkerFlavor::Gcc, static_unwind_libs);
  
      TargetOptions {
-         // FIXME(#13846) this should be enabled for windows
+         target_os: "windows".to_string(),
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -194,14 +184,14 @@ index 1111111..2222222 100644
 +
      Target {
          llvm_target: "i686-pc-windows-gnu".to_string(),
-         target_endian: "little".to_string(),
+         pointer_width: 32,
 diff --git a/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
 +++ b/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
-@@ -5,10 +5,16 @@ pub fn target() -> Target {
-     base.cpu = "x86-64".to_string();
-     base.pre_link_args.get_mut(&LinkerFlavor::Gcc).unwrap().push("-m64".to_string());
+@@ -8,10 +8,16 @@ pub fn target() -> Target {
+     // Use high-entropy 64 bit address space for ASLR
+     gcc_pre_link_args.push("-Wl,--high-entropy-va".to_string());
      base.pre_link_args
 -        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "i386pep".to_string()]);
 +        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "i386pep".to_string(),
@@ -216,7 +206,7 @@ index 1111111..2222222 100644
 +
      Target {
          llvm_target: "x86_64-pc-windows-gnu".to_string(),
-         target_endian: "little".to_string(),
+         pointer_width: 64,
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -233,7 +223,7 @@ diff --git a/src/bootstrap/dist.rs b/src/bootstrap/dist.rs
 index 1111111..2222222 100644
 --- a/src/bootstrap/dist.rs
 +++ b/src/bootstrap/dist.rs
-@@ -347,7 +347,7 @@ impl Step for Mingw {
+@@ -346,7 +346,7 @@ impl Step for Mingw {
      fn run(self, builder: &Builder<'_>) -> Option<PathBuf> {
          let host = self.host;
  

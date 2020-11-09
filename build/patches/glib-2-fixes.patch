@@ -15,7 +15,7 @@ diff --git a/glib/meson.build b/glib/meson.build
 index 1111111..2222222 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -375,19 +375,19 @@ libglib = library('glib-2.0',
+@@ -377,19 +377,19 @@ libglib = library('glib-2.0',
    # intl.lib is not compatible with SAFESEH
    link_args : [noseh_link_args, glib_link_flags, win32_ldflags],
    include_directories : configinc,
@@ -42,7 +42,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2002,40 +2002,17 @@ endif
+@@ -2003,40 +2003,17 @@ endif
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.

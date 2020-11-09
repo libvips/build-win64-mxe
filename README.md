@@ -10,11 +10,11 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [cairo]         | 1.17.2    | Mozilla Public License 2.0                                   |
 | [expat]         | 2.2.10    | MIT Licence                                                  |
 | [fontconfig]    | 2.13.92   | [fontconfig Licence] (BSD-like)                              |
-| [freetype]      | 2.10.3    | [freetype Licence] (BSD-like)                                |
+| [freetype]      | 2.10.4    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.10    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.40.0    | LGPLv3                                                       |
 | [giflib]        | 5.1.4     | MIT Licence                                                  |
-| [glib]          | 2.66.1    | LGPLv3                                                       |
+| [glib]          | 2.67.0    | LGPLv3                                                       |
 | [harfbuzz]      | 2.7.2     | MIT Licence                                                  |
 | [lcms]          | 2.11      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
@@ -30,7 +30,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libwebp]       | 1.1.0     | New BSD License                                              |
 | [libxml2]       | 2.9.10    | MIT Licence                                                  |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.47.0    | LGPLv3                                                       |
+| [pango]         | 1.48.0    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [zlib]          | 1.2.11    | [zlib Licence]                                               |
 
@@ -79,13 +79,13 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.8     | GPLv2                                                        |
 | [hdf5]          | 1.12.0    | BSD-like                                                     |
-| [imagemagick]   | 6.9.11-34 | [ImageMagick License] (GPL-like)                             |
-| [matio]         | 1.5.18    | BSD 2-Clause                                                 |
+| [imagemagick]   | 6.9.11-35 | [ImageMagick License] (GPL-like)                             |
+| [matio]         | 1.5.19    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
 | [openexr]       | 2.5.3     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.3.1     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 20.10.0   | GPLv2                                                        |
+| [poppler]       | 20.11.0   | GPLv2                                                        |
 | [sqlite]        | 3.33.0    | Public domain                                                |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -135,7 +135,7 @@ prebuilt binaries while it is patent-encumbered.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libde265]      | 1.0.7     | LGPLv3                                                       |
+| [libde265]      | 1.0.8     | LGPLv3                                                       |
 | [x265]          | 3.4       | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265
