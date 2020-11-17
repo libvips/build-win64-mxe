@@ -5,14 +5,14 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 18 Apr 2019 16:00:00 +0200
-Subject: [PATCH 1/1] Fix symbol visibility with MinGW-w64 / static library
+Subject: [PATCH 1/2] Fix symbol visibility with MinGW-w64 / static library
 
 
 diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -19,6 +19,7 @@ add_project_arguments('-DHAVE_CONFIG_H', language : 'c')
+@@ -18,6 +18,7 @@ add_project_arguments('-DHAVE_CONFIG_H', language : 'c')
  
  orc_inc = include_directories('.')
  
@@ -20,7 +20,7 @@ index 1111111..2222222 100644
  cc = meson.get_compiler('c')
  
  cdata = configuration_data()      # config.h
-@@ -33,13 +34,19 @@ if meson.version().version_compare('>= 0.46.0')
+@@ -30,13 +31,19 @@ if cc.has_link_argument('-Wl,-Bsymbolic-functions')
  endif
  
  # Symbol visibility
@@ -47,7 +47,7 @@ index 1111111..2222222 100644
  endif
  # Passing this through the command line would be too messy
  cdata.set('ORC_API_EXPORT', export_define)
-@@ -88,7 +95,6 @@ if cc.has_header_symbol('android/log.h', '__android_log_print')
+@@ -87,7 +94,6 @@ if cc.has_header_symbol('android/log.h', '__android_log_print')
    liblog = [cc.find_library('log', required : true)]
  endif
  
@@ -68,3 +68,79 @@ index 1111111..2222222 100644
  #define ORC_API_IMPORT __declspec(dllimport) extern
  #else
  #define ORC_API_IMPORT extern
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 16 Nov 2020 20:46:00 +0100
+Subject: [PATCH 2/2] Neon extensions are suppported by default for AArch64
+
+
+diff --git a/orc/orccpu-arm.c b/orc/orccpu-arm.c
+index 1111111..2222222 100644
+--- a/orc/orccpu-arm.c
++++ b/orc/orccpu-arm.c
+@@ -58,7 +58,7 @@ orc_profile_stamp_xscale(void)
+ }
+ #endif
+ 
+-#if defined(__linux__)
++#if defined(__linux__) && defined(__arm__)
+ static unsigned long
+ orc_check_neon_proc_auxv (void)
+ {
+@@ -80,19 +80,10 @@ orc_check_neon_proc_auxv (void)
+     }
+ 
+     if (aux[0] == AT_HWCAP) {
+-#ifdef __arm__
+       /* if (aux[1] & 64) flags |= ORC_TARGET_NEON_VFP; */
+       /* if (aux[1] & 512) flags |= ORC_TARGET_NEON_IWMMXT; */
+       if (aux[1] & 4096) flags |= ORC_TARGET_NEON_NEON;
+       if (aux[1] & 128) flags |= ORC_TARGET_ARM_EDSP;
+-#elif __aarch64__
+-      /**
+-       * Use HWCAP_ASIMD (1 << 1) to make sure Advanced SIMD (ASIMD) units exist in AArch64.
+-       * Note that some ARMv7 features including HWCAP_NEON are always supported by ARMv8 CPUs.
+-       */
+-      if (aux[1] & (1 << 1))
+-        flags |= ORC_TARGET_NEON_NEON | ORC_TARGET_ARM_EDSP; /** reuse 32bit flags */
+-#endif
+       ORC_INFO("arm hwcap %08x", aux[1]);
+     } if (aux[0] == AT_PLATFORM) {
+       ORC_INFO("arm platform %s", (char *)aux[1]);
+@@ -105,7 +96,6 @@ orc_check_neon_proc_auxv (void)
+ 
+   return flags;
+ }
+-#endif
+ 
+ static unsigned long
+ orc_cpu_arm_getflags_cpuinfo ()
+@@ -158,20 +148,25 @@ out:
+ 
+   return ret;
+ }
++#endif
+ 
+ unsigned long
+ orc_arm_get_cpu_flags (void)
+ {
+   unsigned long neon_flags = 0;
+ 
+-#ifdef __linux__
++#ifdef __aarch64__
++  /* Armv8 architectures support Neon extensions by default.
++   * It is no longer optional as it was with Armv7. */
++  neon_flags = ORC_TARGET_ARM_EDSP | ORC_TARGET_NEON_NEON;
++#elif defined(__linux__)
+   neon_flags = orc_check_neon_proc_auxv ();
+-#endif
+   if (!neon_flags) {
+     /* On ARM, /proc/self/auxv might not be accessible.
+      * Fall back to /proc/cpuinfo */
+     neon_flags = orc_cpu_arm_getflags_cpuinfo ();
+   }
++#endif
+ 
+   if (orc_compiler_flag_check ("-neon")) {
+     neon_flags &= ~ORC_TARGET_NEON_NEON;
