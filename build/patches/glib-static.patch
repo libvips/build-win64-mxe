@@ -12,7 +12,7 @@ diff --git a/gio/giomodule.c b/gio/giomodule.c
 index 1111111..2222222 100644
 --- a/gio/giomodule.c
 +++ b/gio/giomodule.c
-@@ -1056,25 +1056,6 @@ extern GType _g_win32_network_monitor_get_type (void);
+@@ -1057,28 +1057,6 @@ extern GType _g_win32_network_monitor_get_type (void);
  
  static HMODULE gio_dll = NULL;
  
@@ -28,7 +28,10 @@ index 1111111..2222222 100644
 -	 LPVOID    lpvReserved)
 -{
 -  if (fdwReason == DLL_PROCESS_ATTACH)
+-    {
 -      gio_dll = hinstDLL;
+-      gio_win32_appinfo_init (FALSE);
+-    }
 -
 -  return TRUE;
 -}
@@ -42,7 +45,7 @@ diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -779,7 +779,7 @@ else
+@@ -780,7 +780,7 @@ else
    gio_dtrace_hdr = []
  endif
  
