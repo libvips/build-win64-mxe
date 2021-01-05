@@ -13,6 +13,7 @@ OPTIONS:
 	--tmpdir <DIR>		Where intermediate files should be stored (default in /var/tmp/mxe)
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
 	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
+	--with-aom		Build libheif with aom instead of dav1d and rav1e
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaries without optimizations to improve debuggability
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
@@ -56,6 +57,7 @@ git_ref=""
 tmpdir="/var/tmp/mxe"
 jpeg_impl="mozjpeg"
 with_ffi_compat=false
+with_aom=false
 with_hevc=false
 with_debug=false
 with_zlib_ng=true
@@ -71,6 +73,7 @@ while [ $# -gt 0 ]; do
     --tmpdir) tmpdir="$2"; shift ;;
     --nightly) git_ref="master" ;;
     --with-ffi-compat) with_ffi_compat=true ;;
+    --with-aom) with_aom=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --with-jpegli) jpeg_impl="jpegli" ;;
@@ -164,6 +167,7 @@ $oci_runtime run --rm -t \
   -e "GIT_COMMIT=$git_commit" \
   -e "FFI_COMPAT=$with_ffi_compat" \
   -e "JPEG_IMPL=$jpeg_impl" \
+  -e "AOM=$with_aom" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "ZLIB_NG=$with_zlib_ng" \

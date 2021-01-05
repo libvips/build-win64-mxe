@@ -88,6 +88,10 @@ if [ "$JPEG_IMPL" != "libjpeg-turbo" ]; then
   plugins+=" $work_dir/plugins/$JPEG_IMPL"
 fi
 
+if [ "$AOM" = "true" ]; then
+  plugins+=" $work_dir/plugins/aom"
+fi
+
 if [ "$HEVC" = "true" ]; then
   plugins+=" $work_dir/plugins/hevc"
 fi

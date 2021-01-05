@@ -42,12 +42,14 @@ define $(PKG)_BUILD_$(BUILD)
 
     # TODO(kleisauke): Build with --enable-vendor if we are no longer
     # patching panic_unwind/unwind.
+    # rustdoc is needed by https://crates.io/crates/built - a build 
+    # dependency of rav1e.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --prefix='$(PREFIX)/$(BUILD)' \
         --sysconfdir='etc' \
         --release-channel=nightly \
         --enable-extended \
-        --tools=cargo,src \
+        --tools=cargo,rustdoc,src \
         --disable-docs \
         --disable-codegen-tests \
         --disable-manage-submodules \

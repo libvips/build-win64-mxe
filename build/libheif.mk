@@ -6,7 +6,7 @@ $(PKG)_VERSION  := 1.17.6
 $(PKG)_CHECKSUM := 8390baf4913eda0a183e132cec62b875fb2ef507ced5ddddc98dfd2f17780aee
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := strukturag/libheif/releases,v
-$(PKG)_DEPS     := cc aom
+$(PKG)_DEPS     := cc dav1d rav1e
 
 define $(PKG)_BUILD
     $(eval export CFLAGS += -O3)
@@ -14,7 +14,14 @@ define $(PKG)_BUILD
 
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DENABLE_PLUGIN_LOADING=0 \
+        -DWITH_DAV1D_PLUGIN=0 \
+        -DWITH_RAV1E_PLUGIN=0 \
         -DWITH_EXAMPLES=0 \
+        $(if $(IS_AOM),, \
+            -DWITH_AOM_DECODER=0 \
+            -DWITH_AOM_ENCODER=0 \
+            -DWITH_DAV1D=1 \
+            -DWITH_RAV1E=1) \
         $(if $(IS_HEVC),, \
             -DWITH_LIBDE265=0 \
             -DWITH_X265=0) \
