@@ -6,18 +6,21 @@ $(PKG)_VERSION  := 1.12.0
 $(PKG)_CHECKSUM := e1ac2abb354fdc8ccdca71363ebad7503ad731c84022cf460837f0839e171718
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := strukturag/libheif/releases,v
-$(PKG)_DEPS     := cc aom
+$(PKG)_DEPS     := cc dav1d rav1e
 
 define $(PKG)_BUILD
     # Disable multithreading when building with Win32 threads to
     # avoid a dependency on mingw-std-threads (which we only use
     # in the "all" variant). Disabling multithreading only affects
     # decoding tiled HEIF images, so it should be fine.
+    # TODO(kleisauke): --disable-dav1d option missing?
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gdk-pixbuf \
         --disable-go \
         --disable-examples \
+        $(if $(IS_AOM),, --disable-aom) \
+        $(if $(IS_AOM), --disable-rav1e) \
         $(if $(IS_HEVC),, --disable-libde265) \
         $(if $(IS_HEVC),, --disable-x265) \
         $(if $(WIN32_THREADS), --disable-multithreading)

@@ -69,6 +69,10 @@ if [ "$type" = "static" ]; then
   zip_suffix+="-static"
 fi
 
+if [ "$AOM" = "true" ]; then
+  zip_suffix+="-aom"
+fi
+
 if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
 fi

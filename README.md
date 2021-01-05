@@ -17,8 +17,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.1.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
+| [dav1d]         | 0.9.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [expat]         | 2.4.1     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.94   | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.10.4    | [freetype Licence] (BSD-like)                                |
@@ -43,13 +43,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.48.7    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
+| [rav1e]         | 0.4.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [zlib-ng]       | 2.0.5     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 
-[aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
 [cairo]: https://gitlab.freedesktop.org/cairo/cairo
+[dav1d]: https://code.videolan.org/videolan/dav1d
 [expat]: https://github.com/libexpat/libexpat
 [fontconfig]: https://gitlab.freedesktop.org/fontconfig/fontconfig
 [fontconfig Licence]: https://gitlab.freedesktop.org/fontconfig/fontconfig/blob/master/COPYING
@@ -80,6 +81,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [orc License]: https://gitlab.freedesktop.org/gstreamer/orc/blob/master/COPYING
 [pango]: https://gitlab.gnome.org/GNOME/pango
 [pixman]: https://gitlab.freedesktop.org/pixman/pixman
+[rav1e]: https://github.com/xiph/rav1e
 [zlib-ng]: https://github.com/zlib-ng/zlib-ng
 [zlib-ng Licence]: https://github.com/zlib-ng/zlib-ng/blob/develop/LICENSE.md
 
@@ -160,6 +162,23 @@ In that case, the following version of zlib is built:
 
 [zlib]: https://zlib.net/
 [zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h
+
+## aom
+
+[aom] is the reference implementation (encoder and decoder) of the AV1 codec. Since this
+is the former research codec, it has the advantage to cover all use cases, but at the
+general cost of performance. The above variants can optionally be built with aom instead
+of [dav1d] and [rav1e]. This can be turned on with the `--with-aom` argument. For example:
+
+```bash
+./build.sh --with-aom
+```
+
+| Dependency      | Version   | Used under the terms of                                      |
+|-----------------|-----------|--------------------------------------------------------------|
+| [aom]           | 3.1.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+
+[aom]: https://aomedia.googlesource.com/aom/
 
 ## HEVC-related dependencies
 

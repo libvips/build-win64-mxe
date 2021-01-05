@@ -20,9 +20,10 @@ define $(PKG)_PRE_CONFIGURE
         cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
 
     (printf '{\n'; \
-     printf '  "aom": "$(aom_VERSION)",\n'; \
+     $(if $(IS_AOM),printf '  "aom": "$(aom_VERSION)"$(comma)\n';) \
      printf '  "brotli": "$(brotli_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
+     $(if $(IS_AOM),,printf '  "dav1d": "$(dav1d_VERSION)"$(comma)\n';) \
      printf '  "cfitsio": "$(cfitsio_VERSION)",\n'; \
      $(if $(IS_HEVC),printf '  "de265": "$(libde265_VERSION)"$(comma)\n';) \
      printf '  "exif": "$(libexif_VERSION)",\n'; \
@@ -54,6 +55,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "pixman": "$(pixman_VERSION)",\n'; \
      printf '  "png": "$(libpng_VERSION)",\n'; \
      printf '  "poppler": "$(poppler_VERSION)",\n'; \
+     $(if $(IS_AOM),,printf '  "rav1e": "$(rav1e_VERSION)"$(comma)\n';) \
      printf '  "sqlite": "$(sqlite_VERSION)",\n'; \
      printf '  "svg": "$(librsvg_VERSION)",\n'; \
      printf '  "spng": "$(libspng_VERSION)",\n'; \

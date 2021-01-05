@@ -8,6 +8,7 @@ Build libvips for Windows in a Docker container
 
 OPTIONS:
 	--help			Show the help and exit
+	--with-aom		Build libheif with aom instead of dav1d and rav1e
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaires with debug symbols
 	--without-llvm		Build binaires with GCC
@@ -46,6 +47,7 @@ EOF
 . $PWD/build/variables.sh
 
 # Default arguments
+with_aom=false
 with_hevc=false
 with_debug=false
 with_llvm=true
@@ -58,6 +60,7 @@ POSITIONAL=()
 while [ $# -gt 0 ]; do
   case $1 in
     -h|--help) usage 0 ;;
+    --with-aom) with_aom=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --without-llvm) with_llvm=false ;;
@@ -144,6 +147,7 @@ docker build -t libvips-build-win-mxe container
 docker run --rm -t \
   -u $(id -u):$(id -g) \
   -v $PWD/build:/data \
+  -e "AOM=$with_aom" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "LLVM=$with_llvm" \
