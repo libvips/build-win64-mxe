@@ -90,6 +90,10 @@ if [ "$DISP" = "true" ]; then
   pe_targets+=($bin_dir/vipsdisp.exe $bin_dir/gdbus.exe)
 fi
 
+if [ "$AOM" = "true" ]; then
+  zip_suffix+="-aom"
+fi
+
 if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
 fi

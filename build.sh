@@ -14,6 +14,7 @@ OPTIONS:
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
 	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
 	--with-disp		Build vipsdisp image viewer
+	--with-aom		Build libheif with aom instead of dav1d and rav1e
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaries without optimizations to improve debuggability
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
@@ -58,6 +59,7 @@ tmpdir="/var/tmp/mxe"
 jpeg_impl="mozjpeg"
 with_ffi_compat=false
 with_disp=false
+with_aom=false
 with_hevc=false
 with_debug=false
 with_llvm=true
@@ -75,6 +77,7 @@ while [ $# -gt 0 ]; do
     --nightly) git_ref="master" ;;
     --with-ffi-compat) with_ffi_compat=true ;;
     --with-disp) with_disp=true ;;
+    --with-aom) with_aom=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --without-llvm) with_llvm=false ;;
@@ -201,6 +204,7 @@ $oci_runtime run --rm -t \
   -e "FFI_COMPAT=$with_ffi_compat" \
   -e "JPEG_IMPL=$jpeg_impl" \
   -e "DISP=$with_disp" \
+  -e "AOM=$with_aom" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "LLVM=$with_llvm" \

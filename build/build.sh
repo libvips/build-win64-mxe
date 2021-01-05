@@ -98,6 +98,10 @@ if [ "$DISP" = "true" ]; then
   plugins+=" $work_dir/plugins/vipsdisp"
 fi
 
+if [ "$AOM" = "true" ]; then
+  plugins+=" $work_dir/plugins/aom"
+fi
+
 if [ "$HEVC" = "true" ]; then
   plugins+=" $work_dir/plugins/hevc"
 fi

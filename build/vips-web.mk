@@ -19,10 +19,11 @@ define $(PKG)_PRE_CONFIGURE
         cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
 
     (printf '{\n'; \
-     printf '  "aom": "$(aom_VERSION)",\n'; \
+     $(if $(IS_AOM),printf '  "aom": "$(aom_VERSION)"$(comma)\n';) \
      printf '  "archive": "$(libarchive_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
      printf '  "cgif": "$(cgif_VERSION)",\n'; \
+     $(if $(IS_AOM),,printf '  "dav1d": "$(dav1d_VERSION)"$(comma)\n';) \
      printf '  "exif": "$(libexif_VERSION)",\n'; \
      printf '  "expat": "$(expat_VERSION)",\n'; \
      printf '  "ffi": "$(libffi_VERSION)",\n'; \
@@ -44,6 +45,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "pixman": "$(pixman_VERSION)",\n'; \
      printf '  "png": "$(libpng_VERSION)",\n'; \
      $(if $(IS_INTL_DUMMY),printf '  "proxy-libintl": "$(proxy-libintl_VERSION)"$(comma)\n';) \
+     $(if $(IS_AOM),,printf '  "rav1e": "$(rav1e_VERSION)"$(comma)\n';) \
      printf '  "rsvg": "$(librsvg_VERSION)",\n'; \
      printf '  "spng": "$(libspng_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
@@ -65,6 +67,9 @@ define $(PKG)_BUILD
 
     # Always build as shared library, we need
     # libvips-42.dll for the language bindings.
+    # The `-Wl,-Xlink=-force:multiple` linker
+    # flag is a workaround for:
+    # https://github.com/rust-lang/rust/issues/44322
     $(MXE_MESON_WRAPPER) \
         --default-library=shared \
         -Ddeprecated=false \
@@ -86,6 +91,7 @@ define $(PKG)_BUILD
         -Dppm=false \
         -Danalyze=false \
         -Dradiance=false \
+        $(if $(BUILD_STATIC), -Dcpp_link_args="$(LDFLAGS) -Wl$(comma)$(if $(IS_LLVM),-Xlink=-force:multiple,--allow-multiple-definition)") \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
