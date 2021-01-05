@@ -16,6 +16,7 @@ OPTIONS:
 	-r, --ref <REF>		The branch or tag to build libvips from
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
 	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
+	--with-aom		Build libheif with aom instead of dav1d and rav1e
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaries without optimizations to improve debuggability
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
@@ -50,6 +51,7 @@ git_commit=""
 git_ref=""
 jpeg_impl="mozjpeg"
 with_ffi_compat=false
+with_aom=false
 with_hevc=false
 with_debug=false
 with_prebuilt=true
@@ -66,6 +68,7 @@ while [ $# -gt 0 ]; do
     -r|--ref) git_ref="$2"; shift ;;
     --nightly) git_ref="master" ;;
     --with-ffi-compat) with_ffi_compat=true ;;
+    --with-aom) with_aom=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --with-jpegli) jpeg_impl="jpegli" ;;
@@ -179,6 +182,10 @@ if [ "$jpeg_impl" != "libjpeg-turbo" ]; then
   plugin_dirs+=" /data/plugins/$jpeg_impl"
 fi
 
+if [ "$with_aom" = true ]; then
+  plugin_dirs+=" /data/plugins/aom"
+fi
+
 if [ "$with_hevc" = true ]; then
   plugin_dirs+=" /data/plugins/hevc-deps"
 fi
@@ -237,6 +244,7 @@ $oci_runtime run --rm -t \
   -e MXE_TARGETS="${mxe_targets[*]}" \
   -e FFI_COMPAT="$with_ffi_compat" \
   -e JPEG_IMPL="$jpeg_impl" \
+  -e AOM="$with_aom" \
   -e HEVC="$with_hevc" \
   -e DEBUG="$with_debug" \
   -e ZLIB_NG="$with_zlib_ng" \

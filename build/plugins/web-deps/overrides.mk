@@ -1,5 +1,8 @@
 $(PLUGIN_HEADER)
 
+# The `-Wl,-Xlink=-force:multiple` linker
+# flag is a workaround for:
+# https://github.com/rust-lang/rust/issues/44322
 vips_MESON_OPTS = \
     -Dmodules=disabled \
     -Dcfitsio=disabled \
@@ -17,4 +20,5 @@ vips_MESON_OPTS = \
     -Draw=disabled \
     -Dppm=false \
     -Danalyze=false \
-    -Dradiance=false
+    -Dradiance=false \
+    $(if $(BUILD_STATIC), -Dcpp_link_args="$(LDFLAGS) -Wl$(comma)-Xlink=-force:multiple")

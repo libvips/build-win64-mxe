@@ -94,6 +94,10 @@ if [ "$FFI_COMPAT" = true ]; then
   zip_suffix+="-ffi"
 fi
 
+if [ "$AOM" = true ]; then
+  zip_suffix+="-aom"
+fi
+
 if [ "$HEVC" = true ]; then
   zip_suffix+="-hevc"
 fi

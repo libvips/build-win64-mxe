@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 9 Nov 2024 13:29:41 +0100
-Subject: [PATCH 1/1] Only use `dllexport`/`dllimport` on MSVC
+Subject: [PATCH 1/2] Only use `dllexport`/`dllimport` on MSVC
 
 This reverts commit fefce85ca9057a31167d16d17aea9fee9bf95869 and
 26050190264a1c70d27963712a083ac284267c06.
@@ -30,3 +30,24 @@ index 1111111..2222222 100644
  #ifdef LIBHEIF_EXPORTS
  #define LIBHEIF_API __declspec(dllexport)
  #else
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 10 Apr 2023 18:38:37 +0200
+Subject: [PATCH 2/2] Revert "Enable GdkPixbuf loader for mingw as well"
+
+This reverts commit 521d5c26bd86c7c103d1bbbf47aa55e30effad65.
+
+Upstream-Status: Inappropriate [disable feature]
+This patch is just for our convenience.
+
+diff --git a/gdk-pixbuf/CMakeLists.txt b/gdk-pixbuf/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/gdk-pixbuf/CMakeLists.txt
++++ b/gdk-pixbuf/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-if(UNIX OR MINGW)
++if(UNIX)
+   find_package(PkgConfig)
+   pkg_check_modules(GDKPIXBUF2 gdk-pixbuf-2.0)
+ 

@@ -18,10 +18,11 @@ define $(PKG)_PRE_CONFIGURE
         cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
 
     (printf '{\n'; \
-     printf '  "aom": "$(aom_VERSION)",\n'; \
+     $(if $(IS_AOM),printf '  "aom": "$(aom_VERSION)"$(comma)\n';) \
      printf '  "archive": "$(libarchive_VERSION)",\n'; \
      printf '  "brotli": "$(brotli_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
+     $(if $(IS_AOM),,printf '  "dav1d": "$(dav1d_VERSION)"$(comma)\n';) \
      printf '  "cfitsio": "$(cfitsio_VERSION)",\n'; \
      printf '  "cgif": "$(cgif_VERSION)",\n'; \
      $(if $(IS_HEVC),printf '  "de265": "$(libde265_VERSION)"$(comma)\n';) \
@@ -58,6 +59,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "png": "$(libpng_VERSION)",\n'; \
      printf '  "poppler": "$(poppler_VERSION)",\n'; \
      $(if $(IS_INTL_DUMMY),printf '  "proxy-libintl": "$(proxy-libintl_VERSION)"$(comma)\n';) \
+     $(if $(IS_AOM),,printf '  "rav1e": "$(rav1e_VERSION)"$(comma)\n';) \
      printf '  "raw": "$(libraw_VERSION)",\n'; \
      printf '  "rsvg": "$(librsvg_VERSION)",\n'; \
      printf '  "spng": "$(libspng_VERSION)",\n'; \
