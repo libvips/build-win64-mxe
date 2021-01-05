@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 2 Mar 2021 18:30:00 +0100
+Subject: [PATCH 1/1] Update rustc_version to 0.3.3
+
+To fix compilation with LLVM 11.1.0.
+
+diff --git a/Cargo.lock b/Cargo.lock
+index 1111111..2222222 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -1088,7 +1088,7 @@ dependencies = [
+  "rayon",
+  "regex",
+  "rust_hawktracer",
+- "rustc_version 0.3.2",
++ "rustc_version 0.3.3",
+  "scan_fmt",
+  "semver 0.11.0",
+  "serde",
+@@ -1229,9 +1229,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rustc_version"
+-version = "0.3.2"
++version = "0.3.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "397d411cfc34097bdb176984180f7d9980eb161aaf1368ceea96c9834d8f8b85"
++checksum = "f0dfe2087c51c460008730de8b57e6a320782fbfb312e1f4d520e6c6fae155ee"
+ dependencies = [
+  "semver 0.11.0",
+ ]

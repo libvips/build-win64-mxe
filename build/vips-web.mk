@@ -17,8 +17,9 @@ define $(PKG)_PRE_CONFIGURE
     $(foreach f,COPYING ChangeLog README.md AUTHORS, cp '$(SOURCE_DIR)/$f' '$(PREFIX)/$(TARGET)/vips-packaging';)
 
     (printf '{\n'; \
-     printf '  "aom": "$(aom_VERSION)",\n'; \
+     $(if $(IS_AOM),printf '  "aom": "$(aom_VERSION)"$(comma)\n';) \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
+     $(if $(IS_AOM),,printf '  "dav1d": "$(dav1d_VERSION)"$(comma)\n';) \
      printf '  "exif": "$(libexif_VERSION)",\n'; \
      printf '  "expat": "$(expat_VERSION)",\n'; \
      printf '  "ffi": "$(libffi_VERSION)",\n'; \
@@ -38,6 +39,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "pango": "$(pango_VERSION)",\n'; \
      printf '  "pixman": "$(pixman_VERSION)",\n'; \
      printf '  "png": "$(libpng_VERSION)",\n'; \
+     $(if $(IS_AOM),,printf '  "rav1e": "$(rav1e_VERSION)"$(comma)\n';) \
      printf '  "svg": "$(librsvg_VERSION)",\n'; \
      printf '  "spng": "$(libspng_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
@@ -54,6 +56,9 @@ define $(PKG)_BUILD
 
     # Always build as shared library, we need
     # libvips-42.dll for the language bindings.
+    # The `-Wl,{-Xlink=-force:multiple,--allow-multiple-definition}`
+    # linker flag is a workaround for:
+    # https://github.com/rust-lang/rust/issues/44322
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --host='$(TARGET)' \
         --build='$(BUILD)' \
@@ -77,7 +82,9 @@ define $(PKG)_BUILD
         --without-imagequant \
         --disable-introspection \
         --disable-deprecated \
-        $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all")
+        $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all") \
+        $(if $(BUILD_STATIC), \
+            LDFLAGS="$(LDFLAGS) -Wl$(comma)$(if $(IS_LLVM),-Xlink=-force:multiple,--allow-multiple-definition)")
 
     # libtool should automatically generate a list
     # of exported symbols, even for "static" builds

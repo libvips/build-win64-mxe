@@ -6,8 +6,8 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 2.0.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
+| [dav1d]         | 0.8.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [expat]         | 2.2.10    | MIT Licence                                                  |
 | [fontconfig]    | 2.13.93   | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.10.4    | [freetype Licence] (BSD-like)                                |
@@ -32,11 +32,12 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.48.2    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
+| [rav1e]         | 0.4.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [zlib]          | 1.2.11    | [zlib Licence]                                               |
 
-[aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
 [cairo]: https://gitlab.freedesktop.org/cairo/cairo
+[dav1d]: https://code.videolan.org/videolan/dav1d
 [expat]: https://github.com/libexpat/libexpat
 [fontconfig]: https://gitlab.freedesktop.org/fontconfig/fontconfig
 [fontconfig Licence]: https://gitlab.freedesktop.org/fontconfig/fontconfig/blob/master/COPYING
@@ -67,6 +68,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 [orc License]: https://gitlab.freedesktop.org/gstreamer/orc/blob/master/COPYING
 [pango]: https://gitlab.gnome.org/GNOME/pango
 [pixman]: https://gitlab.freedesktop.org/pixman/pixman
+[rav1e]: https://github.com/xiph/rav1e
 [zlib]: https://github.com/madler/zlib
 [zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h
 
@@ -117,6 +119,23 @@ argument. For example:
 | [mozjpeg]       | 4.0.0     | [zlib License, IJG License]                                  |
 
 [mozjpeg]: https://github.com/mozilla/mozjpeg
+
+## aom
+
+aom is the reference implementation (encoder and decoder) of the AV1 codec. Since this
+is the former research codec, it has the advantage to cover all use cases, but at the
+general cost of performance. The above variants can optionally be built with aom instead
+of dav1d and rav1e. This can be turned on with the `--with-aom` argument. For example:
+
+```bash
+./build.sh --with-aom
+```
+
+| Dependency      | Version   | Used under the terms of                                      |
+|-----------------|-----------|--------------------------------------------------------------|
+| [aom]           | 2.0.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+
+[aom]: https://aomedia.googlesource.com/aom/
 
 ## HEVC-related dependencies
 

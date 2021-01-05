@@ -71,6 +71,10 @@ if [ "$MOZJPEG" = "true" ]; then
   zip_suffix+="-mozjpeg"
 fi
 
+if [ "$AOM" = "true" ]; then
+  zip_suffix+="-aom"
+fi
+
 if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
 fi

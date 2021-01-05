@@ -35,7 +35,7 @@ define $(PKG)_BUILD
     # Install prefixed wrappers
     (echo '#!/usr/bin/env bash'; \
      echo 'CARGO_HOME="$(PREFIX)/$(TARGET)/.cargo" \'; \
-     echo 'RUSTC="$(PREFIX)/bin/$(TARGET)-rustc" \'; \
+     echo 'RUSTC="$(PREFIX)/$(TARGET)/bin/rustc" \'; \
      echo 'exec $(PREFIX)/$(TARGET)/bin/cargo \'; \
      echo '"$$@"';) \
              > '$(PREFIX)/bin/$(TARGET)-cargo'
@@ -47,4 +47,14 @@ define $(PKG)_BUILD
     # mingw-w64 to avoid any compatibility issues.
     $(foreach FILE, crt2.o dllcrt2.o, \
         cp -f '$(PREFIX)/$(TARGET)/mingw/lib/$(FILE)' '$(PREFIX)/$(TARGET)/lib/rustlib/$(PROCESSOR)-pc-windows-gnu/lib';)
+
+    # Create dummy libpthread.a as Rust links against this library by default:
+    # https://github.com/rust-lang/rust/blob/76aca6659a0eb3f5696541d0be518530cabdd963/compiler/rustc_target/src/spec/windows_gnu_base.rs#L59
+    # This could also be fixed when using POSIX threads functionality in GCC
+    # but that is significantly slower than the native Win32 implementation.
+    $(if $(BUILD_SHARED),
+        echo 'static int __attribute__((unused)) _dummy;' > '$(BUILD_DIR)/dummy.c'
+        $(TARGET)-gcc -c -o '$(BUILD_DIR)/dummy.o' '$(BUILD_DIR)/dummy.c'
+        $(TARGET)-ar rcs '$(PREFIX)/$(TARGET)/lib/rustlib/$(PROCESSOR)-pc-windows-gnu/lib/libpthread.a' '$(BUILD_DIR)/dummy.o'
+    )
 endef

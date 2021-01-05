@@ -489,16 +489,18 @@ endef
 
 # compile with the Rust toolchain
 define librsvg_BUILD
-    # Update expected Cargo SHA256 hashes for the
-    # files we have patched in $(librsvg_PATCHES)
-    # Note: These replacements can be removed when
-    #       the patches have been accepted upstream.
-    $(SED) -i 's/45d980167c6b1a2fd54f045f39e6322a7739be6c4723b8c373716f8252d3778c/f769fd23b7389e684b2f365a9f1038273788eb0f3d5907fe34f7ac5383b0daf0/' '$(SOURCE_DIR)/vendor/cairo-rs/.cargo-checksum.json'
-    $(SED) -i 's/d8c54bf5eeba9d035434da591646047329e0cad2c0be93c10409f7b36a0e55ec/b03f53a3c001dcd51fac158e8ca17f0c15299c77edba59444e91b73bc2b2226a/' '$(SOURCE_DIR)/vendor/cairo-sys-rs/.cargo-checksum.json'
+    # Allow building vendored sources with `-Zbuild-std`, see:
+    # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524
+    $(if $(IS_LLVM), \
+        cd '$(SOURCE_DIR)' && \
+            MXE_ENABLE_NETWORK=1 \
+            $(TARGET)-cargo vendor -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/test/Cargo.toml')
 
     # armv7 -> thumbv7a
     $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))
 
+    # TODO(kleisauke): Remove `LIBS='-lunwind'` once we
+    # build with `CARGO_PROFILE_RELEASE_PANIC=abort`
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
@@ -508,7 +510,8 @@ define librsvg_BUILD
         --without-libintl-prefix \
         RUST_TARGET='$(ARCH_NAME)-pc-windows-gnu' \
         CARGO='$(TARGET)-cargo' \
-        RUSTC='$(TARGET)-rustc'
+        RUSTC='$(TARGET)-rustc' \
+        $(if $(and $(IS_LLVM), $(BUILD_SHARED)), LIBS='-lunwind')
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_SCRIPTS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=

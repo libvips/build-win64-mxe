@@ -23,7 +23,12 @@ export CARGO_PROFILE_RELEASE_CODEGEN_UNITS := 1
 export CARGO_PROFILE_RELEASE_INCREMENTAL   := false
 export CARGO_PROFILE_RELEASE_LTO           := true
 export CARGO_PROFILE_RELEASE_OPT_LEVEL     := s
-export CARGO_PROFILE_RELEASE_PANIC         := abort
+
+# We need to build with unwind panic strategy as this is currently
+# hard-coded in -Zbuild-std, see:
+# https://github.com/rust-lang/wg-cargo-std-aware/issues/29
+# TODO(kleisauke): Switch to abort once supported
+export CARGO_PROFILE_RELEASE_PANIC         := unwind
 
 # We don't need debugging symbols.
 # For e.g. this commit:
