@@ -32,13 +32,17 @@ define $(PKG)_BUILD_$(BUILD)
     $(eval unexport CXXFLAGS)
     $(eval unexport LDFLAGS)
 
+    # rustdoc is needed by https://crates.io/crates/built - a build
+    # dependency of rav1e.
+    # FIXME: Remove if a new version of rav1e has been released, see:
+    # https://github.com/xiph/rav1e/issues/3395
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --prefix='$(PREFIX)/$(BUILD)' \
         --sysconfdir='etc' \
         --release-channel=nightly \
         --enable-vendor \
         --enable-extended \
-        --tools=cargo,src \
+        --tools=cargo,rustdoc,src \
         --disable-docs \
         --disable-codegen-tests \
         --disable-manage-submodules \
