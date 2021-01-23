@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-if [[ "$*" == *--help* ]]; then
+function usage()
+{
   cat <<EOF
 Usage: $(basename "$0") [OPTIONS] [DEPS] [ARCH] [TYPE]
 Build libvips for Windows in a Docker container
@@ -24,8 +25,8 @@ ARCH:
 	Possible values are:
 	    - x86_64
 	    - i686
-	    - aarch64
-	    - armv7
+	    - aarch64 (implies --with-llvm)
+	    - armv7 (implies --with-llvm)
 
 TYPE:
 	Specifies the type of binary to be created,
@@ -34,33 +35,50 @@ TYPE:
 	    - shared
 	    - static
 EOF
-  exit 0
-fi
+
+  if [ -n "$1" ]; then
+    exit "$1"
+  fi
+}
 
 if [ $EUID -eq 0 ]; then
-  echo "Please don't run as root -- instead, add yourself to the docker group"
+  echo "ERROR: Please don't run as root -- instead, add yourself to the docker group." >&2
   exit 1
 fi
 
 . $PWD/build/variables.sh
 
+# Default arguments
+with_mozjpeg=false
+with_hevc=false
+with_llvm=false
+
+# Parse arguments
+POSITIONAL=()
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    -h|--help) usage 0 ;;
+    --with-mozjpeg) with_mozjpeg=true ;;
+    --with-hevc) with_hevc=true ;;
+    --with-llvm) with_llvm=true ;;
+    -*)
+      echo "ERROR: Unknown option $1" >&2
+      usage 1
+      ;;
+    *) POSITIONAL+=("$1") ;;
+  esac
+  shift
+done
+
+# Restore positional parameters
+set -- "${POSITIONAL[@]}"
+
 deps="${1:-web}"
 arch="${2:-x86_64}"
 type="${3:-shared}"
 
-if [[ "$*" == *--with-mozjpeg* ]]; then
-  with_mozjpeg=true
-else
-  with_mozjpeg=false
-fi
-
-if [[ "$*" == *--with-hevc* ]]; then
-  with_hevc=true
-else
-  with_hevc=false
-fi
-
-if [[ "$*" == *--with-llvm* ]]; then
+if [ "$with_llvm" = "true" ]; then
   # This indicates that we don't need to force C++03
   # compilication for some packages, we can safely use
   # libstdc++'s C++11 <thread>, <mutex>, and <future>
@@ -69,7 +87,6 @@ if [[ "$*" == *--with-llvm* ]]; then
   # libc++ uses Win32 threads to implement the internal
   # threading API.
   threads="posix"
-  with_llvm=true
 elif [ "$arch" = "aarch64" ] || [ "$arch" = "armv7" ]; then
   # Force the LLVM toolchain for the ARM/ARM64 targets,
   # GCC does not support Windows on ARM.
@@ -80,16 +97,15 @@ else
   # GCC because POSIX threads functionality is significantly
   # slower than the native Win32 implementation.
   threads="win32"
-  with_llvm=false
 fi
 
 if [ "$with_hevc" = "true" ] && [ "$deps" = "web" ]; then
-  echo "ERROR: The HEVC-related dependencies can only be built for the \"all\" variant."
+  echo "ERROR: The HEVC-related dependencies can only be built for the \"all\" variant." >&2
   exit 1
 fi
 
 if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
-  echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
+  echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
   exit 1
 fi
 
@@ -97,7 +113,7 @@ target="$arch-w64-mingw32.$type.$threads"
 
 # Is docker available?
 if ! [ -x "$(command -v docker)" ]; then
-  echo "Please install docker"
+  echo "ERROR: Please install docker." >&2
   exit 1
 fi
 
