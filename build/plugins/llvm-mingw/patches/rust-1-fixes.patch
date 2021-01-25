@@ -45,7 +45,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -596,10 +596,12 @@ supported_targets! {
+@@ -679,10 +679,12 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  
@@ -223,10 +223,10 @@ diff --git a/src/bootstrap/dist.rs b/src/bootstrap/dist.rs
 index 1111111..2222222 100644
 --- a/src/bootstrap/dist.rs
 +++ b/src/bootstrap/dist.rs
-@@ -346,7 +346,7 @@ impl Step for Mingw {
-     fn run(self, builder: &Builder<'_>) -> Option<PathBuf> {
+@@ -284,7 +284,7 @@ impl Step for Mingw {
+     /// without any extra installed software (e.g., we bundle gcc, libraries, etc).
+     fn run(self, builder: &Builder<'_>) -> Option<GeneratedTarball> {
          let host = self.host;
- 
 -        if !host.contains("pc-windows-gnu") {
 +        if !host.contains("pc-windows-gnu") || builder.config.build != host {
              return None;
@@ -262,7 +262,7 @@ diff --git a/vendor/compiler_builtins/src/arm.rs b/vendor/compiler_builtins/src/
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/src/arm.rs
 +++ b/vendor/compiler_builtins/src/arm.rs
-@@ -72,7 +72,7 @@ pub unsafe fn __aeabi_uldivmod() {
+@@ -74,7 +74,7 @@ pub unsafe fn __aeabi_uldivmod() {
      intrinsics::unreachable();
  }
  

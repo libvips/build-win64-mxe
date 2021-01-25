@@ -1,18 +1,5 @@
 $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 
-## GCC bootstrap options
-
-# Override GCC patches with our own patches
-gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gcc-[0-9]*.patch)))
-
-# We do not need OpenMP, so build with --disable-libgomp
-# and compile without optimizations / stripping.
-_gcc_CONFIGURE_OPTS=--with-build-sysroot='$(PREFIX)/$(TARGET)' \
---disable-libgomp \
-CFLAGS='' \
-CXXFLAGS='' \
-LDFLAGS=''
-
 ## Update dependencies
 
 # upstream version is 3.2.1
@@ -43,8 +30,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.11-50
-imagemagick_CHECKSUM := f31b92a15a02ba270630fffc2aeb127bb37dde71d71d831040eb9d7acea158ef
+imagemagick_VERSION  := 6.9.11-59
+imagemagick_CHECKSUM := 31d75224733f89b410c5b99a3a5bb12e2daf6ee0a75e5129fa7791dac134b6aa
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -57,8 +44,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.48.0
-pango_CHECKSUM := 391f26f3341c2d7053e0fb26a956bd42360dadd825efe7088b1e9340a65e74e6
+pango_VERSION  := 1.48.1
+pango_CHECKSUM := 08c2d550a96559f15fb317d7167b96df57ef743fef946f4e274bd8b6f2918058
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -83,8 +70,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.67.1
-glib_CHECKSUM := 3b3409fe3a93f9e9f6f5dc9cd8405edfd7513b289589987e568369e627d3350c
+glib_VERSION  := 2.67.2
+glib_CHECKSUM := b41d42d6c572e1e420ffc38a077e0157e0b53b5a94c9647a3dc3701043c3b69b
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -118,7 +105,7 @@ openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
-# ilmbase_GH_CONF  := openexr/openexr/tags
+# ilmbase_GH_CONF  := AcademySoftwareFoundation/openexr/tags
 ilmbase_VERSION  := $(openexr_VERSION)
 ilmbase_CHECKSUM := $(openexr_CHECKSUM)
 ilmbase_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/ilmbase-[0-9]*.patch)))
@@ -177,23 +164,14 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 8.0.0
-# Update MinGW-w64 to 829a2e2
-# https://github.com/mirror/mingw-w64/tarball/829a2e2a00abe0391f348a565a977bc66f67fd6a
-mingw-w64_VERSION  := 829a2e2
-mingw-w64_CHECKSUM := 6521b05028ea20cd452ed7becb235fe47d8362c3bc1cae1c45113cc77b26ae3b
+# Update MinGW-w64 to 6a1b8d0
+# https://github.com/mirror/mingw-w64/tarball/6a1b8d0eae98e0cf183fbbdcc50bb7090406583f
+mingw-w64_VERSION  := 6a1b8d0
+mingw-w64_CHECKSUM := 8d8911c6e93848de00660959306694e8a502d469028678ffe80c8a5aa93a5024
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mirror-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mirror-mingw-w64-$(mingw-w64_VERSION).tar.gz
 mingw-w64_URL      := https://github.com/mirror/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
-
-# upstream version is 2.28 (released on 2017-03-06)
-binutils_VERSION  := 2.35.1
-binutils_CHECKSUM := 3ced91db9bf01182b7e420eab68039f2083aed0a214c0424e257eae3ddee8607
-binutils_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/binutils-[0-9]*.patch)))
-binutils_SUBDIR   := binutils-$(binutils_VERSION)
-binutils_FILE     := binutils-$(binutils_VERSION).tar.xz
-binutils_URL      := https://ftp.gnu.org/gnu/binutils/$(binutils_FILE)
-binutils_URL_2    := https://ftpmirror.gnu.org/binutils/$(binutils_FILE)
 
 ## Patches that we override with our own
 
@@ -233,7 +211,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # Pango:
 #  Added: fribidi
 # Poppler:
-#  Added: mingw-std-threads, libjpeg-turbo, lcms
+#  Added: libjpeg-turbo, lcms
 #  Removed: curl, qtbase, libwebp
 # librsvg:
 #  Added: libxml2, rust
@@ -249,8 +227,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: xz
 # Fontconfig:
 #  Removed: gettext
-# GCC:
-#  Removed: $(BUILD)~zstd
 # CFITSIO:
 #  Added: zlib
 
@@ -265,69 +241,16 @@ tiff_DEPS               := cc libjpeg-turbo libwebp zlib
 imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
 openexr_DEPS            := cc ilmbase zlib
 pango_DEPS              := $(pango_DEPS) fribidi
-poppler_DEPS            := cc mingw-std-threads cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
+poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust
 cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman zlib
 hdf5_DEPS               := $(filter-out pthreads ,$(hdf5_DEPS)) $(BUILD)~cmake
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
 libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
 fontconfig_DEPS         := $(filter-out  gettext,$(fontconfig_DEPS))
-gcc_DEPS                := $(filter-out $(BUILD)~zstd,$(gcc_DEPS))
 cfitsio_DEPS            := cc zlib
 
 ## Override build scripts
-
-# The minimum Windows version we support is Windows 7, so build with:
-#   --with-default-msvcrt=msvcrt \
-#   --with-default-win32-winnt=0x601 \
-# Install the headers in $(PREFIX)/$(TARGET)/mingw since
-# we need to distribute the /include and /lib directories
-# Note: Building with --with-default-msvcrt=ucrt breaks
-# compatibility with the prebuilt Rust binaries that
-# is built in msvcrt mode.
-define gcc_BUILD_mingw-w64
-    # install mingw-w64 headers
-    $(call PREPARE_PKG_SOURCE,mingw-w64,$(BUILD_DIR))
-    mkdir '$(BUILD_DIR).headers'
-    cd '$(BUILD_DIR).headers' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-headers/configure' \
-        --host='$(TARGET)' \
-        --prefix='$(PREFIX)/$(TARGET)/mingw' \
-        --enable-idl \
-        --with-default-msvcrt=msvcrt \
-        --with-default-win32-winnt=0x601 \
-        $(mingw-w64-headers_CONFIGURE_OPTS)
-    $(MAKE) -C '$(BUILD_DIR).headers' install
-
-    # build standalone gcc
-    $(gcc_CONFIGURE)
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' all-gcc
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)-gcc
-
-    # build mingw-w64-crt
-    mkdir '$(BUILD_DIR).crt'
-    cd '$(BUILD_DIR).crt' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-crt/configure' \
-        --host='$(TARGET)' \
-        --prefix='$(PREFIX)/$(TARGET)/mingw' \
-        --with-default-msvcrt=msvcrt \
-        @gcc-crt-config-opts@
-    $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR).crt' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
-
-    # build posix threads
-    mkdir '$(BUILD_DIR).pthreads'
-    cd '$(BUILD_DIR).pthreads' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-libraries/winpthreads/configure' \
-        $(MXE_CONFIGURE_OPTS) \
-        --prefix='$(PREFIX)/$(TARGET)/mingw'
-    $(MAKE) -C '$(BUILD_DIR).pthreads' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR).pthreads' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
-
-    # build rest of gcc
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' all-target-libstdc++-v3
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
-
-    $(gcc_POST_BUILD)
-endef
 
 # libasprintf isn't needed, so build with --disable-libasprintf
 # this definition is for reference purposes only, we use the
@@ -495,15 +418,14 @@ endef
 # detection does not work when cross-compiling
 # build with jpeg-turbo and without lzma
 # disable POSIX threads with --without-threads, use Win32 threads instead
+# avoid linking against -lgdi32, see: https://github.com/kleisauke/net-vips/issues/61
 # exclude deprecated methods in MagickCore API
 define imagemagick_BUILD
-    # avoid linking against -lgdi32, see: https://github.com/kleisauke/net-vips/issues/61
-    $(SED) -i 's,-lgdi32,,g' $(SOURCE_DIR)/configure
-
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --without-fftw \
         --without-fontconfig \
+        --without-gdi32 \
         --without-gvc \
         --without-heic \
         --without-ltdl \

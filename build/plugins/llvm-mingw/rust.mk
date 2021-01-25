@@ -2,14 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# Temporarily pin to 2020-12-17 due to https://github.com/rust-lang/rust/issues/80148
-# https://static.rust-lang.org/dist/2020-12-17/rustc-nightly-src.tar.gz.sha256
+# https://static.rust-lang.org/dist/2021-01-25/rustc-nightly-src.tar.gz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := c2fe6cdaf4cd79e7b71c25224b42c521fa8841241f942bc6888589fa838e6433
+$(PKG)_CHECKSUM := 260488d0bde74f14409b498f61faf830cd254597b982ca14c486b3ca7d20e53d
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.gz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2020-12-17/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2021-01-25/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -48,7 +47,7 @@ define $(PKG)_BUILD_$(BUILD)
     # Enable networking while we build Rust from source. Assumes
     # that the Rust build is reproducible.
     echo 'static int __attribute__((unused)) _dummy;' > '$(BUILD_DIR)/dummy.c'
-    $(BUILD_CC) -shared -fPIC $(NONET_CFLAGS) -o $(NONET_LIB) $(BUILD_DIR)/dummy.c
+    $(BUILD_CC) -shared -fPIC $(NONET_CFLAGS) -o $(NONET_LIB) '$(BUILD_DIR)/dummy.c'
 
     # Build Rust
     cd '$(BUILD_DIR)' && \
@@ -59,7 +58,7 @@ define $(PKG)_BUILD_$(BUILD)
         $(PYTHON) $(SOURCE_DIR)/x.py install --keep-stage 1 -j '$(JOBS)' -v
 
     # Disable networking (again) for reproducible builds further on
-    $(BUILD_CC) -shared -fPIC $(NONET_CFLAGS) -o $(NONET_LIB) $(TOP_DIR)/tools/nonetwork.c
+    $(BUILD_CC) -shared -fPIC $(NONET_CFLAGS) -o $(NONET_LIB) '$(TOP_DIR)/tools/nonetwork.c'
 endef
 
 # Build the standard library of Rust using the build-std feature
@@ -98,7 +97,7 @@ define $(PKG)_BUILD
 
     # Enable networking while we build the standard library
     echo 'static int __attribute__((unused)) _dummy;' > '$(BUILD_DIR)/dummy.c'
-    $(BUILD_CC) -shared -fPIC $(NONET_CFLAGS) -o $(NONET_LIB) $(BUILD_DIR)/dummy.c
+    $(BUILD_CC) -shared -fPIC $(NONET_CFLAGS) -o $(NONET_LIB) '$(BUILD_DIR)/dummy.c'
 
     # Create a new temporary Cargo package
     CARGO_NAME=dummy \
@@ -106,30 +105,50 @@ define $(PKG)_BUILD
 
     # Build and prepare startup objects like rsbegin.o and rsend.o
     $(foreach FILE, rsbegin rsend, \
-        $(PREFIX)/$(BUILD)/bin/rustc --target $(TARGET_RUST) --emit=obj -o '$(BUILD_DIR)/$(FILE).o' \
+        $(PREFIX)/$(BUILD)/bin/rustc --target='$(TARGET_RUST)' --emit=obj -o '$(BUILD_DIR)/$(FILE).o' \
             '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/rtstartup/$(FILE).rs';)
 
     # Build the standard library
-    cd '$(BUILD_DIR)' && \
-        RUSTFLAGS='$(STD_FLAGS)' \
-        $(PREFIX)/$(BUILD)/bin/cargo build -Zbuild-std=panic_abort,std --release --target $(TARGET_RUST)
+    RUSTFLAGS='$(STD_FLAGS)' \
+    $(PREFIX)/$(BUILD)/bin/cargo build \
+        --release \
+        --target='$(TARGET_RUST)' \
+        --no-default-features \
+        --manifest-path='$(BUILD_DIR)/Cargo.toml' \
+        -Zbuild-std=panic_abort,std \
+        -Zbuild-std-features=panic_immediate_abort
 
     # Disable networking (again) for reproducible builds further on
-    $(BUILD_CC) -shared -fPIC $(NONET_CFLAGS) -o $(NONET_LIB) $(TOP_DIR)/tools/nonetwork.c
+    $(BUILD_CC) -shared -fPIC $(NONET_CFLAGS) -o $(NONET_LIB) '$(TOP_DIR)/tools/nonetwork.c'
+
+    # Install the startup objects
+    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
+    mv -vf '$(BUILD_DIR)/'rs{begin,end}.o \
+        '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
 
     # Install the standard library
-    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/rustlib/$(TARGET_RUST)/lib'
     mv -vf '$(BUILD_DIR)/target/$(TARGET_RUST)/release/deps/'*.{rlib,rmeta} \
-        '$(PREFIX)/$(TARGET)/lib/rustlib/$(TARGET_RUST)/lib'
+        '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
 
     # Install Cargo config
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
     (echo '[build]'; \
      echo 'target = "$(TARGET_RUST)"'; \
+     echo '[target.$(TARGET_RUST)]'; \
      echo 'rustflags = ['; \
-     echo '    "--sysroot",'; \
-     echo '    "$(PREFIX)/$(TARGET)"'; \
-     echo ']';) \
+     echo '    "-C",'; \
+     echo '    "linker-flavor=ld.lld",'; \
+     echo '    "-C",'; \
+     echo '    "link-self-contained=yes",'; \
+     echo '    "-C",'; \
+     echo '    "link-arg=-L$(PREFIX)/$(TARGET)/lib",'; \
+     echo '    "-C",'; \
+     echo '    "link-arg=-L$(PREFIX)/$(TARGET)/mingw/lib",'; \
+     echo '    "-C",'; \
+     echo '    "link-arg=-L$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows"'; \
+     echo ']'; \
+     echo 'linker = "$(PREFIX)/$(BUILD)/bin/ld.lld"'; \
+     echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"';) \
              > '$(PREFIX)/$(TARGET)/.cargo/config'
 
     # Install prefixed wrappers

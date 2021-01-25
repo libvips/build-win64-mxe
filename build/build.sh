@@ -44,14 +44,14 @@ deps="${1:-web}"
 target="${2:-x86_64-w64-mingw32.shared.win32}"
 
 if [[ "$target" == *.static* ]] && [ "$deps" = "all" ]; then
-  echo "WARNING: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license."
+  echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
   exit 1
 fi
 
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="a5c92bcc39d9bbe1a46925efb54616568475a368"
+revision="138fcd2e5d377caae209342f304c0c926a423425"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -84,11 +84,7 @@ else
 fi
 
 # The 'plugins' variable controls which plugins are in use
-plugins="plugins/gcc10 plugins/meson-wrapper $work_dir"
-
-if [ "$LLVM" = "true" ]; then
-  plugins+=" $work_dir/plugins/llvm-mingw"
-fi
+plugins="plugins/meson-wrapper $work_dir"
 
 if [ "$MOZJPEG" = "true" ]; then
   plugins+=" $work_dir/plugins/mozjpeg"
@@ -96,6 +92,12 @@ fi
 
 if [ "$HEVC" = "true" ]; then
   plugins+=" $work_dir/plugins/hevc"
+fi
+
+if [ "$LLVM" = "true" ]; then
+  plugins+=" $work_dir/plugins/llvm-mingw"
+else
+  plugins+=" plugins/gcc10 $work_dir/plugins/gcc"
 fi
 
 # Avoid shipping the gettext DLL (libintl-8.dll),

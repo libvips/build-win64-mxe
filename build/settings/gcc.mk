@@ -1,6 +1,6 @@
 # MXE will run as many parallel jobs as there are
 # available CPU cores. This variable can limit this.
-#DEFAULT_MAX_JOBS := 4
+#JOBS := 4
 
 # Turn on debugging
 #export CFLAGS   := -g

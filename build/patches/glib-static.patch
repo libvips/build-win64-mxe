@@ -5,14 +5,14 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 13 May 2019 17:00:00 +0200
-Subject: [PATCH 1/1] Build gio, gmodule and gthread static
+Subject: [PATCH 1/2] Build gio, gmodule and gthread static
 
 
 diff --git a/gio/giomodule.c b/gio/giomodule.c
 index 1111111..2222222 100644
 --- a/gio/giomodule.c
 +++ b/gio/giomodule.c
-@@ -1057,28 +1057,6 @@ extern GType _g_win32_network_monitor_get_type (void);
+@@ -1069,28 +1069,6 @@ extern GType _g_win32_network_monitor_get_type (void);
  
  static HMODULE gio_dll = NULL;
  
@@ -45,7 +45,7 @@ diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -780,7 +780,7 @@ else
+@@ -784,7 +784,7 @@ else
    gio_dtrace_hdr = []
  endif
  
@@ -80,3 +80,29 @@ index 1111111..2222222 100644
    sources : gthread_sources,
    version : library_version,
    soversion : soversion,
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 24 Jan 2021 13:45:03 +0100
+Subject: [PATCH 2/2] Define INITGUID before including shlobj.h
+
+Fixes undefined symbol errors during static linking:
+
+lld-link: error: undefined symbol: CLSID_ApplicationActivationManager
+>>> referenced by libgio-2.0.a(gwin32appinfo.c.obj):(.refptr.CLSID_ApplicationActivationManager)
+
+lld-link: error: undefined symbol: IID_IApplicationActivationManager
+>>> referenced by libgio-2.0.a(gwin32appinfo.c.obj):(.refptr.IID_IApplicationActivationManager)
+
+diff --git a/gio/gwin32appinfo.c b/gio/gwin32appinfo.c
+index 1111111..2222222 100644
+--- a/gio/gwin32appinfo.c
++++ b/gio/gwin32appinfo.c
+@@ -23,6 +23,7 @@
+ #include "config.h"
+ 
+ #define COBJMACROS
++#define INITGUID
+ 
+ #include <string.h>
+ 

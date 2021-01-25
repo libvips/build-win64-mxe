@@ -2,9 +2,9 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/rust-1.48.0-x86_64-unknown-linux-gnu.tar.gz.sha256
-$(PKG)_VERSION  := 1.48.0
-$(PKG)_CHECKSUM := 950420a35b2dd9091f1b93a9ccd5abc026ca7112e667f246b1deb79204e2038b
+# https://static.rust-lang.org/dist/rust-1.49.0-x86_64-unknown-linux-gnu.tar.gz.sha256
+$(PKG)_VERSION  := 1.49.0
+$(PKG)_CHECKSUM := 8b14446df82f3707d69cf58fed92f18e0bff91621c62baf89288ef70e3e92981
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)-x86_64-unknown-linux-gnu
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION)-x86_64-unknown-linux-gnu.tar.gz
 $(PKG)_URL      := https://static.rust-lang.org/dist/$($(PKG)_FILE)
@@ -15,12 +15,24 @@ define $(PKG)_BUILD
     mv '$(BUILD_DIR)/$(rust-std-$(PROCESSOR)_SUBDIR)' '$(SOURCE_DIR)'
     echo 'rust-std-$(PROCESSOR)-pc-windows-gnu' >> '$(SOURCE_DIR)/components'
 
+    # Install in $(PREFIX)/$(TARGET) to avoid conflicts
+    # with the llvm-mingw plugin.
+    # TODO(kleisauke): Could be installed in $(PREFIX)/$(BUILD)
+    # if we build all binaries with LLVM.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/install.sh \
         --prefix='$(PREFIX)/$(TARGET)' \
         --components='rustc,cargo,rust-std-x86_64-unknown-linux-gnu,rust-std-$(PROCESSOR)-pc-windows-gnu'
 
-    # install prefixed wrappers
+    # Install Cargo config
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
+    (echo '[build]'; \
+     echo 'target = "$(PROCESSOR)-pc-windows-gnu"'; \
+     echo '[target.$(PROCESSOR)-pc-windows-gnu]'; \
+     echo 'linker = "$(TARGET)-gcc"'; \
+     echo 'ar = "$(TARGET)-ar"';) \
+             > '$(PREFIX)/$(TARGET)/.cargo/config'
+
+    # Install prefixed wrappers
     (echo '#!/usr/bin/env bash'; \
      echo 'CARGO_HOME="$(PREFIX)/$(TARGET)/.cargo" \'; \
      echo 'RUSTC="$(PREFIX)/bin/$(TARGET)-rustc" \'; \

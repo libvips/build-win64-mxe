@@ -14,8 +14,8 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [fribidi]       | 1.0.10    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.2    | LGPLv3                                                       |
 | [giflib]        | 5.1.4     | MIT Licence                                                  |
-| [glib]          | 2.67.1    | LGPLv3                                                       |
-| [harfbuzz]      | 2.7.2     | MIT Licence                                                  |
+| [glib]          | 2.67.2    | LGPLv3                                                       |
+| [harfbuzz]      | 2.7.4     | MIT Licence                                                  |
 | [lcms]          | 2.11      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
 | [libffi]        | 3.3       | MIT Licence                                                  |
@@ -25,12 +25,12 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
 | [librsvg]       | 2.50.2    | LGPLv3                                                       |
 | [libspng]       | 0.6.1     | BSD 2-Clause                                                 |
-| [libtiff]       | 4.1.0     | [libtiff License] (BSD-like)                                 |
+| [libtiff]       | 4.2.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.10.5    | LGPLv3                                                       |
 | [libwebp]       | 1.1.0     | New BSD License                                              |
 | [libxml2]       | 2.9.10    | MIT Licence                                                  |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.48.0    | LGPLv3                                                       |
+| [pango]         | 1.48.1    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [zlib]          | 1.2.11    | [zlib Licence]                                               |
 
@@ -79,14 +79,14 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
 | [hdf5]          | 1.12.0    | BSD-like                                                     |
-| [imagemagick]   | 6.9.11-50 | [ImageMagick License] (GPL-like)                             |
+| [imagemagick]   | 6.9.11-59 | [ImageMagick License] (GPL-like)                             |
 | [matio]         | 1.5.19    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
 | [openexr]       | 2.5.3     | BSD 3-Clause                                                 |
-| [openjpeg]      | 2.3.1     | BSD 2-Clause                                                 |
+| [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 20.12.1   | GPLv2                                                        |
-| [sqlite]        | 3.34.0    | Public domain                                                |
+| [poppler]       | 21.01.0   | GPLv2                                                        |
+| [sqlite]        | 3.34.1    | Public domain                                                |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [hdf5]: https://www.hdfgroup.org/solutions/hdf5/

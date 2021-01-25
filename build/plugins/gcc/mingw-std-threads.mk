@@ -8,7 +8,6 @@ $(PKG)_CHECKSUM := eaa451e3db0b64b285ae2bc163e30f384ee933bb2765ed428b95686a94814
 $(PKG)_GH_CONF  := meganz/mingw-std-threads/branches/master
 $(PKG)_DEPS     :=
 
-
 define $(PKG)_BUILD
     $(if $(WIN32_THREADS),\
         $(INSTALL) -d '$(PREFIX)/$(TARGET)/include/$(PKG)'; \

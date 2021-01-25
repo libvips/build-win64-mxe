@@ -25,7 +25,7 @@ diff --git a/poppler/Annot.h b/poppler/Annot.h
 index 1111111..2222222 100644
 --- a/poppler/Annot.h
 +++ b/poppler/Annot.h
-@@ -46,7 +46,11 @@
+@@ -48,7 +48,11 @@
  
  #include <memory>
  #include <atomic>

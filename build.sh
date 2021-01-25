@@ -97,6 +97,15 @@ else
   # GCC because POSIX threads functionality is significantly
   # slower than the native Win32 implementation.
   threads="win32"
+  # Use Dwarf-2 (DW2) stack frame unwinding for i686, as
+  # there is a performance overhead when using SJLJ.
+  # Furthermore, the dwarf exception model is basically
+  # used by default by all popular native GCC-based MinGW
+  # toolchains (such as Rust, MSYS2, Fedora 32+, etc.).
+  # See: https://fedoraproject.org/wiki/Changes/Mingw32GccDwarf2
+  if [ "$arch" = "i686" ]; then
+    unwind="dw2"
+  fi
 fi
 
 if [ "$with_hevc" = "true" ] && [ "$deps" = "web" ]; then
@@ -109,7 +118,7 @@ if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
   exit 1
 fi
 
-target="$arch-w64-mingw32.$type.$threads"
+target="$arch-w64-mingw32.$type.$threads${unwind:+.$unwind}"
 
 # Is docker available?
 if ! [ -x "$(command -v docker)" ]; then
