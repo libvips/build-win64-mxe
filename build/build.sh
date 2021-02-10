@@ -117,7 +117,7 @@ make pe-util \
 # Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc),
 # gendef (a tool for generating def files from DLLs)
 # and libvips (+ dependencies).
-make meson-wrapper gendef vips-$deps \
+make meson-wrapper gendef vips-gmic \
   MXE_PLUGIN_DIRS="$plugins" \
   MXE_TARGETS=$target.$deps
 
