@@ -2,9 +2,9 @@ PKG             := vips-gmic
 $(PKG)_WEBSITE  := https://github.com/jcupitt/vips-gmic
 $(PKG)_DESCR    := libvips plugin for running gmic commands
 $(PKG)_IGNORE   :=
-# https://github.com/kleisauke/vips-gmic/tarball/a03dc3865e6fd486a9572c596be147fb0c52b1ae
-$(PKG)_VERSION  := a03dc38
-$(PKG)_CHECKSUM := 1f551e8f5ee35fdc0606f3cccee108294e3ad4f6dd5c5af6a6b04c62b60c9e12
+# https://github.com/kleisauke/vips-gmic/tarball/6ce4541164d9fb19f0b03ba2a54503338b06a043
+$(PKG)_VERSION  := 6ce4541
+$(PKG)_CHECKSUM := 27ae2d52c881c71e0d9464c308ace49b3df84e7f5a9d438e42b97bdf73e949cb
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-gmic-[0-9]*.patch)))
 $(PKG)_GH_CONF  := kleisauke/vips-gmic/branches/master
 $(PKG)_DEPS     := vips-web
