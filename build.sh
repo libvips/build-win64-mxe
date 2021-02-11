@@ -8,6 +8,7 @@ Build libvips for Windows in a Docker container
 
 OPTIONS:
 	--help			Show the help and exit
+	--with-gmic		Build the G'MIC plugin
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaires with debug symbols
 	--without-llvm		Build binaires with GCC
@@ -46,6 +47,7 @@ EOF
 . $PWD/build/variables.sh
 
 # Default arguments
+with_gmic=false
 with_hevc=false
 with_debug=false
 with_llvm=true
@@ -58,6 +60,7 @@ POSITIONAL=()
 while [ $# -gt 0 ]; do
   case $1 in
     -h|--help) usage 0 ;;
+    --with-gmic) with_gmic=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --without-llvm) with_llvm=false ;;
@@ -119,6 +122,11 @@ if [ "$with_hevc" = "true" ] && [ "$deps" = "web" ]; then
   exit 1
 fi
 
+if [ "$with_gmic" = "true" ] && [ "$deps" = "web" ]; then
+  echo "ERROR: The G'MIC plugin can only be built for the \"all\" variant." >&2
+  exit 1
+fi
+
 if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
   echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
   exit 1
@@ -144,6 +152,7 @@ docker build -t libvips-build-win-mxe container
 docker run --rm -t \
   -u $(id -u):$(id -g) \
   -v $PWD/build:/data \
+  -e "GMIC=$with_gmic" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "LLVM=$with_llvm" \

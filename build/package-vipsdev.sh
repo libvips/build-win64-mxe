@@ -67,6 +67,10 @@ if [ "$type" = "static" ]; then
   zip_suffix+="-static"
 fi
 
+if [ "$GMIC" = "true" ]; then
+  zip_suffix+="-gmic"
+fi
+
 if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
 fi
@@ -87,6 +91,15 @@ if [ "$ZLIB_NG" = "false" ]; then
   zip_suffix+="-zlib-vanilla"
 fi
 
+# Utilities
+peldd=$mxe_prefix/$build_os/bin/peldd
+strip=$mxe_prefix/bin/$target.$deps-strip
+
+# Directories
+install_dir=$mxe_prefix/$target.$deps
+bin_dir=$install_dir/bin
+plugin_dir=$install_dir/lib/vips-plugins-$vips_version
+
 echo "Copying libvips and dependencies"
 
 # Need to whitelist the Universal C Runtime (CRT) DLLs
@@ -97,17 +110,27 @@ whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math
 whitelist+=(userenv.dll)
 
 # Copy libvips and dependencies with pe-util
-$mxe_prefix/$build_os/bin/peldd \
-  $mxe_prefix/$target.$deps/bin/$target_dll \
-  --clear-path \
-  --path $mxe_prefix/$target.$deps/bin \
-  ${whitelist[@]/#/--wlist } \
-  -a | xargs cp -t $repackage_dir/bin
+binaries=$($peldd $bin_dir/$target_dll --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
+for dll in $binaries; do
+  cp $dll $repackage_dir/bin
+done
 
-echo "Copying install area $mxe_prefix/$target.$deps/"
+# Copy the transitive dependencies of the plugins
+# that are not already present in the bin directory.
+if [ -d "$plugin_dir" ]; then
+  mkdir -p $repackage_dir/lib/vips-plugins-$vips_version
+  for plugin in $plugin_dir/*.dll; do
+    binaries=$($peldd $plugin --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --transitive)
+    for dll in $binaries; do
+      cp -n $dll $repackage_dir/bin
+    done
+  done
+fi
+
+echo "Copying install area $install_dir/"
 
 # Follow symlinks when copying /share, /etc, /lib and /include
-cp -Lr $mxe_prefix/$target.$deps/{share,etc,lib,include} $repackage_dir
+cp -Lr $install_dir/{share,etc,lib,include} $repackage_dir
 
 echo "Generating import files"
 ./gendeflibs.sh $deps $target
@@ -136,18 +159,19 @@ rm $repackage_dir/{share,lib,include}/.gitkeep
 echo "Copying vips executables"
 
 # We still need to copy the vips executables
-cp $mxe_prefix/$target.$deps/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
+cp $install_dir/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
 
 echo "Strip unneeded symbols"
 
 # Remove all symbols that are not needed
 if [ "$DEBUG" = "false" ]; then
-  $mxe_prefix/bin/$target.$deps-strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
+  $strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
+  [ -d "$plugin_dir" ] && $strip --strip-unneeded $repackage_dir/lib/vips-plugins-$vips_version/*.dll
 fi
 
 echo "Copying packaging files"
 
-cp $mxe_prefix/$target.$deps/vips-packaging/{AUTHORS,ChangeLog,COPYING,README.md,versions.json} $repackage_dir
+cp $install_dir/vips-packaging/{AUTHORS,ChangeLog,COPYING,README.md,versions.json} $repackage_dir
 
 echo "Creating $zipfile"
 

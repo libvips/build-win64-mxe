@@ -131,6 +131,13 @@ make meson-wrapper gendef vips-$deps \
   MXE_PLUGIN_DIRS="$plugins" \
   MXE_TARGETS=$target.$deps
 
+# Build vips-gmic, if requested
+if [ "$GMIC" = "true" ]; then
+  make meson-wrapper vips-gmic \
+    MXE_PLUGIN_DIRS="$plugins" \
+    MXE_TARGETS=$target.$deps
+fi
+
 # Build and bundle llvm-mingw tests
 if [ "$LLVM" = "true" ]; then
   make test-llvm-mingw \

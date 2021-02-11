@@ -2,12 +2,11 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.10.6
-$(PKG)_CHECKSUM := 2468088d958e0e2de1be2991ff8940bf45664a826c0dad12342e1804e2805a6e
+# https://github.com/kleisauke/libvips/tarball/b113203525de252a0034b20f05acd37066cc7ade
+$(PKG)_VERSION  := b113203
+$(PKG)_CHECKSUM := 8ecb49488ec3a31ad00e19666949ac695946c6fec33722c59835ed168716fee9
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
+$(PKG)_GH_CONF  := kleisauke/libvips/branches/gmodulized
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc
@@ -58,7 +57,7 @@ define $(PKG)_BUILD
 
     # Always build as shared library, we need
     # libvips-42.dll for the language bindings.
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/autogen.sh \
         --host='$(TARGET)' \
         --build='$(BUILD)' \
         --prefix='$(PREFIX)/$(TARGET)' \
@@ -80,6 +79,7 @@ define $(PKG)_BUILD
         --without-radiance \
         --disable-introspection \
         --disable-deprecated \
+        --disable-modules \
         $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all")
 
     # libtool should automatically generate a list
