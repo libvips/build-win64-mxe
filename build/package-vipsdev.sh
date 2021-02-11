@@ -79,6 +79,8 @@ if [ "$LLVM" = "true" ] && [[ "$arch" != "arm"* ]]; then
   zip_suffix+="-llvm"
 fi
 
+plugin_dir=$mxe_prefix/$target.$deps/lib/vips-plugins-$vips_version
+
 echo "Copying libvips and dependencies"
 
 # Need to whitelist the Universal C Runtime (CRT) DLLs
@@ -96,10 +98,21 @@ $mxe_prefix/$build_os/bin/peldd \
   ${whitelist[@]/#/--wlist } \
   -a | xargs cp -t $repackage_dir/bin
 
+# Also copy the dependencies of the plugins
+if [ -d "$plugin_dir" ]; then
+  $mxe_prefix/$build_os/bin/peldd \
+    $plugin_dir/*.dll \
+    --clear-path \
+    --path $mxe_prefix/$target.$deps/bin \
+    ${whitelist[@]/#/--wlist } \
+    -a | xargs cp -t $repackage_dir/bin
+fi
+
 echo "Copying install area $mxe_prefix/$target.$deps/"
 
 # Follow symlinks when copying /share, /etc, /lib and /include
 cp -Lr $mxe_prefix/$target.$deps/{share,etc,lib,include} $repackage_dir
+plugin_dir=$repackage_dir/lib/vips-plugins-$vips_version
 
 echo "Generating import files"
 ./gendeflibs.sh $deps $target
@@ -134,6 +147,7 @@ echo "Strip unneeded symbols"
 
 # Remove all symbols that are not needed
 $mxe_prefix/bin/$target.$deps-strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
+[ -d "$plugin_dir" ] && $mxe_prefix/bin/$target.$deps-strip --strip-unneeded $plugin_dir/*.dll
 
 echo "Copying packaging files"
 

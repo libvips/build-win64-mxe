@@ -2,12 +2,11 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.10.5
-$(PKG)_CHECKSUM := a4eef2f5334ab6dbf133cd3c6d6394d5bdb3e76d5ea4d578b02e1bc3d9e1cfd8
+# https://github.com/kleisauke/libvips/tarball/7fe12083b65719d38b084d8d3b5a2c1d07e12863
+$(PKG)_VERSION  := 7fe1208
+$(PKG)_CHECKSUM := 89a85c6ce8e4662bca719b9fbf7886ab81213f1c818c604fa01a05844eca52c3
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
+$(PKG)_GH_CONF  := kleisauke/libvips/branches/openslide-module
 $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
                    libgsf libjpeg-turbo tiff openslide lcms libexif libheif \
                    imagemagick libpng libspng openexr cfitsio nifticlib orc
@@ -66,7 +65,7 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/autogen.sh \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
         --without-pdfium \
