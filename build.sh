@@ -11,6 +11,7 @@ OPTIONS:
 	-c, --commit <COMMIT>	The commit to build libvips from
 	-r, --ref <REF>		The branch or tag to build libvips from
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
+	--with-gmic		Build the G'MIC module
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaires with debug symbols
 	--without-llvm		Build binaires with GCC
@@ -51,6 +52,7 @@ EOF
 # Default arguments
 git_commit=""
 git_ref=""
+with_gmic=false
 with_hevc=false
 with_debug=false
 with_llvm=true
@@ -66,6 +68,7 @@ while [ $# -gt 0 ]; do
     -c|--commit) git_commit="$2"; shift ;;
     -r|--ref) git_ref="$2"; shift ;;
     --nightly) git_ref="master" ;;
+    --with-gmic) with_gmic=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --without-llvm) with_llvm=false ;;
@@ -122,6 +125,11 @@ if [ "$with_hevc" = "true" ] && [ "$deps" = "web" ]; then
   exit 1
 fi
 
+if [ "$with_gmic" = "true" ] && [ "$deps" = "web" ]; then
+  echo "ERROR: The G'MIC module can only be built for the \"all\" variant." >&2
+  exit 1
+fi
+
 if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
   echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
   exit 1
@@ -172,6 +180,7 @@ $oci_runtime run --rm -t \
   -u $(id -u):$(id -g) \
   -v $PWD/build:/data \
   -e "GIT_COMMIT=$git_commit" \
+  -e "GMIC=$with_gmic" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "LLVM=$with_llvm" \

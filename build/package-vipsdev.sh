@@ -66,6 +66,10 @@ if [ "$type" = "static" ]; then
   zip_suffix+="-static"
 fi
 
+if [ "$GMIC" = "true" ]; then
+  zip_suffix+="-gmic"
+fi
+
 if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
 fi

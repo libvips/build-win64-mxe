@@ -141,6 +141,13 @@ make gendef vips-$deps \
   MXE_TARGETS=$target.$deps \
   GIT_COMMIT=$GIT_COMMIT
 
+# Build vips-gmic, if requested
+if [ "$GMIC" = "true" ]; then
+  make vips-gmic \
+    MXE_PLUGIN_DIRS="$plugins" \
+    MXE_TARGETS=$target.$deps
+fi
+
 # Build and bundle llvm-mingw tests when debugging
 if [ "$LLVM" = "true" ] && [ "$DEBUG" = "true" ]; then
   make test-llvm-mingw \
