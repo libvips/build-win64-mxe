@@ -96,16 +96,18 @@ $mxe_prefix/$build_os/bin/peldd \
   --clear-path \
   --path $mxe_prefix/$target.$deps/bin \
   ${whitelist[@]/#/--wlist } \
-  -a | xargs cp -t $repackage_dir/bin
+  --all | xargs cp -t $repackage_dir/bin
 
-# Also copy the dependencies of the plugins
+# Also copy the transitive dependencies of the plugins
 if [ -d "$plugin_dir" ]; then
-  $mxe_prefix/$build_os/bin/peldd \
-    $plugin_dir/*.dll \
-    --clear-path \
-    --path $mxe_prefix/$target.$deps/bin \
-    ${whitelist[@]/#/--wlist } \
-    -a | xargs cp -t $repackage_dir/bin
+  for dllfile in $plugin_dir/*.dll; do
+    $mxe_prefix/$build_os/bin/peldd \
+      $dllfile \
+      --clear-path \
+      --path $mxe_prefix/$target.$deps/bin \
+      ${whitelist[@]/#/--wlist } \
+      --transitive | xargs cp -nt $repackage_dir/bin
+  done
 fi
 
 echo "Copying install area $mxe_prefix/$target.$deps/"
