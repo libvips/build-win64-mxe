@@ -67,6 +67,10 @@ if [ "$type" = "static" ]; then
   zip_suffix+="-static"
 fi
 
+if [ "$GMIC" = "true" ]; then
+  zip_suffix+="-gmic"
+fi
+
 if [ "$MOZJPEG" = "true" ]; then
   zip_suffix+="-mozjpeg"
 fi
