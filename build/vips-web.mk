@@ -2,9 +2,9 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-# https://github.com/kleisauke/libvips/tarball/0a58df50bea1c225ac05b5ad23e24dfd49bcfe34
-$(PKG)_VERSION  := 0a58df5
-$(PKG)_CHECKSUM := 6b58928539ca05cf7246e312ab0b098f0d7329d1eb6b92348b447d2eb9f7c08a
+# https://github.com/kleisauke/libvips/tarball/01c07ea0a8d41ed0eefbe276aa439180d324f2b6
+$(PKG)_VERSION  := 01c07ea
+$(PKG)_CHECKSUM := f960e072c99c8f86e1d1c6287b172b0b150dae7d2b89dda15088bbc6276a0e9c
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
 $(PKG)_GH_CONF  := kleisauke/libvips/branches/openslide-module
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
