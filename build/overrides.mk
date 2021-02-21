@@ -30,22 +30,22 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.11-59
-imagemagick_CHECKSUM := 31d75224733f89b410c5b99a3a5bb12e2daf6ee0a75e5129fa7791dac134b6aa
+imagemagick_VERSION  := 6.9.11-62
+imagemagick_CHECKSUM := a6d639216c98fa5b45c5efe03b163e2313fa121a9d0778a3a8cd4c8b01f03eb3
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.50.2
-librsvg_CHECKSUM := 6211f271ce4cd44a7318190d36712e9cea384a933d3e3570004edeb210a056d3
+librsvg_VERSION  := 2.51.0
+librsvg_CHECKSUM := 89d32e38445025e1b1d9af3dd9d3aeb9f6fce527aeecbecf38b369b34c80c038
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.48.1
-pango_CHECKSUM := 08c2d550a96559f15fb317d7167b96df57ef743fef946f4e274bd8b6f2918058
+pango_VERSION  := 1.48.2
+pango_CHECKSUM := d21f8b30dc8abdfc55de25656ecb88dc1105eeeb315e5e2a980dcef8010c2c80
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -61,17 +61,9 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
-# upstream version is 1.0.3
-libwebp_VERSION  := 1.1.0
-libwebp_CHECKSUM := 98a052268cc4d5ece27f76572a7f50293f439c17a98e67c4ea0c7ed6f50ef043
-libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
-libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
-libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
-libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
-
 # upstream version is 2.50.2
-glib_VERSION  := 2.67.2
-glib_CHECKSUM := b41d42d6c572e1e420ffc38a077e0157e0b53b5a94c9647a3dc3701043c3b69b
+glib_VERSION  := 2.67.4
+glib_CHECKSUM := 8d87b962032dadfcae8df62d248aa91fed2c7a43faf2c6d8b9107eb6c50e5b14
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -96,8 +88,8 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 2.5.3
-openexr_CHECKSUM := 6a6525e6e3907715c6a55887716d7e42d09b54d2457323fcee35a0376960bebf
+openexr_VERSION  := 2.5.5
+openexr_CHECKSUM := 59e98361cb31456a9634378d0f653a2b9554b8900f233450f2396ff495ea76b3
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -164,10 +156,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 8.0.0
-# Update MinGW-w64 to 6a1b8d0
-# https://github.com/mirror/mingw-w64/tarball/6a1b8d0eae98e0cf183fbbdcc50bb7090406583f
-mingw-w64_VERSION  := 6a1b8d0
-mingw-w64_CHECKSUM := 8d8911c6e93848de00660959306694e8a502d469028678ffe80c8a5aa93a5024
+# Update MinGW-w64 to ea40a87
+# https://github.com/mirror/mingw-w64/tarball/ea40a87ad09703b4cc0a47b83a5c4ed2a8276482
+mingw-w64_VERSION  := ea40a87
+mingw-w64_CHECKSUM := c5194bc7c7472f8376cf2f2df989af8bb84717a7cafbe3508b325e0c1e29929b
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mirror-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mirror-mingw-w64-$(mingw-w64_VERSION).tar.gz
@@ -511,7 +503,6 @@ define librsvg_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-introspection \
-        --disable-tools \
         --disable-nls \
         --without-libiconv-prefix \
         --without-libintl-prefix \
@@ -519,8 +510,8 @@ define librsvg_BUILD
         CARGO='$(TARGET)-cargo' \
         RUSTC='$(TARGET)-rustc'
 
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_SCRIPTS=
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=
 endef
 
 # compile with CMake and with libjpeg-turbo
@@ -716,6 +707,7 @@ define openexr_BUILD
         -DOPENEXR_INSTALL_PKG_CONFIG=ON \
         -DBUILD_TESTING=OFF \
         -DOPENEXR_BUILD_UTILS=OFF \
+        $(if $(WIN32_THREADS), -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads') \
         '$(SOURCE_DIR)/OpenEXR'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
@@ -723,12 +715,15 @@ endef
 
 # build with CMake.
 define ilmbase_BUILD
+    $(if $(WIN32_THREADS),\
+        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(ilmbase_PATCHES))))/ilmbase-mingw-std-threads.patch)
+
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-        $(if $(WIN32_THREADS), -DILMBASE_FORCE_CXX03=ON) \
         -DOPENEXR_CXX_STANDARD=14 \
         -DILMBASE_INSTALL_PKG_CONFIG=ON \
         -DBUILD_TESTING=OFF \
         -DBUILD_SHARED_LIBS=OFF \
+        $(if $(WIN32_THREADS), -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads') \
         '$(SOURCE_DIR)/IlmBase'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install

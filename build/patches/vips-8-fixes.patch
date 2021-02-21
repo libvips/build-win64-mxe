@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 22 Dec 2020 10:32:43 +0100
-Subject: [PATCH 1/2] Ensure memory source is non-null
+Subject: [PATCH 1/4] Ensure memory source is non-null
 
 
 diff --git a/libvips/iofuncs/source.c b/libvips/iofuncs/source.c
@@ -22,7 +22,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 22 Dec 2020 11:19:09 +0100
-Subject: [PATCH 2/2] Avoid seeking on bad file descriptors
+Subject: [PATCH 2/4] Avoid seeking on bad file descriptors
 
 
 diff --git a/libvips/iofuncs/source.c b/libvips/iofuncs/source.c
@@ -49,3 +49,83 @@ index 1111111..2222222 100644
  }
  
  static void
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Lovell Fuller <github@lovell.info>
+Date: Mon, 8 Feb 2021 20:20:47 +0000
+Subject: [PATCH 3/4] svgload: remove deprecated librsvg include
+
+librsvg >= 2.40.3 includes it for you
+
+librsvg >= 2.51.0 removes it entirely
+
+diff --git a/libvips/foreign/svgload.c b/libvips/foreign/svgload.c
+index 1111111..2222222 100644
+--- a/libvips/foreign/svgload.c
++++ b/libvips/foreign/svgload.c
+@@ -80,13 +80,6 @@
+  */
+ #define RSVG_MAX_WIDTH (32767)
+ 
+-/* Old librsvg versions don't include librsvg-features.h by default.
+- * Newer versions deprecate direct inclusion.
+- */
+-#ifndef LIBRSVG_FEATURES_H
+-#include <librsvg/librsvg-features.h>
+-#endif
+-
+ /* A handy #define for we-will-handle-svgz.
+  */
+ #if LIBRSVG_CHECK_FEATURE(SVGZ) && defined(HAVE_ZLIB)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: John Cupitt <jcupitt@gmail.com>
+Date: Tue, 9 Feb 2021 16:07:51 +0000
+Subject: [PATCH 4/4] don't put glib includes inside extern "C" blocks
+
+see https://github.com/libvips/libvips/issues/1987
+
+diff --git a/libvips/include/vips/dispatch.h b/libvips/include/vips/dispatch.h
+index 1111111..2222222 100644
+--- a/libvips/include/vips/dispatch.h
++++ b/libvips/include/vips/dispatch.h
+@@ -33,11 +33,12 @@
+ #ifndef IM_DISPATCH_H
+ #define IM_DISPATCH_H
+ 
++#include <glib-object.h>
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif /*__cplusplus*/
+ 
+-#include <glib-object.h>
+ #include <vips/vips.h>
+ #include <vips/util.h>
+ 
+diff --git a/libvips/include/vips/vips.h b/libvips/include/vips/vips.h
+index 1111111..2222222 100644
+--- a/libvips/include/vips/vips.h
++++ b/libvips/include/vips/vips.h
+@@ -80,10 +80,6 @@
+ #ifndef VIPS_VIPS_H
+ #define VIPS_VIPS_H
+ 
+-#ifdef __cplusplus
+-extern "C" {
+-#endif /*__cplusplus*/
+-
+ #include <glib.h>
+ #include <glib/gstdio.h>
+ #include <gmodule.h>
+@@ -93,6 +89,10 @@ extern "C" {
+  */
+ #include <gio/gio.h>
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif /*__cplusplus*/
++
+ /* If we're being parsed by SWIG, remove gcc attributes.
+  */
+ #ifdef SWIG

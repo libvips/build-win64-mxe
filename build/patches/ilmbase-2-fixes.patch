@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 1 Oct 2019 13:00:00 +0200
-Subject: [PATCH 1/4] Make libraries private within the pkg-config file
+Subject: [PATCH 1/2] Make libraries private within the pkg-config file
 
 Assuming that IlmBase is built statically, this ensures that the
 libraries are not exposed during linking.
@@ -24,75 +24,10 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Tue, 1 Oct 2019 14:20:00 +0200
-Subject: [PATCH 2/4] Add ILMBASE_FORCE_CXX03 to IlmBaseConfig.h.in_cmake
-
-
-diff --git a/IlmBase/config/IlmBaseConfig.h.in_cmake b/IlmBase/config/IlmBaseConfig.h.in_cmake
-index 1111111..2222222 100644
---- a/IlmBase/config/IlmBaseConfig.h.in_cmake
-+++ b/IlmBase/config/IlmBaseConfig.h.in_cmake
-@@ -21,6 +21,12 @@
- //
- #cmakedefine ILMBASE_HAVE_LARGE_STACK
- 
-+//
-+// Define and set to 1 if the target system has c++11/14 support
-+// and you want IlmBase to NOT use it's features
-+//
-+#cmakedefine ILMBASE_FORCE_CXX03
-+
- //////////////////////
- //
- // C++ namespace configuration / options
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 7 May 2020 17:50:37 +0200
-Subject: [PATCH 3/4] Fix build errors on MinGW-w64
+Subject: [PATCH 3/3] Fix build errors on MinGW-w64
 
 
-diff --git a/IlmBase/IlmThread/IlmThreadMutexWin32.cpp b/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
-+++ b/IlmBase/IlmThread/IlmThreadMutexWin32.cpp
-@@ -42,7 +42,7 @@
- #include "IlmThreadMutex.h"
- 
- #ifdef ILMBASE_FORCE_CXX03
--#    if ((defined _WIN32 || defined _WIN64) && !defined(__MINGW64_VERSION_MAJOR))
-+#    if ((defined _WIN32 || defined _WIN64) && !defined(HAVE_PTHREAD))
- #        include "Iex.h"
- 
- ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_ENTER
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.cpp b/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-+++ b/IlmBase/IlmThread/IlmThreadSemaphore.cpp
-@@ -41,7 +41,7 @@
- 
- #include "IlmBaseConfig.h"
- 
--#if !defined (_WIN32) && !(_WIN64) && !(HAVE_PTHREAD)
-+#if !defined (_WIN32) && !defined (_WIN64) && !defined (HAVE_PTHREAD)
- #include "IlmThreadSemaphore.h"
- 
- ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_ENTER
-diff --git a/IlmBase/IlmThread/IlmThreadSemaphore.h b/IlmBase/IlmThread/IlmThreadSemaphore.h
-index 1111111..2222222 100644
---- a/IlmBase/IlmThread/IlmThreadSemaphore.h
-+++ b/IlmBase/IlmThread/IlmThreadSemaphore.h
-@@ -107,8 +107,8 @@ class ILMTHREAD_EXPORT Semaphore
- 	{
- 	    unsigned int count;
- 	    unsigned long numWaiting;
--#   if ILMBASE_FORCE_CXX03
--#      if HAVE_PTHREAD
-+#   ifdef ILMBASE_FORCE_CXX03
-+#      ifdef HAVE_PTHREAD
- 	    pthread_mutex_t mutex;
- 	    pthread_cond_t nonZero;
- #      else
 diff --git a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp b/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
 index 1111111..2222222 100644
 --- a/IlmBase/IlmThread/IlmThreadSemaphorePosixCompat.cpp
@@ -102,7 +37,7 @@ index 1111111..2222222 100644
  
  #if !defined (HAVE_POSIX_SEMAPHORES) && !defined (__APPLE__)
 -#if (!defined (_WIN32) && !defined (_WIN64)) || defined (__MINGW64_VERSION_MAJOR)
-+#if (!defined (_WIN32) && !defined (_WIN64)) || (defined (__MINGW64_VERSION_MAJOR) && defined (ILMBASE_FORCE_CXX03))
++#if (!defined (_WIN32) && !defined (_WIN64)) || defined (HAVE_PTHREAD)
  
  #include "Iex.h"
  #include <assert.h>
@@ -111,7 +46,7 @@ index 1111111..2222222 100644
      return value;
  }
 -#else
-+#elif !defined(ILMBASE_FORCE_CXX03)
++#elif !defined(HAVE_PTHREAD)
  Semaphore::Semaphore (unsigned int value)
  {
      _semaphore.count = value;
@@ -119,7 +54,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 7 May 2020 20:00:00 +0200
-Subject: [PATCH 4/4] Prefer native win32 threading functionality
+Subject: [PATCH 2/2] Prefer native win32 threading functionality
 
 
 diff --git a/IlmBase/IlmThread/CMakeLists.txt b/IlmBase/IlmThread/CMakeLists.txt

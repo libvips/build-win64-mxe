@@ -45,7 +45,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -679,10 +679,12 @@ supported_targets! {
+@@ -742,10 +742,12 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  
@@ -312,7 +312,7 @@ diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -89,7 +89,7 @@ extern "C" {
+@@ -92,7 +92,7 @@ extern "C" {
  }
  
  cfg_if::cfg_if! {
@@ -321,7 +321,7 @@ index 1111111..2222222 100644
      // Not ARM EHABI
      #[repr(C)]
      #[derive(Copy, Clone, PartialEq)]
-@@ -103,7 +103,7 @@ if #[cfg(all(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm
+@@ -106,7 +106,7 @@ if #[cfg(all(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm
      pub use _Unwind_Action::*;
  
      #[cfg_attr(all(feature = "llvm-libunwind",

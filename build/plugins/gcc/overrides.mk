@@ -31,8 +31,10 @@ binutils_URL_2    := https://ftpmirror.gnu.org/binutils/$(binutils_FILE)
 
 ## Override sub-dependencies
 
-poppler_DEPS  := $(poppler_DEPS) mingw-std-threads
+ilmbase_DEPS  := $(ilmbase_DEPS) mingw-std-threads
 libde265_DEPS := $(libde265_DEPS) mingw-std-threads
+openexr_DEPS  := $(openexr_DEPS) mingw-std-threads
+poppler_DEPS  := $(poppler_DEPS) mingw-std-threads
 
 ## Override build scripts
 

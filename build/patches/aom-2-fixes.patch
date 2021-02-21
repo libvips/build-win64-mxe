@@ -160,7 +160,7 @@ diff --git a/av1/encoder/encoder.c b/av1/encoder/encoder.c
 index 1111111..2222222 100644
 --- a/av1/encoder/encoder.c
 +++ b/av1/encoder/encoder.c
-@@ -6557,6 +6557,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
+@@ -6558,6 +6558,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
    return AOM_CODEC_OK;
  }
  
@@ -334,7 +334,7 @@ index 1111111..2222222 100644
  
  static const uint8_t extend_modes[INTRA_MODES] = {
    NEED_ABOVE | NEED_LEFT,                   // DC
-@@ -1142,8 +1143,8 @@ static void build_intra_predictors_high(
+@@ -1134,8 +1135,8 @@ static void build_intra_predictors_high(
    int i;
    uint16_t *dst = CONVERT_TO_SHORTPTR(dst8);
    uint16_t *ref = CONVERT_TO_SHORTPTR(ref8);
@@ -345,7 +345,7 @@ index 1111111..2222222 100644
    uint16_t *const above_row = above_data + 16;
    uint16_t *const left_col = left_data + 16;
    const int txwpx = tx_size_wide[tx_size];
-@@ -1157,6 +1158,12 @@ static void build_intra_predictors_high(
+@@ -1149,6 +1150,12 @@ static void build_intra_predictors_high(
    const int is_dr_mode = av1_is_directional_mode(mode);
    const int use_filter_intra = filter_intra_mode != FILTER_INTRA_MODES;
    int base = 128 << (xd->bd - 8);
@@ -358,7 +358,7 @@ index 1111111..2222222 100644
  
    // The default values if ref pixels are not available:
    // base   base-1 base-1 .. base-1 base-1 base-1 base-1 base-1 base-1
-@@ -1211,12 +1218,8 @@ static void build_intra_predictors_high(
+@@ -1203,12 +1210,8 @@ static void build_intra_predictors_high(
        }
        if (i < num_left_pixels_needed)
          aom_memset16(&left_col[i], left_col[i - 1], num_left_pixels_needed - i);
@@ -373,7 +373,7 @@ index 1111111..2222222 100644
      }
    }
  
-@@ -1238,12 +1241,8 @@ static void build_intra_predictors_high(
+@@ -1230,12 +1233,8 @@ static void build_intra_predictors_high(
        if (i < num_top_pixels_needed)
          aom_memset16(&above_row[i], above_row[i - 1],
                       num_top_pixels_needed - i);
@@ -388,7 +388,7 @@ index 1111111..2222222 100644
      }
    }
  
-@@ -1330,8 +1329,8 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
+@@ -1322,8 +1321,8 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
    int i;
    const uint8_t *above_ref = ref - ref_stride;
    const uint8_t *left_ref = ref - 1;
@@ -399,7 +399,7 @@ index 1111111..2222222 100644
    uint8_t *const above_row = above_data + 16;
    uint8_t *const left_col = left_data + 16;
    const int txwpx = tx_size_wide[tx_size];
-@@ -1342,6 +1341,12 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
+@@ -1334,6 +1333,12 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
    int p_angle = 0;
    const int is_dr_mode = av1_is_directional_mode(mode);
    const int use_filter_intra = filter_intra_mode != FILTER_INTRA_MODES;
@@ -412,7 +412,7 @@ index 1111111..2222222 100644
  
    // The default values if ref pixels are not available:
    // 128 127 127 .. 127 127 127 127 127 127
-@@ -1386,10 +1391,7 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
+@@ -1378,10 +1383,7 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
      int need_bottom = extend_modes[mode] & NEED_BOTTOMLEFT;
      if (use_filter_intra) need_bottom = 0;
      if (is_dr_mode) need_bottom = p_angle > 180;
@@ -424,7 +424,7 @@ index 1111111..2222222 100644
      i = 0;
      if (n_left_px > 0) {
        for (; i < n_left_px; i++) left_col[i] = left_ref[i * ref_stride];
-@@ -1400,12 +1402,8 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
+@@ -1392,12 +1394,8 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
        }
        if (i < num_left_pixels_needed)
          memset(&left_col[i], left_col[i - 1], num_left_pixels_needed - i);
@@ -439,7 +439,7 @@ index 1111111..2222222 100644
      }
    }
  
-@@ -1425,12 +1423,8 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
+@@ -1417,12 +1415,8 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
        }
        if (i < num_top_pixels_needed)
          memset(&above_row[i], above_row[i - 1], num_top_pixels_needed - i);

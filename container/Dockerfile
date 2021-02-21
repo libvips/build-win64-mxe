@@ -15,7 +15,7 @@ RUN apt-get update \
 
 # TODO: This patch needs to be incorporated upstream
 RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
-  && curl -L https://gist.github.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/a4aecefa3e069a3b3ae9b94a5489a0027ef7a0d3/meson-llvm-mingw.patch | git apply -v
+  && curl -L https://gist.github.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/794838c1417fbb173a04e3e3eb1eff286496c745/meson-llvm-mingw.patch | git apply -v
 
 # gas-preprocessor.pl is required for the ARM/ARM64 builds of libjpeg-turbo
 # TODO(kleisauke): This is no longer necessary once libjpeg-turbo 2.1 is released.

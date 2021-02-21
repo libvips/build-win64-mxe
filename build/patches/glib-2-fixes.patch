@@ -19,8 +19,8 @@ index 1111111..2222222 100644
    # intl.lib is not compatible with SAFESEH
    link_args : [noseh_link_args, glib_link_flags, win32_ldflags],
    include_directories : configinc,
--  dependencies : pcre_deps + [thread_dep, librt] + libintl_deps + libiconv + platform_deps + gnulib_libm_dependency + [libsysprof_capture_dep],
-+  dependencies : pcre_deps + [thread_dep, libintl, librt] + libiconv + platform_deps + gnulib_libm_dependency + [libsysprof_capture_dep],
+-  dependencies : pcre_deps + [thread_dep, librt] + libintl_deps + libiconv + platform_deps + [gnulib_libm_dependency, libm] + [libsysprof_capture_dep],
++  dependencies : pcre_deps + [thread_dep, libintl, librt] + libiconv + platform_deps + [gnulib_libm_dependency, libm] + [libsysprof_capture_dep],
    c_args : glib_c_args,
    objc_args : glib_c_args,
  )
@@ -42,7 +42,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2008,40 +2008,17 @@ endif
+@@ -2025,40 +2025,17 @@ endif
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.
@@ -95,7 +95,7 @@ diff --git a/gio/tests/meson.build b/gio/tests/meson.build
 index 1111111..2222222 100644
 --- a/gio/tests/meson.build
 +++ b/gio/tests/meson.build
-@@ -436,7 +436,7 @@ gdbus_example_objectmanager_sources = files(
+@@ -438,7 +438,7 @@ gdbus_example_objectmanager_sources = files(
    'gdbus-example-objectmanager-server.c',
  )
  
@@ -104,7 +104,7 @@ index 1111111..2222222 100644
    test_extra_programs += {
      # These three are manual-run tests because they need a session bus but don't bring one up themselves
      # FIXME: these build but don't seem to work!
-@@ -550,7 +550,7 @@ if installed_tests_enabled
+@@ -552,7 +552,7 @@ if installed_tests_enabled
    endforeach
  endif
  
