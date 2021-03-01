@@ -21,7 +21,6 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libffi]        | 3.3       | MIT Licence                                                  |
 | [libgsf]        | 1.14.47   | LGPLv3                                                       |
 | [libheif]       | 1.11.0    | LGPLv3                                                       |
-| [libjpeg-turbo] | 2.0.6     | [zlib License, IJG License]                                  |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
 | [librsvg]       | 2.51.0    | LGPLv3                                                       |
 | [libspng]       | 0.6.2     | BSD 2-Clause                                                 |
@@ -29,6 +28,7 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 | [libvips]       | 8.10.5    | LGPLv3                                                       |
 | [libwebp]       | 1.2.0     | New BSD License                                              |
 | [libxml2]       | 2.9.10    | MIT Licence                                                  |
+| [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.48.2    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
@@ -52,8 +52,6 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 [libffi]: https://github.com/libffi/libffi
 [libgsf]: https://gitlab.gnome.org/GNOME/libgsf
 [libheif]: https://github.com/strukturag/libheif
-[libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
-[zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
 [libpng]: https://github.com/glennrp/libpng
 [libpng License version 2]: https://github.com/glennrp/libpng/blob/master/LICENSE
 [librsvg]: https://gitlab.gnome.org/GNOME/librsvg
@@ -63,6 +61,8 @@ Experiment with building a libvips binary for Windows with [MXE](https://github.
 [libvips]: https://github.com/libvips/libvips
 [libwebp]: https://github.com/webmproject/libwebp
 [libxml2]: https://gitlab.gnome.org/GNOME/libxml2
+[mozjpeg]: https://github.com/mozilla/mozjpeg
+[zlib License, IJG License, BSD-3-Clause]: https://github.com/mozilla/mozjpeg/blob/master/LICENSE.md
 [orc]: https://gitlab.freedesktop.org/gstreamer/orc
 [orc License]: https://gitlab.freedesktop.org/gstreamer/orc/blob/master/COPYING
 [pango]: https://gitlab.gnome.org/GNOME/pango
@@ -101,27 +101,27 @@ Same as libvips-web + these extra dependencies:
 [poppler]: https://gitlab.freedesktop.org/poppler/poppler
 [sqlite]: https://www.sqlite.org/
 
-## MozJPEG
+## libjpeg-turbo
 
-MozJPEG is a libjpeg-turbo fork that provides increased compression for JPEG images
-(at the expense of compression performance). The above variants can optionally be built
-with MozJPEG instead of libjpeg-turbo. This can be turned on with the `--with-mozjpeg`
-argument. For example:
+libvips does not use any of MozJPEG's improvements by default unless explicitly set,
+yet one can still choose to build the above variants with libjpeg-turbo instead of
+MozJPEG. This can be accomplished with the `--without-mozjpeg` argument. For example:
 
 ```bash
-./build.sh --with-mozjpeg
+./build.sh --without-mozjpeg
 ```
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [mozjpeg]       | 4.0.0     | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 2.0.6     | [zlib License, IJG License]                                  |
 
-[mozjpeg]: https://github.com/mozilla/mozjpeg
+[libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
+[zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
 
 ## HEVC-related dependencies
 
 The above "all" variant can optionally be built with libde265 and x265 to process
-HEIC/HEIF images. This can be turned on with the `--with-hevc` argument. For example:
+HEIC images. This can be turned on with the `--with-hevc` argument. For example:
 
 ```bash
 ./build.sh all --with-hevc

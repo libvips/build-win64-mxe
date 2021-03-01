@@ -8,9 +8,9 @@ Build libvips for Windows in a Docker container
 
 OPTIONS:
 	--help		Show the help and exit
-	--with-mozjpeg	Build with MozJPEG instead of libjpeg-turbo
 	--with-hevc	Build libheif with the HEVC-related dependencies
 	--with-llvm	Build with llvm-mingw
+	--without-mozjpeg	Build with libjpeg-turbo instead of MozJPEG
 
 DEPS:
 	The group of dependencies to build libvips with,
@@ -49,9 +49,9 @@ fi
 . $PWD/build/variables.sh
 
 # Default arguments
-with_mozjpeg=false
 with_hevc=false
 with_llvm=false
+with_mozjpeg=true
 
 # Parse arguments
 POSITIONAL=()
@@ -59,9 +59,9 @@ POSITIONAL=()
 while [ $# -gt 0 ]; do
   case $1 in
     -h|--help) usage 0 ;;
-    --with-mozjpeg) with_mozjpeg=true ;;
     --with-hevc) with_hevc=true ;;
     --with-llvm) with_llvm=true ;;
+    --without-mozjpeg) with_mozjpeg=false ;;
     -*)
       echo "ERROR: Unknown option $1" >&2
       usage 1
