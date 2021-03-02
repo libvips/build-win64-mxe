@@ -2,14 +2,15 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.10.5
-$(PKG)_CHECKSUM := a4eef2f5334ab6dbf133cd3c6d6394d5bdb3e76d5ea4d578b02e1bc3d9e1cfd8
+$(PKG)_VERSION  := 8.10.6
+$(PKG)_CHECKSUM := 72b52fbeba6f2b5ff33847db733a049ba88f875e96fae8e52f00a60357a7db64
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,-beta
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
-                   libjpeg-turbo tiff lcms libexif libheif libpng libspng orc
+                   libjpeg-turbo tiff lcms libexif libheif libpng \
+                   libspng libimagequant orc
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -31,6 +32,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
+     printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
@@ -44,7 +46,9 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "vips": "$(vips-web_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
      printf '  "xml": "$(libxml2_VERSION)",\n'; \
-     printf '  "zlib": "$(zlib_VERSION)"\n'; \
+     $(if $(IS_ZLIB_NG), \
+          printf '  "zlib-ng": "$(zlib-ng_VERSION)"\n';, \
+          printf '  "zlib": "$(zlib_VERSION)"\n';) \
      printf '}';) \
      > '$(PREFIX)/$(TARGET)/vips-packaging/versions.json'
 endef
@@ -74,7 +78,6 @@ define $(PKG)_BUILD
         --without-ppm \
         --without-analyze \
         --without-radiance \
-        --without-imagequant \
         --disable-introspection \
         --disable-deprecated \
         $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all")

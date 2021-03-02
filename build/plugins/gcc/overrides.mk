@@ -10,24 +10,11 @@ gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/
 # Remove $(BUILD)~zstd since we do not need LTO compression
 gcc_DEPS := $(filter-out $(BUILD)~zstd,$(gcc_DEPS))
 
-# We do not need OpenMP, so build with --disable-libgomp
-# and compile without optimizations / stripping.
-_gcc_CONFIGURE_OPTS=--with-build-sysroot='$(PREFIX)/$(TARGET)' \
---disable-libgomp \
-CFLAGS='' \
-CXXFLAGS='' \
-LDFLAGS=''
-
-## Update dependencies
-
-# upstream version is 2.28 (released on 2017-03-06)
-binutils_VERSION  := 2.35.1
-binutils_CHECKSUM := 3ced91db9bf01182b7e420eab68039f2083aed0a214c0424e257eae3ddee8607
-binutils_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/binutils-[0-9]*.patch)))
-binutils_SUBDIR   := binutils-$(binutils_VERSION)
-binutils_FILE     := binutils-$(binutils_VERSION).tar.xz
-binutils_URL      := https://ftp.gnu.org/gnu/binutils/$(binutils_FILE)
-binutils_URL_2    := https://ftpmirror.gnu.org/binutils/$(binutils_FILE)
+# Build GCC with --disable-libgomp, since we do not need OpenMP,
+# and to avoid shipping libgomp-1.dll.
+_gcc_CONFIGURE_OPTS= \
+    --with-build-sysroot='$(PREFIX)/$(TARGET)' \
+    --disable-libgomp
 
 ## Override sub-dependencies
 
@@ -47,6 +34,11 @@ poppler_DEPS  := $(poppler_DEPS) mingw-std-threads
 # compatibility with the prebuilt Rust binaries that
 # is built in msvcrt mode.
 define gcc_BUILD_mingw-w64
+    # Unexport target specific compiler / linker flags
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
     # install mingw-w64 headers
     $(call PREPARE_PKG_SOURCE,mingw-w64,$(BUILD_DIR))
     mkdir '$(BUILD_DIR).headers'

@@ -75,8 +75,12 @@ if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
 fi
 
-if [ "$LLVM" = "true" ] && [[ "$arch" != "arm"* ]]; then
-  zip_suffix+="-llvm"
+if [ "$ZLIB_NG" = "false" ]; then
+  zip_suffix+="-zlib-vanilla"
+fi
+
+if [ "$LLVM" = "false" ]; then
+  zip_suffix+="-gcc"
 fi
 
 echo "Copying libvips and dependencies"

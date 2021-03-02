@@ -12,7 +12,11 @@ $(PKG)_DEPS     := cc $(BUILD)~nasm
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && NASM_PATH='$(PREFIX)/$(BUILD)/bin' $(TARGET)-cmake \
         -DENABLE_NASM=ON \
+        -DENABLE_DOCS=OFF \
         -DENABLE_TESTS=OFF \
+        -DENABLE_TESTDATA=OFF \
+        -DENABLE_TOOLS=OFF \
+        -DENABLE_EXAMPLES=OFF \
         -DCONFIG_AV1_HIGHBITDEPTH=0 \
         -DCONFIG_WEBM_IO=0 \
         $(if $(IS_ARM), -DCONFIG_RUNTIME_CPU_DETECT=0) \

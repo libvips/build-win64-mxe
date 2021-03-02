@@ -18,6 +18,11 @@ $(PKG)_DEPS     := mingw-w64
 # Install the headers in $(PREFIX)/$(TARGET)/mingw since
 # we need to distribute the /include and /lib directories
 define $(PKG)_BUILD_mingw-w64
+    # Unexport target specific compiler / linker flags
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
     # install the usual wrappers
     $($(PKG)_PRE_BUILD)
 

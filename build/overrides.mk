@@ -30,8 +30,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.11-62
-imagemagick_CHECKSUM := a6d639216c98fa5b45c5efe03b163e2313fa121a9d0778a3a8cd4c8b01f03eb3
+imagemagick_VERSION  := 6.9.12-2
+imagemagick_CHECKSUM := e7157883de4602172cd93687afa4c86fb118aa976f1ca4742af2cddbe57e74df
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -62,8 +62,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.67.4
-glib_CHECKSUM := 8d87b962032dadfcae8df62d248aa91fed2c7a43faf2c6d8b9107eb6c50e5b14
+glib_VERSION  := 2.67.5
+glib_CHECKSUM := 9d2ad4303ce25ae7cfde77409d8364508ac6072a868cfca2e78333c6cdfa05e6
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -146,6 +146,14 @@ fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
+# upstream version is 21.02.0
+poppler_VERSION  := 21.03.0
+poppler_CHECKSUM := fd51ead4aac1d2f4684fa6e7b0ec06f0233ed21667e720a4e817e4455dd63d27
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
+
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
 nasm_CHECKSUM := 3caf6729c1073bf96629b57cee31eeb54f4f8129b01902c73428836550b30a3f
@@ -168,7 +176,6 @@ mingw-w64_URL      := https://github.com/mirror/mingw-w64/tarball/$(mingw-w64_VE
 ## Patches that we override with our own
 
 libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
-poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
@@ -363,6 +370,9 @@ endef
 
 # build pixman with the Meson build system
 define pixman_BUILD
+    # Disable tests and demos
+    $(SED) -i "/subdir('test')/{N;d;}" '$(SOURCE_DIR)/meson.build'
+
     '$(TARGET)-meson' \
         --buildtype=release \
         --strip \
@@ -489,12 +499,12 @@ endef
 
 # compile with the Rust toolchain
 define librsvg_BUILD
-    # Update expected Cargo SHA256 hashes for the
-    # files we have patched in $(librsvg_PATCHES)
-    # Note: These replacements can be removed when
-    #       the patches have been accepted upstream.
-    $(SED) -i 's/45d980167c6b1a2fd54f045f39e6322a7739be6c4723b8c373716f8252d3778c/f769fd23b7389e684b2f365a9f1038273788eb0f3d5907fe34f7ac5383b0daf0/' '$(SOURCE_DIR)/vendor/cairo-rs/.cargo-checksum.json'
-    $(SED) -i 's/d8c54bf5eeba9d035434da591646047329e0cad2c0be93c10409f7b36a0e55ec/b03f53a3c001dcd51fac158e8ca17f0c15299c77edba59444e91b73bc2b2226a/' '$(SOURCE_DIR)/vendor/cairo-sys-rs/.cargo-checksum.json'
+    # Allow building vendored sources with `-Zbuild-std`, see:
+    # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524
+    $(if $(IS_LLVM), \
+        cd '$(SOURCE_DIR)' && \
+            MXE_ENABLE_NETWORK=1 \
+            $(TARGET)-cargo vendor -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/test/Cargo.toml')
 
     # armv7 -> thumbv7a
     $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))
@@ -625,9 +635,10 @@ define cairo_BUILD
         --enable-fc \
         --enable-ft \
         --without-x \
-        CFLAGS="$(CFLAGS) $(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD)"
+        CFLAGS="$(CFLAGS) $(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD)" \
+        ax_cv_c_float_words_bigendian=no
 
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
 
@@ -643,16 +654,30 @@ define matio_BUILD_SHARED
     $($(PKG)_BUILD)
 endef
 
-# build without lzma, disable the linker version script on llvm-mingw
+# build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
+# disable the linker version script on llvm-mingw
+# OpenSlide needs --with-xpath
+# ImageMagick's internal MSVG parser needs --with-sax1
 define libxml2_BUILD
     $(SED) -i 's,`uname`,MinGW,g' '$(1)/xml2-config.in'
 
     # need to regenerate the configure script
     cd '$(SOURCE_DIR)' && autoreconf -fi
 
+    # TODO(kleisauke): remove --with-regexps flag from v2.10.0+
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-zlib='$(PREFIX)/$(TARGET)/lib' \
+        --with-minimum \
+        --with-reader \
+        --with-writer \
+        --with-valid \
+        --with-http \
+        --with-tree \
+        --with-regexps \
+        $(if $(findstring .all,$(TARGET)), \
+            --with-xpath \
+            --with-sax1) \
         --without-lzma \
         --without-debug \
         --without-iconv \

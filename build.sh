@@ -7,10 +7,11 @@ Usage: $(basename "$0") [OPTIONS] [DEPS] [ARCH] [TYPE]
 Build libvips for Windows in a Docker container
 
 OPTIONS:
-	--help		Show the help and exit
-	--with-hevc	Build libheif with the HEVC-related dependencies
-	--with-llvm	Build with llvm-mingw
-	--without-mozjpeg	Build with libjpeg-turbo instead of MozJPEG
+	--help			Show the help and exit
+	--with-hevc		Build libheif with the HEVC-related dependencies
+	--without-llvm		Build binaires with GCC
+	--without-mozjpeg	Build binaires with libjpeg-turbo
+	--without-zlib-ng	Build binaires with vanilla zlib
 
 DEPS:
 	The group of dependencies to build libvips with,
@@ -25,8 +26,8 @@ ARCH:
 	Possible values are:
 	    - x86_64
 	    - i686
-	    - aarch64 (implies --with-llvm)
-	    - armv7 (implies --with-llvm)
+	    - aarch64 (disables --without-llvm)
+	    - armv7 (disables --without-llvm)
 
 TYPE:
 	Specifies the type of binary to be created,
@@ -41,17 +42,13 @@ EOF
   fi
 }
 
-if [ $EUID -eq 0 ]; then
-  echo "ERROR: Please don't run as root -- instead, add yourself to the docker group." >&2
-  exit 1
-fi
-
 . $PWD/build/variables.sh
 
 # Default arguments
 with_hevc=false
-with_llvm=false
+with_llvm=true
 with_mozjpeg=true
+with_zlib_ng=true
 
 # Parse arguments
 POSITIONAL=()
@@ -60,8 +57,9 @@ while [ $# -gt 0 ]; do
   case $1 in
     -h|--help) usage 0 ;;
     --with-hevc) with_hevc=true ;;
-    --with-llvm) with_llvm=true ;;
+    --without-llvm) with_llvm=false ;;
     --without-mozjpeg) with_mozjpeg=false ;;
+    --without-zlib-ng) with_zlib_ng=false ;;
     -*)
       echo "ERROR: Unknown option $1" >&2
       usage 1
@@ -70,6 +68,11 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+
+if [ $EUID -eq 0 ]; then
+  echo "ERROR: Please don't run as root -- instead, add yourself to the docker group." >&2
+  exit 1
+fi
 
 # Restore positional parameters
 set -- "${POSITIONAL[@]}"
@@ -141,6 +144,7 @@ docker run --rm -t \
   -e "MOZJPEG=$with_mozjpeg" \
   -e "HEVC=$with_hevc" \
   -e "LLVM=$with_llvm" \
+  -e "ZLIB_NG=$with_zlib_ng" \
   libvips-build-win-mxe \
   $deps \
   $target

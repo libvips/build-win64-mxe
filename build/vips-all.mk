@@ -2,15 +2,16 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.10.5
-$(PKG)_CHECKSUM := a4eef2f5334ab6dbf133cd3c6d6394d5bdb3e76d5ea4d578b02e1bc3d9e1cfd8
+$(PKG)_VERSION  := 8.10.6
+$(PKG)_CHECKSUM := 72b52fbeba6f2b5ff33847db733a049ba88f875e96fae8e52f00a60357a7db64
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,-beta
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
-$(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
-                   libgsf libjpeg-turbo tiff openslide lcms libexif libheif \
-                   imagemagick libpng libspng openexr cfitsio nifticlib orc
+$(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
+                   libjpeg-turbo tiff lcms libexif libheif libpng \
+                   libspng libimagequant orc imagemagick matio openexr \
+                   cfitsio nifticlib poppler fftw openslide
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -37,6 +38,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "hdf5": "$(hdf5_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
      printf '  "imagemagick": "$(imagemagick_VERSION)",\n'; \
+     printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      printf '  "matio": "$(matio_VERSION)",\n'; \
@@ -58,7 +60,9 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
      $(if $(IS_HEVC),printf '  "x265": "$(x265_VERSION)"$(comma)\n';) \
      printf '  "xml": "$(libxml2_VERSION)",\n'; \
-     printf '  "zlib": "$(zlib_VERSION)"\n'; \
+     $(if $(IS_ZLIB_NG), \
+          printf '  "zlib-ng": "$(zlib-ng_VERSION)"\n';, \
+          printf '  "zlib": "$(zlib_VERSION)"\n';) \
      printf '}';) \
      > '$(PREFIX)/$(TARGET)/vips-packaging/versions.json'
 endef
@@ -70,7 +74,6 @@ define $(PKG)_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
         --without-pdfium \
-        --without-imagequant \
         --disable-introspection \
         --disable-deprecated
 

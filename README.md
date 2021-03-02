@@ -3,8 +3,9 @@
 libvips and its dependencies cross-compiled for all four Windows architectures (`i686`, `x86_64`,
 `armv7` and `arm64`).
 
-Uses [MXE](https://github.com/mxe/mxe) as base environment. Parts of the [llvm-mingw](
-https://github.com/mstorsjo/llvm-mingw) repository is used for targeting Windows on ARM.
+Uses [MXE](https://github.com/mxe/mxe) as base environment. A custom plugin based upon the
+[llvm-mingw](https://github.com/mstorsjo/llvm-mingw) repository is used to swap GCC and binutils
+with Clang and other LLVM-based tools.
 
 ## Creating a zipball
 
@@ -24,13 +25,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fribidi]       | 1.0.10    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.2    | LGPLv3                                                       |
 | [giflib]        | 5.1.4     | MIT Licence                                                  |
-| [glib]          | 2.67.4    | LGPLv3                                                       |
+| [glib]          | 2.67.5    | LGPLv3                                                       |
 | [harfbuzz]      | 2.7.4     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
 | [libffi]        | 3.3       | MIT Licence                                                  |
 | [libgsf]        | 1.14.47   | LGPLv3                                                       |
 | [libheif]       | 1.11.0    | LGPLv3                                                       |
+| [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
 | [librsvg]       | 2.51.0    | LGPLv3                                                       |
 | [libspng]       | 0.6.2     | BSD 2-Clause                                                 |
@@ -42,7 +44,10 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.48.2    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
-| [zlib]          | 1.2.11    | [zlib Licence]                                               |
+| [zlib-ng]       | 2.0.0²    | [zlib-ng Licence]                                            |
+
+¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
+² Built from the [`v2.0.0-RC2`](https://github.com/zlib-ng/zlib-ng/releases/tag/v2.0.0-RC2) tag.
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -62,6 +67,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [libffi]: https://github.com/libffi/libffi
 [libgsf]: https://gitlab.gnome.org/GNOME/libgsf
 [libheif]: https://github.com/strukturag/libheif
+[libimagequant]: https://github.com/lovell/libimagequant
 [libpng]: https://github.com/glennrp/libpng
 [libpng License version 2]: https://github.com/glennrp/libpng/blob/master/LICENSE
 [librsvg]: https://gitlab.gnome.org/GNOME/librsvg
@@ -77,8 +83,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [orc License]: https://gitlab.freedesktop.org/gstreamer/orc/blob/master/COPYING
 [pango]: https://gitlab.gnome.org/GNOME/pango
 [pixman]: https://gitlab.freedesktop.org/pixman/pixman
-[zlib]: https://github.com/madler/zlib
-[zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h
+[zlib-ng]: https://github.com/zlib-ng/zlib-ng
+[zlib-ng Licence]: https://github.com/zlib-ng/zlib-ng/blob/develop/LICENSE.md
 
 ## libvips-all dependencies
 
@@ -89,37 +95,39 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
 | [hdf5]          | 1.12.0    | BSD-like                                                     |
-| [imagemagick]   | 6.9.11-62 | [ImageMagick License] (GPL-like)                             |
+| [imagemagick]   | 6.9.12-2  | [ImageMagick License] (GPL-like)                             |
 | [matio]         | 1.5.19    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
 | [openexr]       | 2.5.5     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 21.02.0   | GPLv2                                                        |
+| [poppler]       | 21.03.0   | GPLv2                                                        |
 | [sqlite]        | 3.34.1    | Public domain                                                |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [hdf5]: https://www.hdfgroup.org/solutions/hdf5/
 [fftw]: https://github.com/FFTW/fftw3
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
-[ImageMagick License]: https://www.imagemagick.org/script/license.php
+[ImageMagick License]: https://imagemagick.org/script/license.php
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://nifti.nimh.nih.gov/
 [openexr]: https://github.com/AcademySoftwareFoundation/openexr
 [openjpeg]: https://github.com/uclouvain/openjpeg
 [openslide]: https://github.com/openslide/openslide
 [poppler]: https://gitlab.freedesktop.org/poppler/poppler
-[sqlite]: https://www.sqlite.org/
+[sqlite]: https://sqlite.org/
 
 ## libjpeg-turbo
 
 libvips does not use any of MozJPEG's improvements by default unless explicitly set,
-yet one can still choose to build the above variants with libjpeg-turbo instead of
+yet one can still choose to build the above variants with [libjpeg-turbo] instead of
 MozJPEG. This can be accomplished with the `--without-mozjpeg` argument. For example:
 
 ```bash
 ./build.sh --without-mozjpeg
 ```
+
+In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
@@ -128,9 +136,28 @@ MozJPEG. This can be accomplished with the `--without-mozjpeg` argument. For exa
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
 
+## zlib
+
+By default [zlib-ng] is built. This is a zlib replacement with optimizations for
+"next generation" systems. You can use the `--without-zlib-ng` argument during the
+build when (vanilla-)[zlib] is preferred. For example:
+
+```bash
+./build.sh --without-zlib-ng
+```
+
+In that case, the following version of zlib is built:
+
+| Dependency      | Version   | Used under the terms of                                      |
+|-----------------|-----------|--------------------------------------------------------------|
+| [zlib]          | 1.2.11    | [zlib Licence]                                               |
+
+[zlib]: https://zlib.net/
+[zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h
+
 ## HEVC-related dependencies
 
-The above "all" variant can optionally be built with libde265 and x265 to process
+The above "all" variant can optionally be built with [libde265] and [x265] to process
 HEIC images. This can be turned on with the `--with-hevc` argument. For example:
 
 ```bash
