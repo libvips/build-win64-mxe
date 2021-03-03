@@ -23,6 +23,11 @@ define $(PKG)_BUILD_$(BUILD)
     $(call PREPARE_PKG_SOURCE,lld,$(BUILD_DIR))
     $(call PREPARE_PKG_SOURCE,lldb,$(BUILD_DIR))
 
+    # Unexport target specific compiler / linker flags
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
     cd '$(BUILD_DIR)' && cmake '$(SOURCE_DIR)' \
         -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(BUILD)' \
         -DCMAKE_BUILD_TYPE=Release \

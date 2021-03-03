@@ -27,6 +27,11 @@ define $(PKG)_BUILD_$(BUILD)
     $(eval unexport CARGO_PROFILE_RELEASE_OPT_LEVEL)
     $(eval unexport CARGO_PROFILE_RELEASE_PANIC)
 
+    # Unexport target specific compiler / linker flags
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
     # Don't depend on a nightly version of rustfmt
     $(SED) -i '/^rustfmt:/d' $(SOURCE_DIR)/src/stage0.txt
 

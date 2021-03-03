@@ -363,6 +363,9 @@ endef
 
 # build pixman with the Meson build system
 define pixman_BUILD
+    # Disable tests and demos
+    $(SED) -i "/subdir('test')/{N;d;}" '$(SOURCE_DIR)/meson.build'
+
     '$(TARGET)-meson' \
         --buildtype=release \
         --strip \
@@ -628,9 +631,10 @@ define cairo_BUILD
         --enable-fc \
         --enable-ft \
         --without-x \
-        CFLAGS="$(CFLAGS) $(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD)"
+        CFLAGS="$(CFLAGS) $(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD)" \
+        ax_cv_c_float_words_bigendian=no
 
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
 

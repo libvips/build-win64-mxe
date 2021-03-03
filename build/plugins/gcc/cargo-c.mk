@@ -18,16 +18,22 @@ define $(PKG)_BUILD
     $(eval unexport CARGO_PROFILE_RELEASE_OPT_LEVEL)
     $(eval unexport CARGO_PROFILE_RELEASE_PANIC)
 
+    # Unexport target specific compiler / linker flags
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
     # Install in $(PREFIX)/$(TARGET) to avoid conflicts 
     # with the llvm-mingw plugin.
     # TODO(kleisauke): Could be installed in $(PREFIX)/$(BUILD)
     # if we build all binaries with LLVM.
-    cd '$(SOURCE_DIR)' && $(TARGET)-cargo build \
+    cd '$(SOURCE_DIR)' && CC='$(BUILD_CC)' $(TARGET)-cargo build \
         --release \
         --target='x86_64-unknown-linux-gnu' \
         --features=vendored-openssl
 
-    $(TARGET)-cargo install \
+    CC='$(BUILD_CC)' $(TARGET)-cargo install \
         --path='$(SOURCE_DIR)' \
+        --target='x86_64-unknown-linux-gnu' \
         --features=vendored-openssl
 endef

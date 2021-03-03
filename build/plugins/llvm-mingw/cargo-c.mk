@@ -21,6 +21,11 @@ define $(PKG)_BUILD_$(BUILD)
     $(eval unexport CARGO_PROFILE_RELEASE_OPT_LEVEL)
     $(eval unexport CARGO_PROFILE_RELEASE_PANIC)
 
+    # Unexport target specific compiler / linker flags
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
     cd '$(SOURCE_DIR)' && $(PREFIX)/$(BUILD)/bin/cargo build \
         --release \
         --features=vendored-openssl
