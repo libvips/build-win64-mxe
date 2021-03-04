@@ -1,6 +1,16 @@
 # build-win64-mxe
 
-Experiment with building a libvips binary for Windows with [MXE](https://github.com/mxe/mxe).
+libvips and its dependencies cross-compiled for all four Windows architectures (`i686`, `x86_64`,
+`armv7` and `arm64`).
+
+Uses [MXE](https://github.com/mxe/mxe) as base environment. Parts of the [llvm-mingw](
+https://github.com/mstorsjo/llvm-mingw) repository is used for targeting Windows on ARM.
+
+## Creating a zipball
+
+Most people will not need to do this; proceed with caution.
+
+Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 ## libvips-web dependencies
 
