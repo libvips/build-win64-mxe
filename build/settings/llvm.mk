@@ -13,9 +13,9 @@
 # (see: https://github.com/mstorsjo/llvm-mingw/blob/master/README.md#pdb-support)
 
 # Special flags for compiler.
-export CFLAGS   := -O3 -fdata-sections -ffunction-sections
-export CXXFLAGS := -O3 -fdata-sections -ffunction-sections
-export LDFLAGS  := -Wl,--gc-sections -Wl,-s
+export CFLAGS   := -O3 -flto
+export CXXFLAGS := -O3 -flto
+export LDFLAGS  := -flto -Wl,-s
 
 # Special flags for Rust.
 export CARGO_PROFILE_RELEASE_DEBUG         := false

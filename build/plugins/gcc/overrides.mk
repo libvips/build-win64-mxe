@@ -7,11 +7,9 @@ IS_GCC := $(true)
 # Override GCC patches with our own patches
 gcc_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gcc-[0-9]*.patch)))
 
-# Remove $(BUILD)~zstd since we do not need LTO compression
-gcc_DEPS := $(filter-out $(BUILD)~zstd,$(gcc_DEPS))
-
 # Build GCC with --disable-libgomp, since we do not need OpenMP.
 _gcc_CONFIGURE_OPTS= \
+    --with-zstd='$(PREFIX)/$(BUILD)' \
     --with-build-sysroot='$(PREFIX)/$(TARGET)' \
     --disable-libgomp
 
@@ -79,4 +77,13 @@ define gcc_BUILD_mingw-w64
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
 
     $(gcc_POST_BUILD)
+
+    # Ensure LTO plugin is used for the GNU ar, nm and ranlib utils, see:
+    # https://stackoverflow.com/a/25878408/10952119
+    $(foreach EXEC, ar nm ranlib, \
+        mv '$(PREFIX)/bin/$(TARGET)-$(EXEC)' '$(PREFIX)/bin/$(TARGET)-$(EXEC)-nonlto'; \
+        (echo '#!/bin/sh'; \
+         echo 'exec "$(PREFIX)/bin/$(TARGET)-$(EXEC)-nonlto" --plugin "$(PREFIX)/libexec/gcc/$(TARGET)/$(gcc_VERSION)/liblto_plugin.so" "$$@"') \
+                 > '$(PREFIX)/bin/$(TARGET)-$(EXEC)'; \
+        chmod 0755 '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
 endef
