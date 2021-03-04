@@ -67,8 +67,8 @@ if [ "$type" = "static" ]; then
   zip_suffix+="-static"
 fi
 
-if [ "$MOZJPEG" = "true" ]; then
-  zip_suffix+="-mozjpeg"
+if [ "$MOZJPEG" = "false" ]; then
+  zip_suffix+="-libjpeg-turbo"
 fi
 
 if [ "$HEVC" = "true" ]; then
