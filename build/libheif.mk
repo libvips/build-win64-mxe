@@ -18,9 +18,11 @@ define $(PKG)_BUILD
         --disable-gdk-pixbuf \
         --disable-go \
         --disable-examples \
+        --disable-visibility \
         $(if $(IS_HEVC),, --disable-libde265) \
         $(if $(IS_HEVC),, --disable-x265) \
-        $(if $(WIN32_THREADS), --disable-multithreading)
+        $(if $(WIN32_THREADS), --disable-multithreading) \
+        $(if $(BUILD_STATIC), CPPFLAGS="-DLIBHEIF_STATIC_BUILD")
 
     # remove -nostdlib from linker commandline options
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866

@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 7 Mar 2021 11:30:00 +0100
+Subject: [PATCH 1/1] Use dllexport/dllimport also for MinGW targets
+
+
+diff --git a/libheif/heif.h b/libheif/heif.h
+index 1111111..2222222 100644
+--- a/libheif/heif.h
++++ b/libheif/heif.h
+@@ -45,7 +45,7 @@ extern "C" {
+ //  1.11         1             2            4             1             1            1
+ 
+ 
+-#if defined(_MSC_VER) && !defined(LIBHEIF_STATIC_BUILD)
++#if (defined(_MSC_VER) || defined(__MINGW32__)) && !defined(LIBHEIF_STATIC_BUILD)
+ #ifdef LIBHEIF_EXPORTS
+ #define LIBHEIF_API __declspec(dllexport)
+ #else

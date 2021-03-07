@@ -84,7 +84,7 @@ define $(PKG)_BUILD
 
     # libtool should automatically generate a list
     # of exported symbols, even for "static" builds
-    $(if $(BUILD_STATIC), \
+    $(if $(or $(IS_LLVM), $(BUILD_STATIC)), \
         $(SED) -i '/^always_export_symbols=/s/=no/=yes/' '$(BUILD_DIR)/libtool')
 
     # remove -nostdlib from linker commandline options

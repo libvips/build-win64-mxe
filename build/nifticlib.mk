@@ -16,9 +16,17 @@ define $(PKG)_UPDATE
     head -1
 endef
 
+# disable link-time garbage collection for shared builds
+define $(PKG)_BUILD_SHARED
+    $(eval export CFLAGS   := -O3)
+    $(eval export CXXFLAGS := -O3)
+    $(eval export LDFLAGS  := -Wl,-s)
+
+    $($(PKG)_BUILD)
+endef
+
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
-        -DBUILD_SHARED_LIBS=ON \
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j $(JOBS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install

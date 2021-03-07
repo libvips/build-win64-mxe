@@ -175,8 +175,11 @@ mingw-w64_URL      := https://github.com/mirror/mingw-w64/tarball/$(mingw-w64_VE
 
 ## Patches that we override with our own
 
+lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+libwebp_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
 libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
@@ -274,6 +277,7 @@ endef
 # disable version script on llvm-mingw
 # disable struct support and make the raw api unavailable when
 # building a statically linked binary
+# ensure declspec(dllexport) is used for shared builds
 define libffi_BUILD
     # build and install the library
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
@@ -282,7 +286,14 @@ define libffi_BUILD
         $(if $(BUILD_STATIC), \
             --disable-structs \
             --disable-raw-api) \
-        $(if $(IS_LLVM), --disable-symvers)
+        $(if $(IS_LLVM), --disable-symvers) \
+        CPPFLAGS="$(if $(BUILD_STATIC),-DFFI_BUILDING,-DFFI_BUILDING_DLL)"
+
+    # ensure dependencies of libffi doesn't link
+    # with __declspec(dllimport) when building a 
+    # statically linked binary
+    $(if $(BUILD_STATIC),
+        $(SED) -i 's/^Cflags:.*/& -DFFI_BUILDING/' '$(BUILD_DIR)/libffi.pc')
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
@@ -295,6 +306,7 @@ endef
 
 # icu will pull in standard linux headers, which we don't want,
 # build with Meson.
+# ensure declspec(dllexport) is used for shared builds
 define harfbuzz_BUILD
     '$(TARGET)-meson' \
         --buildtype=release \
@@ -308,6 +320,9 @@ define harfbuzz_BUILD
         -Dintrospection=disabled \
         -Ddocs=disabled \
         -Dbenchmark=disabled \
+        $(if $(BUILD_SHARED), \
+            -Dc_args="$(CFLAGS) -DHB_EXTERN='__declspec(dllexport)'" \
+            -Dcpp_args="$(CXXFLAGS) -DHB_EXTERN='__declspec(dllexport)'") \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -349,8 +364,7 @@ define libgsf_BUILD
     $(MAKE) -C '$(BUILD_DIR)/gsf' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
 
-# build gdk-pixbuf with libjpeg-turbo
-# and the Meson build system
+# build with the Meson build system
 define gdk-pixbuf_BUILD
     '$(TARGET)-meson' \
         --buildtype=release \
@@ -407,11 +421,13 @@ endef
 # exclude jpeg, tiff dependencies
 # build with -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT to avoid a
 # horrible hack (we don't target pre-Windows XP, so it should be safe)
+# ensure declspec(dllexport) is used for shared builds
+# avoid __stdcall calling convention on exported functions
 define lcms_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-zlib \
-        CFLAGS="$(CFLAGS) -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT"
+        CPPFLAGS="$(if $(BUILD_SHARED),-DCMS_DLL_BUILD) -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
@@ -447,7 +463,7 @@ define imagemagick_BUILD
         --disable-largefile \
         --disable-opencl \
         --disable-openmp \
-        CFLAGS="$(CFLAGS) -DMAGICKCORE_EXCLUDE_DEPRECATED"
+        --disable-deprecated
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
 endef
@@ -524,7 +540,7 @@ define librsvg_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=
 endef
 
-# compile with CMake and with libjpeg-turbo
+# compile with CMake
 define poppler_BUILD
     $(if $(WIN32_THREADS),\
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(poppler_PATCHES))))/poppler-mingw-std-threads.patch)
@@ -568,18 +584,22 @@ define zlib_BUILD
 endef
 
 # disable the C++ API for now, we don't use it anyway
-# build with libjpeg-turbo and without lzma
+# build without lzma
+# compile with CMake
 define tiff_BUILD
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --without-x \
-        --disable-cxx \
-        --disable-lzma
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_CRUFT)
+    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
+        -Dcxx=OFF \
+        -Dlzma=OFF \
+        '$(SOURCE_DIR)'
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
 # disable unneeded loaders
+# disable stats
+# ensure declspec(dllexport) is used for shared builds
 define libwebp_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
@@ -591,7 +611,8 @@ define libwebp_BUILD
         --disable-gif \
         --disable-nls \
         --enable-libwebpmux \
-        --enable-libwebpdemux
+        --enable-libwebpdemux \
+        CPPFLAGS="$(if $(BUILD_SHARED),-DWEBP_DLL -DWEBP_EXTERN='__declspec(dllexport)') -DWEBP_DISABLE_STATS"
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef
@@ -602,6 +623,7 @@ endef
 # disable the Win32 surface and font backend to avoid having to link against -lgdi32 and -lmsimg32, see: https://github.com/kleisauke/net-vips/issues/61
 # disable the PostScript backend
 # ensure the FontConfig backend is enabled
+# ensure declspec(dllexport) is used for shared builds
 define cairo_BUILD
     $(SED) -i 's,libpng12,libpng16,g'                        '$(SOURCE_DIR)/configure.ac'
     $(SED) -i 's,^\(Libs:.*\),\1 @CAIRO_NONPKGCONFIG_LIBS@,' '$(SOURCE_DIR)/src/cairo.pc.in'
@@ -635,11 +657,28 @@ define cairo_BUILD
         --enable-fc \
         --enable-ft \
         --without-x \
-        CFLAGS="$(CFLAGS) $(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD)" \
+        CPPFLAGS="$(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD,-Dcairo_public='__declspec(dllexport)')" \
         ax_cv_c_float_words_bigendian=no
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
+endef
+
+# automatically generate a list of exported symbols
+# TODO(kleisauke): No longer needed after https://github.com/libvips/libvips/pull/1709.
+define giflib_BUILD_SHARED
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS) \
+        CPPFLAGS="-D_OPEN_BINARY"
+    echo 'all:' > '$(BUILD_DIR)/doc/Makefile'
+
+    # libtool should automatically generate a list
+    # of exported symbols on llvm-mingw
+    $(if $(IS_LLVM), \
+        $(SED) -i '/^always_export_symbols=/s/=no/=yes/' '$(BUILD_DIR)/libtool')
+
+    $(MAKE) -C '$(BUILD_DIR)/lib' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)/lib' -j 1 install
 endef
 
 define matio_BUILD
@@ -652,6 +691,20 @@ endef
 
 define matio_BUILD_SHARED
     $($(PKG)_BUILD)
+endef
+
+# do not build xmlwf, examples and tests
+# ensure declspec(dllexport) is used for shared builds
+define expat_BUILD
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS) \
+        --without-xmlwf \
+        --without-docbook \
+        --without-examples \
+        --without-tests \
+        $(if $(BUILD_SHARED), CPPFLAGS="-DXMLIMPORT='__declspec(dllexport)'")
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92

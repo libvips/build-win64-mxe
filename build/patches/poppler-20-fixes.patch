@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andreas=20M=C3=BCller?= <schnitzeltony@gmail.com>
 Date: Sat, 17 Mar 2018 20:52:10 +0100
-Subject: [PATCH 1/2] Do not overwrite all our build flags
+Subject: [PATCH 1/3] Do not overwrite all our build flags
 
 
 diff --git a/cmake/modules/PopplerMacros.cmake b/cmake/modules/PopplerMacros.cmake
@@ -51,7 +51,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 19 Feb 2021 16:00:00 +0100
-Subject: [PATCH 2/2] Fix bogus volatiles caught by clang 11
+Subject: [PATCH 2/3] Fix bogus volatiles caught by clang 11
 
 
 diff --git a/glib/poppler-enums.c.template b/glib/poppler-enums.c.template
@@ -80,3 +80,2417 @@ index 1111111..2222222 100644
          if (g_once_init_enter(&g_define_type_id__volatile)) {                                                                                                                                                                                  \
              GType g_define_type_id = g_boxed_type_register_static(g_intern_static_string(#TypeName), (GBoxedCopyFunc)copy_func, (GBoxedFreeFunc)free_func);                                                                                    \
              g_once_init_leave(&g_define_type_id__volatile, g_define_type_id);                                                                                                                                                                  \
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Albert Astals Cid <aacid@kde.org>
+Date: Sun, 17 Jan 2021 18:31:19 +0100
+Subject: [PATCH 3/3] Hide symbols by default
+
+Use cmake for better import/export defines
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -20,6 +20,7 @@ test_big_endian(WORDS_BIGENDIAN)
+ include(CheckFileOffsetBits)
+ CHECK_FILE_OFFSET_BITS()
+ 
++include(GenerateExportHeader)
+ include(GNUInstallDirs)
+ 
+ set(ENABLE_FUZZER FALSE)
+@@ -44,6 +45,10 @@ set(POPPLER_VERSION "${POPPLER_MAJOR_VERSION}.${POPPLER_MINOR_VERSION_STRING}.${
+ set(CMAKE_CXX_STANDARD 14)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+ set(CMAKE_LINK_DEPENDS_NO_SHARED TRUE)
++set(CMAKE_C_VISIBILITY_PRESET hidden)
++set(CMAKE_CXX_VISIBILITY_PRESET hidden)
++set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
++
+ 
+ # command line switches
+ option(ENABLE_UNSTABLE_API_ABI_HEADERS "Install API/ABI unstable xpdf headers." OFF)
+@@ -565,6 +570,7 @@ add_library(poppler STATIC ${poppler_SRCS})
+ else()
+ add_library(poppler ${poppler_SRCS})
+ endif()
++generate_export_header(poppler BASE_NAME poppler-private EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/poppler_private_export.h")
+ set_target_properties(poppler PROPERTIES VERSION 108.0.0 SOVERSION 108)
+ if(MINGW AND BUILD_SHARED_LIBS)
+     get_target_property(POPPLER_SOVERSION poppler SOVERSION)
+@@ -650,6 +656,7 @@ if(ENABLE_UNSTABLE_API_ABI_HEADERS)
+     poppler/BBoxOutputDev.h
+     poppler/UTF.h
+     poppler/Sound.h
++    ${CMAKE_CURRENT_BINARY_DIR}/poppler_private_export.h
+     ${CMAKE_CURRENT_BINARY_DIR}/poppler/poppler-config.h
+     DESTINATION include/poppler)
+   install(FILES
+diff --git a/cpp/CMakeLists.txt b/cpp/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/cpp/CMakeLists.txt
++++ b/cpp/CMakeLists.txt
+@@ -25,6 +25,7 @@ set(poppler_cpp_SRCS
+ )
+ 
+ add_library(poppler-cpp ${poppler_cpp_SRCS})
++generate_export_header(poppler-cpp BASE_NAME poppler-cpp EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/poppler_cpp_export.h")
+ set_target_properties(poppler-cpp PROPERTIES VERSION 0.9.0 SOVERSION 0)
+ if(MINGW AND BUILD_SHARED_LIBS)
+     get_target_property(POPPLER_CPP_SOVERSION poppler-cpp SOVERSION)
+@@ -46,6 +47,7 @@ install(FILES
+   poppler-page-transition.h
+   poppler-rectangle.h
+   poppler-toc.h
++  ${CMAKE_CURRENT_BINARY_DIR}/poppler_cpp_export.h
+   ${CMAKE_CURRENT_BINARY_DIR}/poppler-version.h
+   DESTINATION include/poppler/cpp)
+ 
+diff --git a/cpp/poppler-global.h b/cpp/poppler-global.h
+index 1111111..2222222 100644
+--- a/cpp/poppler-global.h
++++ b/cpp/poppler-global.h
+@@ -22,19 +22,7 @@
+ #ifndef POPPLER_GLOBAL_H
+ #define POPPLER_GLOBAL_H
+ 
+-#if defined(_WIN32)
+-#    define LIB_EXPORT __declspec(dllexport)
+-#    define LIB_IMPORT __declspec(dllimport)
+-#else
+-#    define LIB_EXPORT
+-#    define LIB_IMPORT
+-#endif
+-
+-#if defined(poppler_cpp_EXPORTS)
+-#    define POPPLER_CPP_EXPORT LIB_EXPORT
+-#else
+-#    define POPPLER_CPP_EXPORT LIB_IMPORT
+-#endif
++#include "poppler_cpp_export.h"
+ 
+ #include <iosfwd>
+ #include <string>
+diff --git a/fofi/FoFiTrueType.h b/fofi/FoFiTrueType.h
+index 1111111..2222222 100644
+--- a/fofi/FoFiTrueType.h
++++ b/fofi/FoFiTrueType.h
+@@ -32,6 +32,7 @@
+ #include <unordered_map>
+ #include <string>
+ #include "FoFiBase.h"
++#include "poppler_private_export.h"
+ 
+ class GooString;
+ struct TrueTypeTable;
+@@ -41,7 +42,7 @@ struct TrueTypeCmap;
+ // FoFiTrueType
+ //------------------------------------------------------------------------
+ 
+-class FoFiTrueType : public FoFiBase
++class POPPLER_PRIVATE_EXPORT FoFiTrueType : public FoFiBase
+ {
+ public:
+     // Create a FoFiTrueType object from a memory buffer.
+diff --git a/fofi/FoFiType1C.h b/fofi/FoFiType1C.h
+index 1111111..2222222 100644
+--- a/fofi/FoFiType1C.h
++++ b/fofi/FoFiType1C.h
+@@ -27,6 +27,8 @@
+ 
+ #include "FoFiBase.h"
+ 
++#include "poppler_private_export.h"
++
+ #include <set>
+ 
+ class GooString;
+@@ -148,7 +150,7 @@ struct Type1CEexecBuf
+ // FoFiType1C
+ //------------------------------------------------------------------------
+ 
+-class FoFiType1C : public FoFiBase
++class POPPLER_PRIVATE_EXPORT FoFiType1C : public FoFiBase
+ {
+ public:
+     // Create a FoFiType1C object from a memory buffer.
+diff --git a/glib/CMakeLists.txt b/glib/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/glib/CMakeLists.txt
++++ b/glib/CMakeLists.txt
+@@ -32,7 +32,6 @@ set(poppler_glib_public_headers
+   poppler-form-field.h
+   poppler-annot.h
+   poppler-layer.h
+-  poppler-macros.h
+   poppler-movie.h
+   poppler-media.h
+   poppler.h
+@@ -87,10 +86,8 @@ set(poppler_glib_generated_SRCS
+   ${CMAKE_SOURCE_DIR}/poppler/CairoRescaleBox.cc
+ )
+ add_library(poppler-glib ${poppler_glib_SRCS} ${poppler_glib_generated_SRCS})
++generate_export_header(poppler-glib EXPORT_MACRO_NAME POPPLER_PUBLIC EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/poppler-macros.h")
+ set_target_properties(poppler-glib PROPERTIES VERSION 8.19.0 SOVERSION 8)
+-set_target_properties(poppler-glib PROPERTIES C_VISIBILITY_PRESET hidden)
+-set_target_properties(poppler-glib PROPERTIES CXX_VISIBILITY_PRESET hidden)
+-set_target_properties(poppler-glib PROPERTIES VISIBILITY_INLINES_HIDDEN 1)
+ if(MINGW AND BUILD_SHARED_LIBS)
+     get_target_property(POPPLER_GLIB_SOVERSION poppler-glib SOVERSION)
+     set_target_properties(poppler-glib PROPERTIES SUFFIX "-${POPPLER_GLIB_SOVERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+@@ -105,6 +102,7 @@ install(FILES
+   ${poppler_glib_public_headers}
+   ${CMAKE_CURRENT_BINARY_DIR}/poppler-enums.h
+   ${CMAKE_CURRENT_BINARY_DIR}/poppler-features.h
++  ${CMAKE_CURRENT_BINARY_DIR}/poppler-macros.h
+   DESTINATION include/poppler/glib)
+ 
+ set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES
+@@ -136,7 +134,7 @@ if (HAVE_INTROSPECTION AND BUILD_SHARED_LIBS)
+ 
+   # Load temporary source-file lists, including a few generated at build
+   set(orig_introspect_srcs ${poppler_glib_SRCS} ${poppler_glib_public_headers})
+-  set(gen_introspect_srcs "poppler-enums.c" "poppler-enums.h" "poppler-features.h")
++  set(gen_introspect_srcs "poppler-enums.c" "poppler-enums.h" "poppler-features.h" "poppler-macros.h")
+   # Prefix the files with their correct directories for full paths
+   _gir_list_prefix(_orig_introspect_paths orig_introspect_srcs "${CMAKE_CURRENT_SOURCE_DIR}/")
+   _gir_list_prefix(_gen_introspect_paths gen_introspect_srcs "${CMAKE_CURRENT_BINARY_DIR}/")
+diff --git a/glib/poppler-macros.h b/glib/poppler-macros.h
+deleted file mode 100644
+index 1111111..000000000
+--- a/glib/poppler-macros.h
++++ /dev/null
+@@ -1,33 +0,0 @@
+-/*
+- * Copyright © 2018 Christian Persch
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2, or (at your option)
+- * any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
+- */
+-
+-#ifndef __POPPLER_MACROS_H__
+-#define __POPPLER_MACROS_H__
+-
+-/**
+- * POPPLER_PUBLIC:
+- */
+-#if defined(_WIN32)
+-#    define POPPLER_PUBLIC __declspec(dllexport)
+-#elif defined(__GNUC__)
+-#    define POPPLER_PUBLIC __attribute__((visibility("default"))) extern
+-#else
+-#    define POPPLER_PUBLIC
+-#endif
+-
+-#endif /* __POPPLER_MACROS_H__ */
+diff --git a/goo/GooString.h b/goo/GooString.h
+index 1111111..2222222 100644
+--- a/goo/GooString.h
++++ b/goo/GooString.h
+@@ -38,6 +38,8 @@
+ #ifndef GooString_H
+ #define GooString_H
+ 
++#include "poppler_private_export.h"
++
+ #include <cstdarg>
+ #include <string>
+ 
+@@ -47,7 +49,7 @@
+ #    define GOOSTRING_FORMAT
+ #endif
+ 
+-class GooString : private std::string
++class POPPLER_PRIVATE_EXPORT GooString : private std::string
+ {
+ public:
+     // Create an empty string.
+diff --git a/goo/GooTimer.h b/goo/GooTimer.h
+index 1111111..2222222 100644
+--- a/goo/GooTimer.h
++++ b/goo/GooTimer.h
+@@ -18,6 +18,8 @@
+ #define GOOTIMER_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
++
+ #ifdef HAVE_GETTIMEOFDAY
+ #    include <sys/time.h>
+ #endif
+@@ -33,7 +35,7 @@
+ // GooTimer
+ //------------------------------------------------------------------------
+ 
+-class GooTimer
++class POPPLER_PRIVATE_EXPORT GooTimer
+ {
+ public:
+     // Create a new timer.
+diff --git a/goo/ImgWriter.h b/goo/ImgWriter.h
+index 1111111..2222222 100644
+--- a/goo/ImgWriter.h
++++ b/goo/ImgWriter.h
+@@ -15,9 +15,11 @@
+ #ifndef IMGWRITER_H
+ #define IMGWRITER_H
+ 
++#include "poppler_private_export.h"
++
+ #include <cstdio>
+ 
+-class ImgWriter
++class POPPLER_PRIVATE_EXPORT ImgWriter
+ {
+ public:
+     ImgWriter() = default;
+diff --git a/goo/JpegWriter.h b/goo/JpegWriter.h
+index 1111111..2222222 100644
+--- a/goo/JpegWriter.h
++++ b/goo/JpegWriter.h
+@@ -19,6 +19,7 @@
+ #define JPEGWRITER_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ 
+ #ifdef ENABLE_LIBJPEG
+ 
+@@ -27,7 +28,7 @@
+ 
+ struct JpegWriterPrivate;
+ 
+-class JpegWriter : public ImgWriter
++class POPPLER_PRIVATE_EXPORT JpegWriter : public ImgWriter
+ {
+ public:
+     /* RGB                 - 3 bytes/pixel
+diff --git a/goo/NetPBMWriter.h b/goo/NetPBMWriter.h
+index 1111111..2222222 100644
+--- a/goo/NetPBMWriter.h
++++ b/goo/NetPBMWriter.h
+@@ -16,6 +16,7 @@
+ #define NETPBMWRITER_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ 
+ #include "ImgWriter.h"
+ 
+@@ -24,7 +25,7 @@
+ //   http://netpbm.sourceforge.net/doc/pbm.html
+ //   http://netpbm.sourceforge.net/doc/ppm.html
+ 
+-class NetPBMWriter : public ImgWriter
++class POPPLER_PRIVATE_EXPORT NetPBMWriter : public ImgWriter
+ {
+ public:
+     /* RGB        - 3 bytes/pixel
+diff --git a/goo/PNGWriter.h b/goo/PNGWriter.h
+index 1111111..2222222 100644
+--- a/goo/PNGWriter.h
++++ b/goo/PNGWriter.h
+@@ -17,6 +17,7 @@
+ #define PNGWRITER_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ 
+ #ifdef ENABLE_LIBPNG
+ 
+@@ -24,7 +25,7 @@
+ 
+ struct PNGWriterPrivate;
+ 
+-class PNGWriter : public ImgWriter
++class POPPLER_PRIVATE_EXPORT PNGWriter : public ImgWriter
+ {
+ public:
+     /* RGB        - 3 bytes/pixel
+diff --git a/goo/TiffWriter.h b/goo/TiffWriter.h
+index 1111111..2222222 100644
+--- a/goo/TiffWriter.h
++++ b/goo/TiffWriter.h
+@@ -15,6 +15,7 @@
+ #define TIFFWRITER_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ 
+ #ifdef ENABLE_LIBTIFF
+ 
+@@ -23,7 +24,7 @@
+ 
+ struct TiffWriterPrivate;
+ 
+-class TiffWriter : public ImgWriter
++class POPPLER_PRIVATE_EXPORT TiffWriter : public ImgWriter
+ {
+ public:
+     /* RGB                 - 3 bytes/pixel
+diff --git a/goo/gbase64.h b/goo/gbase64.h
+index 1111111..2222222 100644
+--- a/goo/gbase64.h
++++ b/goo/gbase64.h
+@@ -15,10 +15,12 @@
+ #ifndef GOO_GBASE64_H
+ #define GOO_GBASE64_H
+ 
++#include "poppler_private_export.h"
++
+ #include <string>
+ #include <vector>
+ 
+-std::string gbase64Encode(const void *input, size_t len);
++std::string POPPLER_PRIVATE_EXPORT gbase64Encode(const void *input, size_t len);
+ 
+ inline std::string gbase64Encode(const std::vector<char> &input)
+ {
+diff --git a/goo/gbasename.h b/goo/gbasename.h
+index 1111111..2222222 100644
+--- a/goo/gbasename.h
++++ b/goo/gbasename.h
+@@ -17,7 +17,8 @@
+ #define GBASENAME_H
+ 
+ #include <string>
++#include "poppler_private_export.h"
+ 
+-std::string gbasename(const char *filename);
++std::string POPPLER_PRIVATE_EXPORT gbasename(const char *filename);
+ 
+ #endif // ndef GBASENAME_H
+diff --git a/goo/gfile.h b/goo/gfile.h
+index 1111111..2222222 100644
+--- a/goo/gfile.h
++++ b/goo/gfile.h
+@@ -36,6 +36,7 @@
+ #define GFILE_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include <cstdio>
+ #include <cstdlib>
+ #include <cstddef>
+@@ -82,27 +83,27 @@ typedef long long Goffset;
+ 
+ // Append a file name to a path string.  <path> may be an empty
+ // string, denoting the current directory).  Returns <path>.
+-extern GooString *appendToPath(GooString *path, const char *fileName);
++extern GooString POPPLER_PRIVATE_EXPORT *appendToPath(GooString *path, const char *fileName);
+ 
+ #ifndef _WIN32
+ // Open a file descriptor
+ // Could be implemented on WIN32 too, but the only external caller of
+ // this function is not used on WIN32
+-extern int openFileDescriptor(const char *path, int flags);
++extern int POPPLER_PRIVATE_EXPORT openFileDescriptor(const char *path, int flags);
+ #endif
+ 
+ // Open a file.  On Windows, this converts the path from UTF-8 to
+ // UCS-2 and calls _wfopen (if available).  On other OSes, this simply
+ // calls fopen.
+-extern FILE *openFile(const char *path, const char *mode);
++extern FILE POPPLER_PRIVATE_EXPORT *openFile(const char *path, const char *mode);
+ 
+ // Just like fgets, but handles Unix, Mac, and/or DOS end-of-line
+ // conventions.
+-extern char *getLine(char *buf, int size, FILE *f);
++extern char POPPLER_PRIVATE_EXPORT *getLine(char *buf, int size, FILE *f);
+ 
+ // Like fseek/ftell but uses platform specific variants that support large files
+-extern int Gfseek(FILE *f, Goffset offset, int whence);
+-extern Goffset Gftell(FILE *f);
++extern int POPPLER_PRIVATE_EXPORT Gfseek(FILE *f, Goffset offset, int whence);
++extern Goffset POPPLER_PRIVATE_EXPORT Gftell(FILE *f);
+ 
+ // Largest offset supported by Gfseek/Gftell
+ extern Goffset GoffsetMax();
+@@ -111,7 +112,7 @@ extern Goffset GoffsetMax();
+ // GooFile
+ //------------------------------------------------------------------------
+ 
+-class GooFile
++class POPPLER_PRIVATE_EXPORT GooFile
+ {
+ public:
+     GooFile(const GooFile &) = delete;
+diff --git a/goo/glibc.h b/goo/glibc.h
+index 1111111..2222222 100644
+--- a/goo/glibc.h
++++ b/goo/glibc.h
+@@ -15,19 +15,20 @@
+ #define GLIBC_H
+ 
+ #include "config.h"
++#include "poppler_private_export.h"
+ 
+ #include <ctime>
+ 
+ #ifndef HAVE_GMTIME_R
+-struct tm *gmtime_r(const time_t *timep, struct tm *result);
++struct tm POPPLER_PRIVATE_EXPORT *gmtime_r(const time_t *timep, struct tm *result);
+ #endif
+ 
+ #ifndef HAVE_LOCALTIME_R
+-struct tm *localtime_r(const time_t *timep, struct tm *result);
++struct tm POPPLER_PRIVATE_EXPORT *localtime_r(const time_t *timep, struct tm *result);
+ #endif
+ 
+ #ifndef HAVE_TIMEGM
+-time_t timegm(struct tm *tm);
++time_t POPPLER_PRIVATE_EXPORT timegm(struct tm *tm);
+ #endif
+ 
+ #ifndef HAVE_STRTOK_R
+diff --git a/goo/gstrtod.h b/goo/gstrtod.h
+index 1111111..2222222 100644
+--- a/goo/gstrtod.h
++++ b/goo/gstrtod.h
+@@ -23,6 +23,8 @@
+ #ifndef GSTRTOD_H
+ #define GSTRTOD_H
+ 
++#include "poppler_private_export.h"
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -33,7 +35,7 @@ extern "C" {
+  * A limitation of the implementation is that this function
+  * will still accept localized versions of infinities and NANs.
+  */
+-double gatof(const char *nptr);
++double POPPLER_PRIVATE_EXPORT gatof(const char *nptr);
+ double gstrtod(const char *nptr, char **endptr);
+ 
+ #ifdef __cplusplus
+diff --git a/poppler/Annot.h b/poppler/Annot.h
+index 1111111..2222222 100644
+--- a/poppler/Annot.h
++++ b/poppler/Annot.h
+@@ -52,6 +52,7 @@
+ #include <vector>
+ 
+ #include "Object.h"
++#include "poppler_private_export.h"
+ 
+ class XRef;
+ class Gfx;
+@@ -114,7 +115,7 @@ protected:
+ // AnnotPath
+ //------------------------------------------------------------------------
+ 
+-class AnnotPath
++class POPPLER_PRIVATE_EXPORT AnnotPath
+ {
+ public:
+     AnnotPath();
+@@ -140,7 +141,7 @@ protected:
+ // AnnotCalloutLine
+ //------------------------------------------------------------------------
+ 
+-class AnnotCalloutLine
++class POPPLER_PRIVATE_EXPORT AnnotCalloutLine
+ {
+ public:
+     AnnotCalloutLine(double x1, double y1, double x2, double y2);
+@@ -162,7 +163,7 @@ protected:
+ // AnnotCalloutMultiLine
+ //------------------------------------------------------------------------
+ 
+-class AnnotCalloutMultiLine : public AnnotCalloutLine
++class POPPLER_PRIVATE_EXPORT AnnotCalloutMultiLine : public AnnotCalloutLine
+ {
+ public:
+     AnnotCalloutMultiLine(double x1, double y1, double x2, double y2, double x3, double y3);
+@@ -202,10 +203,10 @@ private:
+ // AnnotQuadrilateral
+ //------------------------------------------------------------------------
+ 
+-class AnnotQuadrilaterals
++class POPPLER_PRIVATE_EXPORT AnnotQuadrilaterals
+ {
+ public:
+-    class AnnotQuadrilateral
++    class POPPLER_PRIVATE_EXPORT AnnotQuadrilateral
+     {
+     public:
+         AnnotQuadrilateral();
+@@ -290,7 +291,7 @@ protected:
+ // AnnotBorderArray
+ //------------------------------------------------------------------------
+ 
+-class AnnotBorderArray : public AnnotBorder
++class POPPLER_PRIVATE_EXPORT AnnotBorderArray : public AnnotBorder
+ {
+ public:
+     AnnotBorderArray();
+@@ -336,7 +337,7 @@ private:
+ // AnnotColor
+ //------------------------------------------------------------------------
+ 
+-class AnnotColor
++class POPPLER_PRIVATE_EXPORT AnnotColor
+ {
+ public:
+     enum AnnotColorSpace
+@@ -369,7 +370,7 @@ private:
+ // DefaultAppearance
+ //------------------------------------------------------------------------
+ 
+-class DefaultAppearance
++class POPPLER_PRIVATE_EXPORT DefaultAppearance
+ {
+ public:
+     DefaultAppearance(Object &&fontNameA, double fontPtSizeA, std::unique_ptr<AnnotColor> fontColorA);
+@@ -473,7 +474,7 @@ protected:
+ // AnnotAppearanceCharacs
+ //------------------------------------------------------------------------
+ 
+-class AnnotAppearanceCharacs
++class POPPLER_PRIVATE_EXPORT AnnotAppearanceCharacs
+ {
+ public:
+     enum AnnotAppearanceCharacsTextPos
+@@ -602,7 +603,7 @@ private:
+ // Annot
+ //------------------------------------------------------------------------
+ 
+-class Annot
++class POPPLER_PRIVATE_EXPORT Annot
+ {
+     friend class Annots;
+     friend class Page;
+@@ -798,7 +799,7 @@ protected:
+ // AnnotPopup
+ //------------------------------------------------------------------------
+ 
+-class AnnotPopup : public Annot
++class POPPLER_PRIVATE_EXPORT AnnotPopup : public Annot
+ {
+ public:
+     AnnotPopup(PDFDoc *docA, PDFRectangle *rect);
+@@ -821,7 +822,7 @@ protected:
+ // AnnotMarkup
+ //------------------------------------------------------------------------
+ 
+-class AnnotMarkup : public Annot
++class POPPLER_PRIVATE_EXPORT AnnotMarkup : public Annot
+ {
+ public:
+     enum AnnotMarkupReplyType
+@@ -876,7 +877,7 @@ private:
+ // AnnotText
+ //------------------------------------------------------------------------
+ 
+-class AnnotText : public AnnotMarkup
++class POPPLER_PRIVATE_EXPORT AnnotText : public AnnotMarkup
+ {
+ public:
+     enum AnnotTextState
+@@ -921,7 +922,7 @@ private:
+ // AnnotMovie
+ //------------------------------------------------------------------------
+ 
+-class AnnotMovie : public Annot
++class POPPLER_PRIVATE_EXPORT AnnotMovie : public Annot
+ {
+ public:
+     AnnotMovie(PDFDoc *docA, PDFRectangle *rect, Movie *movieA);
+@@ -944,7 +945,7 @@ private:
+ // AnnotScreen
+ //------------------------------------------------------------------------
+ 
+-class AnnotScreen : public Annot
++class POPPLER_PRIVATE_EXPORT AnnotScreen : public Annot
+ {
+ public:
+     AnnotScreen(PDFDoc *docA, PDFRectangle *rect);
+@@ -1008,7 +1009,7 @@ protected:
+ // AnnotFreeText
+ //------------------------------------------------------------------------
+ 
+-class AnnotFreeText : public AnnotMarkup
++class POPPLER_PRIVATE_EXPORT AnnotFreeText : public AnnotMarkup
+ {
+ public:
+     enum AnnotFreeTextQuadding
+@@ -1076,7 +1077,7 @@ protected:
+ // AnnotLine
+ //------------------------------------------------------------------------
+ 
+-class AnnotLine : public AnnotMarkup
++class POPPLER_PRIVATE_EXPORT AnnotLine : public AnnotMarkup
+ {
+ public:
+     enum AnnotLineIntent
+@@ -1154,7 +1155,7 @@ protected:
+ // AnnotTextMarkup
+ //------------------------------------------------------------------------
+ 
+-class AnnotTextMarkup : public AnnotMarkup
++class POPPLER_PRIVATE_EXPORT AnnotTextMarkup : public AnnotMarkup
+ {
+ public:
+     AnnotTextMarkup(PDFDoc *docA, PDFRectangle *rect, AnnotSubtype subType);
+@@ -1183,7 +1184,7 @@ private:
+ // AnnotStamp
+ //------------------------------------------------------------------------
+ 
+-class AnnotStamp : public AnnotMarkup
++class POPPLER_PRIVATE_EXPORT AnnotStamp : public AnnotMarkup
+ {
+ public:
+     AnnotStamp(PDFDoc *docA, PDFRectangle *rect);
+@@ -1205,7 +1206,7 @@ private:
+ // AnnotGeometry
+ //------------------------------------------------------------------------
+ 
+-class AnnotGeometry : public AnnotMarkup
++class POPPLER_PRIVATE_EXPORT AnnotGeometry : public AnnotMarkup
+ {
+ public:
+     AnnotGeometry(PDFDoc *docA, PDFRectangle *rect, AnnotSubtype subType);
+@@ -1234,7 +1235,7 @@ private:
+ // AnnotPolygon
+ //------------------------------------------------------------------------
+ 
+-class AnnotPolygon : public AnnotMarkup
++class POPPLER_PRIVATE_EXPORT AnnotPolygon : public AnnotMarkup
+ {
+ public:
+     enum AnnotPolygonIntent
+@@ -1285,7 +1286,7 @@ private:
+ // AnnotCaret
+ //------------------------------------------------------------------------
+ 
+-class AnnotCaret : public AnnotMarkup
++class POPPLER_PRIVATE_EXPORT AnnotCaret : public AnnotMarkup
+ {
+ public:
+     enum AnnotCaretSymbol
+@@ -1315,7 +1316,7 @@ private:
+ // AnnotInk
+ //------------------------------------------------------------------------
+ 
+-class AnnotInk : public AnnotMarkup
++class POPPLER_PRIVATE_EXPORT AnnotInk : public AnnotMarkup
+ {
+ public:
+     AnnotInk(PDFDoc *docA, PDFRectangle *rect);
+@@ -1403,7 +1404,7 @@ private:
+ // AnnotWidget
+ //------------------------------------------------------------------------
+ 
+-class AnnotWidget : public Annot
++class POPPLER_PRIVATE_EXPORT AnnotWidget : public Annot
+ {
+ public:
+     enum AnnotWidgetHighlightMode
+@@ -1520,10 +1521,10 @@ private:
+ // AnnotRichMedia
+ //------------------------------------------------------------------------
+ 
+-class AnnotRichMedia : public Annot
++class POPPLER_PRIVATE_EXPORT AnnotRichMedia : public Annot
+ {
+ public:
+-    class Params
++    class POPPLER_PRIVATE_EXPORT Params
+     {
+     public:
+         Params(Dict *dict);
+@@ -1539,7 +1540,7 @@ public:
+         std::unique_ptr<GooString> flashVars; // FlashVars
+     };
+ 
+-    class Instance
++    class POPPLER_PRIVATE_EXPORT Instance
+     {
+     public:
+         enum Type
+@@ -1565,7 +1566,7 @@ public:
+         std::unique_ptr<Params> params; // Params
+     };
+ 
+-    class Configuration
++    class POPPLER_PRIVATE_EXPORT Configuration
+     {
+     public:
+         enum Type
+@@ -1597,7 +1598,7 @@ public:
+ 
+     class Content;
+ 
+-    class Asset
++    class POPPLER_PRIVATE_EXPORT Asset
+     {
+     public:
+         Asset();
+@@ -1616,7 +1617,7 @@ public:
+         Object fileSpec;
+     };
+ 
+-    class Content
++    class POPPLER_PRIVATE_EXPORT Content
+     {
+     public:
+         Content(Dict *dict);
+@@ -1640,7 +1641,7 @@ public:
+         int nAssets;
+     };
+ 
+-    class Activation
++    class POPPLER_PRIVATE_EXPORT Activation
+     {
+     public:
+         enum Condition
+@@ -1659,7 +1660,7 @@ public:
+         Condition condition;
+     };
+ 
+-    class Deactivation
++    class POPPLER_PRIVATE_EXPORT Deactivation
+     {
+     public:
+         enum Condition
+@@ -1678,7 +1679,7 @@ public:
+         Condition condition;
+     };
+ 
+-    class Settings
++    class POPPLER_PRIVATE_EXPORT Settings
+     {
+     public:
+         Settings(Dict *dict);
+diff --git a/poppler/Array.h b/poppler/Array.h
+index 1111111..2222222 100644
+--- a/poppler/Array.h
++++ b/poppler/Array.h
+@@ -33,6 +33,7 @@
+ #include <vector>
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include "Object.h"
+ 
+ class XRef;
+@@ -41,7 +42,7 @@ class XRef;
+ // Array
+ //------------------------------------------------------------------------
+ 
+-class Array
++class POPPLER_PRIVATE_EXPORT Array
+ {
+ public:
+     // Constructor.
+diff --git a/poppler/BBoxOutputDev.h b/poppler/BBoxOutputDev.h
+index 1111111..2222222 100644
+--- a/poppler/BBoxOutputDev.h
++++ b/poppler/BBoxOutputDev.h
+@@ -12,7 +12,7 @@
+ #include <GfxState.h>
+ #include <OutputDev.h>
+ 
+-class BBoxOutputDev : public OutputDev
++class POPPLER_PRIVATE_EXPORT BBoxOutputDev : public OutputDev
+ {
+ public:
+     bool upsideDown() override { return false; }
+diff --git a/poppler/CachedFile.h b/poppler/CachedFile.h
+index bc73b59a7..588c0e4e4 100644
+--- a/poppler/CachedFile.h
++++ b/poppler/CachedFile.h
+@@ -16,6 +16,7 @@
+ #define CACHEDFILE_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ 
+ #include "Object.h"
+ #include "Stream.h"
+@@ -38,7 +39,7 @@ class CachedFileLoader;
+ // needs from the CachedFileLoader.
+ //------------------------------------------------------------------------
+ 
+-class CachedFile
++class POPPLER_PRIVATE_EXPORT CachedFile
+ {
+ 
+     friend class CachedFileWriter;
+@@ -96,7 +97,7 @@ private:
+ // should be written.
+ //------------------------------------------------------------------------
+ 
+-class CachedFileWriter
++class POPPLER_PRIVATE_EXPORT CachedFileWriter
+ {
+ 
+ public:
+@@ -123,7 +124,7 @@ private:
+ // loadng data from an URI into a CachedFile.
+ //------------------------------------------------------------------------
+ 
+-class CachedFileLoader
++class POPPLER_PRIVATE_EXPORT CachedFileLoader
+ {
+ 
+ public:
+diff --git a/poppler/Catalog.h b/poppler/Catalog.h
+index 1111111..2222222 100644
+--- a/poppler/Catalog.h
++++ b/poppler/Catalog.h
+@@ -41,6 +41,7 @@
+ #define CATALOG_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include "Object.h"
+ #include "Link.h"
+ 
+@@ -64,7 +65,7 @@ class StructTreeRoot;
+ // NameTree
+ //------------------------------------------------------------------------
+ 
+-class NameTree
++class POPPLER_PRIVATE_EXPORT NameTree
+ {
+ public:
+     NameTree();
+@@ -105,7 +106,7 @@ private:
+ // Catalog
+ //------------------------------------------------------------------------
+ 
+-class Catalog
++class POPPLER_PRIVATE_EXPORT Catalog
+ {
+ public:
+     // Constructor.
+diff --git a/poppler/CertificateInfo.h b/poppler/CertificateInfo.h
+index 1111111..2222222 100644
+--- a/poppler/CertificateInfo.h
++++ b/poppler/CertificateInfo.h
+@@ -17,6 +17,7 @@
+ #include <memory>
+ #include <ctime>
+ #include "goo/GooString.h"
++#include "poppler_private_export.h"
+ 
+ enum CertificateKeyUsageExtension
+ {
+@@ -39,7 +40,7 @@ enum PublicKeyType
+     OTHERKEY
+ };
+ 
+-class X509CertificateInfo
++class POPPLER_PRIVATE_EXPORT X509CertificateInfo
+ {
+ public:
+     X509CertificateInfo();
+diff --git a/poppler/DateInfo.h b/poppler/DateInfo.h
+index 1111111..2222222 100644
+--- a/poppler/DateInfo.h
++++ b/poppler/DateInfo.h
+@@ -25,19 +25,20 @@
+ #define DATE_INFO_H
+ 
+ #include "goo/GooString.h"
++#include "poppler_private_export.h"
+ #include <ctime>
+ 
+-bool parseDateString(const char *string, int *year, int *month, int *day, int *hour, int *minute, int *second, char *tz, int *tzHour, int *tzMinute);
++bool POPPLER_PRIVATE_EXPORT parseDateString(const char *string, int *year, int *month, int *day, int *hour, int *minute, int *second, char *tz, int *tzHour, int *tzMinute);
+ 
+ /* Converts the time_t into a PDF Date format string.
+  * If timeA is NULL, current time is used.
+  * Returns new GooString. Free with delete.
+  */
+-GooString *timeToDateString(const time_t *timeA);
++GooString POPPLER_PRIVATE_EXPORT *timeToDateString(const time_t *timeA);
+ 
+ /* Convert PDF date string to time.
+  * Returns -1 if conversion fails.
+  */
+-time_t dateStringToTime(const GooString *dateString);
++time_t POPPLER_PRIVATE_EXPORT dateStringToTime(const GooString *dateString);
+ 
+ #endif
+diff --git a/poppler/Dict.h b/poppler/Dict.h
+index 1111111..2222222 100644
+--- a/poppler/Dict.h
++++ b/poppler/Dict.h
+@@ -37,13 +37,14 @@
+ #include <utility>
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include "Object.h"
+ 
+ //------------------------------------------------------------------------
+ // Dict
+ //------------------------------------------------------------------------
+ 
+-class Dict
++class POPPLER_PRIVATE_EXPORT Dict
+ {
+ public:
+     // Constructor.
+diff --git a/poppler/Error.h b/poppler/Error.h
+index 1111111..2222222 100644
+--- a/poppler/Error.h
++++ b/poppler/Error.h
+@@ -30,6 +30,7 @@
+ 
+ #include <cstdarg>
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include "goo/gfile.h"
+ #include "goo/GooString.h"
+ 
+@@ -51,8 +52,8 @@ enum ErrorCategory
+ 
+ using ErrorCallback = void (*)(ErrorCategory category, Goffset pos, const char *msg);
+ 
+-extern void setErrorCallback(ErrorCallback cbk);
++extern void POPPLER_PRIVATE_EXPORT setErrorCallback(ErrorCallback cbk);
+ 
+-extern void CDECL error(ErrorCategory category, Goffset pos, const char *msg, ...) GOOSTRING_FORMAT;
++extern void CDECL POPPLER_PRIVATE_EXPORT error(ErrorCategory category, Goffset pos, const char *msg, ...) GOOSTRING_FORMAT;
+ 
+ #endif
+diff --git a/poppler/FileSpec.h b/poppler/FileSpec.h
+index 1111111..2222222 100644
+--- a/poppler/FileSpec.h
++++ b/poppler/FileSpec.h
+@@ -17,8 +17,9 @@
+ #define FILE_SPEC_H
+ 
+ #include "Object.h"
++#include "poppler_private_export.h"
+ 
+-class EmbFile
++class POPPLER_PRIVATE_EXPORT EmbFile
+ {
+ public:
+     EmbFile(Object &&efStream);
+@@ -48,7 +49,7 @@ private:
+     Object m_objStr;
+ };
+ 
+-class FileSpec
++class POPPLER_PRIVATE_EXPORT FileSpec
+ {
+ public:
+     FileSpec(const Object *fileSpec);
+@@ -79,6 +80,6 @@ private:
+ };
+ 
+ Object getFileSpecName(const Object *fileSpec);
+-Object getFileSpecNameForPlatform(const Object *fileSpec);
++Object POPPLER_PRIVATE_EXPORT getFileSpecNameForPlatform(const Object *fileSpec);
+ 
+ #endif /* FILE_SPEC_H */
+diff --git a/poppler/FontInfo.h b/poppler/FontInfo.h
+index 1111111..2222222 100644
+--- a/poppler/FontInfo.h
++++ b/poppler/FontInfo.h
+@@ -28,13 +28,14 @@
+ #define FONT_INFO_H
+ 
+ #include "Object.h"
++#include "poppler_private_export.h"
+ 
+ #include <unordered_set>
+ 
+ class GfxFont;
+ class PDFDoc;
+ 
+-class FontInfo
++class POPPLER_PRIVATE_EXPORT FontInfo
+ {
+ public:
+     enum Type
+@@ -86,7 +87,7 @@ private:
+     Ref embRef;
+ };
+ 
+-class FontInfoScanner
++class POPPLER_PRIVATE_EXPORT FontInfoScanner
+ {
+ public:
+     // Constructor.
+diff --git a/poppler/Form.h b/poppler/Form.h
+index 1111111..2222222 100644
+--- a/poppler/Form.h
++++ b/poppler/Form.h
+@@ -32,6 +32,7 @@
+ 
+ #include "Object.h"
+ #include "Annot.h"
++#include "poppler_private_export.h"
+ 
+ #include <ctime>
+ 
+@@ -101,7 +102,7 @@ class FormFieldChoice;
+ // to a page.
+ //------------------------------------------------------------------------
+ 
+-class FormWidget
++class POPPLER_PRIVATE_EXPORT FormWidget
+ {
+ public:
+     virtual ~FormWidget();
+@@ -181,7 +182,7 @@ protected:
+ // FormWidgetButton
+ //------------------------------------------------------------------------
+ 
+-class FormWidgetButton : public FormWidget
++class POPPLER_PRIVATE_EXPORT FormWidgetButton : public FormWidget
+ {
+ public:
+     FormWidgetButton(PDFDoc *docA, Object *dictObj, unsigned num, Ref ref, FormField *p);
+@@ -205,7 +206,7 @@ protected:
+ // FormWidgetText
+ //------------------------------------------------------------------------
+ 
+-class FormWidgetText : public FormWidget
++class POPPLER_PRIVATE_EXPORT FormWidgetText : public FormWidget
+ {
+ public:
+     FormWidgetText(PDFDoc *docA, Object *dictObj, unsigned num, Ref ref, FormField *p);
+@@ -240,7 +241,7 @@ protected:
+ // FormWidgetChoice
+ //------------------------------------------------------------------------
+ 
+-class FormWidgetChoice : public FormWidget
++class POPPLER_PRIVATE_EXPORT FormWidgetChoice : public FormWidget
+ {
+ public:
+     FormWidgetChoice(PDFDoc *docA, Object *dictObj, unsigned num, Ref ref, FormField *p);
+@@ -284,7 +285,7 @@ protected:
+ // FormWidgetSignature
+ //------------------------------------------------------------------------
+ 
+-class FormWidgetSignature : public FormWidget
++class POPPLER_PRIVATE_EXPORT FormWidgetSignature : public FormWidget
+ {
+ public:
+     FormWidgetSignature(PDFDoc *docA, Object *dictObj, unsigned num, Ref ref, FormField *p);
+@@ -587,7 +588,7 @@ protected:
+ // FormFieldSignature
+ //------------------------------------------------------------------------
+ 
+-class FormFieldSignature : public FormField
++class POPPLER_PRIVATE_EXPORT FormFieldSignature : public FormField
+ {
+ public:
+     FormFieldSignature(PDFDoc *docA, Object &&dict, const Ref ref, FormField *parent, std::set<int> *usedParents);
+@@ -636,7 +637,7 @@ private:
+ // Catalog entry).
+ //------------------------------------------------------------------------
+ 
+-class Form
++class POPPLER_PRIVATE_EXPORT Form
+ {
+ public:
+     Form(PDFDoc *docA, Object *acroForm);
+@@ -694,7 +695,7 @@ private:
+ // FormPageWidgets
+ //------------------------------------------------------------------------
+ 
+-class FormPageWidgets
++class POPPLER_PRIVATE_EXPORT FormPageWidgets
+ {
+ public:
+     FormPageWidgets(Annots *annots, unsigned int page, Form *form);
+diff --git a/poppler/Function.h b/poppler/Function.h
+index 1111111..2222222 100644
+--- a/poppler/Function.h
++++ b/poppler/Function.h
+@@ -43,7 +43,7 @@ class PSStack;
+ #define funcMaxOutputs 32
+ #define sampledFuncMaxInputs 16
+ 
+-class Function
++class POPPLER_PRIVATE_EXPORT Function
+ {
+ public:
+     Function();
+diff --git a/poppler/Gfx.h b/poppler/Gfx.h
+index 1111111..2222222 100644
+--- a/poppler/Gfx.h
++++ b/poppler/Gfx.h
+@@ -36,6 +36,7 @@
+ #define GFX_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include "GfxState.h"
+ #include "Object.h"
+ #include "PopplerCache.h"
+@@ -107,7 +108,7 @@ struct Operator
+ 
+ //------------------------------------------------------------------------
+ 
+-class GfxResources
++class POPPLER_PRIVATE_EXPORT GfxResources
+ {
+ public:
+     GfxResources(XRef *xref, Dict *resDict, GfxResources *nextA);
+@@ -148,7 +149,7 @@ private:
+ // Gfx
+ //------------------------------------------------------------------------
+ 
+-class Gfx
++class POPPLER_PRIVATE_EXPORT Gfx
+ {
+ public:
+     // Constructor for regular output.
+diff --git a/poppler/GfxFont.h b/poppler/GfxFont.h
+index 1111111..2222222 100644
+--- a/poppler/GfxFont.h
++++ b/poppler/GfxFont.h
+@@ -36,6 +36,7 @@
+ #include "goo/GooString.h"
+ #include "Object.h"
+ #include "CharTypes.h"
++#include "poppler_private_export.h"
+ 
+ class Dict;
+ class CMap;
+@@ -110,7 +111,7 @@ enum GfxFontLocType
+     gfxFontLocResident // font resident in PS printer
+ };
+ 
+-class GfxFontLoc
++class POPPLER_PRIVATE_EXPORT GfxFontLoc
+ {
+ public:
+     GfxFontLoc();
+@@ -148,7 +149,7 @@ public:
+ #define fontItalic (1 << 6)
+ #define fontBold (1 << 18)
+ 
+-class GfxFont
++class POPPLER_PRIVATE_EXPORT GfxFont
+ {
+ public:
+     enum Stretch
+@@ -332,7 +333,7 @@ protected:
+ // Gfx8BitFont
+ //------------------------------------------------------------------------
+ 
+-class Gfx8BitFont : public GfxFont
++class POPPLER_PRIVATE_EXPORT Gfx8BitFont : public GfxFont
+ {
+ public:
+     Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GooString *nameA, GfxFontType typeA, Ref embFontIDA, Dict *fontDict);
+@@ -392,7 +393,7 @@ private:
+ // GfxCIDFont
+ //------------------------------------------------------------------------
+ 
+-class GfxCIDFont : public GfxFont
++class POPPLER_PRIVATE_EXPORT GfxCIDFont : public GfxFont
+ {
+ public:
+     GfxCIDFont(XRef *xref, const char *tagA, Ref idA, GooString *nameA, GfxFontType typeA, Ref embFontIDA, Dict *fontDict);
+diff --git a/poppler/GfxState.h b/poppler/GfxState.h
+index 1111111..2222222 100644
+--- a/poppler/GfxState.h
++++ b/poppler/GfxState.h
+@@ -36,6 +36,7 @@
+ #define GFXSTATE_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ 
+ #include "Object.h"
+ #include "Function.h"
+@@ -216,7 +217,7 @@ enum GfxColorSpaceMode
+ typedef std::shared_ptr<void> GfxLCMSProfilePtr;
+ 
+ #ifdef USE_CMS
+-GfxLCMSProfilePtr make_GfxLCMSProfilePtr(void *profile);
++GfxLCMSProfilePtr POPPLER_PRIVATE_EXPORT make_GfxLCMSProfilePtr(void *profile);
+ #endif
+ 
+ // wrapper of cmsHTRANSFORM to copy
+@@ -241,7 +242,7 @@ private:
+     unsigned int transformPixelType;
+ };
+ 
+-class GfxColorSpace
++class POPPLER_PRIVATE_EXPORT GfxColorSpace
+ {
+ public:
+     GfxColorSpace();
+@@ -313,7 +314,7 @@ protected:
+ // GfxDeviceGrayColorSpace
+ //------------------------------------------------------------------------
+ 
+-class GfxDeviceGrayColorSpace : public GfxColorSpace
++class POPPLER_PRIVATE_EXPORT GfxDeviceGrayColorSpace : public GfxColorSpace
+ {
+ public:
+     GfxDeviceGrayColorSpace();
+@@ -389,7 +390,7 @@ private:
+ // GfxDeviceRGBColorSpace
+ //------------------------------------------------------------------------
+ 
+-class GfxDeviceRGBColorSpace : public GfxColorSpace
++class POPPLER_PRIVATE_EXPORT GfxDeviceRGBColorSpace : public GfxColorSpace
+ {
+ public:
+     GfxDeviceRGBColorSpace();
+@@ -469,7 +470,7 @@ private:
+ // GfxDeviceCMYKColorSpace
+ //------------------------------------------------------------------------
+ 
+-class GfxDeviceCMYKColorSpace : public GfxColorSpace
++class POPPLER_PRIVATE_EXPORT GfxDeviceCMYKColorSpace : public GfxColorSpace
+ {
+ public:
+     GfxDeviceCMYKColorSpace();
+@@ -547,7 +548,7 @@ private:
+ // GfxICCBasedColorSpace
+ //------------------------------------------------------------------------
+ 
+-class GfxICCBasedColorSpace : public GfxColorSpace
++class POPPLER_PRIVATE_EXPORT GfxICCBasedColorSpace : public GfxColorSpace
+ {
+ public:
+     GfxICCBasedColorSpace(int nCompsA, GfxColorSpace *altA, const Ref *iccProfileStreamA);
+@@ -899,7 +900,7 @@ protected:
+ // GfxUnivariateShading
+ //------------------------------------------------------------------------
+ 
+-class GfxUnivariateShading : public GfxShading
++class POPPLER_PRIVATE_EXPORT GfxUnivariateShading : public GfxShading
+ {
+ public:
+     GfxUnivariateShading(int typeA, double t0A, double t1A, std::vector<std::unique_ptr<Function>> &&funcsA, bool extend0A, bool extend1A);
+@@ -940,7 +941,7 @@ private:
+ // GfxFunctionShading
+ //------------------------------------------------------------------------
+ 
+-class GfxFunctionShading : public GfxShading
++class POPPLER_PRIVATE_EXPORT GfxFunctionShading : public GfxShading
+ {
+ public:
+     GfxFunctionShading(double x0A, double y0A, double x1A, double y1A, const double *matrixA, std::vector<std::unique_ptr<Function>> &&funcsA);
+@@ -1046,7 +1047,7 @@ struct GfxGouraudVertex
+     GfxColor color;
+ };
+ 
+-class GfxGouraudTriangleShading : public GfxShading
++class POPPLER_PRIVATE_EXPORT GfxGouraudTriangleShading : public GfxShading
+ {
+ public:
+     GfxGouraudTriangleShading(int typeA, GfxGouraudVertex *verticesA, int nVerticesA, int (*trianglesA)[3], int nTrianglesA, std::vector<std::unique_ptr<Function>> &&funcsA);
+@@ -1138,7 +1139,7 @@ struct GfxPatch
+     ColorValue color[2][2];
+ };
+ 
+-class GfxPatchMeshShading : public GfxShading
++class POPPLER_PRIVATE_EXPORT GfxPatchMeshShading : public GfxShading
+ {
+ public:
+     GfxPatchMeshShading(int typeA, GfxPatch *patchesA, int nPatchesA, std::vector<std::unique_ptr<Function>> &&funcsA);
+@@ -1187,7 +1188,7 @@ private:
+ // GfxImageColorMap
+ //------------------------------------------------------------------------
+ 
+-class GfxImageColorMap
++class POPPLER_PRIVATE_EXPORT GfxImageColorMap
+ {
+ public:
+     // Constructor.
+@@ -1319,7 +1320,7 @@ private:
+     GfxSubpath(const GfxSubpath *subpath);
+ };
+ 
+-class GfxPath
++class POPPLER_PRIVATE_EXPORT GfxPath
+ {
+ public:
+     // Constructor.
+@@ -1381,7 +1382,7 @@ private:
+ // GfxState
+ //------------------------------------------------------------------------
+ 
+-class GfxState
++class POPPLER_PRIVATE_EXPORT GfxState
+ {
+ public:
+     /**
+diff --git a/poppler/GlobalParams.h b/poppler/GlobalParams.h
+index 1111111..2222222 100644
+--- a/poppler/GlobalParams.h
++++ b/poppler/GlobalParams.h
+@@ -39,6 +39,7 @@
+ 
+ #include <cassert>
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include <cstdio>
+ #include "CharTypes.h"
+ #include "UnicodeMap.h"
+@@ -64,7 +65,7 @@ class SysFontList;
+ //------------------------------------------------------------------------
+ 
+ // The global parameters object.
+-extern std::unique_ptr<GlobalParams> globalParams;
++extern std::unique_ptr<GlobalParams> POPPLER_PRIVATE_EXPORT globalParams;
+ 
+ //------------------------------------------------------------------------
+ 
+@@ -78,7 +79,7 @@ enum SysFontType
+ 
+ //------------------------------------------------------------------------
+ 
+-class GlobalParams
++class POPPLER_PRIVATE_EXPORT GlobalParams
+ {
+ public:
+     // Initialize the global parameters
+@@ -201,7 +202,7 @@ private:
+     const char *popplerDataDir;
+ };
+ 
+-class GlobalParamsIniter
++class POPPLER_PRIVATE_EXPORT GlobalParamsIniter
+ {
+ public:
+     GlobalParamsIniter(ErrorCallback errorCallback);
+diff --git a/poppler/JSInfo.h b/poppler/JSInfo.h
+index 1111111..2222222 100644
+--- a/poppler/JSInfo.h
++++ b/poppler/JSInfo.h
+@@ -21,13 +21,13 @@
+ #include <cstdio>
+ #include "Object.h"
+ #include "PDFDoc.h"
+-
++#include "poppler_private_export.h"
+ #include "Link.h"
+ #include "UnicodeMap.h"
+ 
+ class PDFDoc;
+ 
+-class JSInfo
++class POPPLER_PRIVATE_EXPORT JSInfo
+ {
+ public:
+     // Constructor.
+diff --git a/poppler/Lexer.h b/poppler/Lexer.h
+index 1111111..2222222 100644
+--- a/poppler/Lexer.h
++++ b/poppler/Lexer.h
+@@ -38,7 +38,7 @@ class XRef;
+ // Lexer
+ //------------------------------------------------------------------------
+ 
+-class Lexer
++class POPPLER_PRIVATE_EXPORT Lexer
+ {
+ public:
+     // Construct a lexer for a single stream.  Deletes the stream when
+diff --git a/poppler/Link.h b/poppler/Link.h
+index 1111111..2222222 100644
+--- a/poppler/Link.h
++++ b/poppler/Link.h
+@@ -33,6 +33,7 @@
+ #define LINK_H
+ 
+ #include "Object.h"
++#include "poppler_private_export.h"
+ #include <memory>
+ #include <set>
+ 
+@@ -65,7 +66,7 @@ enum LinkActionKind
+     actionUnknown // anything else
+ };
+ 
+-class LinkAction
++class POPPLER_PRIVATE_EXPORT LinkAction
+ {
+ public:
+     LinkAction();
+@@ -112,7 +113,7 @@ enum LinkDestKind
+     destFitBV
+ };
+ 
+-class LinkDest
++class POPPLER_PRIVATE_EXPORT LinkDest
+ {
+ public:
+     // Build a LinkDest from the array.
+@@ -161,7 +162,7 @@ private:
+ // LinkGoTo
+ //------------------------------------------------------------------------
+ 
+-class LinkGoTo : public LinkAction
++class POPPLER_PRIVATE_EXPORT LinkGoTo : public LinkAction
+ {
+ public:
+     // Build a LinkGoTo from a destination (dictionary, name, or string).
+@@ -242,7 +243,7 @@ private:
+ // LinkURI
+ //------------------------------------------------------------------------
+ 
+-class LinkURI : public LinkAction
++class POPPLER_PRIVATE_EXPORT LinkURI : public LinkAction
+ {
+ public:
+     // Build a LinkURI given the URI (string) and base URI.
+@@ -498,7 +499,7 @@ private:
+ // LinkResetForm
+ //------------------------------------------------------------------------
+ 
+-class LinkResetForm : public LinkAction
++class POPPLER_PRIVATE_EXPORT LinkResetForm : public LinkAction
+ {
+ public:
+     // Build a LinkResetForm.
+@@ -546,7 +547,7 @@ private:
+ // Links
+ //------------------------------------------------------------------------
+ 
+-class Links
++class POPPLER_PRIVATE_EXPORT Links
+ {
+ public:
+     // Extract links from array of annotations.
+diff --git a/poppler/MarkedContentOutputDev.h b/poppler/MarkedContentOutputDev.h
+index 1111111..2222222 100644
+--- a/poppler/MarkedContentOutputDev.h
++++ b/poppler/MarkedContentOutputDev.h
+@@ -13,6 +13,7 @@
+ #define MARKEDCONTENTOUTPUTDEV_H
+ 
+ #include "goo/gmem.h"
++#include "poppler_private_export.h"
+ #include "OutputDev.h"
+ #include "GfxState.h"
+ #include "GfxFont.h"
+@@ -84,7 +85,7 @@ private:
+ 
+ typedef std::vector<TextSpan> TextSpanArray;
+ 
+-class MarkedContentOutputDev : public OutputDev
++class POPPLER_PRIVATE_EXPORT MarkedContentOutputDev : public OutputDev
+ {
+ public:
+     MarkedContentOutputDev(int mcidA);
+diff --git a/poppler/Movie.h b/poppler/Movie.h
+index 1111111..2222222 100644
+--- a/poppler/Movie.h
++++ b/poppler/Movie.h
+@@ -26,6 +26,7 @@
+ #define _MOVIE_H_
+ 
+ #include "Object.h"
++#include "poppler_private_export.h"
+ 
+ struct MovieActivationParameters
+ {
+@@ -71,7 +72,7 @@ struct MovieActivationParameters
+     int zdenum; // 1
+ };
+ 
+-class Movie
++class POPPLER_PRIVATE_EXPORT Movie
+ {
+ public:
+     Movie(const Object *movieDict, const Object *aDict);
+diff --git a/poppler/Object.h b/poppler/Object.h
+index 1111111..2222222 100644
+--- a/poppler/Object.h
++++ b/poppler/Object.h
+@@ -43,6 +43,7 @@
+ #include "goo/GooString.h"
+ #include "goo/GooLikely.h"
+ #include "Error.h"
++#include "poppler_private_export.h"
+ 
+ #define OBJECT_TYPE_CHECK(wanted_type)                                                                                                                                                                                                         \
+     if (unlikely(type != wanted_type)) {                                                                                                                                                                                                       \
+@@ -162,7 +163,7 @@ constexpr int numObjTypes = 17; // total number of object types
+ // Object
+ //------------------------------------------------------------------------
+ 
+-class Object
++class POPPLER_PRIVATE_EXPORT Object
+ {
+ public:
+     Object() : type(objNone) { }
+diff --git a/poppler/OptionalContent.h b/poppler/OptionalContent.h
+index 1111111..2222222 100644
+--- a/poppler/OptionalContent.h
++++ b/poppler/OptionalContent.h
+@@ -17,6 +17,7 @@
+ 
+ #include "Object.h"
+ #include "CharTypes.h"
++#include "poppler_private_export.h"
+ #include <unordered_map>
+ #include <memory>
+ 
+@@ -27,7 +28,7 @@ class OptionalContentGroup;
+ 
+ //------------------------------------------------------------------------
+ 
+-class OCGs
++class POPPLER_PRIVATE_EXPORT OCGs
+ {
+ public:
+     OCGs(Object *ocgObject, XRef *xref);
+@@ -66,7 +67,7 @@ private:
+ 
+ //------------------------------------------------------------------------
+ 
+-class OptionalContentGroup
++class POPPLER_PRIVATE_EXPORT OptionalContentGroup
+ {
+ public:
+     enum State
+diff --git a/poppler/Outline.h b/poppler/Outline.h
+index 1111111..2222222 100644
+--- a/poppler/Outline.h
++++ b/poppler/Outline.h
+@@ -28,6 +28,7 @@
+ #include <memory>
+ #include "Object.h"
+ #include "CharTypes.h"
++#include "poppler_private_export.h"
+ 
+ class GooString;
+ class XRef;
+@@ -53,7 +54,7 @@ private:
+ 
+ //------------------------------------------------------------------------
+ 
+-class OutlineItem
++class POPPLER_PRIVATE_EXPORT OutlineItem
+ {
+ public:
+     OutlineItem(const Dict *dict, int refNumA, OutlineItem *parentA, XRef *xrefA);
+diff --git a/poppler/OutputDev.h b/poppler/OutputDev.h
+index 1111111..2222222 100644
+--- a/poppler/OutputDev.h
++++ b/poppler/OutputDev.h
+@@ -37,6 +37,7 @@
+ #define OUTPUTDEV_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include "CharTypes.h"
+ #include "Object.h"
+ #include "PopplerCache.h"
+@@ -61,7 +62,7 @@ class Function;
+ // OutputDev
+ //------------------------------------------------------------------------
+ 
+-class OutputDev
++class POPPLER_PRIVATE_EXPORT OutputDev
+ {
+ public:
+     // Constructor.
+diff --git a/poppler/PDFDoc.h b/poppler/PDFDoc.h
+index 1111111..2222222 100644
+--- a/poppler/PDFDoc.h
++++ b/poppler/PDFDoc.h
+@@ -46,6 +46,7 @@
+ #include <mutex>
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include <cstdio>
+ #include "XRef.h"
+ #include "Catalog.h"
+@@ -117,7 +118,7 @@ enum PDFSubtypeConformance
+ // PDFDoc
+ //------------------------------------------------------------------------
+ 
+-class PDFDoc
++class POPPLER_PRIVATE_EXPORT PDFDoc
+ {
+ public:
+     PDFDoc(const GooString *fileNameA, const GooString *ownerPassword = nullptr, const GooString *userPassword = nullptr, void *guiDataA = nullptr);
+diff --git a/poppler/PDFDocEncoding.h b/poppler/PDFDocEncoding.h
+index 1111111..2222222 100644
+--- a/poppler/PDFDocEncoding.h
++++ b/poppler/PDFDocEncoding.h
+@@ -28,11 +28,12 @@
+ #include <string>
+ 
+ #include "CharTypes.h"
++#include "poppler_private_export.h"
+ 
+ class GooString;
+ 
+-extern const Unicode pdfDocEncoding[256];
++extern const Unicode POPPLER_PRIVATE_EXPORT pdfDocEncoding[256];
+ 
+-char *pdfDocEncodingToUTF16(const std::string &orig, int *length);
++char POPPLER_PRIVATE_EXPORT *pdfDocEncodingToUTF16(const std::string &orig, int *length);
+ 
+ #endif
+diff --git a/poppler/PDFDocFactory.h b/poppler/PDFDocFactory.h
+index 1111111..2222222 100644
+--- a/poppler/PDFDocFactory.h
++++ b/poppler/PDFDocFactory.h
+@@ -16,6 +16,7 @@
+ #include <memory>
+ 
+ #include "PDFDoc.h"
++#include "poppler_private_export.h"
+ 
+ class GooString;
+ class PDFDocBuilder;
+@@ -32,7 +33,7 @@ class PDFDocBuilder;
+ // the constructor, or by registering a new PDFDocBuilder afterwards.
+ //------------------------------------------------------------------------
+ 
+-class PDFDocFactory
++class POPPLER_PRIVATE_EXPORT PDFDocFactory
+ {
+ 
+ public:
+diff --git a/poppler/PSOutputDev.h b/poppler/PSOutputDev.h
+index 1111111..2222222 100644
+--- a/poppler/PSOutputDev.h
++++ b/poppler/PSOutputDev.h
+@@ -38,6 +38,7 @@
+ #define PSOUTPUTDEV_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include <cstddef>
+ #include "Object.h"
+ #include "GfxState.h"
+@@ -115,7 +116,7 @@ typedef void (*PSOutputFunc)(void *stream, const char *data, int len);
+ 
+ typedef GooString *(*PSOutCustomCodeCbk)(PSOutputDev *psOut, PSOutCustomCodeLocation loc, int n, void *data);
+ 
+-class PSOutputDev : public OutputDev
++class POPPLER_PRIVATE_EXPORT PSOutputDev : public OutputDev
+ {
+ public:
+     // Open a PostScript output file, and write the prolog.
+diff --git a/poppler/Page.h b/poppler/Page.h
+index 1111111..2222222 100644
+--- a/poppler/Page.h
++++ b/poppler/Page.h
+@@ -40,6 +40,7 @@
+ 
+ #include "poppler-config.h"
+ #include "Object.h"
++#include "poppler_private_export.h"
+ 
+ class Dict;
+ class PDFDoc;
+@@ -135,7 +136,7 @@ private:
+ // Page
+ //------------------------------------------------------------------------
+ 
+-class Page
++class POPPLER_PRIVATE_EXPORT Page
+ {
+ public:
+     // Constructor.
+diff --git a/poppler/PageTransition.h b/poppler/PageTransition.h
+index 1111111..2222222 100644
+--- a/poppler/PageTransition.h
++++ b/poppler/PageTransition.h
+@@ -58,7 +58,7 @@ enum PageTransitionDirection
+     transitionOutward
+ };
+ 
+-class PageTransition
++class POPPLER_PRIVATE_EXPORT PageTransition
+ {
+ public:
+     // Construct a Page Transition.
+diff --git a/poppler/Parser.h b/poppler/Parser.h
+index 1111111..2222222 100644
+--- a/poppler/Parser.h
++++ b/poppler/Parser.h
+@@ -33,7 +33,7 @@
+ // Parser
+ //------------------------------------------------------------------------
+ 
+-class Parser
++class POPPLER_PRIVATE_EXPORT Parser
+ {
+ public:
+     // Constructor.
+diff --git a/poppler/Rendition.h b/poppler/Rendition.h
+index 1111111..2222222 100644
+--- a/poppler/Rendition.h
++++ b/poppler/Rendition.h
+@@ -118,7 +118,7 @@ struct MediaParameters
+     MediaWindowParameters windowParams;
+ };
+ 
+-class MediaRendition
++class POPPLER_PRIVATE_EXPORT MediaRendition
+ {
+ public:
+     MediaRendition(Object *obj);
+diff --git a/poppler/SignatureHandler.h b/poppler/SignatureHandler.h
+index 1111111..2222222 100644
+--- a/poppler/SignatureHandler.h
++++ b/poppler/SignatureHandler.h
+@@ -21,6 +21,7 @@
+ #include "goo/GooString.h"
+ #include "SignatureInfo.h"
+ #include "CertificateInfo.h"
++#include "poppler_private_export.h"
+ 
+ #include <vector>
+ #include <functional>
+@@ -38,7 +39,7 @@
+ #include <secmodt.h>
+ #include <sechash.h>
+ 
+-class SignatureHandler
++class POPPLER_PRIVATE_EXPORT SignatureHandler
+ {
+ public:
+     explicit SignatureHandler();
+diff --git a/poppler/SignatureInfo.h b/poppler/SignatureInfo.h
+index 1111111..2222222 100644
+--- a/poppler/SignatureInfo.h
++++ b/poppler/SignatureInfo.h
+@@ -19,6 +19,8 @@
+ #include <memory>
+ #include <ctime>
+ 
++#include "poppler_private_export.h"
++
+ enum SignatureValidationStatus
+ {
+     SIGNATURE_VALID,
+@@ -43,7 +45,7 @@ enum CertificateValidationStatus
+ 
+ class X509CertificateInfo;
+ 
+-class SignatureInfo
++class POPPLER_PRIVATE_EXPORT SignatureInfo
+ {
+ public:
+     SignatureInfo();
+diff --git a/poppler/Sound.h b/poppler/Sound.h
+index 1111111..2222222 100644
+--- a/poppler/Sound.h
++++ b/poppler/Sound.h
+@@ -42,7 +42,7 @@ enum SoundEncoding
+     soundALaw // A-law-encoded samples
+ };
+ 
+-class Sound
++class POPPLER_PRIVATE_EXPORT Sound
+ {
+ public:
+     // Try to parse the Object obj
+diff --git a/poppler/SplashOutputDev.h b/poppler/SplashOutputDev.h
+index 1111111..2222222 100644
+--- a/poppler/SplashOutputDev.h
++++ b/poppler/SplashOutputDev.h
+@@ -35,6 +35,7 @@
+ #include "splash/SplashTypes.h"
+ #include "splash/SplashPattern.h"
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include "OutputDev.h"
+ #include "GfxState.h"
+ #include "GlobalParams.h"
+@@ -189,7 +190,7 @@ private:
+ // SplashOutputDev
+ //------------------------------------------------------------------------
+ 
+-class SplashOutputDev : public OutputDev
++class POPPLER_PRIVATE_EXPORT SplashOutputDev : public OutputDev
+ {
+ public:
+     // Constructor.
+diff --git a/poppler/Stream.h b/poppler/Stream.h
+index 1111111..2222222 100644
+--- a/poppler/Stream.h
++++ b/poppler/Stream.h
+@@ -43,6 +43,7 @@
+ #include <cstdio>
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include "Object.h"
+ 
+ class GooFile;
+@@ -103,7 +104,7 @@ typedef struct _ByteRange
+ // Stream (base class)
+ //------------------------------------------------------------------------
+ 
+-class Stream
++class POPPLER_PRIVATE_EXPORT Stream
+ {
+ public:
+     // Constructor.
+@@ -266,7 +267,7 @@ private:
+ //
+ // This is the base class for all streams that output to a file
+ //------------------------------------------------------------------------
+-class OutStream
++class POPPLER_PRIVATE_EXPORT OutStream
+ {
+ public:
+     // Constructor.
+@@ -293,7 +294,7 @@ public:
+ //------------------------------------------------------------------------
+ // FileOutStream
+ //------------------------------------------------------------------------
+-class FileOutStream : public OutStream
++class POPPLER_PRIVATE_EXPORT FileOutStream : public OutStream
+ {
+ public:
+     FileOutStream(FILE *fa, Goffset startA);
+@@ -319,7 +320,7 @@ private:
+ // This is the base class for all streams that read directly from a file.
+ //------------------------------------------------------------------------
+ 
+-class BaseStream : public Stream
++class POPPLER_PRIVATE_EXPORT BaseStream : public Stream
+ {
+ public:
+     // TODO Mirar si puedo hacer que dictA sea un puntero
+@@ -349,7 +350,7 @@ protected:
+ // BaseInputStream
+ //------------------------------------------------------------------------
+ 
+-class BaseSeekInputStream : public BaseStream
++class POPPLER_PRIVATE_EXPORT BaseSeekInputStream : public BaseStream
+ {
+ public:
+     // This enum is used to tell the seek() method how it must reposition
+@@ -430,7 +431,7 @@ protected:
+ // ImageStream
+ //------------------------------------------------------------------------
+ 
+-class ImageStream
++class POPPLER_PRIVATE_EXPORT ImageStream
+ {
+ public:
+     // Create an image stream object for an image with the specified
+@@ -586,7 +587,7 @@ private:
+ 
+ #define cachedStreamBufSize 1024
+ 
+-class CachedFileStream : public BaseStream
++class POPPLER_PRIVATE_EXPORT CachedFileStream : public BaseStream
+ {
+ public:
+     CachedFileStream(CachedFile *ccA, Goffset startA, bool limitedA, Goffset lengthA, Object &&dictA);
+@@ -724,7 +725,7 @@ private:
+     T *bufPtr;
+ };
+ 
+-class MemStream : public BaseMemStream<const char>
++class POPPLER_PRIVATE_EXPORT MemStream : public BaseMemStream<const char>
+ {
+ public:
+     MemStream(const char *bufA, Goffset startA, Goffset lengthA, Object &&dictA) : BaseMemStream(bufA, startA, lengthA, std::move(dictA)) { }
+@@ -748,7 +749,7 @@ public:
+ // that creating a new FileStream (using makeSubStream).
+ //------------------------------------------------------------------------
+ 
+-class EmbedStream : public BaseStream
++class POPPLER_PRIVATE_EXPORT EmbedStream : public BaseStream
+ {
+ public:
+     EmbedStream(Stream *strA, Object &&dictA, bool limitedA, Goffset lengthA, bool reusableA = false);
+diff --git a/poppler/StructElement.h b/poppler/StructElement.h
+index 1111111..2222222 100644
+--- a/poppler/StructElement.h
++++ b/poppler/StructElement.h
+@@ -17,6 +17,7 @@
+ #include "goo/GooString.h"
+ #include "MarkedContentOutputDev.h"
+ #include "Object.h"
++#include "poppler_private_export.h"
+ #include <vector>
+ #include <set>
+ 
+@@ -25,7 +26,7 @@ class Dict;
+ class StructElement;
+ class StructTreeRoot;
+ 
+-class Attribute
++class POPPLER_PRIVATE_EXPORT Attribute
+ {
+ public:
+     enum Type
+@@ -160,7 +161,7 @@ private:
+     friend class StructElement;
+ };
+ 
+-class StructElement
++class POPPLER_PRIVATE_EXPORT StructElement
+ {
+ public:
+     enum Type
+diff --git a/poppler/TextOutputDev.h b/poppler/TextOutputDev.h
+index 1111111..2222222 100644
+--- a/poppler/TextOutputDev.h
++++ b/poppler/TextOutputDev.h
+@@ -37,6 +37,7 @@
+ #define TEXTOUTPUTDEV_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include <cstdio>
+ #include "GfxFont.h"
+ #include "GfxState.h"
+@@ -83,7 +84,7 @@ enum EndOfLineKind
+ // TextFontInfo
+ //------------------------------------------------------------------------
+ 
+-class TextFontInfo
++class POPPLER_PRIVATE_EXPORT TextFontInfo
+ {
+ public:
+     TextFontInfo(const GfxState *state);
+@@ -133,7 +134,7 @@ private:
+ // TextWord
+ //------------------------------------------------------------------------
+ 
+-class TextWord
++class POPPLER_PRIVATE_EXPORT TextWord
+ {
+ public:
+     // Constructor.
+@@ -503,7 +504,7 @@ private:
+ // TextWordList
+ //------------------------------------------------------------------------
+ 
+-class TextWordList
++class POPPLER_PRIVATE_EXPORT TextWordList
+ {
+ public:
+     // Build a flat word list, in content stream order (if
+@@ -551,7 +552,7 @@ private:
+ // TextPage
+ //------------------------------------------------------------------------
+ 
+-class TextPage
++class POPPLER_PRIVATE_EXPORT TextPage
+ {
+ public:
+     // Constructor.
+@@ -708,7 +709,7 @@ private:
+ // ActualText
+ //------------------------------------------------------------------------
+ 
+-class ActualText
++class POPPLER_PRIVATE_EXPORT ActualText
+ {
+ public:
+     // Create an ActualText
+@@ -737,7 +738,7 @@ private:
+ // TextOutputDev
+ //------------------------------------------------------------------------
+ 
+-class TextOutputDev : public OutputDev
++class POPPLER_PRIVATE_EXPORT TextOutputDev : public OutputDev
+ {
+ public:
+     // Open a text output file.  If <fileName> is NULL, no file is
+diff --git a/poppler/UTF.h b/poppler/UTF.h
+index 1111111..2222222 100644
+--- a/poppler/UTF.h
++++ b/poppler/UTF.h
+@@ -20,6 +20,7 @@
+ 
+ #include "goo/GooString.h"
+ #include "CharTypes.h"
++#include "poppler_private_export.h"
+ 
+ // Convert a UTF-16 string to a UCS-4
+ //   utf16      - utf16 bytes
+@@ -33,7 +34,7 @@ int UTF16toUCS4(const Unicode *utf16, int utf16Len, Unicode **ucs4_out);
+ //   ucs4       - if the number of UCS-4 characters is > 0, allocates and
+ //                returns UCS-4 string. Free with gfree.
+ //   returns number of UCS-4 characters
+-int TextStringToUCS4(const GooString *textStr, Unicode **ucs4);
++int POPPLER_PRIVATE_EXPORT TextStringToUCS4(const GooString *textStr, Unicode **ucs4);
+ 
+ // check if UCS-4 character is valid
+ bool UnicodeIsValid(Unicode ucs4);
+@@ -45,7 +46,7 @@ bool UnicodeIsWhitespace(Unicode ucs4);
+ // (excluding terminating NULL). Each invalid byte is counted as a
+ // code point since the UTF-8 conversion functions will replace it with
+ // REPLACEMENT_CHAR.
+-int utf8CountUtf16CodeUnits(const char *utf8);
++int POPPLER_PRIVATE_EXPORT utf8CountUtf16CodeUnits(const char *utf8);
+ 
+ // Convert UTF-8 to UTF-16
+ //  utf8- UTF-8 string to convert. If not null terminated, set maxUtf8 to num
+@@ -55,14 +56,14 @@ int utf8CountUtf16CodeUnits(const char *utf8);
+ //  maxUtf8 - maximum number of UTF-8 bytes to convert. Conversion stops when
+ //            either this count is reached or a null is encountered.
+ // Returns number of UTF-16 code units written (excluding NULL).
+-int utf8ToUtf16(const char *utf8, uint16_t *utf16, int maxUtf16 = INT_MAX, int maxUtf8 = INT_MAX);
++int POPPLER_PRIVATE_EXPORT utf8ToUtf16(const char *utf8, uint16_t *utf16, int maxUtf16 = INT_MAX, int maxUtf8 = INT_MAX);
+ 
+ // Allocate utf16 string and convert utf8 into it.
+-uint16_t *utf8ToUtf16(const char *utf8, int *len = nullptr);
++uint16_t POPPLER_PRIVATE_EXPORT *utf8ToUtf16(const char *utf8, int *len = nullptr);
+ 
+ // Count number of UTF-8 bytes required to convert a UTF-16 string to
+ // UTF-8 (excluding terminating NULL).
+-int utf16CountUtf8Bytes(const uint16_t *utf16);
++int POPPLER_PRIVATE_EXPORT utf16CountUtf8Bytes(const uint16_t *utf16);
+ 
+ // Convert UTF-16 to UTF-8
+ //  utf16- UTF-16 string to convert. If not null terminated, set maxUtf16 to num
+@@ -72,10 +73,10 @@ int utf16CountUtf8Bytes(const uint16_t *utf16);
+ //  maxUtf16 - maximum number of UTF-16 code units to convert. Conversion stops when
+ //            either this count is reached or a null is encountered.
+ // Returns number of UTF-8 bytes written (excluding NULL).
+-int utf16ToUtf8(const uint16_t *utf16, char *utf8, int maxUtf8 = INT_MAX, int maxUtf16 = INT_MAX);
++int POPPLER_PRIVATE_EXPORT utf16ToUtf8(const uint16_t *utf16, char *utf8, int maxUtf8 = INT_MAX, int maxUtf16 = INT_MAX);
+ 
+ // Allocate utf8 string and convert utf16 into it.
+-char *utf16ToUtf8(const uint16_t *utf16, int *len = nullptr);
++char POPPLER_PRIVATE_EXPORT *utf16ToUtf8(const uint16_t *utf16, int *len = nullptr);
+ 
+ // Convert a UCS-4 string to pure ASCII (7bit)
+ //   in       - UCS-4 string bytes
+@@ -88,6 +89,6 @@ char *utf16ToUtf8(const uint16_t *utf16, int *len = nullptr);
+ //              of length @out_len + 1, for each character in the ascii string giving the index
+ //              of the corresponding character in the text of the line (thanks to this info
+ //              being passed in @in_idx parameter).
+-void unicodeToAscii7(const Unicode *in, int len, Unicode **ucs4_out, int *out_len, const int *in_idx, int **indices);
++void POPPLER_PRIVATE_EXPORT unicodeToAscii7(const Unicode *in, int len, Unicode **ucs4_out, int *out_len, const int *in_idx, int **indices);
+ 
+ #endif
+diff --git a/poppler/UnicodeMap.h b/poppler/UnicodeMap.h
+index 1111111..2222222 100644
+--- a/poppler/UnicodeMap.h
++++ b/poppler/UnicodeMap.h
+@@ -29,6 +29,7 @@
+ #define UNICODEMAP_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include "CharTypes.h"
+ 
+ #include <atomic>
+@@ -56,7 +57,7 @@ struct UnicodeMapExt;
+ 
+ //------------------------------------------------------------------------
+ 
+-class UnicodeMap
++class POPPLER_PRIVATE_EXPORT UnicodeMap
+ {
+ public:
+     // Create the UnicodeMap specified by <encodingName>.  Sets the
+diff --git a/poppler/UnicodeMapFuncs.h b/poppler/UnicodeMapFuncs.h
+index 1111111..2222222 100644
+--- a/poppler/UnicodeMapFuncs.h
++++ b/poppler/UnicodeMapFuncs.h
+@@ -28,7 +28,7 @@
+ 
+ #include "UTF.h"
+ 
+-int mapUTF8(Unicode u, char *buf, int bufSize);
++int POPPLER_PRIVATE_EXPORT mapUTF8(Unicode u, char *buf, int bufSize);
+ 
+ int mapUTF16(Unicode u, char *buf, int bufSize);
+ 
+diff --git a/poppler/UnicodeTypeTable.h b/poppler/UnicodeTypeTable.h
+index 1111111..2222222 100644
+--- a/poppler/UnicodeTypeTable.h
++++ b/poppler/UnicodeTypeTable.h
+@@ -28,6 +28,7 @@
+ #define UNICODETYPETABLE_H
+ 
+ #include "CharTypes.h"
++#include "poppler_private_export.h"
+ 
+ extern bool unicodeTypeL(Unicode c);
+ 
+@@ -41,8 +42,8 @@ extern bool unicodeIsAlphabeticPresentationForm(Unicode c);
+ 
+ extern Unicode unicodeToUpper(Unicode c);
+ 
+-extern Unicode *unicodeNormalizeNFKC(const Unicode *in, int len, int *out_len, int **indices);
++extern Unicode POPPLER_PRIVATE_EXPORT *unicodeNormalizeNFKC(const Unicode *in, int len, int *out_len, int **indices);
+ 
+-extern Unicode *unicodeNormalizeNFKC(const Unicode *in, int len, int *out_len, int **indices, bool reverseRTL);
++extern Unicode POPPLER_PRIVATE_EXPORT *unicodeNormalizeNFKC(const Unicode *in, int len, int *out_len, int **indices, bool reverseRTL);
+ 
+ #endif
+diff --git a/poppler/XRef.h b/poppler/XRef.h
+index c18ff5483..1b050f8e6 100644
+--- a/poppler/XRef.h
++++ b/poppler/XRef.h
+@@ -35,6 +35,7 @@
+ #define XREF_H
+ 
+ #include "poppler-config.h"
++#include "poppler_private_export.h"
+ #include "Object.h"
+ #include "Stream.h"
+ #include "PopplerCache.h"
+@@ -92,7 +93,7 @@ struct XRefEntry
+     }
+ };
+ 
+-class XRef
++class POPPLER_PRIVATE_EXPORT XRef
+ {
+ public:
+     // Constructor, create an empty XRef, used for PDF writing
+diff --git a/qt5/demos/CMakeLists.txt b/qt5/demos/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/qt5/demos/CMakeLists.txt
++++ b/qt5/demos/CMakeLists.txt
+@@ -2,6 +2,7 @@ include_directories(
+   ${CMAKE_CURRENT_SOURCE_DIR}
+   ${CMAKE_CURRENT_SOURCE_DIR}/../src
+   ${CMAKE_CURRENT_BINARY_DIR}
++  ${CMAKE_CURRENT_BINARY_DIR}/../src
+ )
+ 
+ set(poppler_qt5viewer_SRCS
+diff --git a/qt5/src/CMakeLists.txt b/qt5/src/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/qt5/src/CMakeLists.txt
++++ b/qt5/src/CMakeLists.txt
+@@ -37,6 +37,7 @@ set(poppler_qt5_SRCS
+   poppler-version.cpp
+ )
+ add_library(poppler-qt5 ${poppler_qt5_SRCS})
++generate_export_header(poppler-qt5 BASE_NAME poppler-qt5 EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/poppler-export.h")
+ set_target_properties(poppler-qt5 PROPERTIES VERSION 1.27.0 SOVERSION 1)
+ if(MINGW AND BUILD_SHARED_LIBS)
+     get_target_property(POPPLER_QT5_SOVERSION poppler-qt5 SOVERSION)
+@@ -60,9 +61,9 @@ install(FILES
+   poppler-annotation.h
+   poppler-form.h
+   poppler-optcontent.h
+-  poppler-export.h
+   poppler-page-transition.h
+   poppler-media.h
++  ${CMAKE_CURRENT_BINARY_DIR}/poppler-export.h
+   ${CMAKE_CURRENT_BINARY_DIR}/poppler-version.h
+   DESTINATION include/poppler/qt5)
+ 
+diff --git a/qt5/src/poppler-export.h b/qt5/src/poppler-export.h
+deleted file mode 100644
+index 1111111..000000000
+--- a/qt5/src/poppler-export.h
++++ /dev/null
+@@ -1,20 +0,0 @@
+-/*
+- * This file is used to set the poppler_qt5_EXPORT macros right.
+- * This is needed for setting the visibility on windows, it will have no effect on other platforms.
+- */
+-#if defined(_WIN32)
+-#    define _POPPLER_QT5_LIB_EXPORT __declspec(dllexport)
+-#    define _POPPLER_QT5_LIB_IMPORT __declspec(dllimport)
+-#elif defined(__GNUC__)
+-#    define _POPPLER_QT5_LIB_EXPORT __attribute__((visibility("default")))
+-#    define _POPPLER_QT5_LIB_IMPORT
+-#else
+-#    define _POPPLER_QT5_LIB_EXPORT
+-#    define _POPPLER_QT5_LIB_IMPORT
+-#endif
+-
+-#ifdef poppler_qt5_EXPORTS
+-#    define POPPLER_QT5_EXPORT _POPPLER_QT5_LIB_EXPORT
+-#else
+-#    define POPPLER_QT5_EXPORT _POPPLER_QT5_LIB_IMPORT
+-#endif
+diff --git a/qt5/tests/CMakeLists.txt b/qt5/tests/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/qt5/tests/CMakeLists.txt
++++ b/qt5/tests/CMakeLists.txt
+@@ -4,6 +4,7 @@ include_directories(
+   ${CMAKE_CURRENT_SOURCE_DIR}
+   ${CMAKE_CURRENT_SOURCE_DIR}/../src
+   ${CMAKE_CURRENT_BINARY_DIR}
++  ${CMAKE_CURRENT_BINARY_DIR}/../src
+ )
+ 
+ macro(QT5_ADD_SIMPLETEST exe source)
+diff --git a/qt6/demos/CMakeLists.txt b/qt6/demos/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/qt6/demos/CMakeLists.txt
++++ b/qt6/demos/CMakeLists.txt
+@@ -2,6 +2,7 @@ include_directories(
+   ${CMAKE_CURRENT_SOURCE_DIR}
+   ${CMAKE_CURRENT_SOURCE_DIR}/../src
+   ${CMAKE_CURRENT_BINARY_DIR}
++  ${CMAKE_CURRENT_BINARY_DIR}/../src
+ )
+ 
+ set(poppler_qt6viewer_SRCS
+diff --git a/qt6/src/CMakeLists.txt b/qt6/src/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/qt6/src/CMakeLists.txt
++++ b/qt6/src/CMakeLists.txt
+@@ -37,6 +37,7 @@ set(poppler_qt6_SRCS
+   poppler-version.cpp
+ )
+ add_library(poppler-qt6 ${poppler_qt6_SRCS})
++generate_export_header(poppler-qt6 BASE_NAME poppler-qt6 EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/poppler-export.h")
+ set_target_properties(poppler-qt6 PROPERTIES VERSION 1.1.0 SOVERSION 1)
+ if(MINGW AND BUILD_SHARED_LIBS)
+     get_target_property(POPPLER_QT6_SOVERSION poppler-qt6 SOVERSION)
+@@ -60,9 +61,9 @@ install(FILES
+   poppler-annotation.h
+   poppler-form.h
+   poppler-optcontent.h
+-  poppler-export.h
+   poppler-page-transition.h
+   poppler-media.h
++  ${CMAKE_CURRENT_BINARY_DIR}/poppler-export.h
+   ${CMAKE_CURRENT_BINARY_DIR}/poppler-version.h
+   DESTINATION include/poppler/qt6)
+ 
+diff --git a/qt6/src/poppler-export.h b/qt6/src/poppler-export.h
+deleted file mode 100644
+index 1111111..000000000
+--- a/qt6/src/poppler-export.h
++++ /dev/null
+@@ -1,20 +0,0 @@
+-/*
+- * This file is used to set the poppler_qt6_EXPORT macros right.
+- * This is needed for setting the visibility on windows, it will have no effect on other platforms.
+- */
+-#if defined(_WIN32)
+-#    define _POPPLER_QT6_LIB_EXPORT __declspec(dllexport)
+-#    define _POPPLER_QT6_LIB_IMPORT __declspec(dllimport)
+-#elif defined(__GNUC__)
+-#    define _POPPLER_QT6_LIB_EXPORT __attribute__((visibility("default")))
+-#    define _POPPLER_QT6_LIB_IMPORT
+-#else
+-#    define _POPPLER_QT6_LIB_EXPORT
+-#    define _POPPLER_QT6_LIB_IMPORT
+-#endif
+-
+-#ifdef poppler_qt6_EXPORTS
+-#    define POPPLER_QT6_EXPORT _POPPLER_QT6_LIB_EXPORT
+-#else
+-#    define POPPLER_QT6_EXPORT _POPPLER_QT6_LIB_IMPORT
+-#endif
+diff --git a/qt6/tests/CMakeLists.txt b/qt6/tests/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/qt6/tests/CMakeLists.txt
++++ b/qt6/tests/CMakeLists.txt
+@@ -4,6 +4,7 @@ include_directories(
+   ${CMAKE_CURRENT_SOURCE_DIR}
+   ${CMAKE_CURRENT_SOURCE_DIR}/../src
+   ${CMAKE_CURRENT_BINARY_DIR}
++  ${CMAKE_CURRENT_BINARY_DIR}/../src
+ )
+ 
+ macro(QT6_ADD_SIMPLETEST exe source)
+diff --git a/splash/Splash.h b/splash/Splash.h
+index 1111111..2222222 100644
+--- a/splash/Splash.h
++++ b/splash/Splash.h
+@@ -31,6 +31,7 @@
+ #include "SplashTypes.h"
+ #include "SplashClip.h"
+ #include "SplashPattern.h"
++#include "poppler_private_export.h"
+ 
+ class SplashBitmap;
+ struct SplashGlyphBitmap;
+@@ -78,7 +79,7 @@ enum SplashPipeResultColorCtrl
+ // Splash
+ //------------------------------------------------------------------------
+ 
+-class Splash
++class POPPLER_PRIVATE_EXPORT Splash
+ {
+ public:
+     // Create a new rasterizer object.
+diff --git a/splash/SplashBitmap.h b/splash/SplashBitmap.h
+index 1111111..2222222 100644
+--- a/splash/SplashBitmap.h
++++ b/splash/SplashBitmap.h
+@@ -35,6 +35,7 @@
+ 
+ #include "SplashTypes.h"
+ #include "poppler/GfxState.h"
++#include "poppler_private_export.h"
+ #include <cstdio>
+ 
+ class ImgWriter;
+@@ -43,7 +44,7 @@ class ImgWriter;
+ // SplashBitmap
+ //------------------------------------------------------------------------
+ 
+-class SplashBitmap
++class POPPLER_PRIVATE_EXPORT SplashBitmap
+ {
+ public:
+     // Create a new bitmap.  It will have <widthA> x <heightA> pixels in
+diff --git a/splash/SplashPath.h b/splash/SplashPath.h
+index 1111111..2222222 100644
+--- a/splash/SplashPath.h
++++ b/splash/SplashPath.h
+@@ -23,6 +23,7 @@
+ #define SPLASHPATH_H
+ 
+ #include "SplashTypes.h"
++#include "poppler_private_export.h"
+ 
+ //------------------------------------------------------------------------
+ // SplashPathPoint
+@@ -64,7 +65,7 @@ struct SplashPathHint
+ // SplashPath
+ //------------------------------------------------------------------------
+ 
+-class SplashPath
++class POPPLER_PRIVATE_EXPORT SplashPath
+ {
+ public:
+     // Create an empty path.
+diff --git a/splash/SplashPattern.h b/splash/SplashPattern.h
+index 1111111..2222222 100644
+--- a/splash/SplashPattern.h
++++ b/splash/SplashPattern.h
+@@ -23,6 +23,7 @@
+ #define SPLASHPATTERN_H
+ 
+ #include "SplashTypes.h"
++#include "poppler_private_export.h"
+ 
+ class SplashScreen;
+ 
+@@ -62,7 +63,7 @@ private:
+ // SplashSolidColor
+ //------------------------------------------------------------------------
+ 
+-class SplashSolidColor : public SplashPattern
++class POPPLER_PRIVATE_EXPORT SplashSolidColor : public SplashPattern
+ {
+ public:
+     SplashSolidColor(SplashColorPtr colorA);

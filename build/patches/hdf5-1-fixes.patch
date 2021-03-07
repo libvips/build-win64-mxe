@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 28 Nov 2019 12:00:00 +0100
-Subject: [PATCH 1/3] Use H5make_libsettings.c from native build
+Subject: [PATCH 1/4] Use H5make_libsettings.c from native build
 
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
@@ -106,7 +106,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Tom Schoonjans <Tom.Schoonjans@diamond.ac.uk>
 Date: Tue, 27 Feb 2018 15:49:30 +0000
-Subject: [PATCH 2/3] Restore MSYS/MINGW support
+Subject: [PATCH 2/4] Restore MSYS/MINGW support
 
 
 diff --git a/config/cmake_ext_mod/HDFMacros.cmake b/config/cmake_ext_mod/HDFMacros.cmake
@@ -157,7 +157,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 26 Dec 2019 09:45:00 +0100
-Subject: [PATCH 3/3] Remove -static-[libgcc,libstdc++] linker flags
+Subject: [PATCH 3/4] Remove -static-[libgcc,libstdc++] linker flags
 
 It won't work with llvm-mingw.
 
@@ -220,3 +220,176 @@ index 1111111..2222222 100644
    endif ()
  endif ()
  set_target_properties (cpp_testhdf5 PROPERTIES FOLDER test/cpp)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 7 Mar 2021 00:00:00 +0100
+Subject: [PATCH 1/1] Use dllexport/dllimport also for MinGW targets
+
+
+diff --git a/src/H5api_adpt.h b/src/H5api_adpt.h
+index 1111111..2222222 100644
+--- a/src/H5api_adpt.h
++++ b/src/H5api_adpt.h
+@@ -24,7 +24,7 @@
+ #ifdef H5_BUILT_AS_DYNAMIC_LIB
+ 
+ #if defined(hdf5_shared_EXPORTS)
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_DLL __declspec(dllexport)
+     #define H5_DLLVAR extern __declspec(dllexport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -32,7 +32,7 @@
+     #define H5_DLLVAR extern __attribute__ ((visibility("default")))
+   #endif
+ #else
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_DLL __declspec(dllimport)
+     #define H5_DLLVAR __declspec(dllimport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -47,7 +47,7 @@
+ #endif /* _HDF5DLL_ */
+ 
+ #if defined(hdf5_test_shared_EXPORTS)
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5TEST_DLL __declspec(dllexport)
+     #define H5TEST_DLLVAR extern __declspec(dllexport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -55,7 +55,7 @@
+     #define H5TEST_DLLVAR extern __attribute__ ((visibility("default")))
+   #endif
+ #else
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5TEST_DLL __declspec(dllimport)
+     #define H5TEST_DLLVAR __declspec(dllimport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -70,7 +70,7 @@
+ #endif /* H5TEST_DLL */
+ 
+ #if defined(hdf5_tools_shared_EXPORTS)
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5TOOLS_DLL __declspec(dllexport)
+     #define H5TOOLS_DLLVAR extern __declspec(dllexport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -78,7 +78,7 @@
+     #define H5TOOLS_DLLVAR extern __attribute__ ((visibility("default")))
+   #endif
+ #else
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5TOOLS_DLL __declspec(dllimport)
+     #define H5TOOLS_DLLVAR __declspec(dllimport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -93,7 +93,7 @@
+ #endif /* H5TOOLS_DLL */
+ 
+ #if defined(hdf5_cpp_shared_EXPORTS)
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_DLLCPP __declspec(dllexport)
+     #define H5_DLLCPPVAR extern __declspec(dllexport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -101,7 +101,7 @@
+     #define H5_DLLCPPVAR extern __attribute__ ((visibility("default")))
+   #endif
+ #else
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_DLLCPP __declspec(dllimport)
+     #define H5_DLLCPPVAR __declspec(dllimport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -116,7 +116,7 @@
+ #endif /* H5_DLLCPP */
+ 
+ #if defined(hdf5_hl_shared_EXPORTS)
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_HLDLL __declspec(dllexport)
+     #define H5_HLDLLVAR extern __declspec(dllexport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -124,7 +124,7 @@
+     #define H5_HLDLLVAR extern __attribute__ ((visibility("default")))
+   #endif
+ #else
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_HLDLL __declspec(dllimport)
+     #define H5_HLDLLVAR __declspec(dllimport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -139,7 +139,7 @@
+ #endif /* H5_HLDLL */
+ 
+ #if defined(hdf5_hl_cpp_shared_EXPORTS)
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_HLCPPDLL __declspec(dllexport)
+     #define H5_HLCPPDLLVAR extern __declspec(dllexport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -147,7 +147,7 @@
+     #define H5_HLCPPDLLVAR extern __attribute__ ((visibility("default")))
+   #endif
+ #else
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_HLCPPDLL __declspec(dllimport)
+     #define H5_HLCPPDLLVAR __declspec(dllimport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -162,7 +162,7 @@
+ #endif /* H5_HLCPPDLL */
+ 
+ #if defined(hdf5_f90cstub_shared_EXPORTS)
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_FCDLL __declspec(dllexport)
+     #define H5_FCDLLVAR extern __declspec(dllexport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -170,7 +170,7 @@
+     #define H5_FCDLLVAR extern __attribute__ ((visibility("default")))
+   #endif
+ #else
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_FCDLL __declspec(dllimport)
+     #define H5_FCDLLVAR __declspec(dllimport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -185,7 +185,7 @@
+ #endif /* H5_FCDLL */
+ 
+ #if defined(hdf5_test_f90cstub_shared_EXPORTS)
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_FCTESTDLL __declspec(dllexport)
+     #define H5_FCTESTDLLVAR extern __declspec(dllexport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -193,7 +193,7 @@
+     #define H5_FCTESTDLLVAR extern __attribute__ ((visibility("default")))
+   #endif
+ #else
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define H5_FCTESTDLL __declspec(dllimport)
+     #define H5_FCTESTDLLVAR __declspec(dllimport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -208,7 +208,7 @@
+ #endif /* H5_FCTESTDLL */
+ 
+ #if defined(hdf5_hl_f90cstub_shared_EXPORTS)
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define HDF5_HL_F90CSTUBDLL __declspec(dllexport)
+     #define HDF5_HL_F90CSTUBDLLVAR extern __declspec(dllexport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+@@ -216,7 +216,7 @@
+     #define HDF5_HL_F90CSTUBDLLVAR extern __attribute__ ((visibility("default")))
+   #endif
+ #else
+-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
++  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC/MinGW Compiler Case */
+     #define HDF5_HL_F90CSTUBDLL __declspec(dllimport)
+     #define HDF5_HL_F90CSTUBDLLVAR __declspec(dllimport)
+   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */

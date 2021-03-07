@@ -14,6 +14,7 @@ define $(PKG)_BUILD
         --strip \
         --libdir='lib' \
         --includedir='include' \
+        $(if $(BUILD_SHARED), -Dc_args="$(CFLAGS) -DLIQ_EXPORT='extern __declspec(dllexport)'") \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

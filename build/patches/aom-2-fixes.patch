@@ -68,28 +68,86 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Wed, 10 Jun 2020 21:00:00 +0200
-Subject: [PATCH 3/8] Disable version script on llvm-mingw
+Date: Sat, 6 Mar 2021 22:50:00 +0100
+Subject: [PATCH 3/8] Avoid using version script on llvm-mingw
 
 
 diff --git a/build/cmake/exports.cmake b/build/cmake/exports.cmake
 index 1111111..2222222 100644
 --- a/build/cmake/exports.cmake
 +++ b/build/cmake/exports.cmake
-@@ -54,11 +54,11 @@ function(setup_exports_target)
+@@ -19,7 +19,7 @@ include("${AOM_ROOT}/build/cmake/exports_sources.cmake")
+ function(setup_exports_target)
+   if("${AOM_TARGET_SYSTEM}" STREQUAL "Darwin")
+     set(symbol_file_ext "syms")
+-  elseif("${AOM_TARGET_SYSTEM}" MATCHES "Windows\|MSYS" AND MSVC)
++  elseif("${AOM_TARGET_SYSTEM}" MATCHES "Windows\|MSYS")
+     set(symbol_file_ext "def")
+   else()
+     set(symbol_file_ext "ver")
+@@ -33,8 +33,7 @@ function(setup_exports_target)
+                             -DAOM_CONFIG_DIR="${AOM_CONFIG_DIR}"
+                             -DAOM_TARGET_SYSTEM=${AOM_TARGET_SYSTEM}
+                             -DAOM_SYM_FILE="${aom_sym_file}"
+-                            -DAOM_MSVC=${MSVC}
+-                            -DAOM_XCODE=${XCODE}
++                            -DAOM_LIB_PREFIX=${CMAKE_SHARED_LIBRARY_PREFIX}
+                             -DCONFIG_NAME=$<CONFIG>
+                             -DCONFIG_AV1_DECODER=${CONFIG_AV1_DECODER}
+                             -DCONFIG_AV1_ENCODER=${CONFIG_AV1_ENCODER}
+@@ -54,15 +53,8 @@ function(setup_exports_target)
                   APPEND_STRING
                   PROPERTY LINK_FLAGS "-exported_symbols_list ${aom_sym_file}")
    elseif(WIN32)
 -    if(NOT MSVC)
-+    if(CMAKE_C_COMPILER_ID MATCHES GNU)
-       set_property(TARGET aom
-                    APPEND_STRING
-                    PROPERTY LINK_FLAGS "-Wl,--version-script ${aom_sym_file}")
+-      set_property(TARGET aom
+-                   APPEND_STRING
+-                   PROPERTY LINK_FLAGS "-Wl,--version-script ${aom_sym_file}")
 -    else()
-+    elseif(MSVC)
-       set_property(TARGET aom
-                    APPEND_STRING
-                    PROPERTY LINK_FLAGS "/DEF:${aom_sym_file}")
+-      set_property(TARGET aom
+-                   APPEND_STRING
+-                   PROPERTY LINK_FLAGS "/DEF:${aom_sym_file}")
+-    endif()
++    set_property(SOURCE "${aom_sym_file}" PROPERTY GENERATED 1)
++    target_sources(aom PRIVATE "${aom_sym_file}")
+ 
+     # TODO(tomfinegan): Sort out the import lib situation and flags for MSVC.
+ 
+diff --git a/build/cmake/generate_exports.cmake b/build/cmake/generate_exports.cmake
+index 1111111..2222222 100644
+--- a/build/cmake/generate_exports.cmake
++++ b/build/cmake/generate_exports.cmake
+@@ -23,8 +23,8 @@ include("${AOM_ROOT}/build/cmake/exports_sources.cmake")
+ 
+ if("${AOM_TARGET_SYSTEM}" STREQUAL "Darwin")
+   set(symbol_prefix "_")
+-elseif("${AOM_TARGET_SYSTEM}" MATCHES "Windows\|MSYS" AND AOM_MSVC)
+-  file(WRITE "${AOM_SYM_FILE}" "LIBRARY aom\n" "EXPORTS\n")
++elseif("${AOM_TARGET_SYSTEM}" MATCHES "Windows\|MSYS")
++  file(WRITE "${AOM_SYM_FILE}" "LIBRARY ${AOM_LIB_PREFIX}aom\n" "EXPORTS\n")
+ else()
+   set(symbol_suffix ";")
+ endif()
+@@ -33,8 +33,8 @@ set(aom_sym_file "${AOM_SYM_FILE}")
+ 
+ if("${AOM_TARGET_SYSTEM}" STREQUAL "Darwin")
+   file(REMOVE "${aom_sym_file}")
+-elseif("${AOM_TARGET_SYSTEM}" MATCHES "Windows\|MSYS" AND AOM_MSVC)
+-  file(WRITE "${aom_sym_file}" "LIBRARY aom\n" "EXPORTS\n")
++elseif("${AOM_TARGET_SYSTEM}" MATCHES "Windows\|MSYS")
++  file(WRITE "${aom_sym_file}" "LIBRARY ${AOM_LIB_PREFIX}aom\n" "EXPORTS\n")
+ else()
+   file(WRITE "${aom_sym_file}" "{\nglobal:\n")
+ endif()
+@@ -47,7 +47,7 @@ endforeach()
+ 
+ foreach(exported_symbol ${exported_symbols})
+   string(STRIP "${exported_symbol}" exported_symbol)
+-  if("${AOM_TARGET_SYSTEM}" MATCHES "Windows\|MSYS" AND AOM_MSVC)
++  if("${AOM_TARGET_SYSTEM}" MATCHES "Windows\|MSYS")
+     string(SUBSTRING ${exported_symbol} 0 4 export_type)
+     string(COMPARE EQUAL "${export_type}" "data" is_data)
+     if(is_data)
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>

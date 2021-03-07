@@ -77,10 +77,15 @@ define $(PKG)_BUILD
         --disable-introspection \
         --disable-deprecated
 
+    # libtool should automatically generate a list
+    # of exported symbols on llvm-mingw
+    $(if $(IS_LLVM), \
+        $(SED) -i '/^always_export_symbols=/s/=no/=yes/' '$(BUILD_DIR)/libtool')
+
     # remove -nostdlib from linker commandline options
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
     $(if $(IS_LLVM), \
-        $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(BUILD_DIR)/libtool')
+        $(SED) -i '/\-shared /s/ \-nostdlib//' '$(BUILD_DIR)/libtool')
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
