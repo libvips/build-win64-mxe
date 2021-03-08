@@ -26,6 +26,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [giflib]        | 5.1.4     | MIT Licence                                                  |
 | [glib]          | 2.67.4    | LGPLv3                                                       |
 | [harfbuzz]      | 2.7.4     | MIT Licence                                                  |
+| [imagequant]    | 2.4.1     | BSD 2-Clause                                                 |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
 | [libffi]        | 3.3       | MIT Licence                                                  |
@@ -57,6 +58,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [giflib]: https://sourceforge.net/projects/giflib/
 [glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
+[imagequant]: https://github.com/lovell/libimagequant/blob/main/COPYRIGHT
 [lcms]: https://github.com/mm2/Little-CMS
 [libexif]: https://github.com/libexif/libexif
 [libffi]: https://github.com/libffi/libffi

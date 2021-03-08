@@ -9,7 +9,7 @@ $(PKG)_GH_CONF  := libvips/libvips/releases,v
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
-                   libjpeg-turbo tiff lcms libexif libheif libpng libspng orc
+                   libjpeg-turbo tiff lcms libexif libheif libpng libspng orc imagequant
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -31,6 +31,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
+     printf '  "imagequant": "$(imagequant_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
@@ -74,7 +75,6 @@ define $(PKG)_BUILD
         --without-ppm \
         --without-analyze \
         --without-radiance \
-        --without-imagequant \
         --disable-introspection \
         --disable-deprecated \
         $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all")

@@ -10,7 +10,7 @@ $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc matio libwebp librsvg giflib poppler glib pango fftw \
                    libgsf libjpeg-turbo tiff openslide lcms libexif libheif \
-                   imagemagick libpng libspng openexr cfitsio nifticlib orc
+                   imagemagick libpng libspng openexr cfitsio nifticlib orc imagequant
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -37,6 +37,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "hdf5": "$(hdf5_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
      printf '  "imagemagick": "$(imagemagick_VERSION)",\n'; \
+     printf '  "imagequant": "$(imagequant_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      printf '  "matio": "$(matio_VERSION)",\n'; \
@@ -70,7 +71,6 @@ define $(PKG)_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
         --without-pdfium \
-        --without-imagequant \
         --disable-introspection \
         --disable-deprecated
 
