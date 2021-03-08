@@ -46,7 +46,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [zlib-ng]       | 2.0.0²    | [zlib-ng Licence]                                            |
 
-¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
+¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 ² Built from the [`v2.0.0-RC2`](https://github.com/zlib-ng/zlib-ng/releases/tag/v2.0.0-RC2) tag.
 
 [aom]: https://aomedia.googlesource.com/aom/
