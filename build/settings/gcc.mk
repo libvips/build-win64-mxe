@@ -6,7 +6,8 @@
 #export CFLAGS   := -g
 #export CXXFLAGS := -g
 # GCC doesn't support generating debug info in the PDB format,
-# use https://github.com/rainers/cv2pdb as workaround.
+# use https://github.com/rainers/cv2pdb as workaround, e.g.:
+#   for /r %i in (*.exe *.dll) do cv2pdb %i
 
 # Special flags for compiler.
 export CFLAGS   := -s -O3 -fPIC
