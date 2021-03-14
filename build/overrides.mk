@@ -164,10 +164,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 8.0.0
-# Update MinGW-w64 to ea40a87
-# https://github.com/mirror/mingw-w64/tarball/ea40a87ad09703b4cc0a47b83a5c4ed2a8276482
-mingw-w64_VERSION  := ea40a87
-mingw-w64_CHECKSUM := c5194bc7c7472f8376cf2f2df989af8bb84717a7cafbe3508b325e0c1e29929b
+# Update MinGW-w64 to 79951ed
+# https://github.com/mirror/mingw-w64/tarball/79951edef1e76a79d7ce0fa1cf94391b2f6b3d94
+mingw-w64_VERSION  := 79951ed
+mingw-w64_CHECKSUM := 21a47426330d6d102fb048e9b8d849fb370f511aa87f7c554abb3db8ad8564bb
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mirror-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mirror-mingw-w64-$(mingw-w64_VERSION).tar.gz
