@@ -12,8 +12,8 @@ libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_
 libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
 # upstream version is 2.32.3
-gdk-pixbuf_VERSION  := 2.42.2
-gdk-pixbuf_CHECKSUM := 83c66a1cfd591d7680c144d2922c5955d38b4db336d7cd3ee109f7bcf9afef15
+gdk-pixbuf_VERSION  := 2.42.4
+gdk-pixbuf_CHECKSUM := fe9c5dd88f486194ea2bc09b8814c1ed895bb6c530f37cbbf259757c4e482e4d
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -22,16 +22,16 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 # upstream version is 1.5.2
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.19
-matio_CHECKSUM := a4fa4d248b0414fc72f3d6155f710c470d5628d3c31af834f8d5ccf06b60286f
+matio_VERSION  := 1.5.21
+matio_CHECKSUM := 21809177e55839e7c94dada744ee55c1dea7d757ddaab89605776d50122fb065
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-2
-imagemagick_CHECKSUM := e7157883de4602172cd93687afa4c86fb118aa976f1ca4742af2cddbe57e74df
+imagemagick_VERSION  := 6.9.12-4
+imagemagick_CHECKSUM := 8ba3bddd2b95a0e44e5ffd3f5292ea07a306e9123a8a31a432b2e8eace7f6bf9
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -44,8 +44,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.48.2
-pango_CHECKSUM := d21f8b30dc8abdfc55de25656ecb88dc1105eeeb315e5e2a980dcef8010c2c80
+pango_VERSION  := 1.48.3
+pango_CHECKSUM := 36ea145c82217c8efc954d02aa577391b1d9a5da205e0aef7ffe0461349b4b46
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -62,12 +62,20 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.67.5
-glib_CHECKSUM := 9d2ad4303ce25ae7cfde77409d8364508ac6072a868cfca2e78333c6cdfa05e6
+glib_VERSION  := 2.68.0
+glib_CHECKSUM := 67734f584f3a05a2872f57e9a8db38f3b06c7087fb531c5a839d9171968103ea
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
+# upstream version is 2.2.10
+expat_VERSION  := 2.3.0
+expat_CHECKSUM := f122a20eada303f904d5e0513326c5b821248f2d4d2afbf5c6f1339e511c0586
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.bz2
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_2_3_0/$(expat_FILE)
 
 # upstream version is 1.14.30
 libgsf_VERSION  := 1.14.47
@@ -88,22 +96,12 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 2.5.5
-openexr_CHECKSUM := 59e98361cb31456a9634378d0f653a2b9554b8900f233450f2396ff495ea76b3
+openexr_VERSION  := 3.0.0
+openexr_CHECKSUM := 845e70393e1157473689ed8735174afb28eb800d3513d417bbb14fa5204952a5
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
-openexr_SUBDIR   := openexr-$(openexr_VERSION)
-openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
-openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
-
-# upstream version is 2.2.0
-# cannot use GH_CONF:
-# ilmbase_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-ilmbase_VERSION  := $(openexr_VERSION)
-ilmbase_CHECKSUM := $(openexr_CHECKSUM)
-ilmbase_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/ilmbase-[0-9]*.patch)))
-ilmbase_SUBDIR   := $(openexr_SUBDIR)
-ilmbase_FILE     := $(openexr_FILE)
-ilmbase_URL      := $(openexr_URL)
+openexr_SUBDIR   := openexr-$(openexr_VERSION)-beta
+openexr_FILE     := openexr-$(openexr_VERSION)-beta.tar.gz
+openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION)-beta.tar.gz
 
 # upstream version is 3410
 cfitsio_VERSION  := 3.49
@@ -241,7 +239,7 @@ gdk-pixbuf_DEPS         := cc glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
 tiff_DEPS               := cc libjpeg-turbo libwebp zlib
 imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
-openexr_DEPS            := cc ilmbase zlib
+openexr_DEPS            := cc imath zlib
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust
@@ -780,29 +778,18 @@ endef
 
 # build with CMake.
 define openexr_BUILD
+    # disable link-time garbage collection for shared builds
+    $(eval export CFLAGS   := -O3)
+    $(eval export CXXFLAGS := -O3)
+    $(eval export LDFLAGS  := -Wl,-s)
+
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-        -DOPENEXR_CXX_STANDARD=14 \
         -DOPENEXR_INSTALL_PKG_CONFIG=ON \
-        -DBUILD_TESTING=OFF \
+        -DOPENEXR_ENABLE_THREADING=$(if $(WIN32_THREADS),OFF,ON) \
+        -DOPENEXR_INSTALL_TOOLS=OFF \
         -DOPENEXR_BUILD_UTILS=OFF \
-        $(if $(WIN32_THREADS), -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads') \
-        '$(SOURCE_DIR)/OpenEXR'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
-endef
-
-# build with CMake.
-define ilmbase_BUILD
-    $(if $(WIN32_THREADS),\
-        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(ilmbase_PATCHES))))/ilmbase-mingw-std-threads.patch)
-
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-        -DOPENEXR_CXX_STANDARD=14 \
-        -DILMBASE_INSTALL_PKG_CONFIG=ON \
         -DBUILD_TESTING=OFF \
-        -DBUILD_SHARED_LIBS=OFF \
-        $(if $(WIN32_THREADS), -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads') \
-        '$(SOURCE_DIR)/IlmBase'
+        '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef

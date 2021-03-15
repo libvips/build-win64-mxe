@@ -12,12 +12,12 @@ diff --git a/src/matio_private.h b/src/matio_private.h
 index 1111111..2222222 100644
 --- a/src/matio_private.h
 +++ b/src/matio_private.h
-@@ -63,7 +63,7 @@
-  * @endif
+@@ -64,7 +64,7 @@
   */
- struct _mat_t {
--    void  *fp;              /**< File pointer for the MAT file */
-+    FILE  *fp;              /**< File pointer for the MAT file */
-     char  *header;          /**< MAT file header string */
-     char  *subsys_offset;   /**< Offset */
-     char  *filename;        /**< Filename of the MAT file */
+ struct _mat_t
+ {
+-    void *fp;            /**< File pointer for the MAT file */
++    FILE *fp;            /**< File pointer for the MAT file */
+     char *header;        /**< MAT file header string */
+     char *subsys_offset; /**< Offset */
+     char *filename;      /**< Filename of the MAT file */

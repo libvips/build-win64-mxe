@@ -18,9 +18,7 @@ _gcc_CONFIGURE_OPTS= \
 
 ## Override sub-dependencies
 
-ilmbase_DEPS  := $(ilmbase_DEPS) mingw-std-threads
 libde265_DEPS := $(libde265_DEPS) mingw-std-threads
-openexr_DEPS  := $(openexr_DEPS) mingw-std-threads
 poppler_DEPS  := $(poppler_DEPS) mingw-std-threads
 
 ## Override build scripts

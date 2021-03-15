@@ -17,16 +17,16 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 2.0.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.0.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
-| [expat]         | 2.2.10    | MIT Licence                                                  |
+| [expat]         | 2.3.0     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.93   | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.10.4    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.10    | LGPLv3                                                       |
-| [gdk-pixbuf]    | 2.42.2    | LGPLv3                                                       |
+| [gdk-pixbuf]    | 2.42.4    | LGPLv3                                                       |
 | [giflib]        | 5.1.4     | MIT Licence                                                  |
-| [glib]          | 2.67.5    | LGPLv3                                                       |
-| [harfbuzz]      | 2.7.4     | MIT Licence                                                  |
+| [glib]          | 2.68.0    | LGPLv3                                                       |
+| [harfbuzz]      | 2.8.0     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
 | [libffi]        | 3.3       | MIT Licence                                                  |
@@ -42,12 +42,11 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.9.10    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.48.2    | LGPLv3                                                       |
+| [pango]         | 1.48.3    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
-| [zlib-ng]       | 2.0.0²    | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.0.2     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
-² Built from the [`v2.0.0-RC2`](https://github.com/zlib-ng/zlib-ng/releases/tag/v2.0.0-RC2) tag.
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -95,14 +94,16 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
 | [hdf5]          | 1.12.0    | BSD-like                                                     |
-| [imagemagick]   | 6.9.12-2  | [ImageMagick License] (GPL-like)                             |
-| [matio]         | 1.5.19    | BSD 2-Clause                                                 |
+| [imagemagick]   | 6.9.12-4  | [ImageMagick License] (GPL-like)                             |
+| [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
-| [openexr]       | 2.5.5     | BSD 3-Clause                                                 |
+| [openexr]       | 3.0.0²    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
 | [poppler]       | 21.03.0   | GPLv2                                                        |
-| [sqlite]        | 3.34.1    | Public domain                                                |
+| [sqlite]        | 3.35.2    | Public domain                                                |
+
+² Built from the [`v3.0.0-beta`](https://github.com/AcademySoftwareFoundation/openexr/releases/tag/v3.0.0-beta) tag.
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [hdf5]: https://www.hdfgroup.org/solutions/hdf5/

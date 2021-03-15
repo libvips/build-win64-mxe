@@ -12,7 +12,7 @@ diff --git a/gdk-pixbuf/gdk-pixbuf-io.c b/gdk-pixbuf/gdk-pixbuf-io.c
 index 1111111..2222222 100644
 --- a/gdk-pixbuf/gdk-pixbuf-io.c
 +++ b/gdk-pixbuf/gdk-pixbuf-io.c
-@@ -199,6 +199,7 @@ get_file_formats (void)
+@@ -188,6 +188,7 @@ get_file_formats (void)
  
  static HMODULE gdk_pixbuf_dll;
  
@@ -20,7 +20,7 @@ index 1111111..2222222 100644
  BOOL WINAPI
  DllMain (HINSTANCE hinstDLL,
           DWORD     fdwReason,
-@@ -213,6 +214,7 @@ DllMain (HINSTANCE hinstDLL,
+@@ -202,6 +203,7 @@ DllMain (HINSTANCE hinstDLL,
    return TRUE;
  }
  #endif
@@ -40,7 +40,7 @@ diff --git a/gdk-pixbuf/gdk-pixbuf-io.c b/gdk-pixbuf/gdk-pixbuf-io.c
 index 1111111..2222222 100644
 --- a/gdk-pixbuf/gdk-pixbuf-io.c
 +++ b/gdk-pixbuf/gdk-pixbuf-io.c
-@@ -193,7 +193,7 @@ get_file_formats (void)
+@@ -182,7 +182,7 @@ get_file_formats (void)
          return file_formats;
  }
  
@@ -66,7 +66,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -347,15 +347,8 @@ if get_option('tiff') and not native_windows_loaders
+@@ -348,15 +348,8 @@ if get_option('tiff') and not native_windows_loaders
    endif
  endif
  
@@ -94,7 +94,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -308,7 +308,7 @@ endif
+@@ -309,7 +309,7 @@ endif
  # Don't check and build the jpeg loader if native_windows_loaders is true
  if get_option('jpeg') and not native_windows_loaders
    if cc.has_header('jpeglib.h')
@@ -115,7 +115,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -286,6 +286,9 @@ if get_option('png')
+@@ -287,6 +287,9 @@ if get_option('png')
          loaders_deps += png_dep
        endif
      endif
@@ -125,7 +125,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -300,9 +303,13 @@ else
+@@ -301,9 +304,13 @@ else
  endif
  
  if native_windows_loaders
@@ -141,7 +141,7 @@ index 1111111..2222222 100644
  endif
  
  # Don't check and build the jpeg loader if native_windows_loaders is true
-@@ -321,6 +328,9 @@ if get_option('jpeg') and not native_windows_loaders
+@@ -322,6 +329,9 @@ if get_option('jpeg') and not native_windows_loaders
        gdk_pixbuf_conf.set('HAVE_PROGRESSIVE_JPEG',
                            cc.has_function('jpeg_simple_progression',
                                            dependencies: jpeg_dep))
@@ -151,7 +151,7 @@ index 1111111..2222222 100644
      endif
    endif
  endif
-@@ -344,6 +354,9 @@ if get_option('tiff') and not native_windows_loaders
+@@ -345,6 +355,9 @@ if get_option('tiff') and not native_windows_loaders
    if tiff_dep.found()
      enabled_loaders += 'tiff'
      loaders_deps += tiff_dep
