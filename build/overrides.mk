@@ -12,8 +12,8 @@ libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_
 libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
 # upstream version is 2.32.3
-gdk-pixbuf_VERSION  := 2.42.2
-gdk-pixbuf_CHECKSUM := 83c66a1cfd591d7680c144d2922c5955d38b4db336d7cd3ee109f7bcf9afef15
+gdk-pixbuf_VERSION  := 2.42.4
+gdk-pixbuf_CHECKSUM := fe9c5dd88f486194ea2bc09b8814c1ed895bb6c530f37cbbf259757c4e482e4d
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -22,16 +22,16 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 # upstream version is 1.5.2
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.19
-matio_CHECKSUM := a4fa4d248b0414fc72f3d6155f710c470d5628d3c31af834f8d5ccf06b60286f
+matio_VERSION  := 1.5.20
+matio_CHECKSUM := 5d1f72a1f51abf6a9cd23eaa812fb17b861097059095f48c768c4835c5aa2598
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-2
-imagemagick_CHECKSUM := e7157883de4602172cd93687afa4c86fb118aa976f1ca4742af2cddbe57e74df
+imagemagick_VERSION  := 6.9.12-4
+imagemagick_CHECKSUM := 8ba3bddd2b95a0e44e5ffd3f5292ea07a306e9123a8a31a432b2e8eace7f6bf9
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -44,8 +44,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.48.2
-pango_CHECKSUM := d21f8b30dc8abdfc55de25656ecb88dc1105eeeb315e5e2a980dcef8010c2c80
+pango_VERSION  := 1.48.3
+pango_CHECKSUM := 36ea145c82217c8efc954d02aa577391b1d9a5da205e0aef7ffe0461349b4b46
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -62,8 +62,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.67.5
-glib_CHECKSUM := 9d2ad4303ce25ae7cfde77409d8364508ac6072a868cfca2e78333c6cdfa05e6
+glib_VERSION  := 2.68.0
+glib_CHECKSUM := 67734f584f3a05a2872f57e9a8db38f3b06c7087fb531c5a839d9171968103ea
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
