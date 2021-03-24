@@ -35,7 +35,6 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "glib": "$(glib_VERSION)",\n'; \
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
-     printf '  "hdf5": "$(hdf5_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
      printf '  "imagemagick": "$(imagemagick_VERSION)",\n'; \
      printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \

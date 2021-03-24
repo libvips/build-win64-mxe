@@ -128,14 +128,6 @@ fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
 
-# upstream version is 1.8.12
-hdf5_VERSION  := 1.12.0
-hdf5_CHECKSUM := 97906268640a6e9ce0cde703d5a71c9ac3092eded729591279bf2e3ca9765f61
-hdf5_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/hdf5-[0-9]*.patch)))
-hdf5_SUBDIR   := hdf5-$(hdf5_VERSION)
-hdf5_FILE     := hdf5-$(hdf5_VERSION).tar.bz2
-hdf5_URL      := https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$(call SHORT_PKG_VERSION,hdf5)/hdf5-$(hdf5_VERSION)/src/$(hdf5_FILE)
-
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.9
 fftw_CHECKSUM := bf2c7ce40b04ae811af714deb512510cc2c17b9ab9d6ddcf49fe4487eea7af3d
@@ -218,9 +210,8 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: libcroco, libgsf
 # Cairo:
 #  Removed: lzo
-# hdf5:
-#  Added: $(BUILD)~cmake
-#  Removed: pthreads
+# matio:
+#  Removed: hdf5
 # libjpeg-turbo:
 #  Replaced: yasm with $(BUILD)~nasm
 # libxml2:
@@ -244,7 +235,7 @@ pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust
 cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman zlib
-hdf5_DEPS               := $(filter-out pthreads ,$(hdf5_DEPS)) $(BUILD)~cmake
+matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
 libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
 fontconfig_DEPS         := $(filter-out  gettext,$(fontconfig_DEPS))
@@ -807,57 +798,4 @@ define cfitsio_BUILD_SHARED
         -W -Wall -Werror -ansi \
         '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-cfitsio.exe' \
         `'$(TARGET)-pkg-config' cfitsio --cflags --libs`
-endef
-
-# build with CMake.
-define hdf5_BUILD
-    mkdir '$(BUILD_DIR)/native'
-    mkdir '$(BUILD_DIR)/cross'
-
-    # TODO: Do we need to generate H5lib_settings.c and H5Tinit.c on
-    # the host system instead?
-    cd '$(BUILD_DIR)/native' && cmake \
-        -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
-        -DONLY_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
-        -DBUILD_TESTING=OFF \
-        -DHDF5_BUILD_TOOLS=OFF \
-        -DHDF5_BUILD_EXAMPLES=OFF \
-        -DHDF5_BUILD_HL_LIB=OFF \
-        -DHDF5_BUILD_CPP_LIB=OFF \
-        -DHDF5_GENERATE_HEADERS=OFF \
-        '$(SOURCE_DIR)'
-    $(MAKE) -C '$(BUILD_DIR)/native' -j '$(JOBS)' gen_hdf5-$(if $(BUILD_STATIC),static,shared)
-    cp '$(BUILD_DIR)/native/H5lib_settings.c' '$(BUILD_DIR)/cross'
-
-    # H5_HAVE_IOEO=1 requires WINVER >= 0x600
-    cd '$(BUILD_DIR)/cross' && '$(TARGET)-cmake' \
-        -DONLY_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
-        -DH5_ENABLE_SHARED_LIB=$(CMAKE_SHARED_BOOL) \
-        -DH5_ENABLE_STATIC_LIB=$(CMAKE_STATIC_BOOL) \
-        -DH5_PRINTF_LL_WIDTH='"ll"' \
-        -DH5_LDOUBLE_TO_LONG_SPECIAL=OFF \
-        -DH5_LONG_TO_LDOUBLE_SPECIAL=OFF \
-        -DH5_LDOUBLE_TO_LLONG_ACCURATE=ON \
-        -DH5_LLONG_TO_LDOUBLE_CORRECT=ON \
-        -DH5_DISABLE_SOME_LDOUBLE_CONV=OFF \
-        -DH5_NO_ALIGNMENT_RESTRICTIONS=ON \
-        -DH5_HAVE_IOEO=1 \
-        -DTEST_LFS_WORKS_RUN=0 \
-        -DHDF5_ENABLE_THREADSAFE=ON \
-        -DHDF5_USE_PREGEN=ON \
-        -DHDF5_USE_PREGEN_DIR='$(BUILD_DIR)/native' \
-        -DBUILD_TESTING=OFF \
-        -DHDF5_BUILD_TOOLS=OFF \
-        -DHDF5_BUILD_EXAMPLES=OFF \
-        -DHDF5_BUILD_HL_LIB=OFF \
-        -DHDF5_BUILD_CPP_LIB=OFF \
-        -DHDF5_GENERATE_HEADERS=OFF \
-        '$(SOURCE_DIR)'
-    $(MAKE) -C '$(BUILD_DIR)/cross' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)/cross' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
-
-    # setup cmake toolchain
-    (echo 'set(HDF5_C_COMPILER_EXECUTABLE $(PREFIX)/bin/$(TARGET)-h5cc)'; \
-     echo 'set(HDF5_CXX_COMPILER_EXECUTABLE $(PREFIX)/bin/$(TARGET)-h5c++)'; \
-     ) > '$(CMAKE_TOOLCHAIN_DIR)/$(PKG).cmake'
 endef

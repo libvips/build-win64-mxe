@@ -93,7 +93,6 @@ Same as libvips-web + these extra dependencies:
 |-----------------|-----------|--------------------------------------------------------------|
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
-| [hdf5]          | 1.12.0    | BSD-like                                                     |
 | [imagemagick]   | 6.9.12-4  | [ImageMagick License] (GPL-like)                             |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
@@ -106,7 +105,6 @@ Same as libvips-web + these extra dependencies:
 ² Built from the [`v3.0.0-beta`](https://github.com/AcademySoftwareFoundation/openexr/releases/tag/v3.0.0-beta) tag.
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
-[hdf5]: https://www.hdfgroup.org/solutions/hdf5/
 [fftw]: https://github.com/FFTW/fftw3
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://imagemagick.org/script/license.php
