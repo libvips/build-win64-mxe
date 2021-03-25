@@ -18,17 +18,9 @@ define $(PKG)_BUILD
         --disable-gdk-pixbuf \
         --disable-go \
         --disable-examples \
-        --disable-visibility \
         $(if $(IS_HEVC),, --disable-libde265) \
         $(if $(IS_HEVC),, --disable-x265) \
-        $(if $(WIN32_THREADS), --disable-multithreading) \
-        $(if $(BUILD_STATIC), CPPFLAGS="-DLIBHEIF_STATIC_BUILD")
-
-    # ensure dependencies of libheif doesn't link
-    # with __declspec(dllimport) when building a
-    # statically linked binary
-    $(if $(BUILD_STATIC),
-        $(SED) -i 's/^Cflags:.*/& -DLIBHEIF_STATIC_BUILD/' '$(BUILD_DIR)/libheif.pc')
+        $(if $(WIN32_THREADS), --disable-multithreading)
 
     # remove -nostdlib from linker commandline options
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
