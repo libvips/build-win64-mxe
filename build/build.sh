@@ -51,7 +51,7 @@ fi
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="0ba1caeface6659fa2a7f69064cc353b045d0387"
+revision="2853cbbd97cd1c91e73a47d05e7191a153f7b41c"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -75,12 +75,18 @@ if [ "$initialize" = true ]; then
   git apply $work_dir/patches/mxe-fixes.patch
 fi
 
+if [ "$DEBUG" = "false" ]; then
+  settings_suffix="release"
+else
+  settings_suffix="debug"
+fi
+
 if [ "$LLVM" = "true" ]; then
   # Copy LLVM settings
-  cp -f $work_dir/settings/llvm.mk $mxe_dir/settings.mk
+  cp -f $work_dir/settings/llvm-$settings_suffix.mk $mxe_dir/settings.mk
 else
   # Copy GCC settings
-  cp -f $work_dir/settings/gcc.mk $mxe_dir/settings.mk
+  cp -f $work_dir/settings/gcc-$settings_suffix.mk $mxe_dir/settings.mk
 fi
 
 # The 'plugins' variable controls which plugins are in use
@@ -92,6 +98,10 @@ fi
 
 if [ "$HEVC" = "true" ]; then
   plugins+=" $work_dir/plugins/hevc"
+fi
+
+if [ "$ZLIB_NG" = "true" ]; then
+  plugins+=" $work_dir/plugins/zlib-ng"
 fi
 
 if [ "$LLVM" = "true" ]; then

@@ -29,47 +29,39 @@ define $(PKG)_BUILD
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/bin/$(PKG)'
     $(foreach TEST, $($(PKG)_TESTS_C), \
         '$(TARGET)-clang' \
-            $(CFLAGS) \
             '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).c' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST).exe';)
 
     $(foreach TEST, $($(PKG)_TESTS_C_DLL), \
-        '$(TARGET)-clang' \
-            $(CFLAGS) -shared \
+        '$(TARGET)-clang' -shared \
             '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).c' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST).dll' \
             -Wl,--out-implib,'$(PREFIX)/$(TARGET)/bin/$(PKG)/lib$(TEST).dll.a';)
 
     $(foreach TEST, $($(PKG)_TESTS_C_LINK_DLL), \
         '$(TARGET)-clang' \
-            $(CFLAGS) \
             '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).c' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST).exe' \
             -L'$(PREFIX)/$(TARGET)/bin/$(PKG)' -l$(subst -main,,$(TEST))-lib;)
 
     $(foreach TEST, $($(PKG)_TESTS_C_NO_BUILTIN), \
         '$(TARGET)-clang' \
-            $(CFLAGS) \
             '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).c' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST)-no-builtin.exe' \
             -fno-builtin;)
 
     $(foreach TEST, $($(PKG)_TESTS_C_ANSI_STDIO), \
         '$(TARGET)-clang' \
-            $(CFLAGS) \
             '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).c' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST)-ansi-stdio.exe' \
             -D__USE_MINGW_ANSI_STDIO=1;)
 
     $(foreach TEST, $($(PKG)_TESTS_CPP) $($(PKG)_TESTS_CPP_EXCEPTIONS) $($(PKG)_TESTS_CPP_LOAD_DLL), \
         '$(TARGET)-clang++' \
-            $(CFLAGS) \
             '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).cpp' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST).exe';)
 
     $(foreach TEST, $($(PKG)_TESTS_CPP_DLL), \
-        '$(TARGET)-clang++' \
-            $(CFLAGS) -shared \
+        '$(TARGET)-clang++' -shared \
             '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).cpp' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST).dll';)
 
     # We're not building libssp, so disable this test for now.
     # $(foreach TEST, $($(PKG)_TESTS_SSP), \
     #     '$(TARGET)-clang' \
-    #         $(CFLAGS) \
     #         '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).c' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST).exe' \
     #         -fstack-protector-strong;)
 
@@ -79,13 +71,11 @@ define $(PKG)_BUILD
     $(if $(IS_X86),
         $(foreach TEST, $($(PKG)_TESTS_ASAN), \
             '$(TARGET)-clang' \
-                $(CFLAGS) \
                 '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).c' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST)-asan.exe' \
                 -fsanitize=address -g -gcodeview -Wl,-pdb,'$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST)-asan.pdb';)
 
         $(foreach TEST, $($(PKG)_TESTS_UBSAN), \
             '$(TARGET)-clang' \
-                $(CFLAGS) \
                 '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).c' -o '$(PREFIX)/$(TARGET)/bin/$(PKG)/$(TEST).exe' \
                 -fsanitize=undefined;)
     )

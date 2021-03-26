@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 26 Mar 2021 09:20:00 +0100
+Subject: [PATCH 1/1] [LLD] [COFF] Ensure exported MinGW symbols are kept during
+ the GC pass
+
+See: https://github.com/mstorsjo/llvm-mingw/issues/188
+
+diff --git a/COFF/Driver.cpp b/COFF/Driver.cpp
+index 1111111..2222222 100644
+--- a/COFF/Driver.cpp
++++ b/COFF/Driver.cpp
+@@ -1077,6 +1077,11 @@ void LinkerDriver::maybeExportMinGWSymbols(const opt::InputArgList &args) {
+     if (!exporter.shouldExport(def))
+       return;
+ 
++    if (!def->isGCRoot) {
++      def->isGCRoot = true;
++      config->gcroot.push_back(def);
++    }
++
+     Export e;
+     e.name = def->getName();
+     e.sym = def;
+diff --git a/COFF/MinGW.cpp b/COFF/MinGW.cpp
+index 1111111..2222222 100644
+--- a/COFF/MinGW.cpp
++++ b/COFF/MinGW.cpp
+@@ -118,7 +118,7 @@ void AutoExporter::addWholeArchive(StringRef path) {
+ }
+ 
+ bool AutoExporter::shouldExport(Defined *sym) const {
+-  if (!sym || !sym->isLive() || !sym->getChunk())
++  if (!sym || !sym->getChunk())
+     return false;
+ 
+   // Only allow the symbol kinds that make sense to export; in particular,

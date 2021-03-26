@@ -35,7 +35,7 @@ define $(PKG)_BUILD
     # Install prefixed wrappers
     (echo '#!/usr/bin/env bash'; \
      echo 'CARGO_HOME="$(PREFIX)/$(TARGET)/.cargo" \'; \
-     echo 'RUSTC="$(PREFIX)/bin/$(TARGET)-rustc" \'; \
+     echo 'RUSTC="$(PREFIX)/$(TARGET)/bin/rustc" \'; \
      echo 'exec $(PREFIX)/$(TARGET)/bin/cargo \'; \
      echo '"$$@"';) \
              > '$(PREFIX)/bin/$(TARGET)-cargo'

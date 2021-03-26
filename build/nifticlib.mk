@@ -18,10 +18,9 @@ endef
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
-        -DBUILD_SHARED_LIBS=ON \
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j $(JOBS)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 
     # create pkg-config files
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/pkgconfig'

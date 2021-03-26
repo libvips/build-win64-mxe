@@ -13,25 +13,29 @@ new file mode 100644
 index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs
-@@ -0,0 +1,27 @@
-+use crate::spec::{LinkerFlavor, LldFlavor, Target};
+@@ -0,0 +1,31 @@
++use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
 +
 +pub fn target() -> Target {
 +    let mut base = super::windows_gnu_base::opts();
 +
 +    base.cpu = "generic".to_string();
 +    base.pre_link_args
-+        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "arm64pe".to_string(),
-+                                                       "-e".to_string(), "DllMainCRTStartup".to_string()]);
++        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "arm64pe".to_string()]);
 +    base.max_atomic_width = Some(64);
 +    base.has_elf_tls = true;
 +    base.linker = Some("ld.lld".to_string());
 +    base.linker_flavor = LinkerFlavor::Lld(LldFlavor::Ld);
 +
-+    base.late_link_args
-+        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
-+        .unwrap()
-+        .push("-lclang_rt.builtins-aarch64".to_string());
++    // Ensure DllMainCRTStartup is specified as DLL entry point.
++    let entry_point = vec![
++        "-e".to_string(),
++        "DllMainCRTStartup".to_string(),
++    ];
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::StaticDylib, entry_point);
 +
 +    Target {
 +        llvm_target: "aarch64-pc-windows-gnu".to_string(),
@@ -45,7 +49,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -742,10 +742,12 @@ supported_targets! {
+@@ -743,10 +743,12 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  
@@ -63,20 +67,29 @@ new file mode 100644
 index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs
-@@ -0,0 +1,27 @@
-+use crate::spec::{LinkerFlavor, LldFlavor, Target};
+@@ -0,0 +1,36 @@
++use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
 +
 +pub fn target() -> Target {
 +    let mut base = super::windows_gnu_base::opts();
 +
 +    base.cpu = "generic".to_string();
 +    base.pre_link_args
-+        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "thumb2pe".to_string(),
-+                                                       "-e".to_string(), "DllMainCRTStartup".to_string()]);
++        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "thumb2pe".to_string()]);
 +    base.max_atomic_width = Some(64);
 +    base.eliminate_frame_pointer = false; // Required for backtraces
 +    base.linker = Some("ld.lld".to_string());
 +    base.linker_flavor = LinkerFlavor::Lld(LldFlavor::Ld);
++
++    // Ensure DllMainCRTStartup is specified as DLL entry point.
++    let entry_point = vec![
++        "-e".to_string(),
++        "DllMainCRTStartup".to_string(),
++    ];
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::StaticDylib, entry_point);
 +
 +    base.late_link_args
 +        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
@@ -163,20 +176,26 @@ diff --git a/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs b/compiler/ru
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs
 +++ b/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs
-@@ -4,7 +4,8 @@ pub fn target() -> Target {
+@@ -1,4 +1,4 @@
+-use crate::spec::{LinkerFlavor, LldFlavor, Target};
++use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
+ 
+ pub fn target() -> Target {
      let mut base = super::windows_gnu_base::opts();
-     base.cpu = "pentium4".to_string();
-     base.pre_link_args
--        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "i386pe".to_string()]);
-+        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "i386pe".to_string(),
-+                                                       "-e".to_string(), "_DllMainCRTStartup".to_string()]);
-     base.max_atomic_width = Some(64);
-     base.eliminate_frame_pointer = false; // Required for backtraces
-     base.linker = Some("i686-w64-mingw32-gcc".to_string());
-@@ -16,6 +17,11 @@ pub fn target() -> Target {
+@@ -16,6 +16,21 @@ pub fn target() -> Target {
          .unwrap()
          .push("-Wl,--large-address-aware".to_string());
  
++    // Ensure _DllMainCRTStartup is specified as DLL entry point.
++    let entry_point = vec![
++        "-e".to_string(),
++        "_DllMainCRTStartup".to_string(),
++    ];
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::StaticDylib, entry_point);
++
 +    base.late_link_args
 +        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
 +        .unwrap()
@@ -189,16 +208,26 @@ diff --git a/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs b/compiler/
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
 +++ b/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
-@@ -8,10 +8,16 @@ pub fn target() -> Target {
-     // Use high-entropy 64 bit address space for ASLR
-     gcc_pre_link_args.push("-Wl,--high-entropy-va".to_string());
-     base.pre_link_args
--        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "i386pep".to_string()]);
-+        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "i386pep".to_string(),
-+                                                       "-e".to_string(), "DllMainCRTStartup".to_string()]);
+@@ -1,4 +1,4 @@
+-use crate::spec::{LinkerFlavor, LldFlavor, Target};
++use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
+ 
+ pub fn target() -> Target {
+     let mut base = super::windows_gnu_base::opts();
+@@ -12,6 +12,21 @@ pub fn target() -> Target {
      base.max_atomic_width = Some(64);
      base.linker = Some("x86_64-w64-mingw32-gcc".to_string());
  
++    // Ensure DllMainCRTStartup is specified as DLL entry point.
++    let entry_point = vec![
++        "-e".to_string(),
++        "DllMainCRTStartup".to_string(),
++    ];
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::StaticDylib, entry_point);
++
 +    base.late_link_args
 +        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
 +        .unwrap()

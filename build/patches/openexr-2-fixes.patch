@@ -4,68 +4,242 @@ Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Wed, 2 Oct 2019 09:40:00 +0200
-Subject: [PATCH 1/1] Fix build errors on MinGW-w64
+Date: Wed, 24 Mar 2021 18:20:00 +0100
+Subject: [PATCH 1/2] Fix build errors on MinGW-w64
 
 
-diff --git a/OpenEXR/IlmImf/CMakeLists.txt b/OpenEXR/IlmImf/CMakeLists.txt
+diff --git a/src/lib/IlmThread/IlmThreadSemaphore.h b/src/lib/IlmThread/IlmThreadSemaphore.h
 index 1111111..2222222 100644
---- a/OpenEXR/IlmImf/CMakeLists.txt
-+++ b/OpenEXR/IlmImf/CMakeLists.txt
-@@ -2,7 +2,12 @@
- # Copyright Contributors to the OpenEXR Project.
+--- a/src/lib/IlmThread/IlmThreadSemaphore.h
++++ b/src/lib/IlmThread/IlmThreadSemaphore.h
+@@ -52,18 +52,20 @@ class ILMTHREAD_EXPORT_TYPE Semaphore
  
- openexr_define_library(IlmImf
--  PRIV_EXPORT ILMIMF_EXPORTS
-+  PRIV_EXPORT
-+    ILMIMF_EXPORTS
-+    IEX_EXPORTS
-+    HALF_EXPORTS
-+    IMATH_EXPORTS
-+    ILMTHREAD_EXPORTS
-   CURDIR ${CMAKE_CURRENT_SOURCE_DIR}
-   SOURCES
-     b44ExpLogTable.h
-diff --git a/OpenEXR/IlmImfExamples/CMakeLists.txt b/OpenEXR/IlmImfExamples/CMakeLists.txt
+   private:
+ 
+-#if ILMTHREAD_HAVE_POSIX_SEMAPHORES
++#if ILMTHREAD_THREADING_ENABLED
++#   if ILMTHREAD_HAVE_POSIX_SEMAPHORES
+ 
+ 	mutable sem_t _semaphore;
+ 
+-#elif defined(__APPLE__)
++#   elif defined(__APPLE__)
++
+ 	mutable dispatch_semaphore_t _semaphore;
+ 
+-#elif (defined (_WIN32) || defined (_WIN64))
++#   elif (defined (_WIN32) || defined (_WIN64))
+ 
+ 	mutable HANDLE _semaphore;
+ 
+-#elif ILMTHREAD_THREADING_ENABLED
++#   else
+ 	//
+ 	// If the platform has threads but no semapohores,
+ 	// then we implement them ourselves using condition variables
+@@ -79,6 +81,7 @@ class ILMTHREAD_EXPORT_TYPE Semaphore
+ 
+ 	mutable sema_t _semaphore;
+   
++#   endif
+ #endif
+ 
+     void operator = (const Semaphore& s) = delete;
+diff --git a/src/lib/IlmThread/IlmThreadSemaphoreWin32.cpp b/src/lib/IlmThread/IlmThreadSemaphoreWin32.cpp
 index 1111111..2222222 100644
---- a/OpenEXR/IlmImfExamples/CMakeLists.txt
-+++ b/OpenEXR/IlmImfExamples/CMakeLists.txt
-@@ -12,6 +12,7 @@ add_executable(IlmImfExamples
-   rgbaInterfaceTiledExamples.cpp
- )
- target_link_libraries(IlmImfExamples OpenEXR::IlmImf)
-+target_compile_definitions(IlmImfExamples PRIVATE IEX_EXPORTS HALF_EXPORTS)
+--- a/src/lib/IlmThread/IlmThreadSemaphoreWin32.cpp
++++ b/src/lib/IlmThread/IlmThreadSemaphoreWin32.cpp
+@@ -11,7 +11,7 @@
  
- # Examples
- install(
-diff --git a/OpenEXR/IlmImfUtil/CMakeLists.txt b/OpenEXR/IlmImfUtil/CMakeLists.txt
+ #include "IlmThreadConfig.h"
+ 
+-#if (defined(_WIN32) || defined(_WIN64)) && !ILMTHREAD_HAVE_POSIX_SEMAPHORES
++#if (defined(_WIN32) || defined(_WIN64)) && !ILMTHREAD_HAVE_POSIX_SEMAPHORES && ILMTHREAD_THREADING_ENABLED
+ 
+ #include "IlmThreadSemaphore.h"
+ #include "Iex.h"
+diff --git a/src/lib/OpenEXR/ImfRgbaFile.cpp b/src/lib/OpenEXR/ImfRgbaFile.cpp
 index 1111111..2222222 100644
---- a/OpenEXR/IlmImfUtil/CMakeLists.txt
-+++ b/OpenEXR/IlmImfUtil/CMakeLists.txt
-@@ -2,7 +2,10 @@
- # Copyright Contributors to the OpenEXR Project.
+--- a/src/lib/OpenEXR/ImfRgbaFile.cpp
++++ b/src/lib/OpenEXR/ImfRgbaFile.cpp
+@@ -20,7 +20,10 @@
+ #include <Iex.h>
+ #include <string.h>
+ #include <algorithm>
++
++#if ILMTHREAD_THREADING_ENABLED
+ #include <mutex>
++#endif
  
- openexr_define_library(IlmImfUtil
--  PRIV_EXPORT ILMIMFUTIL_EXPORTS
-+  PRIV_EXPORT
-+    ILMIMFUTIL_EXPORTS
-+    IEX_EXPORTS
-+    HALF_EXPORTS
-   CURDIR ${CMAKE_CURRENT_SOURCE_DIR}
-   SOURCES
-     ImfImageChannel.cpp
-diff --git a/OpenEXR/config/LibraryDefine.cmake b/OpenEXR/config/LibraryDefine.cmake
+ #include "ImfNamespace.h"
+ 
+@@ -159,7 +162,10 @@ cachePadding (ptrdiff_t size)
+ } // namespace
+ 
+ 
+-class RgbaOutputFile::ToYca: public std::mutex
++class RgbaOutputFile::ToYca
++#if ILMTHREAD_THREADING_ENABLED
++    : public std::mutex
++#endif
+ {
+   public:
+ 
+@@ -640,7 +646,9 @@ RgbaOutputFile::setFrameBuffer (const Rgba *base,
+ {
+     if (_toYca)
+     {
++#if ILMTHREAD_THREADING_ENABLED
+ 	std::lock_guard<std::mutex> lock (*_toYca);
++#endif
+ 	_toYca->setFrameBuffer (base, xStride, yStride);
+     }
+     else
+@@ -665,7 +673,9 @@ RgbaOutputFile::writePixels (int numScanLines)
+ {
+     if (_toYca)
+     {
++#if ILMTHREAD_THREADING_ENABLED
+ 	std::lock_guard<std::mutex> lock (*_toYca);
++#endif
+ 	_toYca->writePixels (numScanLines);
+     }
+     else
+@@ -680,7 +690,9 @@ RgbaOutputFile::currentScanLine () const
+ {
+     if (_toYca)
+     {
++#if ILMTHREAD_THREADING_ENABLED
+ 	std::lock_guard<std::mutex> lock (*_toYca);
++#endif
+ 	return _toYca->currentScanLine();
+     }
+     else
+@@ -772,7 +784,9 @@ RgbaOutputFile::setYCRounding (unsigned int roundY, unsigned int roundC)
+ {
+     if (_toYca)
+     {
++#if ILMTHREAD_THREADING_ENABLED
+ 	std::lock_guard<std::mutex> lock (*_toYca);
++#endif
+ 	_toYca->setYCRounding (roundY, roundC);
+     }
+ }
+@@ -785,7 +799,10 @@ RgbaOutputFile::breakScanLine  (int y, int offset, int length, char c)
+ }
+ 
+ 
+-class RgbaInputFile::FromYca: public std::mutex
++class RgbaInputFile::FromYca
++#if ILMTHREAD_THREADING_ENABLED
++    : public std::mutex
++#endif
+ {
+   public:
+ 
+@@ -1218,7 +1235,9 @@ RgbaInputFile::setFrameBuffer (Rgba *base, size_t xStride, size_t yStride)
+ {
+     if (_fromYca)
+     {
++#if ILMTHREAD_THREADING_ENABLED
+ 	std::lock_guard<std::mutex> lock (*_fromYca);
++#endif
+ 	_fromYca->setFrameBuffer (base, xStride, yStride, _channelNamePrefix);
+     }
+     else
+@@ -1299,7 +1318,9 @@ RgbaInputFile::readPixels (int scanLine1, int scanLine2)
+ {
+     if (_fromYca)
+     {
++#if ILMTHREAD_THREADING_ENABLED
+ 	std::lock_guard<std::mutex> lock (*_fromYca);
++#endif
+ 	_fromYca->readPixels (scanLine1, scanLine2);
+     }
+     else
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 24 Mar 2021 12:28:20 +0100
+Subject: [PATCH 2/2] Use ImathForward.h where possible
+
+
+diff --git a/src/lib/OpenEXR/ImfBoxAttribute.cpp b/src/lib/OpenEXR/ImfBoxAttribute.cpp
 index 1111111..2222222 100644
---- a/OpenEXR/config/LibraryDefine.cmake
-+++ b/OpenEXR/config/LibraryDefine.cmake
-@@ -5,8 +5,8 @@
- # in it, so be careful copying...
- function(OPENEXR_DEFINE_LIBRARY libname)
-   set(options)
--  set(oneValueArgs PRIV_EXPORT CURDIR CURBINDIR)
--  set(multiValueArgs SOURCES HEADERS DEPENDENCIES PRIVATE_DEPS)
-+  set(oneValueArgs CURDIR CURBINDIR)
-+  set(multiValueArgs PRIV_EXPORT SOURCES HEADERS DEPENDENCIES PRIVATE_DEPS)
-   cmake_parse_arguments(OPENEXR_CURLIB "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+--- a/src/lib/OpenEXR/ImfBoxAttribute.cpp
++++ b/src/lib/OpenEXR/ImfBoxAttribute.cpp
+@@ -14,11 +14,7 @@
+ #include <ImathExport.h>
+ #include <ImathNamespace.h>
  
-   # only do the object library mechanism in a few cases:
+-IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
+-template <class V> class IMF_EXPORT_TEMPLATE_TYPE Vec2;
+-template <class V> class IMF_EXPORT_TEMPLATE_TYPE Vec3;
+-template <class V> class IMF_EXPORT_TEMPLATE_TYPE Box;
+-IMATH_INTERNAL_NAMESPACE_HEADER_EXIT
++#include <ImathForward.h>
+ 
+ #define COMPILING_IMF_BOX_ATTRIBUTE
+ 
+diff --git a/src/lib/OpenEXR/ImfMatrixAttribute.cpp b/src/lib/OpenEXR/ImfMatrixAttribute.cpp
+index 1111111..2222222 100644
+--- a/src/lib/OpenEXR/ImfMatrixAttribute.cpp
++++ b/src/lib/OpenEXR/ImfMatrixAttribute.cpp
+@@ -16,10 +16,7 @@
+ #include <ImathExport.h>
+ #include <ImathNamespace.h>
+ 
+-IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
+-template <class V> class IMF_EXPORT_TEMPLATE_TYPE Matrix33;
+-template <class V> class IMF_EXPORT_TEMPLATE_TYPE Matrix44;
+-IMATH_INTERNAL_NAMESPACE_HEADER_EXIT
++#include <ImathForward.h>
+ 
+ #define COMPILING_IMF_MATRIX_ATTRIBUTE
+ 
+diff --git a/src/lib/OpenEXR/ImfVecAttribute.cpp b/src/lib/OpenEXR/ImfVecAttribute.cpp
+index 1111111..2222222 100644
+--- a/src/lib/OpenEXR/ImfVecAttribute.cpp
++++ b/src/lib/OpenEXR/ImfVecAttribute.cpp
+@@ -18,10 +18,7 @@
+ #include <ImathExport.h>
+ #include <ImathNamespace.h>
+ 
+-IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
+-template <class V> class IMF_EXPORT_TEMPLATE_TYPE Vec2;
+-template <class V> class IMF_EXPORT_TEMPLATE_TYPE Vec3;
+-IMATH_INTERNAL_NAMESPACE_HEADER_EXIT
++#include <ImathForward.h>
+ 
+ #define COMPILING_IMF_VECTOR_ATTRIBUTE
+ #include "ImfVecAttribute.h"
+diff --git a/src/lib/OpenEXRUtil/ImfDeepImageChannel.cpp b/src/lib/OpenEXRUtil/ImfDeepImageChannel.cpp
+index 1111111..2222222 100644
+--- a/src/lib/OpenEXRUtil/ImfDeepImageChannel.cpp
++++ b/src/lib/OpenEXRUtil/ImfDeepImageChannel.cpp
+@@ -12,9 +12,7 @@
+ #include <ImathExport.h>
+ #include <ImathNamespace.h>
+ 
+-IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
+-class IMFUTIL_EXPORT_TYPE half;
+-IMATH_INTERNAL_NAMESPACE_HEADER_EXIT
++#include <ImathForward.h>
+ 
+ #define COMPILING_IMF_DEEP_IMAGE_CHANNEL
+ 
+diff --git a/src/lib/OpenEXRUtil/ImfFlatImageChannel.cpp b/src/lib/OpenEXRUtil/ImfFlatImageChannel.cpp
+index 1111111..2222222 100644
+--- a/src/lib/OpenEXRUtil/ImfFlatImageChannel.cpp
++++ b/src/lib/OpenEXRUtil/ImfFlatImageChannel.cpp
+@@ -12,9 +12,7 @@
+ #include <ImathExport.h>
+ #include <ImathNamespace.h>
+ 
+-IMATH_INTERNAL_NAMESPACE_HEADER_ENTER
+-class IMFUTIL_EXPORT_TYPE half;
+-IMATH_INTERNAL_NAMESPACE_HEADER_EXIT
++#include <ImathForward.h>
+ 
+ #define COMPILING_IMF_FLAT_IMAGE_CHANNEL
+ 
