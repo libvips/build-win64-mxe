@@ -1,397 +1,158 @@
 # build-win64-mxe
 
-Experiment with building a libvips binary for 64-bit Windows with [MXE](https://github.com/mxe/mxe).
+Experiment with building a libvips binary for Windows with [MXE](https://github.com/mxe/mxe).
 
 ## libvips-web dependencies
-| Dependency      | Version  | Used under the terms of         |
-|-----------------|----------|---------------------------------|
-| [cairo]         | 1.15.12  | Mozilla Public License 2.0      |
-| [expat]         | 2.2.6    | MIT Licence                     |
-| [fftw]          | 3.3.8    | GPLv2                           |
-| [fontconfig]    | 2.13.0   | [fontconfig Licence] (BSD-like) |
-| [freetype]      | 2.9.1    | [freetype Licence] (BSD-like)   |
-| [fribidi]       | 0.19.7   | LGPLv3                          |
-| [gdk-pixbuf]    | 2.36.12  | LGPLv3                          |
-| [gettext]       | 0.19.8.1 | LGPLv3                          |
-| [giflib]        | 5.1.4    | MIT Licence                     |
-| [glib]          | 2.57.2   | LGPLv3                          |
-| [harfbuzz]      | 1.8.8    | MIT Licence                     |
-| [lcms]          | 2.9      | MIT Licence                     |
-| [libcroco]      | 0.6.12   | LGPLv3                          |
-| [libexif]       | 0.6.21   | LGPLv3                          |
-| [libffi]        | 3.2.1    | MIT Licence                     |
-| [libgsf]        | 1.14.44  | LGPLv3                          |
-| [libiconv]      | 1.15     | LGPLv3                          |
-| [libjpeg-turbo] | 2.0.0    | [zlib License, IJG License]     |
-| [libpng]        | 1.6.35   | [libpng License]                |
-| [librsvg]       | 2.43.4   | LGPLv3                          |
-| [libtiff]       | 4.0.9    | [libtiff License] (BSD-like)    |
-| [libvips]       | 8.6.5    | LGPLv3                          |
-| [libwebp]       | 1.0.0    | New BSD License                 |
-| [libxml2]       | 2.9.8    | MIT Licence                     |
-| [pango]         | 1.42.2   | LGPLv3                          |
-| [pixman]        | 0.33.6   | MIT Licence                     |
-| [zlib]          | 1.2.11   | [zlib Licence]                  |
 
-[cairo]: https://cairographics.org/
+| Dependency      | Version   | Used under the terms of                                      |
+|-----------------|-----------|--------------------------------------------------------------|
+| [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
+| [dav1d]         | 0.8.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [expat]         | 2.2.10    | MIT Licence                                                  |
+| [fontconfig]    | 2.13.93   | [fontconfig Licence] (BSD-like)                              |
+| [freetype]      | 2.10.4    | [freetype Licence] (BSD-like)                                |
+| [fribidi]       | 1.0.10    | LGPLv3                                                       |
+| [gdk-pixbuf]    | 2.42.2    | LGPLv3                                                       |
+| [giflib]        | 5.1.4     | MIT Licence                                                  |
+| [glib]          | 2.67.4    | LGPLv3                                                       |
+| [harfbuzz]      | 2.7.4     | MIT Licence                                                  |
+| [lcms]          | 2.12      | MIT Licence                                                  |
+| [libexif]       | 0.6.22    | LGPLv3                                                       |
+| [libffi]        | 3.3       | MIT Licence                                                  |
+| [libgsf]        | 1.14.47   | LGPLv3                                                       |
+| [libheif]       | 1.11.0    | LGPLv3                                                       |
+| [libjpeg-turbo] | 2.0.6     | [zlib License, IJG License]                                  |
+| [libpng]        | 1.6.37    | [libpng License version 2]                                   |
+| [librsvg]       | 2.51.0    | LGPLv3                                                       |
+| [libspng]       | 0.6.2     | BSD 2-Clause                                                 |
+| [libtiff]       | 4.2.0     | [libtiff License] (BSD-like)                                 |
+| [libvips]       | 8.10.5    | LGPLv3                                                       |
+| [libwebp]       | 1.2.0     | New BSD License                                              |
+| [libxml2]       | 2.9.10    | MIT Licence                                                  |
+| [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
+| [pango]         | 1.48.2    | LGPLv3                                                       |
+| [pixman]        | 0.40.0    | MIT Licence                                                  |
+| [rav1e]         | 0.4.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [zlib]          | 1.2.11    | [zlib Licence]                                               |
+
+[Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
+[cairo]: https://gitlab.freedesktop.org/cairo/cairo
+[dav1d]: https://code.videolan.org/videolan/dav1d
 [expat]: https://github.com/libexpat/libexpat
-[fftw]: https://github.com/FFTW/fftw3
-[fontconfig]: https://www.fontconfig.org/
-[fontconfig Licence]: https://cgit.freedesktop.org/fontconfig/tree/COPYING
-[freetype]: https://www.freetype.org/
-[freetype Licence]: http://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/FTL.TXT
+[fontconfig]: https://gitlab.freedesktop.org/fontconfig/fontconfig
+[fontconfig Licence]: https://gitlab.freedesktop.org/fontconfig/fontconfig/blob/master/COPYING
+[freetype]: https://git.savannah.gnu.org/cgit/freetype/freetype2.git
+[freetype Licence]: https://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/FTL.TXT
 [fribidi]: https://github.com/fribidi/fribidi
-[gdk-pixbuf]: https://github.com/GNOME/gdk-pixbuf
-[gettext]: https://www.gnu.org/software/gettext/
+[gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [giflib]: https://sourceforge.net/projects/giflib/
-[glib]: https://github.com/GNOME/glib
+[glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
 [lcms]: https://github.com/mm2/Little-CMS
-[libcroco]: https://github.com/GNOME/libcroco
 [libexif]: https://github.com/libexif/libexif
-[libffi]: https://sourceware.org/libffi/
-[libgsf]: https://github.com/GNOME/libgsf
-[libiconv]: https://www.gnu.org/software/libiconv/
+[libffi]: https://github.com/libffi/libffi
+[libgsf]: https://gitlab.gnome.org/GNOME/libgsf
+[libheif]: https://github.com/strukturag/libheif
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
 [libpng]: https://github.com/glennrp/libpng
-[libpng License]: http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
-[librsvg]: https://github.com/GNOME/librsvg
-[libtiff]: http://www.simplesystems.org/libtiff/
-[libtiff License]: http://www.simplesystems.org/libtiff/misc.html
-[libvips]: https://github.com/jcupitt/libvips
+[libpng License version 2]: https://github.com/glennrp/libpng/blob/master/LICENSE
+[librsvg]: https://gitlab.gnome.org/GNOME/librsvg
+[libspng]: https://github.com/randy408/libspng
+[libtiff]: https://gitlab.com/libtiff/libtiff
+[libtiff License]: https://libtiff.gitlab.io/libtiff/misc.html
+[libvips]: https://github.com/libvips/libvips
 [libwebp]: https://github.com/webmproject/libwebp
-[libxml2]: https://github.com/GNOME/libxml2
-[pango]: https://www.pango.org/
-[pixman]: http://www.pixman.org/
-[zlib]: https://zlib.net/
+[libxml2]: https://gitlab.gnome.org/GNOME/libxml2
+[orc]: https://gitlab.freedesktop.org/gstreamer/orc
+[orc License]: https://gitlab.freedesktop.org/gstreamer/orc/blob/master/COPYING
+[pango]: https://gitlab.gnome.org/GNOME/pango
+[pixman]: https://gitlab.freedesktop.org/pixman/pixman
+[rav1e]: https://github.com/xiph/rav1e
+[zlib]: https://github.com/madler/zlib
 [zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h
 
 ## libvips-all dependencies
+
 Same as libvips-web + these extra dependencies:
 
-| Dependency      | Version   | Used under the terms of          |
-|-----------------|-----------|----------------------------------|
-| [cfitsio]       | 3.450     | BSD-like                         |
-| [hdf5]          | 1.8.12    | BSD-like                         |
-| [imagemagick]   | 6.9.10-10 | [ImageMagick License] (GPL-like) |
-| [matio]         | 1.5.12    | BSD 2-Clause                     |
-| [nifticlib]     | 2.0.0     | Public domain                    |
-| [openexr]       | 2.3.0     | BSD 3-Clause                     |
-| [openjpeg]      | 2.3.0     | BSD 2-Clause                     |
-| [openslide]     | 3.4.1     | LGPLv3                           |
-| [poppler]       | 0.68.0    | GPLv2                            |
-| [sqlite]        | 3.24.0    | Public domain                    |
+| Dependency      | Version   | Used under the terms of                                      |
+|-----------------|-----------|--------------------------------------------------------------|
+| [cfitsio]       | 3.49      | BSD-like                                                     |
+| [fftw]          | 3.3.9     | GPLv2                                                        |
+| [hdf5]          | 1.12.0    | BSD-like                                                     |
+| [imagemagick]   | 6.9.11-62 | [ImageMagick License] (GPL-like)                             |
+| [matio]         | 1.5.19    | BSD 2-Clause                                                 |
+| [nifticlib]     | 2.0.0     | Public domain                                                |
+| [openexr]       | 2.5.5     | BSD 3-Clause                                                 |
+| [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
+| [openslide]     | 3.4.1     | LGPLv3                                                       |
+| [poppler]       | 21.02.0   | GPLv2                                                        |
+| [sqlite]        | 3.34.1    | Public domain                                                |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [hdf5]: https://www.hdfgroup.org/solutions/hdf5/
+[fftw]: https://github.com/FFTW/fftw3
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://www.imagemagick.org/script/license.php
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://nifti.nimh.nih.gov/
-[openexr]: https://github.com/openexr/openexr
-[openjpeg]: http://www.openjpeg.org/
+[openexr]: https://github.com/AcademySoftwareFoundation/openexr
+[openjpeg]: https://github.com/uclouvain/openjpeg
 [openslide]: https://github.com/openslide/openslide
-[poppler]: https://poppler.freedesktop.org/
+[poppler]: https://gitlab.freedesktop.org/poppler/poppler
 [sqlite]: https://www.sqlite.org/
 
-## Dependencies overview
-Generated by the [open-source modern Dependency Walker](https://github.com/lucasg/Dependencies).
+## MozJPEG
 
-<details>
- <summary>libvips-web</summary>
+MozJPEG is a libjpeg-turbo fork that provides increased compression for JPEG images
+(at the expense of compression performance). The above variants can optionally be built
+with MozJPEG instead of libjpeg-turbo. This can be turned on with the `--with-mozjpeg`
+argument. For example:
 
+```bash
+./build.sh --with-mozjpeg
 ```
-libvips-42.dll
-└───libcairo-2.dll
-│   └───libgcc_s_seh-1.dll
-│   └───libfontconfig-1.dll
-│   │   └───libgcc_s_seh-1.dll
-│   │   └───libexpat-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libfreetype-6.dll
-│   │   └───libharfbuzz-0.dll  
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libpixman-1-0.dll
-│   │   └───libgcc_s_seh-1.dll
-│   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libz1.dll
-└───libexif-12.dll
-│   └───libintl-8.dll
-│       └───libiconv-2.dll
-└───libexpat-1.dll
-└───libfftw3-3.dll
-└───libgif-7.dll
-└───libglib-2.0-0.dll
-│   └───libintl-8.dll
-│       └───libiconv-2.dll
-└───libgmodule-2.0-0.dll
-│   └───libglib-2.0-0.dll
-│       └───libintl-8.dll
-└───libgobject-2.0-0.dll
-│   └───libglib-2.0-0.dll
-│   │   └───libintl-8.dll
-│   └───libffi-6.dll
-└───libgsf-1-114.dll
-│   └───libgio-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgmodule-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   │   └───libz1.dll
-│   └───libglib-2.0-0.dll
-│   │   └───libintl-8.dll
-│   └───libgobject-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libffi-6.dll
-│   └───libintl-8.dll
-│   │   └───libiconv-2.dll
-│   └───libxml2-2.dll
-│   │   └───libz1.dll
-│   │   └───libiconv-2.dll
-│   └───libz1.dll
-└───libintl-8.dll
-│   └───libiconv-2.dll
-└───libjpeg-62.dll
-└───liblcms2-2.dll
-└───libpango-1.0-0.dll
-│   └───libfribidi-0.dll
-│   │   └───libglib-2.0-0.dll
-│   └───libglib-2.0-0.dll
-│   │   └───libintl-8.dll
-│   └───libgobject-2.0-0.dll
-│       └───libglib-2.0-0.dll
-│       └───libffi-6.dll
-└───libpangoft2-1.0-0.dll
-│   └───libpango-1.0-0.dll
-│   │   └───libfribidi-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   └───libfontconfig-1.dll
-│   │   └───libgcc_s_seh-1.dll
-│   │   └───libexpat-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libfreetype-6.dll
-│   │   └───libharfbuzz-0.dll  
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libglib-2.0-0.dll
-│   │   └───libintl-8.dll
-│   └───libgobject-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libffi-6.dll
-│   └───libharfbuzz-0.dll 
-│       └───libgcc_s_seh-1.dll
-│       └───libfreetype-6.dll
-│       └───libglib-2.0-0.dll
-└───libpng16-16.dll
-│   └───libz1.dll
-└───librsvg-2-2.dll
-│   └───libcairo-2.dll
-│   │   └───libgcc_s_seh-1.dll
-│   │   └───libfontconfig-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libpixman-1-0.dll
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libcroco-0.6-3.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libxml2-2.dll
-│   └───libfontconfig-1.dll
-│   │   └───libgcc_s_seh-1.dll
-│   │   └───libexpat-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libgdk_pixbuf-2.0-0.dll
-│   │   └───libgio-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   │   └───libintl-8.dll
-│   │   └───libjpeg-62.dll
-│   │   └───libpng16-16.dll
-│   │   └───libtiff-5.dll
-│   └───libgio-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgmodule-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   │   └───libz1.dll
-│   └───libglib-2.0-0.dll
-│   │   └───libintl-8.dll
-│   └───libgobject-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libffi-6.dll
-│   └───libpango-1.0-0.dll
-│   │   └───libfribidi-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   └───libpangocairo-1.0-0.dll
-│   │   └───libpango-1.0-0.dll
-│   │   └───libpangoft2-1.0-0.dll
-│   │   └───libpangowin32-1.0-0.dll
-│   │   └───libcairo-2.dll
-│   │   └───libfontconfig-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   └───libpangoft2-1.0-0.dll
-│   │   └───libpango-1.0-0.dll
-│   │   └───libfontconfig-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   │   └───libharfbuzz-0.dll 
-│   └───libxml2-2.dll
-│       └───libz1.dll
-│       └───libiconv-2.dll
-└───libtiff-5.dll
-│   └───libz1.dll
-│   └───libjpeg-62.dll
-└───libwebp-7.dll
-└───libwebpmux-3.dll
-│   └───libwebp-7.dll
-└───libz1.dll
-```
-</details>
 
-<details>
- <summary>libvips-all</summary>
-Same as libvips-web + these extra dependencies:
+| Dependency      | Version   | Used under the terms of                                      |
+|-----------------|-----------|--------------------------------------------------------------|
+| [mozjpeg]       | 4.0.0     | [zlib License, IJG License]                                  |
 
+[mozjpeg]: https://github.com/mozilla/mozjpeg
+
+## aom
+
+aom is the reference implementation (encoder and decoder) of the AV1 codec. Since this
+is the former research codec, it has the advantage to cover all use cases, but at the
+general cost of performance. The above variants can optionally be built with aom instead
+of dav1d and rav1e. This can be turned on with the `--with-aom` argument. For example:
+
+```bash
+./build.sh --with-aom
 ```
-libvips-42.dll
-└───libIlmImf-2_3.dll
-│   └───libgcc_s_seh-1.dll
-│   └───libstdc++-6.dll
-│   └───libz1.dll
-└───libMagickCore-6.Q16-6.dll
-│   └───libcairo-2.dll
-│   │   └───libgcc_s_seh-1.dll
-│   │   └───libfontconfig-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libpixman-1-0.dll
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libfftw3-3.dll
-│   └───libfontconfig-1.dll
-│   │   └───libgcc_s_seh-1.dll
-│   │   └───libexpat-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libgobject-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libffi-6.dll
-│   └───libjpeg-62.dll
-│   └───liblcms2-2.dll
-│   └───libopenjp2.dll
-│   └───libpango-1.0-0.dll
-│   │   └───libfribidi-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   └───libpangocairo-1.0-0.dll
-│   │   └───libpango-1.0-0.dll
-│   │   └───libpangoft2-1.0-0.dll
-│   │   └───libpangowin32-1.0-0.dll
-│   │   └───libcairo-2.dll
-│   │   └───libfontconfig-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   └───libpng16-16.dll
-│   └───libtiff-5.dll
-│   │   └───libz1.dll
-│   │   └───libjpeg-62.dll
-│   └───libwebp-7.dll
-│   └───libwebpmux-3.dll
-│   │   └───libwebp-7.dll
-│   └───libxml2-2.dll
-│   │   └───libz1.dll
-│   │   └───libiconv-2.dll
-│   └───libz1.dll
-└───libcfitsio.dll
-└───libmatio-4.dll
-│   └───libz1.dll
-│   └───libhdf5-8.dll
-│       └───libz1.dll
-└───libniftiio.dll
-│   └───libznz.dll
-│       └───libz1.dll
-└───libopenslide-0.dll
-│   └───libcairo-2.dll
-│   │   └───libgcc_s_seh-1.dll
-│   │   └───libfontconfig-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libpixman-1-0.dll
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libgdk_pixbuf-2.0-0.dll
-│   │   └───libgio-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   │   └───libintl-8.dll
-│   │   └───libjpeg-62.dll
-│   │   └───libpng16-16.dll
-│   │   └───libtiff-5.dll
-│   └───libgio-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgmodule-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   │   └───libz1.dll
-│   └───libglib-2.0-0.dll
-│   │   └───libintl-8.dll
-│   └───libgobject-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libffi-6.dll
-│   └───libjpeg-62.dll
-│   └───libopenjp2.dll
-│   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libsqlite3-0.dll
-│   └───libtiff-5.dll
-│   │   └───libz1.dll
-│   │   └───libjpeg-62.dll
-│   └───libxml2-2.dll
-│   │   └───libz1.dll
-│   │   └───libiconv-2.dll
-│   └───libz1.dll
-└───libpoppler-glib-8.dll
-│   └───libpoppler-79.dll
-│   │   └───libstdc++-6.dll
-│   │   └───liblcms2-2.dll
-│   │   └───libopenjp2.dll
-│   │   └───libjpeg-62.dll
-│   │   └───libpng16-16.dll
-│   │   └───libtiff-5.dll
-│   │   └───libz1.dll
-│   └───libstdc++-6.dll
-│   └───libcairo-2.dll
-│   │   └───libgcc_s_seh-1.dll
-│   │   └───libfontconfig-1.dll
-│   │   └───libfreetype-6.dll
-│   │   └───libpixman-1-0.dll
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libfreetype-6.dll
-│   │   └───libharfbuzz-0.dll  
-│   │   └───libpng16-16.dll
-│   │   └───libz1.dll
-│   └───libgio-2.0-0.dll
-│   │   └───libglib-2.0-0.dll
-│   │   └───libgmodule-2.0-0.dll
-│   │   └───libgobject-2.0-0.dll
-│   │   └───libz1.dll
-│   └───libglib-2.0-0.dll
-│   │   └───libintl-8.dll
-│   └───libgobject-2.0-0.dll
-│       └───libglib-2.0-0.dll
-│       └───libffi-6.dll
-└───libznz.dll
-    └───libz1.dll
+
+| Dependency      | Version   | Used under the terms of                                      |
+|-----------------|-----------|--------------------------------------------------------------|
+| [aom]           | 2.0.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+
+[aom]: https://aomedia.googlesource.com/aom/
+
+## HEVC-related dependencies
+
+The above "all" variant can optionally be built with libde265 and x265 to process
+HEIC/HEIF images. This can be turned on with the `--with-hevc` argument. For example:
+
+```bash
+./build.sh all --with-hevc
 ```
-</details>
+
+These dependencies include HEVC-related logic and are therefore not included in the
+prebuilt binaries while it is patent-encumbered.
+
+| Dependency      | Version   | Used under the terms of                                      |
+|-----------------|-----------|--------------------------------------------------------------|
+| [libde265]      | 1.0.8     | LGPLv3                                                       |
+| [x265]          | 3.4       | GPLv2                                                        |
+
+[libde265]: https://github.com/strukturag/libde265
+[x265]: https://bitbucket.org/multicoreware/x265_git/wiki/Home

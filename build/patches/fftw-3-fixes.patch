@@ -1,0 +1,30 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 16 Feb 2020 19:20:00 +0100
+Subject: [PATCH 1/1] Fixes for the llvm-mingw ARM/ARM64 build
+
+
+diff --git a/threads/threads.c b/threads/threads.c
+index 1111111..2222222 100644
+--- a/threads/threads.c
++++ b/threads/threads.c
+@@ -236,7 +236,15 @@ typedef volatile LONG os_static_mutex_t;
+ static void os_static_mutex_lock(os_static_mutex_t *s)
+ {
+      while (InterlockedExchange(s, 1) == 1) {
++#if defined(_MSC_VER)
+           YieldProcessor();
++#elif defined(__i386__) || defined(__x86_64__)
++          __asm__ __volatile__("pause");
++#elif defined(__ia64__) || defined(__ia64)
++          __asm__ __volatile__ ("hint @pause");
++#elif defined(__arm__) || defined(__aarch64__)
++          __asm__ __volatile__ ("yield");
++#endif
+           Sleep(0);
+      }
+ }

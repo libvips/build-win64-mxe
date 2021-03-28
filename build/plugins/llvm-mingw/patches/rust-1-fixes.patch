@@ -1,0 +1,361 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 15 Sep 2020 11:50:00 +0200
+Subject: [PATCH 1/6] Add llvm-mingw ARM/ARM64 targets
+
+
+diff --git a/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs
+@@ -0,0 +1,31 @@
++use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
++
++pub fn target() -> Target {
++    let mut base = super::windows_gnu_base::opts();
++
++    base.cpu = "generic".to_string();
++    base.pre_link_args
++        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "arm64pe".to_string()]);
++    base.max_atomic_width = Some(64);
++    base.has_elf_tls = true;
++    base.linker = Some("ld.lld".to_string());
++    base.linker_flavor = LinkerFlavor::Lld(LldFlavor::Ld);
++
++    // Ensure DllMainCRTStartup is specified as DLL entry point.
++    let entry_point = vec![
++        "-e".to_string(),
++        "DllMainCRTStartup".to_string(),
++    ];
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::StaticDylib, entry_point);
++
++    Target {
++        llvm_target: "aarch64-pc-windows-gnu".to_string(),
++        pointer_width: 64,
++        data_layout: "e-m:w-p:64:64-i32:32-i64:64-i128:128-n32:64-S128".to_string(),
++        arch: "aarch64".to_string(),
++        options: base,
++    }
++}
+diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
+index 1111111..2222222 100644
+--- a/compiler/rustc_target/src/spec/mod.rs
++++ b/compiler/rustc_target/src/spec/mod.rs
+@@ -742,10 +742,12 @@ supported_targets! {
+ 
+     ("x86_64-unknown-illumos", x86_64_unknown_illumos),
+ 
++    ("aarch64-pc-windows-gnu", aarch64_pc_windows_gnu),
+     ("x86_64-pc-windows-gnu", x86_64_pc_windows_gnu),
+     ("i686-pc-windows-gnu", i686_pc_windows_gnu),
+     ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
+     ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
++    ("thumbv7a-pc-windows-gnu", thumbv7a_pc_windows_gnu),
+ 
+     ("aarch64-pc-windows-msvc", aarch64_pc_windows_msvc),
+     ("aarch64-uwp-windows-msvc", aarch64_uwp_windows_msvc),
+diff --git a/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs
+@@ -0,0 +1,36 @@
++use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
++
++pub fn target() -> Target {
++    let mut base = super::windows_gnu_base::opts();
++
++    base.cpu = "generic".to_string();
++    base.pre_link_args
++        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "thumb2pe".to_string()]);
++    base.max_atomic_width = Some(64);
++    base.eliminate_frame_pointer = false; // Required for backtraces
++    base.linker = Some("ld.lld".to_string());
++    base.linker_flavor = LinkerFlavor::Lld(LldFlavor::Ld);
++
++    // Ensure DllMainCRTStartup is specified as DLL entry point.
++    let entry_point = vec![
++        "-e".to_string(),
++        "DllMainCRTStartup".to_string(),
++    ];
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::StaticDylib, entry_point);
++
++    base.late_link_args
++        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
++        .unwrap()
++        .push("-lclang_rt.builtins-arm".to_string());
++
++    Target {
++        llvm_target: "thumbv7a-pc-windows-gnu".to_string(),
++        pointer_width: 32,
++        data_layout: "e-m:w-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".to_string(),
++        arch: "arm".to_string(),
++        options: base,
++    }
++}
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 15 Sep 2020 15:20:00 +0200
+Subject: [PATCH 2/6] Prefer linking against UCRT over MSVCRT
+
+When our linker is LLD (i.e. building with llvm-mingw).
+
+Also avoid linking against libgcc, libgcc_eh and libgcc_s.
+
+diff --git a/compiler/rustc_target/src/spec/windows_gnu_base.rs b/compiler/rustc_target/src/spec/windows_gnu_base.rs
+index 1111111..2222222 100644
+--- a/compiler/rustc_target/src/spec/windows_gnu_base.rs
++++ b/compiler/rustc_target/src/spec/windows_gnu_base.rs
+@@ -23,7 +23,7 @@ pub fn opts() -> TargetOptions {
+     let mut late_link_args_static = LinkArgs::new();
+     // Order of `late_link_args*` was found through trial and error to work with various
+     // mingw-w64 versions (not tested on the CI). It's expected to change from time to time.
+-    let mingw_libs = vec![
++    let mingw_libs_gcc = vec![
+         "-lmsvcrt".to_string(),
+         "-lmingwex".to_string(),
+         "-lmingw32".to_string(),
+@@ -39,16 +39,23 @@ pub fn opts() -> TargetOptions {
+         "-luser32".to_string(),
+         "-lkernel32".to_string(),
+     ];
+-    late_link_args.insert(LinkerFlavor::Gcc, mingw_libs.clone());
+-    late_link_args.insert(LinkerFlavor::Lld(LldFlavor::Ld), mingw_libs);
++    late_link_args.insert(LinkerFlavor::Gcc, mingw_libs_gcc);
++    let mingw_libs_llvm = vec![
++        "-lmingw32".to_string(),
++        "-lmingwex".to_string(),
++        "-lucrt".to_string(),
++        "-luser32".to_string(),
++        "-lkernel32".to_string(),
++        "-lunwind".to_string(),
++    ];
++    late_link_args.insert(LinkerFlavor::Lld(LldFlavor::Ld), mingw_libs_llvm);
+     let dynamic_unwind_libs = vec![
+         // If any of our crates are dynamically linked then we need to use
+         // the shared libgcc_s-dw2-1.dll. This is required to support
+         // unwinding across DLL boundaries.
+         "-lgcc_s".to_string(),
+     ];
+-    late_link_args_dynamic.insert(LinkerFlavor::Gcc, dynamic_unwind_libs.clone());
+-    late_link_args_dynamic.insert(LinkerFlavor::Lld(LldFlavor::Ld), dynamic_unwind_libs);
++    late_link_args_dynamic.insert(LinkerFlavor::Gcc, dynamic_unwind_libs);
+     let static_unwind_libs = vec![
+         // If all of our crates are statically linked then we can get away
+         // with statically linking the libgcc unwinding code. This allows
+@@ -58,8 +65,7 @@ pub fn opts() -> TargetOptions {
+         "-lgcc_eh".to_string(),
+         "-l:libpthread.a".to_string(),
+     ];
+-    late_link_args_static.insert(LinkerFlavor::Gcc, static_unwind_libs.clone());
+-    late_link_args_static.insert(LinkerFlavor::Lld(LldFlavor::Ld), static_unwind_libs);
++    late_link_args_static.insert(LinkerFlavor::Gcc, static_unwind_libs);
+ 
+     TargetOptions {
+         os: "windows".to_string(),
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 16 Sep 2020 09:30:00 +0200
+Subject: [PATCH 3/6] Make Windows GNU targets compatible with llvm-mingw
+
+
+diff --git a/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs
+index 1111111..2222222 100644
+--- a/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs
++++ b/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs
+@@ -1,4 +1,4 @@
+-use crate::spec::{LinkerFlavor, LldFlavor, Target};
++use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
+ 
+ pub fn target() -> Target {
+     let mut base = super::windows_gnu_base::opts();
+@@ -16,6 +16,21 @@ pub fn target() -> Target {
+         .unwrap()
+         .push("-Wl,--large-address-aware".to_string());
+ 
++    // Ensure _DllMainCRTStartup is specified as DLL entry point.
++    let entry_point = vec![
++        "-e".to_string(),
++        "_DllMainCRTStartup".to_string(),
++    ];
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::StaticDylib, entry_point);
++
++    base.late_link_args
++        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
++        .unwrap()
++        .push("-lclang_rt.builtins-i386".to_string());
++
+     Target {
+         llvm_target: "i686-pc-windows-gnu".to_string(),
+         pointer_width: 32,
+diff --git a/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
+index 1111111..2222222 100644
+--- a/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
++++ b/compiler/rustc_target/src/spec/x86_64_pc_windows_gnu.rs
+@@ -1,4 +1,4 @@
+-use crate::spec::{LinkerFlavor, LldFlavor, Target};
++use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
+ 
+ pub fn target() -> Target {
+     let mut base = super::windows_gnu_base::opts();
+@@ -12,6 +12,21 @@ pub fn target() -> Target {
+     base.max_atomic_width = Some(64);
+     base.linker = Some("x86_64-w64-mingw32-gcc".to_string());
+ 
++    // Ensure DllMainCRTStartup is specified as DLL entry point.
++    let entry_point = vec![
++        "-e".to_string(),
++        "DllMainCRTStartup".to_string(),
++    ];
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++    base.pre_link_objects_fallback
++        .insert(LinkOutputKind::StaticDylib, entry_point);
++
++    base.late_link_args
++        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
++        .unwrap()
++        .push("-lclang_rt.builtins-x86_64".to_string());
++
+     Target {
+         llvm_target: "x86_64-pc-windows-gnu".to_string(),
+         pointer_width: 64,
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 18 Sep 2020 21:00:00 +0200
+Subject: [PATCH 4/6] Do not distribute Windows-specific files while
+ cross-compiling
+
+These files (gcc.exe, ld.exe, dlltool.exe, etc.) are not available on
+Unix systems with MinGW and probably exists only on MSYS environments.
+
+Note: this patch has only been tested on Linux.
+
+diff --git a/src/bootstrap/dist.rs b/src/bootstrap/dist.rs
+index 1111111..2222222 100644
+--- a/src/bootstrap/dist.rs
++++ b/src/bootstrap/dist.rs
+@@ -284,7 +284,7 @@ impl Step for Mingw {
+     /// without any extra installed software (e.g., we bundle gcc, libraries, etc).
+     fn run(self, builder: &Builder<'_>) -> Option<GeneratedTarball> {
+         let host = self.host;
+-        if !host.contains("pc-windows-gnu") {
++        if !host.contains("pc-windows-gnu") || builder.config.build != host {
+             return None;
+         }
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 21 Sep 2020 11:00:00 +0200
+Subject: [PATCH 5/6] Ensure that compiler_builtins can be successfully built on
+ llvm-mingw
+
+Fixes an undefined symbol error while linking the compiler_builtins crate on
+llvm-mingw (targeting ARMv7).
+
+Details:
+lld-link: error: undefined symbol: __aeabi_idiv
+>>> referenced by libcompiler_builtins-<HASH>.rlib(<O_FILE>):(__aeabi_idivmod)
+
+diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.rs
+index 1111111..2222222 100644
+--- a/vendor/compiler_builtins/build.rs
++++ b/vendor/compiler_builtins/build.rs
+@@ -303,7 +303,7 @@ mod c {
+             }
+         }
+ 
+-        if target_arch == "arm" && target_os != "ios" && target_env != "msvc" {
++        if target_arch == "arm" && target_os != "ios" && target_os != "windows" {
+             sources.extend(&[
+                 ("__aeabi_div0", "arm/aeabi_div0.c"),
+                 ("__aeabi_drsub", "arm/aeabi_drsub.c"),
+diff --git a/vendor/compiler_builtins/src/arm.rs b/vendor/compiler_builtins/src/arm.rs
+index 1111111..2222222 100644
+--- a/vendor/compiler_builtins/src/arm.rs
++++ b/vendor/compiler_builtins/src/arm.rs
+@@ -74,7 +74,7 @@ pub unsafe fn __aeabi_uldivmod() {
+     intrinsics::unreachable();
+ }
+ 
+-#[cfg(not(target_os = "ios"))]
++#[cfg(not(any(target_os = "ios", target_os = "windows")))]
+ #[naked]
+ #[cfg_attr(not(feature = "mangled-names"), no_mangle)]
+ pub unsafe fn __aeabi_idivmod() {
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 22 Sep 2020 10:00:00 +0200
+Subject: [PATCH 6/6] Ensure that panic_unwind/unwind can be successfully built on
+ llvm-mingw
+
+Fixes undefined symbol errors while linking these crates on llvm-mingw
+(targeting ARMv7).
+
+lld-link: error: undefined symbol: __gnu_unwind_frame
+>>> referenced by libpanic_unwind-<HASH>.rlib(<O_FILE>):(rust_eh_personality)
+>>> referenced by libpanic_unwind-<HASH>.rlib(<O_FILE>):(rust_eh_personality)
+
+lld-link: error: undefined symbol: _Unwind_VRS_Get
+>>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_GetGR::<HASH>)
+>>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_GetIP::<HASH>)
+>>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_SetIP::<HASH>)
+>>> referenced 1 more times
+
+lld-link: error: undefined symbol: _Unwind_VRS_Set
+>>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_SetGR::<HASH>)
+>>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_SetIP::<HASH>)
+
+diff --git a/library/panic_unwind/src/gcc.rs b/library/panic_unwind/src/gcc.rs
+index 1111111..2222222 100644
+--- a/library/panic_unwind/src/gcc.rs
++++ b/library/panic_unwind/src/gcc.rs
+@@ -128,7 +128,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
+ // https://github.com/gcc-mirror/gcc/blob/trunk/libgcc/unwind-c.c
+ 
+ cfg_if::cfg_if! {
+-    if #[cfg(all(target_arch = "arm", not(target_os = "ios"), not(target_os = "netbsd")))] {
++    if #[cfg(all(target_arch = "arm", not(target_os = "ios"), not(target_os = "netbsd"), not(target_os = "windows")))] {
+         // ARM EHABI personality routine.
+         // http://infocenter.arm.com/help/topic/com.arm.doc.ihi0038b/IHI0038B_ehabi.pdf
+         //
+diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
+index 1111111..2222222 100644
+--- a/library/unwind/src/libunwind.rs
++++ b/library/unwind/src/libunwind.rs
+@@ -92,7 +92,7 @@ extern "C" {
+ }
+ 
+ cfg_if::cfg_if! {
+-if #[cfg(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm")))] {
++if #[cfg(any(target_os = "ios", target_os = "netbsd", target_os = "windows", not(target_arch = "arm")))] {
+     // Not ARM EHABI
+     #[repr(C)]
+     #[derive(Copy, Clone, PartialEq)]
+@@ -106,7 +106,7 @@ if #[cfg(all(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm
+     pub use _Unwind_Action::*;
+ 
+     #[cfg_attr(all(feature = "llvm-libunwind",
+-                   any(target_os = "fuchsia", target_os = "linux")),
++                   any(target_os = "fuchsia", target_os = "linux", target_os = "windows")),
+                link(name = "unwind", kind = "static"))]
+     extern "C" {
+         pub fn _Unwind_GetGR(ctx: *mut _Unwind_Context, reg_index: c_int) -> _Unwind_Word;

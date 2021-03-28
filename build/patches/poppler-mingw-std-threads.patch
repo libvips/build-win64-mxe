@@ -1,0 +1,135 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 16 May 2019 20:00:00 +0200
+Subject: [PATCH 1/1] Use the mutex helper from mingw-std-threads
+
+
+diff --git a/cmake/modules/PopplerMacros.cmake b/cmake/modules/PopplerMacros.cmake
+index 1111111..2222222 100644
+--- a/cmake/modules/PopplerMacros.cmake
++++ b/cmake/modules/PopplerMacros.cmake
+@@ -104,7 +104,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
+   set(DEFAULT_COMPILE_WARNINGS_EXTRA "${_warn} ${_warnx}")
+ 
+   set(_save_cxxflags "${CMAKE_CXX_FLAGS}")
+-  set(CMAKE_CXX_FLAGS                "-fno-exceptions -fno-check-new -fno-common -fno-operator-names -D_DEFAULT_SOURCE ${_save_cxxflags}")
++  set(CMAKE_CXX_FLAGS                "-fno-check-new -fno-common -fno-operator-names -D_DEFAULT_SOURCE ${_save_cxxflags}")
+   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g ${_save_cxxflags}")
+   set(CMAKE_CXX_FLAGS_RELEASE        "-O2 -DNDEBUG ${_save_cxxflags}")
+   set(CMAKE_CXX_FLAGS_DEBUG          "-g -O2 -fno-reorder-blocks -fno-schedule-insns -fno-inline ${_save_cxxflags}")
+diff --git a/poppler/Annot.h b/poppler/Annot.h
+index 1111111..2222222 100644
+--- a/poppler/Annot.h
++++ b/poppler/Annot.h
+@@ -48,7 +48,11 @@
+ 
+ #include <memory>
+ #include <atomic>
++#ifdef _WIN32
++#include "mingw.mutex.h"
++#else
+ #include <mutex>
++#endif
+ #include <vector>
+ 
+ #include "Object.h"
+diff --git a/poppler/Array.h b/poppler/Array.h
+index 1111111..2222222 100644
+--- a/poppler/Array.h
++++ b/poppler/Array.h
+@@ -29,7 +29,11 @@
+ #define ARRAY_H
+ 
+ #include <atomic>
++#ifdef _WIN32
++#include "mingw.mutex.h"
++#else
+ #include <mutex>
++#endif
+ #include <vector>
+ 
+ #include "poppler-config.h"
+diff --git a/poppler/CairoFontEngine.h b/poppler/CairoFontEngine.h
+index 1111111..2222222 100644
+--- a/poppler/CairoFontEngine.h
++++ b/poppler/CairoFontEngine.h
+@@ -30,7 +30,11 @@
+ #ifndef CAIROFONTENGINE_H
+ #define CAIROFONTENGINE_H
+ 
++#ifdef _WIN32
++#include "mingw.mutex.h"
++#else
+ #include <mutex>
++#endif
+ 
+ #include "poppler-config.h"
+ #include <cairo-ft.h>
+diff --git a/poppler/Dict.h b/poppler/Dict.h
+index 1111111..2222222 100644
+--- a/poppler/Dict.h
++++ b/poppler/Dict.h
+@@ -31,7 +31,11 @@
+ #define DICT_H
+ 
+ #include <atomic>
++#ifdef _WIN32
++#include "mingw.mutex.h"
++#else
+ #include <mutex>
++#endif
+ #include <string>
+ #include <vector>
+ #include <utility>
+diff --git a/poppler/GlobalParams.h b/poppler/GlobalParams.h
+index 1111111..2222222 100644
+--- a/poppler/GlobalParams.h
++++ b/poppler/GlobalParams.h
+@@ -46,7 +46,11 @@
+ #include <unordered_map>
+ #include <string>
+ #include <memory>
++#ifdef _WIN32
++#include "mingw.mutex.h"
++#else
+ #include <mutex>
++#endif
+ #include <vector>
+ 
+ class GooString;
+diff --git a/poppler/PDFDoc.h b/poppler/PDFDoc.h
+index 1111111..2222222 100644
+--- a/poppler/PDFDoc.h
++++ b/poppler/PDFDoc.h
+@@ -43,7 +43,11 @@
+ #ifndef PDFDOC_H
+ #define PDFDOC_H
+ 
++#ifdef _WIN32
++#include "mingw.mutex.h"
++#else
+ #include <mutex>
++#endif
+ 
+ #include "poppler-config.h"
+ #include <cstdio>
+diff --git a/poppler/Page.h b/poppler/Page.h
+index 1111111..2222222 100644
+--- a/poppler/Page.h
++++ b/poppler/Page.h
+@@ -36,7 +36,11 @@
+ #define PAGE_H
+ 
+ #include <memory>
++#ifdef _WIN32
++#include "mingw.mutex.h"
++#else
+ #include <mutex>
++#endif
+ 
+ #include "poppler-config.h"
+ #include "Object.h"

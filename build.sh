@@ -1,55 +1,161 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-if [ $# -lt 1 ]; then
-  echo "Usage: $0 VERSION [DEPS]"
-  echo "Build libvips for win64 in a Docker container"
-  echo "VERSION is the name of a versioned subdirectory, e.g. 8.1"
-  echo "DEPS is the group of dependencies to build libvips with,"
-  echo "    defaults to 'all'"
+function usage()
+{
+  cat <<EOF
+Usage: $(basename "$0") [OPTIONS] [DEPS] [ARCH] [TYPE]
+Build libvips for Windows in a Docker container
+
+OPTIONS:
+	--help		Show the help and exit
+	--with-mozjpeg	Build with MozJPEG instead of libjpeg-turbo
+	--with-aom	Build libheif with aom instead of dav1d and rav1e
+	--with-hevc	Build libheif with the HEVC-related dependencies
+	--with-llvm	Build with llvm-mingw
+
+DEPS:
+	The group of dependencies to build libvips with,
+	    defaults to 'web'
+	Possible values are:
+	    - web
+	    - all
+
+ARCH:
+	The Windows architecture to target,
+	    defaults to 'x86_64'
+	Possible values are:
+	    - x86_64
+	    - i686
+	    - aarch64 (implies --with-llvm)
+	    - armv7 (implies --with-llvm)
+
+TYPE:
+	Specifies the type of binary to be created,
+	    defaults to 'shared'
+	Possible values are:
+	    - shared
+	    - static
+EOF
+
+  if [ -n "$1" ]; then
+    exit "$1"
+  fi
+}
+
+if [ $EUID -eq 0 ]; then
+  echo "ERROR: Please don't run as root -- instead, add yourself to the docker group." >&2
   exit 1
 fi
 
-if [ x$(whoami) == x"root" ]; then
-  echo "Please don't run as root -- instead, add yourself to the docker group"
+. $PWD/build/variables.sh
+
+# Default arguments
+with_mozjpeg=false
+with_aom=false
+with_hevc=false
+with_llvm=false
+
+# Parse arguments
+POSITIONAL=()
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    -h|--help) usage 0 ;;
+    --with-mozjpeg) with_mozjpeg=true ;;
+    --with-aom) with_aom=true ;;
+    --with-hevc) with_hevc=true ;;
+    --with-llvm) with_llvm=true ;;
+    -*)
+      echo "ERROR: Unknown option $1" >&2
+      usage 1
+      ;;
+    *) POSITIONAL+=("$1") ;;
+  esac
+  shift
+done
+
+# Restore positional parameters
+set -- "${POSITIONAL[@]}"
+
+deps="${1:-web}"
+arch="${2:-x86_64}"
+type="${3:-shared}"
+
+if [ "$with_llvm" = "true" ]; then
+  # This indicates that we don't need to force C++03
+  # compilication for some packages, we can safely use
+  # libstdc++'s C++11 <thread>, <mutex>, and <future>
+  # functionality when compiling with the LLVM toolchain.
+  # Note: We don't distribute the winpthreads DLL as
+  # libc++ uses Win32 threads to implement the internal
+  # threading API.
+  threads="posix"
+elif [ "$arch" = "aarch64" ] || [ "$arch" = "armv7" ]; then
+  # Force the LLVM toolchain for the ARM/ARM64 targets,
+  # GCC does not support Windows on ARM.
+  threads="posix"
+  with_llvm=true
+else
+  # Use native Win32 threading functions when compiling with
+  # GCC because POSIX threads functionality is significantly
+  # slower than the native Win32 implementation.
+  threads="win32"
+  # Use Dwarf-2 (DW2) stack frame unwinding for i686, as
+  # there is a performance overhead when using SJLJ.
+  # Furthermore, the dwarf exception model is basically
+  # used by default by all popular native GCC-based MinGW
+  # toolchains (such as Rust, MSYS2, Fedora 32+, etc.).
+  # See: https://fedoraproject.org/wiki/Changes/Mingw32GccDwarf2
+  if [ "$arch" = "i686" ]; then
+    unwind="dw2"
+  fi
+fi
+
+if [ "$with_hevc" = "true" ] && [ "$deps" = "web" ]; then
+  echo "ERROR: The HEVC-related dependencies can only be built for the \"all\" variant." >&2
   exit 1
 fi
 
-version="$1"
-deps="${2:-all}"
-
-# Note: When 32-bit is needed, also change the Docker rustup target (see TODO).
-# ARCH='i686'
-arch='x86_64'
-
-# Note: librsvg can't be build statically (it's broken on 2.42, stick 
-# with 2.40.20 if we need to build statically).
-# See: https://gitlab.gnome.org/GNOME/librsvg/issues/159
-# target="$arch-w64-mingw32.static"
-target="$arch-w64-mingw32.shared"
-
-if ! type docker > /dev/null; then
-  echo "Please install docker"
+if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
+  echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
   exit 1
 fi
 
-# Ensure latest Debian stable base image, inherit from 
-# the Rust toolchain because librsvg needs it.
-docker pull rust:stretch
+target="$arch-w64-mingw32.$type.$threads${unwind:+.$unwind}"
 
-# Create a machine image with all the required build tools pre-installed
+# Is docker available?
+if ! [ -x "$(command -v docker)" ]; then
+  echo "ERROR: Please install docker." >&2
+  exit 1
+fi
+
+# Ensure latest Debian stable base image.
+docker pull buildpack-deps:buster
+
+# Create a machine image with all the required build tools pre-installed.
 docker build -t libvips-build-win-mxe container
 
 # Run build scripts inside container
-docker run --rm -t -u $(id -u):$(id -g) -v $PWD/$version:/data \
-  libvips-build-win-mxe $deps $target
+# - inheriting the current uid and gid
+# - build dir mounted at /data
+docker run --rm -t \
+  -u $(id -u):$(id -g) \
+  -v $PWD/build:/data \
+  -e "MOZJPEG=$with_mozjpeg" \
+  -e "AOM=$with_aom" \
+  -e "HEVC=$with_hevc" \
+  -e "LLVM=$with_llvm" \
+  libvips-build-win-mxe \
+  $deps \
+  $target
 
 # test outside the container ... saves us having to install wine inside docker
 if [ -x "$(command -v wine)" ]; then
   echo -n "testing build ... "
-  wine $version/vips-dev-$version/bin/vips.exe --help > /dev/null
+  wine $PWD/build/$repackage_dir/bin/vips.exe --help > /dev/null
   if [ "$?" -ne "0" ]; then
-    echo WARNING: vips.exe failed to run
+    echo "WARNING: vips.exe failed to run"
   else
-    echo ok
+    echo "OK"
   fi
 fi

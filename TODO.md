@@ -1,18 +1,13 @@
 ## TODO
-- [ ] Add headers, link libraries and def files to the `-dev` packages.
-  - [ ] For NetVips this isn't necessary, so make a `-slim` package which contains only runtime DDLs and relevant EXEs.
-  - [ ] `libvipsCC-42.dll` and `libvips-cpp-42.dll` also needs to be added.
-  - [ ] `AUTHORS`, `ChangeLog`, `COPYING` and `README.md` also needs to be added.
-- [ ] Try to build with [orc](https://github.com/GStreamer/orc).
-- [X] Add [cfitsio](https://heasarc.gsfc.nasa.gov/fitsio/) to the 'all target'. MXE already has [this dependency](https://github.com/mxe/mxe/blob/master/src/cfitsio.mk).
-- [X] Add [OpenEXR](https://github.com/openexr/openexr) to the 'all target'. MXE already has [this dependency](https://github.com/mxe/mxe/blob/master/src/openexr.mk).
-- [X] Add [nifticlib](https://nifti.nimh.nih.gov/) to the 'all target'.
-- [X] Try to update ImageMagick6 to the latest version (latest versions of ImageMagick are continuous fuzzed by [OSS-Fuzz](https://github.com/google/oss-fuzz), so it'll reduce the attack surface).
 - [ ] Let Travis build libvips with pre-compiled dependencies.
-  - [ ] Wait for: https://github.com/mxe/mxe/issues/2021.
+  - [ ] Wait for: [mxe/mxe#2021](https://github.com/mxe/mxe/issues/2021).
 - [ ] Incorporate all new dependencies and patches into [MXE](https://github.com/mxe/mxe).
   - [ ] Should we also add libvips-web?
-  - [ ] Not sure about `librsvg`, because v2.42.0+ requires the Rust toolchain.
-- [ ] Try to update Pixman to 0.34.0. Couldn't find a tarball for version 0.34.0 [here](https://cairographics.org/snapshots/).
-- [ ] Try to build with 32-bit architecture (not sure if this is still being distributed).
+  - [x] Not sure about `librsvg`, because v2.42.0+ requires the Rust toolchain.
 - [ ] Try to test the binaries with the Python test suite on Wine.
+- [ ] Incorporate the llvm-mingw toolchain plugin into MXE (see [mxe/mxe#2330](https://github.com/mxe/mxe/issues/2330)).
+  - [x] Test the `armv7-w64-mingw32` target on a Raspberry Pi 3B with Windows 10 IoT.
+  - [x] Test the `aarch64-w64-mingw32` target on a Raspberry Pi 4B with Windows 10 ARM64.
+  - [x] The VIPS test suite should be able to run successfully on ARM/ARM64.
+  - [ ] Fix the llvm-mingw specific patches upstream or within LLVM.
+  - [x] The Rust MinGW-w64 ARM/ARM64 targets are not yet supported, is there an alternative way to build librsvg for these architectures?

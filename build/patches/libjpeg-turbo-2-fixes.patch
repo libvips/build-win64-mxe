@@ -1,0 +1,124 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Alexpux <alexey.pawlow@gmail.com>
+Date: Sun, 18 Jan 2015 16:49:05 +0300
+Subject: [PATCH 1/2] Fix compatibility with "basestd.h" header
+
+Taken from:
+https://github.com/Alexpux/MINGW-packages/blob/master/mingw-w64-libjpeg-turbo/0001-header-compat.mingw.patch
+
+diff --git a/jmorecfg.h b/jmorecfg.h
+index 1111111..2222222 100644
+--- a/jmorecfg.h
++++ b/jmorecfg.h
+@@ -14,6 +14,12 @@
+  * optimizations.  Most users will not need to touch this file.
+  */
+ 
++/* prevents conflicts */
++#if defined(__MINGW32__)
++#include <shlwapi.h> /* typedefs INT16 and INT32 */
++ 
++#define HAVE_BOOLEAN
++#endif
+ 
+ /*
+  * Maximum number of components (color channels) allowed in JPEG image.
+@@ -114,6 +120,7 @@ typedef char JOCTET;
+ #endif /* HAVE_UNSIGNED_CHAR */
+ 
+ 
++#ifndef _BASETSD_H_		/* basestd.h from mingw-w64 defines UINT8, UINT16, INT16, INT32 */
+ /* These typedefs are used for various table entries and so forth.
+  * They must be at least as wide as specified; but making them too big
+  * won't cost a huge amount of memory, so we don't provide special
+@@ -173,14 +180,11 @@ typedef short INT16;
+  */
+ 
+ #ifndef XMD_H                   /* X11/xmd.h correctly defines INT32 */
+-#ifndef _BASETSD_H_             /* Microsoft defines it in basetsd.h */
+-#ifndef _BASETSD_H              /* MinGW is slightly different */
+ #ifndef QGLOBAL_H               /* Qt defines it in qglobal.h */
+ typedef long INT32;
+ #endif
+ #endif
+ #endif
+-#endif
+ 
+ /* Datatype used for image dimensions.  The JPEG standard only supports
+  * images up to 64K*64K due to 16-bit fields in SOF markers.  Therefore
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 15 Feb 2020 20:00:00 +0100
+Subject: [PATCH 2/2] Fixes for the llvm-mingw ARM build
+
+
+diff --git a/simd/CMakeLists.txt b/simd/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/simd/CMakeLists.txt
++++ b/simd/CMakeLists.txt
+@@ -225,7 +233,11 @@ if(CPU_TYPE STREQUAL "arm")
+     .fpu neon
+     .arch armv7a
+     .object_arch armv4
++#ifdef _WIN32
++    .thumb
++#else
+     .arm
++#endif
+     pld [r0]
+     vmovn.u16 d0, q0")
+ else()
+@@ -253,6 +265,9 @@ if(NOT RESULT EQUAL 0)
+     return()
+   else()
+     message(STATUS "Using gas-preprocessor.pl")
++    if(WIN32 AND CPU_TYPE STREQUAL "arm")
++      set(CMAKE_ASM_COMPILER "-force-thumb ${CMAKE_ASM_COMPILER}")
++    endif()
+     configure_file(gas-preprocessor.in gas-preprocessor @ONLY)
+     set(CMAKE_ASM_COMPILER ${CMAKE_CURRENT_BINARY_DIR}/gas-preprocessor)
+   endif()
+@@ -264,7 +272,7 @@ file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/gastest.S)
+ 
+ add_library(simd OBJECT ${CPU_TYPE}/jsimd_neon.S ${CPU_TYPE}/jsimd.c)
+ 
+-if(CMAKE_POSITION_INDEPENDENT_CODE OR ENABLE_SHARED)
++if(NOT WIN32 AND (CMAKE_POSITION_INDEPENDENT_CODE OR ENABLE_SHARED))
+   set_target_properties(simd PROPERTIES POSITION_INDEPENDENT_CODE 1)
+ endif()
+ 
+diff --git a/simd/arm/jsimd_neon.S b/simd/arm/jsimd_neon.S
+index 1111111..2222222 100644
+--- a/simd/arm/jsimd_neon.S
++++ b/simd/arm/jsimd_neon.S
+@@ -2457,15 +2457,22 @@ asm_function jsimd_h2v1_fancy_upsample_neon
+     uxtb            \TMP, \TMP
+     strb            \TMP, [\BUFFER, #1]!
+     cmp             \TMP, #0xff
+-    /*it eq*/
++#ifdef _WIN32
++    IT EQ
++#endif
+     strbeq          \ZERO, [\BUFFER, #1]!
+ .endm
+ 
+ .macro put_bits PUT_BUFFER, PUT_BITS, CODE, SIZE
+-    /*lsl             \PUT_BUFFER, \PUT_BUFFER, \SIZE*/
++#ifdef _WIN32
++    lsl             \PUT_BUFFER, \PUT_BUFFER, \SIZE
++#endif
+     add             \PUT_BITS, \SIZE
+-    /*orr             \PUT_BUFFER, \PUT_BUFFER, \CODE*/
++#ifdef _WIN32
++    orr             \PUT_BUFFER, \PUT_BUFFER, \CODE
++#else
+     orr             \PUT_BUFFER, \CODE, \PUT_BUFFER, lsl \SIZE
++#endif
+ .endm
+ 
+ .macro checkbuf15 BUFFER, PUT_BUFFER, PUT_BITS, ZERO, TMP

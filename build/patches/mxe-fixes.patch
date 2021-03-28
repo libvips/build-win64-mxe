@@ -1,0 +1,322 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 14 Feb 2020 15:20:00 +0100
+Subject: [PATCH 1/3] Add support for targeting ARM/ARM64
+
+See: mxe/mxe#2330
+
+diff --git a/Makefile b/Makefile
+index 1111111..2222222 100644
+--- a/Makefile
++++ b/Makefile
+@@ -8,7 +8,8 @@ EXT_DIR  := $(TOP_DIR)/ext
+ # See docs/gmsl.html for further information
+ include $(EXT_DIR)/gmsl
+ 
+-MXE_TRIPLETS       := i686-w64-mingw32 x86_64-w64-mingw32
++MXE_TRIPLETS       := i686-w64-mingw32 x86_64-w64-mingw32 \
++                      armv7-w64-mingw32 aarch64-w64-mingw32
+ MXE_LIB_TYPES      := static shared
+ MXE_TARGET_LIST    := $(strip $(foreach TRIPLET,$(MXE_TRIPLETS),\
+                           $(addprefix $(TRIPLET).,$(MXE_LIB_TYPES))))
+@@ -774,8 +775,10 @@ build-only-$(1)_$(3): BUILD_$(if $(findstring shared,$(3)),SHARED,STATIC) = TRUE
+ build-only-$(1)_$(3): BUILD_$(if $(call seq,$(TARGET),$(BUILD)),NATIVE,CROSS) = TRUE
+ build-only-$(1)_$(3): $(if $(findstring win32,$(TARGET)),WIN32,POSIX)_THREADS = TRUE
+ build-only-$(1)_$(3): LIB_SUFFIX = $(if $(findstring shared,$(3)),dll,a)
+-build-only-$(1)_$(3): BITS = $(if $(findstring x86_64,$(3)),64,32)
++build-only-$(1)_$(3): BITS = $(if $(or $(findstring x86_64,$(3)),$(findstring aarch64,$(3))),64,32)
+ build-only-$(1)_$(3): PROCESSOR = $(firstword $(call split,-,$(3)))
++build-only-$(1)_$(3): IS_X86 = $(or $(findstring x86_64,$(3)),$(findstring i686,$(3)))
++build-only-$(1)_$(3): IS_ARM = $(or $(findstring armv7,$(3)),$(findstring aarch64,$(3)))
+ build-only-$(1)_$(3): BUILD_TYPE = $(if $(findstring debug,$(3) $($(1)_CONFIGURE_OPTS)),debug,release)
+ build-only-$(1)_$(3): BUILD_TYPE_SUFFIX = $(if $(findstring debug,$(3) $($(1)_CONFIGURE_OPTS)),d)
+ build-only-$(1)_$(3): INSTALL_STRIP_TOOLCHAIN = install$(if $(STRIP_TOOLCHAIN),-strip)
+diff --git a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in b/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
+index 1111111..2222222 100644
+--- a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
++++ b/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
+@@ -1,8 +1,8 @@
+ # This file is part of MXE. See LICENSE.md for licensing information.
+ 
+ [binaries]
+-c = '@PREFIX@/bin/@TARGET@-gcc'
+-cpp = '@PREFIX@/bin/@TARGET@-g++'
++c = '@PREFIX@/bin/@TARGET@-@CC@'
++cpp = '@PREFIX@/bin/@TARGET@-@CXX@'
+ ar = '@PREFIX@/bin/@TARGET@-ar'
+ ranlib = '@PREFIX@/bin/@TARGET@-ranlib'
+ ld = '@PREFIX@/bin/@TARGET@-ld'
+@@ -10,6 +10,10 @@ strip = '@PREFIX@/bin/@TARGET@-strip'
+ windres = '@PREFIX@/bin/@TARGET@-windres'
+ windmc = '@PREFIX@/bin/@TARGET@-windmc'
+ pkgconfig = '@PREFIX@/bin/@TARGET@-pkg-config'
++glib-mkenums = '@PREFIX@/@TARGET@/bin/glib-mkenums'
++glib-genmarshal = '@PREFIX@/@TARGET@/bin/glib-genmarshal'
++glib-compile-schemas = '@PREFIX@/@TARGET@/bin/glib-compile-schemas'
++glib-compile-resources = '@PREFIX@/@TARGET@/bin/glib-compile-resources'
+ # MXE forbids this
+ # exe_wrapper = 'wine'
+ 
+diff --git a/plugins/meson-wrapper/meson-wrapper.mk b/plugins/meson-wrapper/meson-wrapper.mk
+index 1111111..2222222 100644
+--- a/plugins/meson-wrapper/meson-wrapper.mk
++++ b/plugins/meson-wrapper/meson-wrapper.mk
+@@ -16,11 +16,12 @@ define $(PKG)_BUILD
+         -DTARGET=$(TARGET) \
+         -DBUILD=$(BUILD) \
+         -DCPU_FAMILY=$(strip \
+-             $(if $(findstring x86_64,$(TARGET)),x86_64,\
+-             $(if $(findstring i686,$(TARGET)),x86))) \
+-        -DCPU=$(strip \
+-             $(if $(findstring x86_64,$(TARGET)),x86_64,\
+-             $(if $(findstring i686,$(TARGET)),i686))) \
++            $(if $(findstring armv7,$(PROCESSOR)),arm, \
++            $(if $(findstring i686,$(PROCESSOR)),x86, \
++            $(PROCESSOR)))) \
++        -DCPU=$(PROCESSOR) \
++        -DCC=$(if $(IS_LLVM),clang,gcc) \
++        -DCXX=$(if $(IS_LLVM),clang++,g++) \
+         -DINPUT='$(PWD)/plugins/meson-wrapper/conf/mxe-crossfile.meson.in' \
+         -DOUTPUT='$(PREFIX)/$(TARGET)/share/meson/mxe-crossfile.meson'
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 3 Mar 2020 15:00:00 +0100
+Subject: [PATCH 2/3] Update libffi test
+
+See:
+http://www.chiark.greenend.org.uk/doc/libffi-dev/html/Simple-Example.html#Simple-Example
+
+diff --git a/src/libffi-test.c b/src/libffi-test.c
+index 1111111..2222222 100644
+--- a/src/libffi-test.c
++++ b/src/libffi-test.c
+@@ -5,26 +5,30 @@
+ #include <stdio.h>
+ #include <ffi.h>
+ 
+-int main(int argc, char *argv[])
++int main()
+ {
+     ffi_cif cif;
+     ffi_type *args[1];
+     void *values[1];
+     char *s;
+-    int rc;
+-
+-    (void)argc;
+-    (void)argv;
++    ffi_arg rc;
+ 
++    /* Initialize the argument info vectors */    
+     args[0] = &ffi_type_pointer;
+     values[0] = &s;
+ 
+-    if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
+-                           &ffi_type_uint, args) == FFI_OK)
++    /* Initialize the cif */
++    if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1, 
++                           &ffi_type_sint, args) == FFI_OK)
+     {
+         s = "Hello World!";
+         ffi_call(&cif, FFI_FN(puts), &rc, values);
+-        s = "Goodbye!";
++        /* rc now holds the result of the call to puts */
++
++        /* values holds a pointer to the function's arg, so to 
++           call puts() again all we need to do is change the 
++           value of s */
++        s = "This is cool!";
+         ffi_call(&cif, FFI_FN(puts), &rc, values);
+     }
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 2 Mar 2021 13:00:00 +0100
+Subject: [PATCH 3/3] Allow networking when MXE_ENABLE_NETWORK is set
+
+
+diff --git a/Makefile b/Makefile
+index 1111111..2222222 100644
+--- a/Makefile
++++ b/Makefile
+@@ -705,6 +705,7 @@ $(foreach PKG,$(PKGS),$(eval $(call PKG_RULE,$(PKG),$(call TMP_DIR,$(PKG)))))
+ ifeq ($(findstring darwin,$(BUILD)),)
+     NONET_LIB := $(PREFIX)/$(BUILD)/lib/nonetwork.so
+     PRELOAD   := LD_PRELOAD='$(NONET_LIB)'
++    NONET_LDFLAGS := -ldl
+ else
+     NONET_LIB := $(PREFIX)/$(BUILD)/lib/nonetwork.dylib
+     PRELOAD   := DYLD_FORCE_FLAT_NAMESPACE=1 DYLD_INSERT_LIBRARIES='$(NONET_LIB)' \
+@@ -714,7 +715,7 @@ endif
+ 
+ $(NONET_LIB): $(TOP_DIR)/tools/nonetwork.c | $(PREFIX)/$(BUILD)/lib/.gitkeep
+ 	@$(PRINTF_FMT) '[nonet lib]' '$@'
+-	+@$(BUILD_CC) -shared -fPIC $(NONET_CFLAGS) -o $@ $<
++	+@$(BUILD_CC) -shared -fPIC $(NONET_CFLAGS) $< -o $@ $(NONET_LDFLAGS)
+ 
+ .PHONY: nonet-lib
+ nonet-lib: $(NONET_LIB)
+diff --git a/tools/nonetwork.c b/tools/nonetwork.c
+index 1111111..2222222 100644
+--- a/tools/nonetwork.c
++++ b/tools/nonetwork.c
+@@ -3,53 +3,138 @@
+ // Copyright (C) 2015 Boris Nagaev
+ // License: MIT
+ 
++#define _GNU_SOURCE // required to get RTLD_NEXT defined
++
+ #include <errno.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <dlfcn.h>
++
++int (*real_connect)(int sock, const void *addr, unsigned int len);
++void *(*real_gethostbyname)(const char *name);
++int (*real_getaddrinfo)(const char *node, const char *service,
++                        const void *hints, void **res);
++void (*real_freeaddrinfo)(void *res);
++int (*real_getnameinfo)(const void *sa, unsigned int salen, char *host,
++                        unsigned int hostlen, char *serv, unsigned int servlen,
++                        int flags);
++struct hostent *(*real_gethostbyaddr)(const void *addr, unsigned int len,
++                                      int type);
++
++int enable;
++int silent;
++
++__attribute__((constructor)) void init(void) {
++  if (getenv("MXE_SILENT_NO_NETWORK"))
++    silent = 1;
++
++  if (!getenv("MXE_ENABLE_NETWORK"))
++    return;
++
++  real_connect = dlsym(RTLD_NEXT, "connect");
++  if (!real_connect) {
++    fprintf(stderr, "dlsym(real_connect) failed: %s\n", dlerror());
++    exit(1);
++  }
++
++  real_gethostbyname = dlsym(RTLD_NEXT, "gethostbyname");
++  if (!real_gethostbyname) {
++    fprintf(stderr, "dlsym(gethostbyname) failed: %s\n", dlerror());
++    exit(1);
++  }
++
++  real_getaddrinfo = dlsym(RTLD_NEXT, "getaddrinfo");
++  if (!real_getaddrinfo) {
++    fprintf(stderr, "dlsym(getaddrinfo) failed: %s\n", dlerror());
++    exit(1);
++  }
++
++  real_freeaddrinfo = dlsym(RTLD_NEXT, "freeaddrinfo");
++  if (!real_freeaddrinfo) {
++    fprintf(stderr, "dlsym(freeaddrinfo) failed: %s\n", dlerror());
++    exit(1);
++  }
++
++  real_getnameinfo = dlsym(RTLD_NEXT, "getnameinfo");
++  if (!real_getnameinfo) {
++    fprintf(stderr, "dlsym(getnameinfo) failed: %s\n", dlerror());
++    exit(1);
++  }
++
++  real_gethostbyaddr = dlsym(RTLD_NEXT, "gethostbyaddr");
++  if (!real_gethostbyaddr) {
++    fprintf(stderr, "dlsym(gethostbyaddr) failed: %s\n", dlerror());
++    exit(1);
++  }
++
++  enable = 1;
++}
+ 
+ static void print_message() {
+-    if(getenv("MXE_SILENT_NO_NETWORK")) {
+-    } else {
+-        fflush(stderr);
+-        fprintf(stderr, "\nDon't use network from MXE build rules!\n");
+-        fprintf(stderr, "\tSilent mode for scripts reading stderr into variables:\n");
+-        fprintf(stderr, "\t\tMXE_SILENT_NO_NETWORK= make ...\n");
+-        fflush(stderr);
+-    }
++  if (!silent) {
++    fflush(stderr);
++    fprintf(stderr, "\nDon't use network from MXE build rules!\n");
++    fprintf(stderr,
++            "\tSilent mode for scripts reading stderr into variables:\n");
++    fprintf(stderr, "\t\tMXE_SILENT_NO_NETWORK= make ...\n");
++    fflush(stderr);
++  }
+ }
+ 
+ int connect(int sock, const void *addr, unsigned int len) {
++  if (!enable) {
+     print_message();
+     errno = 13; // EACCES, Permission denied
+     return -1;
++  }
++
++  return real_connect(sock, addr, len);
+ }
+ 
+ void *gethostbyname(const char *name) {
++  if (!enable) {
+     print_message();
+     return 0;
++  }
++
++  return real_gethostbyname(name);
+ }
+ 
+-int getaddrinfo(const char *node, const char *service,
+-                const void *hints,
++int getaddrinfo(const char *node, const char *service, const void *hints,
+                 void **res) {
++  if (!enable) {
+     print_message();
+     return -4; // EAI_FAIL
++  }
++
++  return real_getaddrinfo(node, service, hints, res);
+ }
+ 
+ void freeaddrinfo(void *res) {
++  if (!enable) {
+     print_message();
++    return;
++  }
++
++  real_freeaddrinfo(res);
+ }
+ 
+-int getnameinfo(const void * sa,
+-                unsigned int salen, char * host,
+-                unsigned int hostlen, char * serv,
+-                unsigned int servlen, int flags) {
++int getnameinfo(const void *sa, unsigned int salen, char *host,
++                unsigned int hostlen, char *serv, unsigned int servlen,
++                int flags) {
++  if (!enable) {
+     print_message();
+     return -4; // EAI_FAIL
++  }
++
++  return real_getnameinfo(sa, salen, host, hostlen, serv, servlen, flags);
+ }
+ 
+-struct hostent *gethostbyaddr(const void *addr, unsigned int len,
+-                              int type) {
++struct hostent *gethostbyaddr(const void *addr, unsigned int len, int type) {
++  if (!enable) {
+     print_message();
+     return 0;
++  }
++
++  return real_gethostbyaddr(addr, len, type);
+ }

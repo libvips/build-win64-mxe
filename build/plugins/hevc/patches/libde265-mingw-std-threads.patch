@@ -1,0 +1,26 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 25 Jan 2020 17:30:00 +0100
+Subject: [PATCH 1/1] Use the mutex helper from mingw-std-threads
+
+
+diff --git a/libde265/de265.cc b/libde265/de265.cc
+index 1111111..2222222 100644
+--- a/libde265/de265.cc
++++ b/libde265/de265.cc
+@@ -31,7 +31,11 @@
+ #include <assert.h>
+ #include <string.h>
+ #include <stdlib.h>
++#ifdef _WIN32
++#include "mingw.mutex.h"
++#else
+ #include <mutex>
++#endif
+ 
+ 
+ // TODO: should be in some vps.c related header

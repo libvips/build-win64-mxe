@@ -1,29 +1,29 @@
-# Rust toolchain is needed for librsvg
-FROM rust:stretch
+FROM buildpack-deps:buster
 
-RUN \
-    apt-get update \
-    && apt-get install -y \
-        # http://mxe.cc/#requirements-debian
-        autoconf automake autopoint bash bison bzip2 flex g++ \
-        g++-multilib gettext git gperf intltool libc6-dev-i386 \
-        libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin \
-        libxml-parser-perl make openssl p7zip-full patch perl \
-        pkg-config python ruby scons sed unzip wget xz-utils
+RUN apt-get update \
+  && apt-get install -y \
+    # http://mxe.cc/#requirements-debian
+    autopoint bison flex gettext gperf intltool \
+    libtool-bin libxml-parser-perl lzip p7zip-full \
+    ruby g++-multilib libc6-dev-i386 \
+    # needed when building libvips from git
+    gobject-introspection gtk-doc-tools \
+    # needed for Meson
+    ninja-build python3-pip \
+  # install Meson
+  && pip3 install meson
 
-# Enable if 32-bit is needed.
-# RUN \
-#     dpkg --add-architecture i386 \
-#     && apt-get update 
+# TODO: This patch needs to be incorporated upstream
+RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
+  && curl -L https://gist.github.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/794838c1417fbb173a04e3e3eb1eff286496c745/meson-llvm-mingw.patch | git apply -v
 
-# Add Windows target for cross-compilation
-# TODO: Switch to i686-pc-windows-gnu if 32-bit is needed.
-RUN \
-    rustup target add x86_64-pc-windows-gnu
+# gas-preprocessor.pl is required for the ARM/ARM64 builds of libjpeg-turbo
+# TODO(kleisauke): This is no longer necessary once libjpeg-turbo 2.1 is released.
+RUN curl -L https://github.com/libav/gas-preprocessor/raw/master/gas-preprocessor.pl -o /usr/bin/gas-preprocessor.pl \
+  && chmod +x /usr/bin/gas-preprocessor.pl
 
-# the versioned build dir is mounted at /data, so this runs the build script
-# in that
+# The build dir is mounted at /data, so this runs the build script in that
 ENTRYPOINT ["/bin/bash", "/data/build.sh"]
 
-# The versioned subdirectory is mounted here
+# The build dir is mounted here
 WORKDIR /data

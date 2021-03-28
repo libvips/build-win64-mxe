@@ -1,0 +1,456 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 10 Jun 2020 13:15:00 +0200
+Subject: [PATCH 1/8] Ensure DLLs are installed in the bin directory
+
+
+diff --git a/build/cmake/aom_install.cmake b/build/cmake/aom_install.cmake
+index 1111111..2222222 100644
+--- a/build/cmake/aom_install.cmake
++++ b/build/cmake/aom_install.cmake
+@@ -81,16 +81,21 @@ macro(setup_aom_install_targets)
+     # Setup the install rules.
+     install(
+       FILES ${AOM_INSTALL_INCS}
+-      DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/aom")
++      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aom)
+     install(
+       FILES "${AOM_PKG_CONFIG_FILE}"
+-      DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+-    install(TARGETS ${AOM_INSTALL_LIBS} DESTINATION
+-                    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+-
++      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
++    install(TARGETS ${AOM_INSTALL_LIBS}
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    )
+     if(ENABLE_EXAMPLES)
+-      install(TARGETS ${AOM_INSTALL_BINS} DESTINATION
+-                      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}")
++      install(TARGETS ${AOM_INSTALL_BINS}
++		  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++		  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++		  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++      )
+     endif()
+   endif()
+ endmacro()
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 10 Jun 2020 14:50:00 +0200
+Subject: [PATCH 2/8] Prefer native win32 threading functionality
+
+
+diff --git a/build/cmake/aom_configure.cmake b/build/cmake/aom_configure.cmake
+index 1111111..2222222 100644
+--- a/build/cmake/aom_configure.cmake
++++ b/build/cmake/aom_configure.cmake
+@@ -218,6 +218,12 @@ aom_get_inline("INLINE")
+ # Don't just check for pthread.h, but use the result of the full pthreads
+ # including a linking check in FindThreads above.
+ set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
++
++# Prefer native win32 threading functionality.
++if(CMAKE_USE_WIN32_THREADS_INIT)
++  set(HAVE_PTHREAD_H 0)
++endif()
++
+ aom_check_source_compiles("unistd_check" "#include <unistd.h>" HAVE_UNISTD_H)
+ 
+ if(NOT MSVC)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 10 Jun 2020 21:00:00 +0200
+Subject: [PATCH 3/8] Disable version script on llvm-mingw
+
+
+diff --git a/build/cmake/exports.cmake b/build/cmake/exports.cmake
+index 1111111..2222222 100644
+--- a/build/cmake/exports.cmake
++++ b/build/cmake/exports.cmake
+@@ -54,11 +54,11 @@ function(setup_exports_target)
+                  APPEND_STRING
+                  PROPERTY LINK_FLAGS "-exported_symbols_list ${aom_sym_file}")
+   elseif(WIN32)
+-    if(NOT MSVC)
++    if(CMAKE_C_COMPILER_ID MATCHES GNU)
+       set_property(TARGET aom
+                    APPEND_STRING
+                    PROPERTY LINK_FLAGS "-Wl,--version-script ${aom_sym_file}")
+-    else()
++    elseif(MSVC)
+       set_property(TARGET aom
+                    APPEND_STRING
+                    PROPERTY LINK_FLAGS "/DEF:${aom_sym_file}")
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 8 Oct 2020 19:40:00 +0200
+Subject: [PATCH 4/8] Ensure ESP is aligned on 16-byte boundaries on x86
+
+Reference:
+https://sourceforge.net/p/mingw-w64/mailman/message/35294616/
+https://chromium-review.googlesource.com/c/webm/libvpx/+/364140
+
+diff --git a/aom_ports/mem.h b/aom_ports/mem.h
+index 1111111..2222222 100644
+--- a/aom_ports/mem.h
++++ b/aom_ports/mem.h
+@@ -24,6 +24,17 @@
+ #define DECLARE_ALIGNED(n, typ, val) typ val
+ #endif
+ 
++/* force_align_arg_pointer is required for proper function arguments aligning
++ * when SSE code is used. Some systems (Windows, QNX) do not guarantee our
++ * thread functions will be properly aligned on the stack, even though GCC may
++ * generate code with the assumption that it is. */
++#if defined(__GNUC__) && defined(__i386__) && \
++    (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2))
++#define FORCE_ALIGN __attribute__((force_align_arg_pointer))
++#else
++#define FORCE_ALIGN
++#endif
++
+ /* Indicates that the usage of the specified variable has been audited to assure
+  * that it's safe to use uninitialized. Silences 'may be used uninitialized'
+  * warnings on gcc.
+diff --git a/aom_util/aom_thread.h b/aom_util/aom_thread.h
+index 1111111..2222222 100644
+--- a/aom_util/aom_thread.h
++++ b/aom_util/aom_thread.h
+@@ -19,6 +19,8 @@
+ 
+ #include "config/aom_config.h"
+ 
++#include "aom_ports/mem.h"
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -52,7 +54,7 @@ typedef CONDITION_VARIABLE pthread_cond_t;
+ // simplistic pthread emulation layer
+ 
+ // _beginthreadex requires __stdcall
+-#define THREADFN unsigned int __stdcall
++#define THREADFN FORCE_ALIGN unsigned int __stdcall
+ #define THREAD_RETURN(val) (unsigned int)((DWORD_PTR)val)
+ 
+ static INLINE int pthread_create(pthread_t *const thread, const void *attr,
+diff --git a/av1/decoder/decodeframe.c b/av1/decoder/decodeframe.c
+index 1111111..2222222 100644
+--- a/av1/decoder/decodeframe.c
++++ b/av1/decoder/decodeframe.c
+@@ -5195,6 +5195,7 @@ static AOM_INLINE void setup_frame_info(AV1Decoder *pbi) {
+   }
+ }
+ 
++FORCE_ALIGN
+ void av1_decode_tg_tiles_and_wrapup(AV1Decoder *pbi, const uint8_t *data,
+                                     const uint8_t *data_end,
+                                     const uint8_t **p_data_end, int start_tile,
+diff --git a/av1/encoder/encoder.c b/av1/encoder/encoder.c
+index 1111111..2222222 100644
+--- a/av1/encoder/encoder.c
++++ b/av1/encoder/encoder.c
+@@ -6558,6 +6558,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
+   return AOM_CODEC_OK;
+ }
+ 
++FORCE_ALIGN
+ int av1_encode(AV1_COMP *const cpi, uint8_t *const dest,
+                const EncodeFrameInput *const frame_input,
+                const EncodeFrameParams *const frame_params,
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 6 Oct 2020 19:40:00 +0200
+Subject: [PATCH 5/8] aom_thread: switch win32 mutex API entirely to SWR
+
+See:
+https://code.videolan.org/videolan/dav1d/-/merge_requests/107
+
+diff --git a/aom_util/aom_thread.h b/aom_util/aom_thread.h
+index 1111111..2222222 100644
+--- a/aom_util/aom_thread.h
++++ b/aom_util/aom_thread.h
+@@ -34,7 +34,9 @@ extern "C" {
+ #include <process.h>  // NOLINT
+ #include <windows.h>  // NOLINT
+ typedef HANDLE pthread_t;
+-typedef CRITICAL_SECTION pthread_mutex_t;
++
++// use lightweight mutex/condition variable API for Windows Vista and later
++typedef SRWLOCK pthread_mutex_t;
+ 
+ #if _WIN32_WINNT < 0x0600
+ #error _WIN32_WINNT must target Windows Vista / Server 2008 or newer.
+@@ -88,26 +90,27 @@ static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
+ static INLINE int pthread_mutex_init(pthread_mutex_t *const mutex,
+                                      void *mutexattr) {
+   (void)mutexattr;
+-  InitializeCriticalSectionEx(mutex, 0 /*dwSpinCount*/, 0 /*Flags*/);
++  InitializeSRWLock(mutex);
+   return 0;
+ }
+ 
+ static INLINE int pthread_mutex_trylock(pthread_mutex_t *const mutex) {
+-  return TryEnterCriticalSection(mutex) ? 0 : EBUSY;
++  return TryAcquireSRWLockExclusive(mutex) ? 0 : EBUSY;
+ }
+ 
+ static INLINE int pthread_mutex_lock(pthread_mutex_t *const mutex) {
+-  EnterCriticalSection(mutex);
++  AcquireSRWLockExclusive(mutex);
+   return 0;
+ }
+ 
+ static INLINE int pthread_mutex_unlock(pthread_mutex_t *const mutex) {
+-  LeaveCriticalSection(mutex);
++  ReleaseSRWLockExclusive(mutex);
+   return 0;
+ }
+ 
+ static INLINE int pthread_mutex_destroy(pthread_mutex_t *const mutex) {
+-  DeleteCriticalSection(mutex);
++  (void)mutex;
++  // Unlocked SWR locks does not use resources
+   return 0;
+ }
+ 
+@@ -137,7 +140,7 @@ static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
+ static INLINE int pthread_cond_wait(pthread_cond_t *const condition,
+                                     pthread_mutex_t *const mutex) {
+   int ok;
+-  ok = SleepConditionVariableCS(condition, mutex, INFINITE);
++  ok = SleepConditionVariableSRW(condition, mutex, INFINITE, 0);
+   return !ok;
+ }
+ #elif defined(__OS2__)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 7 Oct 2020 18:19:52 +0200
+Subject: [PATCH 6/8] aom_thread: release mutex before signaling
+
+See:
+https://github.com/webmproject/libwebp/commit/6682f2c4155a1b606566cc6461a62da643aba6ef
+
+diff --git a/aom_util/aom_thread.c b/aom_util/aom_thread.c
+index 1111111..2222222 100644
+--- a/aom_util/aom_thread.c
++++ b/aom_util/aom_thread.c
+@@ -75,8 +75,12 @@ static THREADFN thread_loop(void *ptr) {
+       done = 1;
+     }
+     // signal to the main thread that we're done (for sync())
+-    pthread_cond_signal(&worker->impl_->condition_);
++    // Note the associated mutex does not need to be held when signaling the
++    // condition. Unlocking the mutex first may improve performance in some
++    // implementations, avoiding the case where the waiting thread can't
++    // reacquire the mutex when woken.
+     pthread_mutex_unlock(&worker->impl_->mutex_);
++    pthread_cond_signal(&worker->impl_->condition_);
+   }
+   return THREAD_RETURN(NULL);  // Thread is finished
+ }
+@@ -97,7 +101,13 @@ static void change_state(AVxWorker *const worker, AVxWorkerStatus new_status) {
+     // assign new status and release the working thread if needed
+     if (new_status != OK) {
+       worker->status_ = new_status;
++      // Note the associated mutex does not need to be held when signaling the
++      // condition. Unlocking the mutex first may improve performance in some
++      // implementations, avoiding the case where the waiting thread can't
++      // reacquire the mutex when woken.
++      pthread_mutex_unlock(&worker->impl_->mutex_);
+       pthread_cond_signal(&worker->impl_->condition_);
++      return;
+     }
+   }
+   pthread_mutex_unlock(&worker->impl_->mutex_);
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 7 Oct 2020 18:43:50 +0200
+Subject: [PATCH 7/8] aom_thread: fix potentially bad call to execute
+
+See:
+https://github.com/webmproject/libwebp/commit/fde2782ecbb95043c9640f53682d128713542c49
+
+diff --git a/aom_util/aom_thread.c b/aom_util/aom_thread.c
+index 1111111..2222222 100644
+--- a/aom_util/aom_thread.c
++++ b/aom_util/aom_thread.c
+@@ -36,10 +36,9 @@ struct AVxWorkerImpl {
+ 
+ //------------------------------------------------------------------------------
+ 
+-static void execute(AVxWorker *const worker);  // Forward declaration.
+-
+ static THREADFN thread_loop(void *ptr) {
+   AVxWorker *const worker = (AVxWorker *)ptr;
++  const AVxWorkerInterface *const winterface = aom_get_worker_interface();
+ #ifdef __APPLE__
+   if (worker->thread_name != NULL) {
+     // Apple's version of pthread_setname_np takes one argument and operates on
+@@ -69,7 +68,7 @@ static THREADFN thread_loop(void *ptr) {
+       pthread_cond_wait(&worker->impl_->condition_, &worker->impl_->mutex_);
+     }
+     if (worker->status_ == WORK) {
+-      execute(worker);
++      winterface->execute(worker);
+       worker->status_ = OK;
+     } else if (worker->status_ == NOT_OK) {  // finish the worker
+       done = 1;
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Deepa K G <deepa.kg@ittiam.com>
+Date: Thu, 11 Jun 2020 12:18:55 +0530
+Subject: [PATCH 8/8] Fix issues reported by valgrind in intra pred modules
+
+Added a memset which is a potential fix to avoid the
+access of uninitialized memory in intra pred modules.
+
+BUG=aomedia:2752
+
+Change-Id: Iaf1d81085994a634debe1165be3864a2cec3ee21
+
+diff --git a/av1/common/reconintra.c b/av1/common/reconintra.c
+index 1111111..2222222 100644
+--- a/av1/common/reconintra.c
++++ b/av1/common/reconintra.c
+@@ -35,6 +35,7 @@ enum {
+ #define INTRA_EDGE_FILT 3
+ #define INTRA_EDGE_TAPS 5
+ #define MAX_UPSAMPLE_SZ 16
++#define NUM_INTRA_NEIGHBOUR_PIXELS (MAX_TX_SIZE * 2 + 32)
+ 
+ static const uint8_t extend_modes[INTRA_MODES] = {
+   NEED_ABOVE | NEED_LEFT,                   // DC
+@@ -1134,8 +1135,8 @@ static void build_intra_predictors_high(
+   int i;
+   uint16_t *dst = CONVERT_TO_SHORTPTR(dst8);
+   uint16_t *ref = CONVERT_TO_SHORTPTR(ref8);
+-  DECLARE_ALIGNED(16, uint16_t, left_data[MAX_TX_SIZE * 2 + 32]);
+-  DECLARE_ALIGNED(16, uint16_t, above_data[MAX_TX_SIZE * 2 + 32]);
++  DECLARE_ALIGNED(16, uint16_t, left_data[NUM_INTRA_NEIGHBOUR_PIXELS]);
++  DECLARE_ALIGNED(16, uint16_t, above_data[NUM_INTRA_NEIGHBOUR_PIXELS]);
+   uint16_t *const above_row = above_data + 16;
+   uint16_t *const left_col = left_data + 16;
+   const int txwpx = tx_size_wide[tx_size];
+@@ -1149,6 +1150,12 @@ static void build_intra_predictors_high(
+   const int is_dr_mode = av1_is_directional_mode(mode);
+   const int use_filter_intra = filter_intra_mode != FILTER_INTRA_MODES;
+   int base = 128 << (xd->bd - 8);
++  // The left_data, above_data buffers must be zeroed to fix some intermittent
++  // valgrind errors. Uninitialized reads in intra pred modules (e.g. width = 4
++  // path in av1_highbd_dr_prediction_z2_avx2()) from left_data, above_data are
++  // seen to be the potential reason for this issue.
++  aom_memset16(left_data, base + 1, NUM_INTRA_NEIGHBOUR_PIXELS);
++  aom_memset16(above_data, base - 1, NUM_INTRA_NEIGHBOUR_PIXELS);
+ 
+   // The default values if ref pixels are not available:
+   // base   base-1 base-1 .. base-1 base-1 base-1 base-1 base-1 base-1
+@@ -1203,12 +1210,8 @@ static void build_intra_predictors_high(
+       }
+       if (i < num_left_pixels_needed)
+         aom_memset16(&left_col[i], left_col[i - 1], num_left_pixels_needed - i);
+-    } else {
+-      if (n_top_px > 0) {
+-        aom_memset16(left_col, above_ref[0], num_left_pixels_needed);
+-      } else {
+-        aom_memset16(left_col, base + 1, num_left_pixels_needed);
+-      }
++    } else if (n_top_px > 0) {
++      aom_memset16(left_col, above_ref[0], num_left_pixels_needed);
+     }
+   }
+ 
+@@ -1230,12 +1233,8 @@ static void build_intra_predictors_high(
+       if (i < num_top_pixels_needed)
+         aom_memset16(&above_row[i], above_row[i - 1],
+                      num_top_pixels_needed - i);
+-    } else {
+-      if (n_left_px > 0) {
+-        aom_memset16(above_row, left_ref[0], num_top_pixels_needed);
+-      } else {
+-        aom_memset16(above_row, base - 1, num_top_pixels_needed);
+-      }
++    } else if (n_left_px > 0) {
++      aom_memset16(above_row, left_ref[0], num_top_pixels_needed);
+     }
+   }
+ 
+@@ -1322,8 +1321,8 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
+   int i;
+   const uint8_t *above_ref = ref - ref_stride;
+   const uint8_t *left_ref = ref - 1;
+-  DECLARE_ALIGNED(16, uint8_t, left_data[MAX_TX_SIZE * 2 + 32]);
+-  DECLARE_ALIGNED(16, uint8_t, above_data[MAX_TX_SIZE * 2 + 32]);
++  DECLARE_ALIGNED(16, uint8_t, left_data[NUM_INTRA_NEIGHBOUR_PIXELS]);
++  DECLARE_ALIGNED(16, uint8_t, above_data[NUM_INTRA_NEIGHBOUR_PIXELS]);
+   uint8_t *const above_row = above_data + 16;
+   uint8_t *const left_col = left_data + 16;
+   const int txwpx = tx_size_wide[tx_size];
+@@ -1334,6 +1333,12 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
+   int p_angle = 0;
+   const int is_dr_mode = av1_is_directional_mode(mode);
+   const int use_filter_intra = filter_intra_mode != FILTER_INTRA_MODES;
++  // The left_data, above_data buffers must be zeroed to fix some intermittent
++  // valgrind errors. Uninitialized reads in intra pred modules (e.g. width = 4
++  // path in av1_dr_prediction_z1_avx2()) from left_data, above_data are seen to
++  // be the potential reason for this issue.
++  memset(left_data, 129, NUM_INTRA_NEIGHBOUR_PIXELS);
++  memset(above_data, 127, NUM_INTRA_NEIGHBOUR_PIXELS);
+ 
+   // The default values if ref pixels are not available:
+   // 128 127 127 .. 127 127 127 127 127 127
+@@ -1378,10 +1383,7 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
+     int need_bottom = extend_modes[mode] & NEED_BOTTOMLEFT;
+     if (use_filter_intra) need_bottom = 0;
+     if (is_dr_mode) need_bottom = p_angle > 180;
+-    // the avx2 dr_prediction_z2 may read at most 3 extra bytes,
+-    // due to the avx2 mask load is with dword granularity.
+-    // so we initialize 3 extra bytes to silence valgrind complain.
+-    const int num_left_pixels_needed = txhpx + (need_bottom ? txwpx : 3);
++    const int num_left_pixels_needed = txhpx + (need_bottom ? txwpx : 0);
+     i = 0;
+     if (n_left_px > 0) {
+       for (; i < n_left_px; i++) left_col[i] = left_ref[i * ref_stride];
+@@ -1392,12 +1394,8 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
+       }
+       if (i < num_left_pixels_needed)
+         memset(&left_col[i], left_col[i - 1], num_left_pixels_needed - i);
+-    } else {
+-      if (n_top_px > 0) {
+-        memset(left_col, above_ref[0], num_left_pixels_needed);
+-      } else {
+-        memset(left_col, 129, num_left_pixels_needed);
+-      }
++    } else if (n_top_px > 0) {
++      memset(left_col, above_ref[0], num_left_pixels_needed);
+     }
+   }
+ 
+@@ -1417,12 +1415,8 @@ static void build_intra_predictors(const MACROBLOCKD *xd, const uint8_t *ref,
+       }
+       if (i < num_top_pixels_needed)
+         memset(&above_row[i], above_row[i - 1], num_top_pixels_needed - i);
+-    } else {
+-      if (n_left_px > 0) {
+-        memset(above_row, left_ref[0], num_top_pixels_needed);
+-      } else {
+-        memset(above_row, 127, num_top_pixels_needed);
+-      }
++    } else if (n_left_px > 0) {
++      memset(above_row, left_ref[0], num_top_pixels_needed);
+     }
+   }
+ 
