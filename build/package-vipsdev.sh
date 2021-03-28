@@ -139,6 +139,9 @@ echo "Strip unneeded symbols"
 # Remove all symbols that are not needed
 $mxe_prefix/bin/$target.$deps-strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
 
+plugin_dir=$repackage_dir/lib/vips-plugins-$vips_version
+[ -d "$plugin_dir" ] && $mxe_prefix/bin/$target.$deps-strip --strip-unneeded $plugin_dir/*.plg
+
 echo "Copying packaging files"
 
 cp $mxe_prefix/$target.$deps/vips-packaging/{AUTHORS,ChangeLog,COPYING,README.md,versions.json} $repackage_dir
