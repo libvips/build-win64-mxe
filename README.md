@@ -23,9 +23,9 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.13.93   | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.10.4    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.10    | LGPLv3                                                       |
-| [gdk-pixbuf]    | 2.42.4    | LGPLv3                                                       |
+| [gdk-pixbuf]    | 2.42.6    | LGPLv3                                                       |
 | [giflib]        | 5.1.4     | MIT Licence                                                  |
-| [glib]          | 2.68.0    | LGPLv3                                                       |
+| [glib]          | 2.68.1    | LGPLv3                                                       |
 | [harfbuzz]      | 2.8.0     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
@@ -36,13 +36,13 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
 | [librsvg]       | 2.51.0    | LGPLv3                                                       |
 | [libspng]       | 0.6.2     | BSD 2-Clause                                                 |
-| [libtiff]       | 4.2.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.10.5    | LGPLv3                                                       |
+| [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
+| [libvips]       | 8.10.6    | LGPLv3                                                       |
 | [libwebp]       | 1.2.0     | New BSD License                                              |
 | [libxml2]       | 2.9.10    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.48.3    | LGPLv3                                                       |
+| [pango]         | 1.48.4    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [zlib-ng]       | 2.0.2     | [zlib-ng Licence]                                            |
 
@@ -93,16 +93,14 @@ Same as libvips-web + these extra dependencies:
 |-----------------|-----------|--------------------------------------------------------------|
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
-| [imagemagick]   | 6.9.12-4  | [ImageMagick License] (GPL-like)                             |
+| [imagemagick]   | 6.9.12-8  | [ImageMagick License] (GPL-like)                             |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
-| [openexr]       | 3.0.0²    | BSD 3-Clause                                                 |
+| [openexr]       | 3.0.1     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 21.03.0   | GPLv2                                                        |
-| [sqlite]        | 3.35.2    | Public domain                                                |
-
-² Built from the [`v3.0.0-beta`](https://github.com/AcademySoftwareFoundation/openexr/releases/tag/v3.0.0-beta) tag.
+| [poppler]       | 21.04.0   | GPLv2                                                        |
+| [sqlite]        | 3.35.5    | Public domain                                                |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [fftw]: https://github.com/FFTW/fftw3

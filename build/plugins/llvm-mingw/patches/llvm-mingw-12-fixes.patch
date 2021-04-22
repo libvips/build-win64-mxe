@@ -54,7 +54,7 @@ index 1111111..2222222 100644
  #ifndef DEFAULT_TARGET
  #define DEFAULT_TARGET "x86_64-w64-mingw32"
  #endif
-@@ -265,7 +277,12 @@ int _tmain(int argc, TCHAR* argv[]) {
+@@ -318,7 +330,12 @@ int _tmain(int argc, TCHAR* argv[]) {
      else if (!_tcscmp(arch, _T("aarch64")))
          machine = _T("ARM64");
  
@@ -68,16 +68,16 @@ index 1111111..2222222 100644
  
      const TCHAR **rc_options = malloc(2 * argc * sizeof(*cpp_options));
      int nb_rc_options = 0;
-@@ -296,7 +313,7 @@ int _tmain(int argc, TCHAR* argv[]) {
-     int arg = 0;
- 
-     if (!_tcsicmp(input_format, _T("rc"))) {
--        exec_argv[arg++] = concat(dir, CC);
-+        exec_argv[arg++] = resolved_CC;
-         exec_argv[arg++] = _T("-E");
-         for (int i = 0; i < nb_cpp_options; i++)
-             exec_argv[arg++] = cpp_options[i];
-@@ -321,7 +338,7 @@ int _tmain(int argc, TCHAR* argv[]) {
+@@ -354,7 +371,7 @@ int _tmain(int argc, TCHAR* argv[]) {
+         if (preprocessor) {
+             split_args(preprocessor, exec_argv, &arg, max_arg);
+         } else {
+-            exec_argv[arg++] = concat(dir, CC);
++            exec_argv[arg++] = resolved_CC;
+             exec_argv[arg++] = _T("-E");
+             exec_argv[arg++] = _T("-xc");
+             exec_argv[arg++] = _T("-DRC_INVOKED=1");
+@@ -380,7 +397,7 @@ int _tmain(int argc, TCHAR* argv[]) {
          }
  
          arg = 0;
@@ -86,7 +86,7 @@ index 1111111..2222222 100644
          for (int i = 0; i < nb_rc_options; i++)
              exec_argv[arg++] = rc_options[i];
          exec_argv[arg++] = _T("-I");
-@@ -359,7 +376,7 @@ int _tmain(int argc, TCHAR* argv[]) {
+@@ -418,7 +435,7 @@ int _tmain(int argc, TCHAR* argv[]) {
              // All done
          } else if (!_tcsicmp(output_format, _T("coff"))) {
              arg = 0;
@@ -95,7 +95,7 @@ index 1111111..2222222 100644
              exec_argv[arg++] = res;
              exec_argv[arg++] = concat(_T("-machine:"), machine);
              exec_argv[arg++] = concat(_T("-out:"), output);
-@@ -382,7 +399,7 @@ int _tmain(int argc, TCHAR* argv[]) {
+@@ -439,7 +456,7 @@ int _tmain(int argc, TCHAR* argv[]) {
              error(basename, _T("invalid output format: `"TS"'"), output_format);
          }
      } else if (!_tcsicmp(input_format, _T("res"))) {

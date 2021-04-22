@@ -12,8 +12,8 @@ libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_
 libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
 # upstream version is 2.32.3
-gdk-pixbuf_VERSION  := 2.42.4
-gdk-pixbuf_CHECKSUM := fe9c5dd88f486194ea2bc09b8814c1ed895bb6c530f37cbbf259757c4e482e4d
+gdk-pixbuf_VERSION  := 2.42.6
+gdk-pixbuf_CHECKSUM := c4a6b75b7ed8f58ca48da830b9fa00ed96d668d3ab4b1f723dcf902f78bde77f
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -30,8 +30,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-4
-imagemagick_CHECKSUM := 8ba3bddd2b95a0e44e5ffd3f5292ea07a306e9123a8a31a432b2e8eace7f6bf9
+imagemagick_VERSION  := 6.9.12-8
+imagemagick_CHECKSUM := 894c05f0a2c33f3a7e3ac7125112410ce216cab635238fd5bdba7620d83e7458
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -44,8 +44,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.48.3
-pango_CHECKSUM := 36ea145c82217c8efc954d02aa577391b1d9a5da205e0aef7ffe0461349b4b46
+pango_VERSION  := 1.48.4
+pango_CHECKSUM := 418913fb062071a075846244989d4a67aa5c80bf0eae8ee4555a092fd566a37a
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -62,20 +62,12 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.68.0
-glib_CHECKSUM := 67734f584f3a05a2872f57e9a8db38f3b06c7087fb531c5a839d9171968103ea
+glib_VERSION  := 2.68.1
+glib_CHECKSUM := 241654b96bd36b88aaa12814efc4843b578e55d47440103727959ac346944333
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
-
-# upstream version is 2.2.10
-expat_VERSION  := 2.3.0
-expat_CHECKSUM := f122a20eada303f904d5e0513326c5b821248f2d4d2afbf5c6f1339e511c0586
-expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
-expat_SUBDIR   := expat-$(expat_VERSION)
-expat_FILE     := expat-$(expat_VERSION).tar.bz2
-expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_2_3_0/$(expat_FILE)
 
 # upstream version is 1.14.30
 libgsf_VERSION  := 1.14.47
@@ -84,6 +76,14 @@ libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
 libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)
+
+# upstream version is 4.2.0
+tiff_VERSION  := 4.3.0
+tiff_CHECKSUM := 0e46e5acb087ce7d1ac53cf4f56a09b221537fc86dfc5daaad1c2e89e1b37ac8
+tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
+tiff_SUBDIR   := tiff-$(tiff_VERSION)
+tiff_FILE     := tiff-$(tiff_VERSION).tar.gz
+tiff_URL      := https://download.osgeo.org/libtiff/$(tiff_FILE)
 
 # upstream version is 1.16.0
 cairo_VERSION  := 1.17.4
@@ -96,12 +96,12 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.0.0
-openexr_CHECKSUM := 845e70393e1157473689ed8735174afb28eb800d3513d417bbb14fa5204952a5
+openexr_VERSION  := 3.0.1
+openexr_CHECKSUM := 6d14a8df938bbbd55dd6e55b24c527fe9323fe6a45f704e56967dfbf477cecc1
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
-openexr_SUBDIR   := openexr-$(openexr_VERSION)-beta
-openexr_FILE     := openexr-$(openexr_VERSION)-beta.tar.gz
-openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION)-beta.tar.gz
+openexr_SUBDIR   := openexr-$(openexr_VERSION)
+openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
+openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 3410
 cfitsio_VERSION  := 3.49
@@ -137,8 +137,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 21.02.0
-poppler_VERSION  := 21.03.0
-poppler_CHECKSUM := fd51ead4aac1d2f4684fa6e7b0ec06f0233ed21667e720a4e817e4455dd63d27
+poppler_VERSION  := 21.04.0
+poppler_CHECKSUM := 5e2219656c6bbd36154133fef2e12b7d0938464518827098b29a10b1697ea79c
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -154,10 +154,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 8.0.0
-# Update MinGW-w64 to 45def5d
-# https://github.com/mirror/mingw-w64/tarball/45def5d7a10885dfb87af3c7996f8de7197183b5
-mingw-w64_VERSION  := 45def5d
-mingw-w64_CHECKSUM := e13e26882235634e7c67dfcb0dc8440bdbd2b3b05f972d7a091a6d3f2235f072
+# Update MinGW-w64 to 1c77387
+# https://github.com/mirror/mingw-w64/tarball/1c773877f4a13c8bd7bfb8da80e1e8761a889f51
+mingw-w64_VERSION  := 1c77387
+mingw-w64_CHECKSUM := f4fbeaea44fad92ad574f4e6f20813812eb86871a445761d4922dd7e03ec1eff
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mirror-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mirror-mingw-w64-$(mingw-w64_VERSION).tar.gz
@@ -514,7 +514,7 @@ endef
 
 # compile with CMake
 define poppler_BUILD
-    $(if $(WIN32_THREADS),\
+    $(if $(WIN32_THREADS), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(poppler_PATCHES))))/poppler-mingw-std-threads.patch)
 
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \

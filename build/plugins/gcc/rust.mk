@@ -2,9 +2,9 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/rust-1.50.0-x86_64-unknown-linux-gnu.tar.gz.sha256
-$(PKG)_VERSION  := 1.50.0
-$(PKG)_CHECKSUM := fa889b53918980aea2dea42bfae4e858dcb2104c6fdca6e4fe359f3a49767701
+# https://static.rust-lang.org/dist/rust-1.51.0-x86_64-unknown-linux-gnu.tar.gz.sha256
+$(PKG)_VERSION  := 1.51.0
+$(PKG)_CHECKSUM := 9e125977aa13f012a68fdc6663629c685745091ae244f0587dd55ea4e3a3e42f
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)-x86_64-unknown-linux-gnu
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION)-x86_64-unknown-linux-gnu.tar.gz
 $(PKG)_URL      := https://static.rust-lang.org/dist/$($(PKG)_FILE)
@@ -17,8 +17,6 @@ define $(PKG)_BUILD
 
     # Install in $(PREFIX)/$(TARGET) to avoid conflicts
     # with the llvm-mingw plugin.
-    # TODO(kleisauke): Could be installed in $(PREFIX)/$(BUILD)
-    # if we build all binaries with LLVM.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/install.sh \
         --prefix='$(PREFIX)/$(TARGET)' \
         --components='rustc,cargo,rust-std-x86_64-unknown-linux-gnu,rust-std-$(PROCESSOR)-pc-windows-gnu'

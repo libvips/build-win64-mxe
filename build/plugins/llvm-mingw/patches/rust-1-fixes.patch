@@ -49,7 +49,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -743,10 +743,12 @@ supported_targets! {
+@@ -823,10 +823,12 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  
@@ -118,7 +118,7 @@ diff --git a/compiler/rustc_target/src/spec/windows_gnu_base.rs b/compiler/rustc
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/windows_gnu_base.rs
 +++ b/compiler/rustc_target/src/spec/windows_gnu_base.rs
-@@ -23,7 +23,7 @@ pub fn opts() -> TargetOptions {
+@@ -21,7 +21,7 @@ pub fn opts() -> TargetOptions {
      let mut late_link_args_static = LinkArgs::new();
      // Order of `late_link_args*` was found through trial and error to work with various
      // mingw-w64 versions (not tested on the CI). It's expected to change from time to time.
@@ -127,7 +127,7 @@ index 1111111..2222222 100644
          "-lmsvcrt".to_string(),
          "-lmingwex".to_string(),
          "-lmingw32".to_string(),
-@@ -39,16 +39,23 @@ pub fn opts() -> TargetOptions {
+@@ -37,16 +37,23 @@ pub fn opts() -> TargetOptions {
          "-luser32".to_string(),
          "-lkernel32".to_string(),
      ];
@@ -155,7 +155,7 @@ index 1111111..2222222 100644
      let static_unwind_libs = vec![
          // If all of our crates are statically linked then we can get away
          // with statically linking the libgcc unwinding code. This allows
-@@ -58,8 +65,7 @@ pub fn opts() -> TargetOptions {
+@@ -56,8 +63,7 @@ pub fn opts() -> TargetOptions {
          "-lgcc_eh".to_string(),
          "-l:libpthread.a".to_string(),
      ];
@@ -183,7 +183,7 @@ index 1111111..2222222 100644
  pub fn target() -> Target {
      let mut base = super::windows_gnu_base::opts();
 @@ -16,6 +16,21 @@ pub fn target() -> Target {
-         .unwrap()
+         .or_default()
          .push("-Wl,--large-address-aware".to_string());
  
 +    // Ensure _DllMainCRTStartup is specified as DLL entry point.

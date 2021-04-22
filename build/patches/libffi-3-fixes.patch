@@ -316,7 +316,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Mike Hommey <mh@glandium.org>
 Date: Tue, 10 Nov 2020 20:41:33 +0900
-Subject: [PATCH 5/6] Allow to build with mingw-clang (#579)
+Subject: [PATCH 5/10] Allow to build with mingw-clang (#579)
 
 For some reason, compiling sysv.S with mingw-clang fails with:
 ```
@@ -343,10 +343,120 @@ index 1111111..2222222 100644
  # define ffi_closure_inner	C(ffi_closure_inner)
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sun, 26 Apr 2020 12:00:00 +0200
-Subject: [PATCH 6/6] Fixes for the llvm-mingw ARM build
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Mon, 6 Apr 2020 00:59:31 +0300
+Subject: [PATCH 6/10] arm: Check _WIN32 instead of _M_ARM or _MSC_VER for
+ detecting windows
 
+This matches what was done for ARM64 in
+c06468fa6674d3783a0edb1d0fae9afc8bc28513.
+
+diff --git a/src/arm/ffi.c b/src/arm/ffi.c
+index 1111111..2222222 100644
+--- a/src/arm/ffi.c
++++ b/src/arm/ffi.c
+@@ -36,7 +36,7 @@
+ #include <stdlib.h>
+ #include "internal.h"
+ 
+-#if defined(_MSC_VER) && defined(_M_ARM)
++#if defined(_WIN32)
+ #define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+ #endif
+@@ -48,7 +48,7 @@
+ #endif
+ 
+ #else
+-#ifndef _M_ARM
++#ifndef _WIN32
+ extern unsigned int ffi_arm_trampoline[2] FFI_HIDDEN;
+ #else
+ extern unsigned int ffi_arm_trampoline[3] FFI_HIDDEN;
+@@ -98,13 +98,13 @@ ffi_put_arg (ffi_type *ty, void *src, void *dst)
+     case FFI_TYPE_SINT32:
+     case FFI_TYPE_UINT32:
+     case FFI_TYPE_POINTER:
+-#ifndef _MSC_VER
++#ifndef _WIN32
+     case FFI_TYPE_FLOAT:
+ #endif
+       *(UINT32 *)dst = *(UINT32 *)src;
+       break;
+ 
+-#ifdef _MSC_VER
++#ifdef _WIN32
+     // casting a float* to a UINT32* doesn't work on Windows
+     case FFI_TYPE_FLOAT:
+         *(uintptr_t *)dst = 0;
+@@ -592,7 +592,7 @@ ffi_prep_closure_loc (ffi_closure * closure,
+   config[1] = closure_func;
+ #else
+
+-#ifndef _M_ARM
++#ifndef _WIN32
+   memcpy(closure->tramp, ffi_arm_trampoline, 8);
+ #else
+   // cast away function type so MSVC doesn't set the lower bit of the function pointer
+@@ -602,13 +602,13 @@ ffi_prep_closure_loc (ffi_closure * closure,
+ #if defined (__QNX__)
+   msync(closure->tramp, 8, 0x1000000);	/* clear data map */
+   msync(codeloc, 8, 0x1000000);	/* clear insn map */
+-#elif defined(_MSC_VER)
++#elif defined(_WIN32)
+   FlushInstructionCache(GetCurrentProcess(), closure->tramp, FFI_TRAMPOLINE_SIZE);
+ #else
+   __clear_cache(closure->tramp, closure->tramp + 8);	/* clear data map */
+   __clear_cache(codeloc, codeloc + 8);			/* clear insn map */
+ #endif
+-#ifdef _M_ARM
++#ifdef _WIN32
+   *(void(**)(void))(closure->tramp + FFI_TRAMPOLINE_CLOSURE_FUNCTION) = closure_func;
+ #else
+   *(void (**)(void))(closure->tramp + 8) = closure_func;
+diff --git a/src/arm/ffitarget.h b/src/arm/ffitarget.h
+index 1111111..2222222 100644
+--- a/src/arm/ffitarget.h
++++ b/src/arm/ffitarget.h
+@@ -43,7 +43,7 @@ typedef enum ffi_abi {
+   FFI_SYSV,
+   FFI_VFP,
+   FFI_LAST_ABI,
+-#if defined(__ARM_PCS_VFP) || defined(_M_ARM)
++#if defined(__ARM_PCS_VFP) || defined(_WIN32)
+   FFI_DEFAULT_ABI = FFI_VFP,
+ #else
+   FFI_DEFAULT_ABI = FFI_SYSV,
+@@ -57,7 +57,7 @@ typedef enum ffi_abi {
+   signed char vfp_args[16]			\
+ 
+ #define FFI_TARGET_SPECIFIC_VARIADIC
+-#ifndef _M_ARM
++#ifndef _WIN32
+ #define FFI_TARGET_HAS_COMPLEX_TYPE
+ #endif
+ 
+@@ -77,7 +77,7 @@ typedef enum ffi_abi {
+ #endif
+ 
+ #else
+-#ifdef _MSC_VER
++#ifdef _WIN32
+ #define FFI_TRAMPOLINE_SIZE 16
+ #define FFI_TRAMPOLINE_CLOSURE_FUNCTION 12
+ #else
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Mon, 6 Apr 2020 00:59:33 +0300
+Subject: [PATCH 7/10] arm: Only use armasm source when building with MSVC
+
+When building for windows/arm with clang, the normal gas style .S
+source works fine (if fixed up to support thumb and other windows
+specifics).
+
+This matches what was done for ARM64 in
+c06468fa6674d3783a0edb1d0fae9afc8bc28513.
 
 diff --git a/configure.host b/configure.host
 index 1111111..2222222 100644
@@ -376,295 +486,121 @@ index 1111111..2222222 100644
  	;;
    ARM_WIN64)
  	if test "$MSVC" = 1; then
-diff --git a/src/arm/ffi.c b/src/arm/ffi.c
-index 1111111..2222222 100644
---- a/src/arm/ffi.c
-+++ b/src/arm/ffi.c
-@@ -28,7 +28,7 @@
-    DEALINGS IN THE SOFTWARE.
-    ----------------------------------------------------------------------- */
- 
--#if defined(__arm__) || defined(_M_ARM)
-+#if defined(__arm__) || defined(_WIN32)
- #include <fficonfig.h>
- #include <ffi.h>
- #include <ffi_common.h>
-@@ -36,7 +36,7 @@
- #include <stdlib.h>
- #include "internal.h"
- 
--#if defined(_MSC_VER) && defined(_M_ARM)
-+#ifdef _WIN32
- #define WIN32_LEAN_AND_MEAN
- #include <windows.h>
- #endif
-@@ -48,7 +48,7 @@
- #endif
- 
- #else
--#ifndef _M_ARM
-+#ifndef _WIN32
- extern unsigned int ffi_arm_trampoline[2] FFI_HIDDEN;
- #else
- extern unsigned int ffi_arm_trampoline[3] FFI_HIDDEN;
-@@ -592,24 +592,26 @@ ffi_prep_closure_loc (ffi_closure * closure,
-   config[1] = closure_func;
- #else
- 
--#ifndef _M_ARM
-+#ifndef _WIN32
-   memcpy(closure->tramp, ffi_arm_trampoline, 8);
--#else
-+#elif defined(_MSC_VER)
-   // cast away function type so MSVC doesn't set the lower bit of the function pointer
-   memcpy(closure->tramp, (void*)((uintptr_t)ffi_arm_trampoline & 0xFFFFFFFE), FFI_TRAMPOLINE_CLOSURE_OFFSET);
-+#else
-+  memcpy(closure->tramp, ffi_arm_trampoline, FFI_TRAMPOLINE_CLOSURE_OFFSET);
- #endif
- 
- #if defined (__QNX__)
-   msync(closure->tramp, 8, 0x1000000);	/* clear data map */
-   msync(codeloc, 8, 0x1000000);	/* clear insn map */
--#elif defined(_MSC_VER)
-+#elif defined(_WIN32)
-   FlushInstructionCache(GetCurrentProcess(), closure->tramp, FFI_TRAMPOLINE_SIZE);
- #else
-   __clear_cache(closure->tramp, closure->tramp + 8);	/* clear data map */
-   __clear_cache(codeloc, codeloc + 8);			/* clear insn map */
- #endif
--#ifdef _M_ARM
--  *(void(**)(void))(closure->tramp + FFI_TRAMPOLINE_CLOSURE_FUNCTION) = closure_func;
-+#ifdef _WIN32
-+  *(void (**)(void))(closure->tramp + FFI_TRAMPOLINE_CLOSURE_FUNCTION) = closure_func;
- #else
-   *(void (**)(void))(closure->tramp + 8) = closure_func;
- #endif
-@@ -851,4 +853,4 @@ layout_vfp_args (ffi_cif * cif)
-     }
- }
- 
--#endif /* __arm__ or _M_ARM */
-+#endif /* defined(__arm__) || defined(_WIN32) */
-diff --git a/src/arm/ffitarget.h b/src/arm/ffitarget.h
-index 1111111..2222222 100644
---- a/src/arm/ffitarget.h
-+++ b/src/arm/ffitarget.h
-@@ -43,7 +43,7 @@ typedef enum ffi_abi {
-   FFI_SYSV,
-   FFI_VFP,
-   FFI_LAST_ABI,
--#if defined(__ARM_PCS_VFP) || defined(_M_ARM)
-+#if defined(__ARM_PCS_VFP) || defined(_WIN32)
-   FFI_DEFAULT_ABI = FFI_VFP,
- #else
-   FFI_DEFAULT_ABI = FFI_SYSV,
-@@ -57,7 +57,8 @@ typedef enum ffi_abi {
-   signed char vfp_args[16]			\
- 
- #define FFI_TARGET_SPECIFIC_VARIADIC
--#ifndef _M_ARM
-+#ifndef _WIN32
-+/* No complex type on Windows */
- #define FFI_TARGET_HAS_COMPLEX_TYPE
- #endif
- 
-@@ -77,7 +78,7 @@ typedef enum ffi_abi {
- #endif
- 
- #else
--#ifdef _MSC_VER
-+#ifdef _WIN32
- #define FFI_TRAMPOLINE_SIZE 16
- #define FFI_TRAMPOLINE_CLOSURE_FUNCTION 12
- #else
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Mon, 6 Apr 2020 00:59:37 +0300
+Subject: [PATCH 8/10] arm: Fix sysv.S to work in thumb mode
+
+Align cases in jump tables (adding nop padding to make sure each
+case starts where expected).
+
+Rewrite instructions that add directly to the pc register.
+
+For ffi_closure_ret, factor out a call_epilogue subroutine that
+restores both sp and pc from the stack; the thumb version of ldm
+can't load into the sp register. To avoid excessive ifdeffing, keep
+using call_epilogue in arm mode, but keep the shorter "ldm sp, {sp, pc}"
+epilogue in that case.
+
 diff --git a/src/arm/sysv.S b/src/arm/sysv.S
 index 1111111..2222222 100644
 --- a/src/arm/sysv.S
 +++ b/src/arm/sysv.S
-@@ -95,7 +95,8 @@
- /* Aid in defining a jump table with 8 bytes between entries.  */
- /* ??? The clang assembler doesn't handle .if with symbolic expressions.  */
- #ifdef __clang__
--# define E(index)
-+# define E(index)				\
-+	.balign	8
- #else
- # define E(index)				\
- 	.if . - 0b - 8*index;			\
-@@ -105,7 +106,11 @@
+@@ -92,9 +92,25 @@
+ #define ARM_FUNC_END(name) \
+ 	SIZE(name)
  
- 	.text
- 	.syntax unified
-+#ifdef _WIN32
++	.text
++	.syntax unified
++#if defined(_WIN32)
++	/* Windows on ARM is thumb-only */
 +	.thumb
 +#else
- 	.arm
++	/* Keep the assembly in ARM mode in other cases, for simplicity
++	 * (to avoid interworking issues). */
++#undef __thumb__
++	.arm
 +#endif
++
+ /* Aid in defining a jump table with 8 bytes between entries.  */
++#ifdef __thumb__
++/* In thumb mode, instructions can be shorter than expected in arm mode, so
++ * we need to align the start of each case. */
++# define E(index) .align 3
++#elif defined(__clang__)
+ /* ??? The clang assembler doesn't handle .if with symbolic expressions.  */
+-#ifdef __clang__
+ # define E(index)
+ #else
+ # define E(index)				\
+@@ -103,9 +119,6 @@
+ 	.endif
+ #endif
+ 
+-	.text
+-	.syntax unified
+-	.arm
  
  #ifndef __clang__
  	/* We require interworking on LDM, which implies ARMv5T,
-@@ -128,6 +133,10 @@ ARM_FUNC_START(ffi_call_VFP)
+@@ -128,6 +141,7 @@ ARM_FUNC_START(ffi_call_VFP)
  	cfi_startproc
  
  	cmp	r3, #3			@ load only d0 if possible
-+
-+#ifdef _WIN32
-+	ITE LE
-+#endif
++	ite	le
  #ifdef __clang__
  	vldrle d0, [r0]
  	vldmgt r0, {d0-d7}
-@@ -167,8 +176,16 @@ ARM_FUNC_START(ffi_call_SYSV)
+@@ -167,9 +181,16 @@ ARM_FUNC_START(ffi_call_SYSV)
  	cfi_def_cfa_register(sp)
  
  	@ Store values stored in registers.
-+#ifdef _WIN32
-+	.balign 8
-+	lsl	r3, #3
-+	add	r3, r3, pc
-+	add	r3, #8
-+	mov	pc, r3
-+#else
++#ifndef __thumb__
  	.align	3
  	add	pc, pc, r3, lsl #3
-+#endif
  	nop
++#else
++	adr	ip, 0f
++	add	ip, ip, r3, lsl #3
++	mov	pc, ip
++	.align	3
++#endif
  0:
  E(ARM_TYPE_VFP_S)
-@@ -202,6 +219,9 @@ E(ARM_TYPE_VOID)
- 	pop	{fp,pc}
- 	nop
- E(ARM_TYPE_STRUCT)
-+#ifdef _WIN32
-+	cmp	r3, #ARM_TYPE_STRUCT
-+#endif
- 	pop	{fp,pc}
- 
- 	cfi_endproc
-@@ -227,6 +247,9 @@ ARM_FUNC_END(ffi_go_closure_SYSV)
- ARM_FUNC_START(ffi_closure_SYSV)
- 	UNWIND(.fnstart)
- 	cfi_startproc
-+#ifdef _WIN32
-+	pop	{r0,ip}			@ restore fp (r0 is used for stack alignment)
-+#endif
- 	stmdb	sp!, {r0-r3}			@ save argument regs
- 	cfi_adjust_cfa_offset(16)
- 
-@@ -240,6 +263,10 @@ ARM_FUNC_START(ffi_closure_SYSV)
- 	add	ip, sp, #16			@ compute entry sp
- 	sub	sp, sp, #64+32			@ allocate frame
- 	cfi_adjust_cfa_offset(64+32)
-+
-+#ifdef _WIN32
-+	mov	r3, sp			@ set frame parameter
-+#endif
- 	stmdb	sp!, {ip,lr}
- 
- 	/* Remember that EABI unwind info only applies at call sites.
-@@ -249,13 +276,23 @@ ARM_FUNC_START(ffi_closure_SYSV)
- 	cfi_adjust_cfa_offset(8)
- 	cfi_rel_offset(lr, 4)
- 
-+#ifndef _WIN32
- 	add	r3, sp, #8			@ load frame
-+#endif
- 	bl	CNAME(ffi_closure_inner_SYSV)
- 
+ #ifdef __clang__
+@@ -255,7 +276,12 @@ ARM_FUNC_START(ffi_closure_SYSV)
  	@ Load values returned in registers.
  	add	r2, sp, #8+64			@ load result
-+#ifdef _WIN32
-+	bl	CNAME(ffi_closure_ret)			@ move result to correct register or memory for type
-+
-+	pop	{ip,lr}
-+	mov	sp, ip			@ restore stack pointer
-+	mov	pc, lr
-+#else
  	adr	r3, CNAME(ffi_closure_ret)
++#ifndef __thumb__
  	add	pc, r3, r0, lsl #3
++#else
++	add	r3, r3, r0, lsl #3
++	mov	pc, r3
 +#endif
  	cfi_endproc
  	UNWIND(.fnend)
  ARM_FUNC_END(ffi_closure_SYSV)
-@@ -274,6 +311,9 @@ ARM_FUNC_END(ffi_go_closure_VFP)
- ARM_FUNC_START(ffi_closure_VFP)
- 	UNWIND(.fnstart)
- 	cfi_startproc
-+#ifdef _WIN32
-+	pop	{r0,ip}			@ restore fp (r0 is used for stack alignment)
-+#endif
- 	stmdb	sp!, {r0-r3}			@ save argument regs
- 	cfi_adjust_cfa_offset(16)
- 
-@@ -284,13 +324,22 @@ ARM_FUNC_START(ffi_closure_VFP)
- 	ldr	r1, [ip, #FFI_TRAMPOLINE_CLOSURE_OFFSET+4]  @ load fun
- 	ldr	r2, [ip, #FFI_TRAMPOLINE_CLOSURE_OFFSET+8]  @ load user_data
- 0:
--	add	ip, sp, #16
-+	add	ip, sp, #16			@ compute entry sp
-+#ifdef _WIN32
-+	sub	sp, sp, #32			@ save space for closure_frame->result
-+	cfi_adjust_cfa_offset(32)
-+
-+	vstmdb	sp!, {d0-d7}		@ push closure_frame->vfp_space
-+
-+	mov	r3, sp		@ save closure_frame
-+#else
- 	sub	sp, sp, #64+32			@ allocate frame
- 	cfi_adjust_cfa_offset(64+32)
- #ifdef __clang__
- 	vstm sp, {d0-d7}
- #else
- 	stc	p11, cr0, [sp], {16}		@ vstm sp, {d0-d7}
-+#endif
- #endif
- 	stmdb	sp!, {ip,lr}
- 
-@@ -299,13 +348,22 @@ ARM_FUNC_START(ffi_closure_VFP)
- 	cfi_adjust_cfa_offset(8)
- 	cfi_rel_offset(lr, 4)
- 
-+#ifndef _WIN32
- 	add	r3, sp, #8			@ load frame
-+#endif
- 	bl	CNAME(ffi_closure_inner_VFP)
- 
+@@ -305,7 +331,12 @@ ARM_FUNC_START(ffi_closure_VFP)
  	@ Load values returned in registers.
  	add	r2, sp, #8+64			@ load result
-+#ifdef _WIN32
-+	bl	CNAME(ffi_closure_ret)
-+	pop	{ip,lr}
-+	mov	sp, ip			@ restore stack pointer
-+	mov	pc, lr
-+#else
  	adr	r3, CNAME(ffi_closure_ret)
++#ifndef __thumb__
  	add	pc, r3, r0, lsl #3
++#else
++	add	r3, r3, r0, lsl #3
++	mov	pc, r3
 +#endif
  	cfi_endproc
  	UNWIND(.fnend)
  ARM_FUNC_END(ffi_closure_VFP)
-@@ -316,6 +374,15 @@ ARM_FUNC_END(ffi_closure_VFP)
- 
- ARM_FUNC_START_LOCAL(ffi_closure_ret)
- 	cfi_startproc
-+#ifdef _WIN32
-+	stmdb	sp!, {fp,lr}
-+
-+	.balign	8
-+	lsl	r0, #3
-+	add	r0, r0, pc
-+	add	r0, #8
-+	mov	pc, r0
-+#endif
- 	cfi_rel_offset(sp, 0)
- 	cfi_rel_offset(lr, 4)
- 0:
-@@ -325,32 +392,38 @@ E(ARM_TYPE_VFP_S)
+@@ -325,32 +356,40 @@ E(ARM_TYPE_VFP_S)
  #else
  	ldc	p10, cr0, [r2]			@ vldr s0, [r2]
  #endif
 -	ldm	sp, {sp,pc}
-+	b call_epilogue
++	b	call_epilogue
  E(ARM_TYPE_VFP_D)
  #ifdef __clang__
  	vldr d0, [r2]
@@ -672,7 +608,7 @@ index 1111111..2222222 100644
  	ldc	p11, cr0, [r2]			@ vldr d0, [r2]
  #endif
 -	ldm	sp, {sp,pc}
-+	b call_epilogue
++	b	call_epilogue
  E(ARM_TYPE_VFP_N)
  #ifdef __clang__
  	vldm r2, {d0-d3}
@@ -680,36 +616,118 @@ index 1111111..2222222 100644
  	ldc	p11, cr0, [r2], {8}		@ vldm r2, {d0-d3}
  #endif
 -	ldm	sp, {sp,pc}
-+	b call_epilogue
++	b	call_epilogue
  E(ARM_TYPE_INT64)
  	ldr	r1, [r2, #4]
  	nop
  E(ARM_TYPE_INT)
  	ldr	r0, [r2]
 -	ldm	sp, {sp,pc}
-+	b call_epilogue
++	b	call_epilogue
  E(ARM_TYPE_VOID)
 -	ldm	sp, {sp,pc}
-+	b call_epilogue
++	b	call_epilogue
  	nop
  E(ARM_TYPE_STRUCT)
-+	b call_epilogue
++	b	call_epilogue
 +call_epilogue:
-+#ifdef _WIN32
-+	pop	{fp,pc}
-+#else
++#ifndef __thumb__
  	ldm	sp, {sp,pc}
++#else
++	ldm	sp, {ip,lr}
++	mov	sp, ip
++	bx	lr
 +#endif
  	cfi_endproc
  ARM_FUNC_END(ffi_closure_ret)
  
-@@ -373,6 +446,9 @@ ARM_FUNC_END(ffi_closure_trampoline_table_page)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Mon, 6 Apr 2020 00:59:42 +0300
+Subject: [PATCH 9/10] arm: Add win32 version of trampoline to sysv.S
+
+This matches the version of it in sysv_msvc_arm32.S. The calling
+C code expects a specific form of the trampoline on windows; make
+sure these work the same on windows regardless of the form of
+assembly used.
+
+
+diff --git a/src/arm/sysv.S b/src/arm/sysv.S
+index 1111111..2222222 100644
+--- a/src/arm/sysv.S
++++ b/src/arm/sysv.S
+@@ -248,6 +248,9 @@ ARM_FUNC_END(ffi_go_closure_SYSV)
+ ARM_FUNC_START(ffi_closure_SYSV)
+ 	UNWIND(.fnstart)
+ 	cfi_startproc
++#ifdef _WIN32
++	ldmfd	sp!, {r0, ip}			@ restore fp (r0 is used for stack alignment)
++#endif
+ 	stmdb	sp!, {r0-r3}			@ save argument regs
+ 	cfi_adjust_cfa_offset(16)
+ 
+@@ -300,6 +303,9 @@ ARM_FUNC_END(ffi_go_closure_VFP)
+ ARM_FUNC_START(ffi_closure_VFP)
+ 	UNWIND(.fnstart)
+ 	cfi_startproc
++#ifdef _WIN32
++	ldmfd	sp!, {r0, ip}			@ restore fp (r0 is used for stack alignment)
++#endif
+ 	stmdb	sp!, {r0-r3}			@ save argument regs
+ 	cfi_adjust_cfa_offset(16)
+ 
+@@ -408,6 +414,15 @@ ARM_FUNC_START(ffi_closure_trampoline_table_page)
+ ARM_FUNC_END(ffi_closure_trampoline_table_page)
+ #endif
+ 
++#elif defined(_WIN32)
++
++ARM_FUNC_START(ffi_arm_trampoline)
++0:	adr	ip, 0b
++	stmdb	sp!, {r0, ip}
++	ldr	pc, 1f
++1:	.long	0
++ARM_FUNC_END(ffi_arm_trampoline)
++
+ #else
  
  ARM_FUNC_START(ffi_arm_trampoline)
- 0:	adr	ip, 0b
-+#ifdef _WIN32
-+	stmdb	sp!, {r0, ip}
-+#endif
- 	ldr	pc, 1f
- 1:	.long	0
- ARM_FUNC_END(ffi_arm_trampoline)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Martin=20Storsj=C3=B6?= <martin@martin.st>
+Date: Tue, 30 Mar 2021 00:34:28 +0300
+Subject: [PATCH 10/10] arm: Avoid optimizing out clearing the thumb bit of
+ ffi_arm_trampoline
+
+We clear the thumb bit of ffi_arm_trampoline with a bitmask before
+memcpying its instructions into closure->tramp.
+
+If the bit isn't cleared, the memcpy of the trampoline function
+copies the wrong instructions.
+
+If the ffi_arm_trampoline symbol is declared as an array of int,
+the compiler can assume that it is aligned to a 4 byte boundary
+and the bitmask operation is a no-op, and optimize it out.
+
+See https://godbolt.org/z/dE3jE1WTz; both Clang and GCC optimize
+out the bitmask as it is, while MSVC doesn't. By declaring the
+trampoline as an array of unsigned char, the bitmask works as
+intended.
+
+diff --git a/src/arm/ffi.c b/src/arm/ffi.c
+index 1111111..2222222 100644
+--- a/src/arm/ffi.c
++++ b/src/arm/ffi.c
+@@ -51,7 +51,10 @@
+ #ifndef _WIN32
+ extern unsigned int ffi_arm_trampoline[2] FFI_HIDDEN;
+ #else
+-extern unsigned int ffi_arm_trampoline[3] FFI_HIDDEN;
++// Declare this as an array of char, instead of array of int,
++// otherwise Clang optimizes out the "& 0xFFFFFFFE" for clearing
++// the thumb bit.
++extern unsigned char ffi_arm_trampoline[12] FFI_HIDDEN;
+ #endif
+ #endif
+ 

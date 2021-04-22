@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2021-03-26/rustc-nightly-src.tar.gz.sha256
+# https://static.rust-lang.org/dist/2021-04-22/rustc-nightly-src.tar.gz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 1313eba0525340464db1e68c4f701f339ad4ea9d19c1be855786dd5dfee052d2
+$(PKG)_CHECKSUM := bece0a5359d709b1f01ad0ed3f4e5c4ade66d1312423165e2ab796a3c53263ba
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.gz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2021-03-26/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2021-04-22/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -72,7 +72,7 @@ define $(PKG)_BUILD
     $(eval TARGET_RUST := $(ARCH_NAME)-pc-windows-gnu)
 
     # [major].[minor].[patch]-[label] -> [major].[minor].[patch]
-    $(eval CLANG_VERSION := $(firstword $(subst -, ,$(clang_VERSION))))
+    $(eval CLANG_VERSION := $(firstword $(subst -, ,$(llvm_VERSION))))
 
     # Build and prepare startup objects like rsbegin.o and rsend.o
     $(foreach FILE, rsbegin rsend, \

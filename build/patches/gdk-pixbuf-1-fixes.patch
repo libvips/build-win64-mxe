@@ -66,7 +66,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -348,15 +348,8 @@ if get_option('tiff') and not native_windows_loaders
+@@ -369,15 +369,8 @@ if get_option('tiff') and not native_windows_loaders
    endif
  endif
  
@@ -94,7 +94,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -309,7 +309,7 @@ endif
+@@ -325,7 +325,7 @@ endif
  # Don't check and build the jpeg loader if native_windows_loaders is true
  if get_option('jpeg') and not native_windows_loaders
    if cc.has_header('jpeglib.h')
@@ -115,7 +115,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -287,6 +287,9 @@ if get_option('png')
+@@ -303,6 +303,9 @@ if get_option('png')
          loaders_deps += png_dep
        endif
      endif
@@ -125,7 +125,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -301,9 +304,13 @@ else
+@@ -317,9 +320,13 @@ else
  endif
  
  if native_windows_loaders
@@ -141,7 +141,7 @@ index 1111111..2222222 100644
  endif
  
  # Don't check and build the jpeg loader if native_windows_loaders is true
-@@ -322,6 +329,9 @@ if get_option('jpeg') and not native_windows_loaders
+@@ -343,6 +350,9 @@ if get_option('jpeg') and not native_windows_loaders
        gdk_pixbuf_conf.set('HAVE_PROGRESSIVE_JPEG',
                            cc.has_function('jpeg_simple_progression',
                                            dependencies: jpeg_dep))
@@ -151,7 +151,7 @@ index 1111111..2222222 100644
      endif
    endif
  endif
-@@ -345,6 +355,9 @@ if get_option('tiff') and not native_windows_loaders
+@@ -366,6 +376,9 @@ if get_option('tiff') and not native_windows_loaders
    if tiff_dep.found()
      enabled_loaders += 'tiff'
      loaders_deps += tiff_dep

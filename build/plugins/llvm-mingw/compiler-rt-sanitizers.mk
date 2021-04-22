@@ -2,9 +2,13 @@
 
 PKG             := compiler-rt-sanitizers
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
-$(PKG)_VERSION  := 11.1.0
-$(PKG)_DEPS     := compiler-rt
-$(PKG)_TYPE     := meta
+$(PKG)_IGNORE   :=
+$(PKG)_VERSION  := 12.0.0
+$(PKG)_CHECKSUM := 85a8cd0a62413eaa0457d8d02f8edac38c4dc0c96c00b09dc550260c23268434
+$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/compiler-rt-[0-9]*.patch)))
+$(PKG)_GH_CONF  := llvm/llvm-project/releases,llvmorg-,,,,.tar.xz
+$(PKG)_SUBDIR   := compiler-rt-$(subst -,,$($(PKG)_VERSION)).src
+$(PKG)_DEPS     := cc
 
 # Note: Ubsan includes <typeinfo> from the C++ headers, so
 # this has to be built after libcxx.
@@ -15,9 +19,7 @@ define $(PKG)_BUILD
     # [major].[minor].[patch]-[label] -> [major].[minor].[patch]
     $(eval CLANG_VERSION := $(firstword $(subst -, ,$($(PKG)_VERSION))))
 
-    $(call PREPARE_PKG_SOURCE,compiler-rt,$(BUILD_DIR))
-
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(BUILD_DIR)/$(compiler-rt_SUBDIR)' \
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
         -DCMAKE_C_COMPILER_WORKS=TRUE \
@@ -25,17 +27,21 @@ define $(PKG)_BUILD
         -DCMAKE_C_COMPILER_TARGET='$(BUILD_ARCH_NAME)-windows-gnu' \
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE \
         -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE \
+        -DCOMPILER_RT_BUILD_BUILTINS=FALSE \
+        -DCOMPILER_RT_BUILD_LIBFUZZER=FALSE \
+        -DCOMPILER_RT_BUILD_PROFILE=FALSE \
+        -DCOMPILER_RT_BUILD_MEMPROF=FALSE \
         -DSANITIZER_CXX_ABI=libc++
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' install-compiler-rt-headers -j 1
 
     $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows'
 
-    $(foreach FILE,asan-preinit asan asan_cxx asan_dll_thunk asan_dynamic_runtime_thunk ubsan_standalone ubsan_standalone_cxx, \
-        cp '$(BUILD_DIR)/lib/windows/libclang_rt.$(FILE)-$(BUILD_ARCH_NAME).a' '$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows';)
+    find '$(BUILD_DIR)/lib/windows' -name 'libclang_rt.*.a' \
+        -exec $(INSTALL) -m644 {} '$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows' \;
 
-    cp '$(BUILD_DIR)/lib/windows/libclang_rt.asan_dynamic-$(BUILD_ARCH_NAME).dll.a' '$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows'
-    cp '$(BUILD_DIR)/lib/windows/libclang_rt.asan_dynamic-$(BUILD_ARCH_NAME).dll' '$(PREFIX)/$(TARGET)/bin'
+    find '$(BUILD_DIR)/lib/windows' -type f -name 'libclang_rt.*.dll' \
+        -exec $(INSTALL) -m644 {} '$(PREFIX)/$(TARGET)/bin' \;
 endef
 
 # Sanitizers on windows only support x86.
