@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/277b8c4c27ad2eb3ce6db00f735e9399cc71cd4d
-$(PKG)_VERSION  := 277b8c4
-$(PKG)_CHECKSUM := a36ea84add164dd3ae6befc652098ce8a1caf997d07ee0fb3d17dd8c73fce0d6
+# https://github.com/mstorsjo/llvm-mingw/tarball/42d2eb7346eb392d9d0b25e5c083f92020dbd757
+$(PKG)_VERSION  := 42d2eb7
+$(PKG)_CHECKSUM := 4559f04750546337007e3a83acb6987f1906a1086495074a11b6d9ee38e63944
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := mingw-w64
@@ -51,18 +51,26 @@ endef
 
 define $(PKG)_PRE_BUILD
     # setup symlinks
-    $(foreach EXEC, clang clang++ ld.lld llvm-dlltool llvm-objdump, \
+    $(foreach EXEC, clang clang++ ld.lld llvm-objdump, \
         ln -sf '$(PREFIX)/$(BUILD)/bin/$(EXEC)' '$(PREFIX)/$(TARGET)/bin/$(EXEC)';)
 
     # setup target wrappers
     # Can't symlink here, it will break the basename detection of LLVM. See:
     # sys::path::stem("x86_64-w64-mingw32.shared-ranlib"); -> x86_64-w64-mingw32
     # https://github.com/llvm/llvm-project/blob/9a432161c68774e6c717616e3d688142e89bbb42/llvm/tools/llvm-ar/llvm-ar.cpp#L1181-L1192
-    $(foreach EXEC, addr2line ar cvtres nm objcopy ranlib rc strings strip, \
+    $(foreach EXEC, addr2line ar cvtres dlltool nm objcopy ranlib rc strings strip, \
         (echo '#!/bin/sh'; \
          echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-$(EXEC)" "$$@"') \
                  > '$(PREFIX)/bin/$(TARGET)-$(EXEC)'; \
         chmod 0755 '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
+
+    # We need to pass some additional arguments for windres
+    (echo '#!/bin/sh'; \
+     echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-windres" \
+         --preprocessor-arg="--sysroot=$(PREFIX)/$(TARGET)" \
+         --target="$(firstword $(subst ., ,$(TARGET)))" "$$@"') \
+             > '$(PREFIX)/bin/$(TARGET)-windres'
+    chmod 0755 '$(PREFIX)/bin/$(TARGET)-windres'
 
     $(foreach EXEC, clang-target ld objdump, \
         $(SED) -i -e 's|^DEFAULT_TARGET=.*|DEFAULT_TARGET=$(TARGET)|' \
@@ -71,14 +79,6 @@ define $(PKG)_PRE_BUILD
 
     $(foreach EXEC, clang clang++ gcc g++ cc c99 c11 c++, \
         ln -sf '$(PREFIX)/$(TARGET)/bin/clang-target-wrapper.sh' '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
-
-    $(BUILD_CC) '$(SOURCE_DIR)/wrappers/dlltool-wrapper.c' \
-        -o '$(PREFIX)/bin/$(TARGET)-dlltool' \
-        -O2 -Wl,-s -DDEFAULT_TARGET="\"$(TARGET)\""
-
-    $(BUILD_CC) '$(SOURCE_DIR)/wrappers/windres-wrapper.c' \
-        -o '$(PREFIX)/bin/$(TARGET)-windres' \
-        -O2 -Wl,-s -DLLVM_RC="\"rc\"" -DLLVM_CVTRES="\"cvtres\"" -DDEFAULT_TARGET="\"$(TARGET)\""
 
     $(foreach EXEC, ld objdump, \
         ln -sf '$(PREFIX)/$(TARGET)/bin/$(EXEC)-wrapper.sh' '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
