@@ -4,15 +4,15 @@ PKG             := llvm
 $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
-# This version needs to be in-sync with the compiler-rt-sanitizers package
-$(PKG)_VERSION  := 12.0.1
-$(PKG)_CHECKSUM := 129cb25cd13677aad951ce5c2deb0fe4afc1e9d98950f53b51bdcfb5a73afa0e
+# https://github.com/llvm/llvm-project/tarball/7e0768329ca347e37c7bdb0da16b51cb3e7b7d8b
+$(PKG)_VERSION  := 7e07683
+$(PKG)_CHECKSUM := a8ba16436504ec42fb8f74c9717219aa17d147d0ef3deef1c699836a88a0b660
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
-$(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
-$(PKG)_SUBDIR   := $(PKG)-project-$(subst -,,$($(PKG)_VERSION)).src
-$(PKG)_FILE     := $($(PKG)_SUBDIR).tar.xz
+$(PKG)_GH_CONF  := llvm/llvm-project/branches/main
+$(PKG)_SUBDIR   := $(PKG)-llvm-project-$($(PKG)_VERSION)
+$(PKG)_FILE     := $(PKG)-llvm-project-$($(PKG)_VERSION).tar.gz
 # This is needed to properly override: https://github.com/mxe/mxe/blob/master/src/llvm.mk#L11
-$(PKG)_URL      := https://github.com/llvm/llvm-project/releases/download/llvmorg-$($(PKG)_VERSION)/$($(PKG)_FILE)
+$(PKG)_URL      := https://github.com/llvm/llvm-project/tarball/$($(PKG)_VERSION)/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG) llvm-mingw
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -30,7 +30,7 @@ define $(PKG)_BUILD_$(BUILD)
         -DLLVM_ENABLE_ASSERTIONS=OFF \
         -DLLVM_ENABLE_PROJECTS='clang;lld;lldb' \
         -DLLVM_TARGETS_TO_BUILD='ARM;AArch64;X86' \
-        -DLLVM_TOOLCHAIN_TOOLS='llvm-ar;llvm-config;llvm-ranlib;llvm-objdump;llvm-rc;llvm-cvtres;llvm-nm;llvm-strings;llvm-readobj;llvm-dlltool;llvm-pdbutil;llvm-objcopy;llvm-strip;llvm-cov;llvm-profdata;llvm-addr2line;llvm-symbolizer' \
+        -DLLVM_TOOLCHAIN_TOOLS='llvm-ar;llvm-config;llvm-ranlib;llvm-objdump;llvm-rc;llvm-cvtres;llvm-nm;llvm-strings;llvm-readobj;llvm-dlltool;llvm-pdbutil;llvm-objcopy;llvm-strip;llvm-cov;llvm-profdata;llvm-addr2line;llvm-symbolizer;llvm-windres' \
         -DLLVM_BUILD_DOCS=OFF \
         -DLLVM_BUILD_EXAMPLES=OFF \
         -DLLVM_BUILD_TESTS=OFF \
@@ -57,15 +57,10 @@ define $(PKG)_BUILD_COMPILER_RT
     # i686 -> i386
     $(eval BUILD_ARCH_NAME := $(if $(findstring i686,$(PROCESSOR)),i386,$(PROCESSOR)))
 
-    # armv7 -> arm
-    $(eval LIB_ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),arm,$(BUILD_ARCH_NAME)))
-
     mkdir '$(BUILD_DIR).compiler-rt'
     cd '$(BUILD_DIR).compiler-rt' && $(TARGET)-cmake '$(SOURCE_DIR)/compiler-rt/lib/builtins' \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
-        -DCMAKE_C_COMPILER_WORKS=TRUE \
-        -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DCMAKE_C_COMPILER_TARGET='$(BUILD_ARCH_NAME)-windows-gnu' \
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE \
         -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE
@@ -73,7 +68,7 @@ define $(PKG)_BUILD_COMPILER_RT
 
     $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)/lib/windows'
     find '$(BUILD_DIR).compiler-rt/lib/windows' -name 'libclang_rt.builtins-*.a' \
-        -exec $(INSTALL) -m644 {} '$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)/lib/windows/libclang_rt.builtins-$(LIB_ARCH_NAME).a' \;
+        -exec $(INSTALL) -m644 {} '$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)/lib/windows' \;
 endef
 
 define $(PKG)_BUILD_LIBUNWIND
@@ -92,9 +87,6 @@ define $(PKG)_BUILD_LIBUNWIND
         -DLIBUNWIND_ENABLE_CROSS_UNWINDING=FALSE
     $(MAKE) -C '$(BUILD_DIR).libunwind' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).libunwind' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
-
-    $(if $(BUILD_SHARED), \
-        cp '$(BUILD_DIR).libunwind/lib/libunwind.dll' '$(PREFIX)/$(TARGET)/bin')
 endef
 
 define $(PKG)_BUILD_LIBCXX

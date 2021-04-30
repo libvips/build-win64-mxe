@@ -2,7 +2,7 @@
 
 PKG             := compiler-rt-sanitizers
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
-$(PKG)_VERSION  := 12.0.1
+$(PKG)_VERSION  := 13.0.0
 $(PKG)_DEPS     := cc
 $(PKG)_TYPE     := meta
 
@@ -17,8 +17,6 @@ define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)/$(llvm_SUBDIR)/compiler-rt' \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
-        -DCMAKE_C_COMPILER_WORKS=TRUE \
-        -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DCMAKE_C_COMPILER_TARGET='$(BUILD_ARCH_NAME)-windows-gnu' \
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE \
         -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE \

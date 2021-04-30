@@ -64,6 +64,14 @@ define $(PKG)_PRE_BUILD
                  > '$(PREFIX)/bin/$(TARGET)-$(EXEC)'; \
         chmod 0755 '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
 
+    # We need to pass some additional arguments for windres
+    (echo '#!/bin/sh'; \
+     echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-windres" \
+         --preprocessor-arg="--sysroot=$(PREFIX)/$(TARGET)" \
+         --target="$(firstword $(subst ., ,$(TARGET)))" "$$@"') \
+             > '$(PREFIX)/bin/$(TARGET)-windres'
+    chmod 0755 '$(PREFIX)/bin/$(TARGET)-windres'
+
     $(foreach EXEC, clang-target ld objdump, \
         $(SED) -i -e 's|^DEFAULT_TARGET=.*|DEFAULT_TARGET=$(TARGET)|' \
                   -e 's|^DIR=.*|DIR="$(PREFIX)/$(TARGET)/bin"|' '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh'; \
@@ -75,10 +83,6 @@ define $(PKG)_PRE_BUILD
     $(BUILD_CC) '$(SOURCE_DIR)/wrappers/dlltool-wrapper.c' \
         -o '$(PREFIX)/bin/$(TARGET)-dlltool' \
         -O2 -Wl,-s -DDEFAULT_TARGET="\"$(TARGET)\""
-
-    $(BUILD_CC) '$(SOURCE_DIR)/wrappers/windres-wrapper.c' \
-        -o '$(PREFIX)/bin/$(TARGET)-windres' \
-        -O2 -Wl,-s -DLLVM_RC="\"rc\"" -DLLVM_CVTRES="\"cvtres\"" -DDEFAULT_TARGET="\"$(TARGET)\""
 
     $(foreach EXEC, ld objdump, \
         ln -sf '$(PREFIX)/$(TARGET)/bin/$(EXEC)-wrapper.sh' '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
