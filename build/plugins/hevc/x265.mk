@@ -2,15 +2,13 @@ PKG             := x265
 $(PKG)_WEBSITE  := http://x265.org/
 $(PKG)_DESCR    := H.265/HEVC video stream encoder.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3.4
-$(PKG)_CHECKSUM := c2047f23a6b729e5c70280d23223cb61b57bfe4ad4e8f1471eeee2a61d148672
+$(PKG)_VERSION  := 3.5
+$(PKG)_CHECKSUM := e70a3335cacacbba0b3a20ec6fecd6783932288ebc8163ad74bcc9606477cae8
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
 $(PKG)_SUBDIR   := x265_$($(PKG)_VERSION)
 $(PKG)_FILE     := x265_$($(PKG)_VERSION).tar.gz
-# https://bitbucket.org/multicoreware/x265_git/issues/553/tarball-for-34-release-not-in-x265_git
-$(PKG)_URL      := https://bitbucket.org/multicoreware/x265/downloads/$($(PKG)_FILE)
-#$(PKG)_URL_2    := https://download.videolan.org/pub/videolan/x265/$(x265_FILE)
-$(PKG)_URL_2    := https://ftp.osuosl.org/pub/blfs/conglomeration/x265/$(x265_FILE)
+$(PKG)_URL      := https://bitbucket.org/multicoreware/x265_git/downloads/$($(PKG)_FILE)
+$(PKG)_URL_2    := https://download.videolan.org/pub/videolan/x265/$(x265_FILE)
 $(PKG)_DEPS     := cc $(BUILD)~nasm
 
 define $(PKG)_UPDATE

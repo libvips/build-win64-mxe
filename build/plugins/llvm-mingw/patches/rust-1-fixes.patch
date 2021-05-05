@@ -13,7 +13,7 @@ new file mode 100644
 index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,35 @@
 +use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
 +
 +pub fn target() -> Target {
@@ -33,9 +33,13 @@ index 0000000..1111111
 +        "DllMainCRTStartup".to_string(),
 +    ];
 +    base.pre_link_objects_fallback
-+        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++        .entry(LinkOutputKind::DynamicDylib)
++        .or_default()
++        .extend(entry_point.clone());
 +    base.pre_link_objects_fallback
-+        .insert(LinkOutputKind::StaticDylib, entry_point);
++        .entry(LinkOutputKind::StaticDylib)
++        .or_default()
++        .extend(entry_point);
 +
 +    Target {
 +        llvm_target: "aarch64-pc-windows-gnu".to_string(),
@@ -67,7 +71,7 @@ new file mode 100644
 index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs
-@@ -0,0 +1,36 @@
+@@ -0,0 +1,35 @@
 +use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
 +
 +pub fn target() -> Target {
@@ -87,14 +91,13 @@ index 0000000..1111111
 +        "DllMainCRTStartup".to_string(),
 +    ];
 +    base.pre_link_objects_fallback
-+        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++        .entry(LinkOutputKind::DynamicDylib)
++        .or_default()
++        .extend(entry_point.clone());
 +    base.pre_link_objects_fallback
-+        .insert(LinkOutputKind::StaticDylib, entry_point);
-+
-+    base.late_link_args
-+        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
-+        .unwrap()
-+        .push("-lclang_rt.builtins-arm".to_string());
++        .entry(LinkOutputKind::StaticDylib)
++        .or_default()
++        .extend(entry_point);
 +
 +    Target {
 +        llvm_target: "thumbv7a-pc-windows-gnu".to_string(),
@@ -182,7 +185,7 @@ index 1111111..2222222 100644
  
  pub fn target() -> Target {
      let mut base = super::windows_gnu_base::opts();
-@@ -16,6 +16,21 @@ pub fn target() -> Target {
+@@ -16,6 +16,26 @@ pub fn target() -> Target {
          .or_default()
          .push("-Wl,--large-address-aware".to_string());
  
@@ -192,13 +195,18 @@ index 1111111..2222222 100644
 +        "_DllMainCRTStartup".to_string(),
 +    ];
 +    base.pre_link_objects_fallback
-+        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++        .entry(LinkOutputKind::DynamicDylib)
++        .or_default()
++        .extend(entry_point.clone());
 +    base.pre_link_objects_fallback
-+        .insert(LinkOutputKind::StaticDylib, entry_point);
++        .entry(LinkOutputKind::StaticDylib)
++        .or_default()
++        .extend(entry_point);
 +
++    // Need to link against compiler-rt builtins for __chkstk and _alloca
 +    base.late_link_args
-+        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
-+        .unwrap()
++        .entry(LinkerFlavor::Lld(LldFlavor::Ld))
++        .or_default()
 +        .push("-lclang_rt.builtins-i386".to_string());
 +
      Target {
@@ -214,7 +222,7 @@ index 1111111..2222222 100644
  
  pub fn target() -> Target {
      let mut base = super::windows_gnu_base::opts();
-@@ -12,6 +12,21 @@ pub fn target() -> Target {
+@@ -12,6 +12,20 @@ pub fn target() -> Target {
      base.max_atomic_width = Some(64);
      base.linker = Some("x86_64-w64-mingw32-gcc".to_string());
  
@@ -224,14 +232,13 @@ index 1111111..2222222 100644
 +        "DllMainCRTStartup".to_string(),
 +    ];
 +    base.pre_link_objects_fallback
-+        .insert(LinkOutputKind::DynamicDylib, entry_point.clone());
++        .entry(LinkOutputKind::DynamicDylib)
++        .or_default()
++        .extend(entry_point.clone());
 +    base.pre_link_objects_fallback
-+        .insert(LinkOutputKind::StaticDylib, entry_point);
-+
-+    base.late_link_args
-+        .get_mut(&LinkerFlavor::Lld(LldFlavor::Ld))
-+        .unwrap()
-+        .push("-lclang_rt.builtins-x86_64".to_string());
++        .entry(LinkOutputKind::StaticDylib)
++        .or_default()
++        .extend(entry_point);
 +
      Target {
          llvm_target: "x86_64-pc-windows-gnu".to_string(),

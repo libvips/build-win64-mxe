@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2021-04-22/rustc-nightly-src.tar.gz.sha256
+# https://static.rust-lang.org/dist/2021-05-05/rustc-nightly-src.tar.gz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := bece0a5359d709b1f01ad0ed3f4e5c4ade66d1312423165e2ab796a3c53263ba
+$(PKG)_CHECKSUM := fcf165784d28f8708ab558ec46b24734afe2465d8d93075af43d8dd2cd82c787
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.gz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2021-04-22/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2021-05-05/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -71,9 +71,6 @@ define $(PKG)_BUILD
     $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))
     $(eval TARGET_RUST := $(ARCH_NAME)-pc-windows-gnu)
 
-    # [major].[minor].[patch]-[label] -> [major].[minor].[patch]
-    $(eval CLANG_VERSION := $(firstword $(subst -, ,$(llvm_VERSION))))
-
     # Build and prepare startup objects like rsbegin.o and rsend.o
     $(foreach FILE, rsbegin rsend, \
         $(PREFIX)/$(BUILD)/bin/rustc --target='$(TARGET_RUST)' --emit=obj -o '$(BUILD_DIR)/$(FILE).o' \
@@ -107,7 +104,7 @@ define $(PKG)_BUILD
      echo '    "-C",'; \
      echo '    "link-arg=-L$(PREFIX)/$(TARGET)/mingw/lib",'; \
      echo '    "-C",'; \
-     echo '    "link-arg=-L$(PREFIX)/$(BUILD)/lib/clang/$(CLANG_VERSION)/lib/windows"'; \
+     echo '    "link-arg=-L$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)/lib/windows"'; \
      echo ']'; \
      echo 'linker = "$(PREFIX)/$(BUILD)/bin/ld.lld"'; \
      echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"';) \

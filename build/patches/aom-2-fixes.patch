@@ -12,7 +12,7 @@ diff --git a/build/cmake/aom_install.cmake b/build/cmake/aom_install.cmake
 index 1111111..2222222 100644
 --- a/build/cmake/aom_install.cmake
 +++ b/build/cmake/aom_install.cmake
-@@ -81,16 +81,21 @@ macro(setup_aom_install_targets)
+@@ -83,16 +83,21 @@ macro(setup_aom_install_targets)
      # Setup the install rules.
      install(
        FILES ${AOM_INSTALL_INCS}
@@ -206,7 +206,7 @@ diff --git a/av1/decoder/decodeframe.c b/av1/decoder/decodeframe.c
 index 1111111..2222222 100644
 --- a/av1/decoder/decodeframe.c
 +++ b/av1/decoder/decodeframe.c
-@@ -5214,6 +5214,7 @@ static AOM_INLINE void setup_frame_info(AV1Decoder *pbi) {
+@@ -5237,6 +5237,7 @@ static AOM_INLINE void setup_frame_info(AV1Decoder *pbi) {
    }
  }
  
@@ -218,7 +218,7 @@ diff --git a/av1/encoder/encoder.c b/av1/encoder/encoder.c
 index 1111111..2222222 100644
 --- a/av1/encoder/encoder.c
 +++ b/av1/encoder/encoder.c
-@@ -3315,6 +3315,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
+@@ -3380,6 +3380,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
    return AOM_CODEC_OK;
  }
  

@@ -17,7 +17,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.0.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.1.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
 | [expat]         | 2.3.0     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.93   | [fontconfig Licence] (BSD-like)                              |
@@ -26,16 +26,16 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [gdk-pixbuf]    | 2.42.6    | LGPLv3                                                       |
 | [giflib]        | 5.1.4     | MIT Licence                                                  |
 | [glib]          | 2.68.1    | LGPLv3                                                       |
-| [harfbuzz]      | 2.8.0     | MIT Licence                                                  |
+| [harfbuzz]      | 2.8.1     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
 | [libffi]        | 3.3       | MIT Licence                                                  |
 | [libgsf]        | 1.14.47   | LGPLv3                                                       |
-| [libheif]       | 1.11.0    | LGPLv3                                                       |
+| [libheif]       | 1.12.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
-| [librsvg]       | 2.51.0    | LGPLv3                                                       |
-| [libspng]       | 0.6.2     | BSD 2-Clause                                                 |
+| [librsvg]       | 2.51.1    | LGPLv3                                                       |
+| [libspng]       | 0.6.3     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.10.6    | LGPLv3                                                       |
 | [libwebp]       | 1.2.0     | New BSD License                                              |
@@ -93,13 +93,13 @@ Same as libvips-web + these extra dependencies:
 |-----------------|-----------|--------------------------------------------------------------|
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
-| [imagemagick]   | 6.9.12-8  | [ImageMagick License] (GPL-like)                             |
+| [imagemagick]   | 6.9.12-10 | [ImageMagick License] (GPL-like)                             |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
 | [openexr]       | 3.0.1     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 21.04.0   | GPLv2                                                        |
+| [poppler]       | 21.05.0   | GPLv2                                                        |
 | [sqlite]        | 3.35.5    | Public domain                                                |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -128,7 +128,7 @@ In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 2.0.6     | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 2.1.0     | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
@@ -167,7 +167,7 @@ prebuilt binaries while it is patent-encumbered.
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
 | [libde265]      | 1.0.8     | LGPLv3                                                       |
-| [x265]          | 3.4       | GPLv2                                                        |
+| [x265]          | 3.5       | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265
 [x265]: https://bitbucket.org/multicoreware/x265_git/wiki/Home

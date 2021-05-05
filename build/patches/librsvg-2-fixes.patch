@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: "fix@me" <fix@me>
 Date: Mon, 27 Sep 2010 12:00:52 +0200
-Subject: [PATCH 1/2] fix .pc requirements
+Subject: [PATCH 1/3] fix .pc requirements
 
 
 diff --git a/librsvg.pc.in b/librsvg.pc.in
@@ -25,7 +25,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 9 Jun 2020 18:50:00 +0200
-Subject: [PATCH 2/2] Remove rlib from the C API crate type
+Subject: [PATCH 2/3] Remove rlib from the C API crate type
 
 Since LTO optimization does not work for staticlib+rlib compilation.
 
@@ -33,7 +33,7 @@ diff --git a/Cargo.toml b/Cargo.toml
 index 1111111..2222222 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -7,7 +7,7 @@ edition = "2018"
+@@ -30,7 +30,7 @@ edition = "2018"
  
  [lib]
  name = "librsvg"
@@ -41,4 +41,90 @@ index 1111111..2222222 100644
 +crate-type = [ "staticlib" ]
  
  [dependencies]
- bitflags = "1.0"
+ # Keep these in sync with respect to the cairo-rs version:
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Lovell Fuller <github@lovell.info>
+Date: Tue, 13 Apr 2021 09:37:56 +0100
+Subject: [PATCH 3/3] Bump 'cast' dependency to ensure 32-bit ARM support
+
+
+diff --git a/Cargo.lock b/Cargo.lock
+index 1111111..2222222 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -167,9 +167,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cast"
+-version = "0.2.4"
++version = "0.2.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8f566d1fbeb40ec78c78344e9983f46ff9eb4e944fa930ed01b7d72b72a37c11"
++checksum = "cc38c385bfd7e444464011bb24820f40dd1c76bcdfa1b78611cb7c2e5cafab75"
+ dependencies = [
+  "rustc_version",
+ ]
+diff --git a/vendor/cast/.cargo-checksum.json b/vendor/cast/.cargo-checksum.json
+index 1111111..2222222 100644
+--- a/vendor/cast/.cargo-checksum.json
++++ b/vendor/cast/.cargo-checksum.json
+@@ -1 +1 @@
+-{"files":{"CHANGELOG.md":"52d263eeca8cf07135541f1a587a1a04ee523f26e09576b3dd4175ad6a870835","Cargo.toml":"3278e6b962882a2383a623d592dbda251d9986f778ab49a5ef9cb51066490321","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT":"005b3f9b4687364514bbaea2a25e96d54ce6a59277d157386e8259cbcae8e095","README.md":"006ae145ee89fa14a9d755b206ec2011a3687408e9d5fe3943f2448767b01d62","build.rs":"96d02915f44c85ae32515ae73b217fc24bfd1f4aa124d4e8a0f93828bb2b50b7","ci/install.sh":"e295d97db9e12ac6ee3e523e4597ad58fedcca2b8aa3a21302951ad2327b88a9","ci/script.sh":"964e510d5af745d6b86d68d5b95760db4a94112ace0a1027602e6e8baadec8a5","src/lib.rs":"7b6c016aa5d83051ec03b3b9e870dd2ba1425a6554011dec217dae22c03f6507","src/test.rs":"314d5236c0a34068a4e0ba0ec8f3fbfaeac61cae60a9725f2584266d00a863a3"},"package":"8f566d1fbeb40ec78c78344e9983f46ff9eb4e944fa930ed01b7d72b72a37c11"}
+\ No newline at end of file
++{"files":{"CHANGELOG.md":"e55cdd51726a3865d07424514fdba6b1b465136c7906252da48be5d2e76e52f1","Cargo.toml":"c284d65591f858bdb358246f46638e481cb0e09f8cd59ff5d0e0650f6ed4f6dc","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT":"005b3f9b4687364514bbaea2a25e96d54ce6a59277d157386e8259cbcae8e095","README.md":"006ae145ee89fa14a9d755b206ec2011a3687408e9d5fe3943f2448767b01d62","build.rs":"96d02915f44c85ae32515ae73b217fc24bfd1f4aa124d4e8a0f93828bb2b50b7","ci/install.sh":"e295d97db9e12ac6ee3e523e4597ad58fedcca2b8aa3a21302951ad2327b88a9","ci/script.sh":"964e510d5af745d6b86d68d5b95760db4a94112ace0a1027602e6e8baadec8a5","src/lib.rs":"2c58d1191fa96491fa169ac37a561f7bad4dc8c063c63a3bab88985632aff01c","src/test.rs":"314d5236c0a34068a4e0ba0ec8f3fbfaeac61cae60a9725f2584266d00a863a3"},"package":"cc38c385bfd7e444464011bb24820f40dd1c76bcdfa1b78611cb7c2e5cafab75"}
+\ No newline at end of file
+diff --git a/vendor/cast/CHANGELOG.md b/vendor/cast/CHANGELOG.md
+index 1111111..2222222 100644
+--- a/vendor/cast/CHANGELOG.md
++++ b/vendor/cast/CHANGELOG.md
+@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
+ 
+ ## [Unreleased]
+ 
++## [v0.2.5] - 2021-04-13
++
++### Fixed
++
++- Build on platforms with 32-bit pointers
++
++## [v0.2.4] - 2021-04-11 - YANKED
++
+ ## [v0.2.3] - 2018-11-17
+ 
+ ### Changed
+diff --git a/vendor/cast/Cargo.toml b/vendor/cast/Cargo.toml
+index 1111111..2222222 100644
+--- a/vendor/cast/Cargo.toml
++++ b/vendor/cast/Cargo.toml
+@@ -13,7 +13,7 @@
+ [package]
+ edition = "2018"
+ name = "cast"
+-version = "0.2.4"
++version = "0.2.5"
+ authors = ["Jorge Aparicio <jorge@japaric.io>"]
+ build = "build.rs"
+ description = "Ergonomic, checked cast functions for primitive types"
+diff --git a/vendor/cast/src/lib.rs b/vendor/cast/src/lib.rs
+index 1111111..2222222 100644
+--- a/vendor/cast/src/lib.rs
++++ b/vendor/cast/src/lib.rs
+@@ -358,7 +358,7 @@ macro_rules! from_float_dst {
+ 
+ #[cfg(target_pointer_width = "32")]
+ mod _32 {
+-    use {Error, From};
++    use crate::{Error, From};
+ 
+     // Signed
+     promotion! {
+@@ -474,7 +474,7 @@ mod _64 {
+ 
+ #[cfg(feature = "x128")]
+ mod _x128 {
+-    use {Error, From};
++    use crate::{Error, From};
+ 
+     // Signed
+     promotion! {

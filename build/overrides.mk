@@ -30,14 +30,14 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-8
-imagemagick_CHECKSUM := 894c05f0a2c33f3a7e3ac7125112410ce216cab635238fd5bdba7620d83e7458
+imagemagick_VERSION  := 6.9.12-10
+imagemagick_CHECKSUM := 04e7050dc3c21a2c7d3189fe3b9c822ccacadc88651f26621200ab81775b2509
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.51.0
-librsvg_CHECKSUM := 89d32e38445025e1b1d9af3dd9d3aeb9f6fce527aeecbecf38b369b34c80c038
+librsvg_VERSION  := 2.51.1
+librsvg_CHECKSUM := 7d72c0de6cd1a767922328a214e346ce7e12fbfaf0a50de59d0e502532c1c75e
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -85,6 +85,15 @@ tiff_SUBDIR   := tiff-$(tiff_VERSION)
 tiff_FILE     := tiff-$(tiff_VERSION).tar.gz
 tiff_URL      := https://download.osgeo.org/libtiff/$(tiff_FILE)
 
+# Override libjpeg-turbo patch with our own
+# upstream version is 2.0.6
+libjpeg-turbo_VERSION  := 2.1.0
+libjpeg-turbo_CHECKSUM := bef89803e506f27715c5627b1e3219c95b80fc31465d4452de2a909d382e4444
+libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
+libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
+libjpeg-turbo_URL      := https://$(SOURCEFORGE_MIRROR)/project/libjpeg-turbo/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
+
 # upstream version is 1.16.0
 cairo_VERSION  := 1.17.4
 cairo_CHECKSUM := 74b24c1ed436bbe87499179a3b27c43f4143b8676d8ad237a6fa787401959705
@@ -120,6 +129,12 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
+# upstream version is 2.8.0
+harfbuzz_VERSION  := 2.8.1
+harfbuzz_CHECKSUM := 4124f663ec4bf4e294d9cf230668370b4249a48ff34deaf0f06e8fc82d891300
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
 # upstream version is 2.13.1
 fontconfig_VERSION  := 2.13.93
 fontconfig_CHECKSUM := ea968631eadc5739bc7c8856cef5c77da812d1f67b763f5e51b57b8026c1a0a0
@@ -137,8 +152,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 21.02.0
-poppler_VERSION  := 21.04.0
-poppler_CHECKSUM := 5e2219656c6bbd36154133fef2e12b7d0938464518827098b29a10b1697ea79c
+poppler_VERSION  := 21.05.0
+poppler_CHECKSUM := dafd537b680fad1215bc40fc53d1f38e8449d7c185bc60d5a89e1d26c90dbd8c
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -154,10 +169,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 8.0.0
-# Update MinGW-w64 to 1c77387
-# https://github.com/mirror/mingw-w64/tarball/1c773877f4a13c8bd7bfb8da80e1e8761a889f51
-mingw-w64_VERSION  := 1c77387
-mingw-w64_CHECKSUM := f4fbeaea44fad92ad574f4e6f20813812eb86871a445761d4922dd7e03ec1eff
+# Update MinGW-w64 to 6ee9a4d
+# https://github.com/mirror/mingw-w64/tarball/6ee9a4d9d911b334af0c39869bcaa770788eeb41
+mingw-w64_VERSION  := 6ee9a4d
+mingw-w64_CHECKSUM := fdccabe1bb13cc507c5dd3855918f953310ebd36afc333aad6fa9dacb9314016
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mirror-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mirror-mingw-w64-$(mingw-w64_VERSION).tar.gz
@@ -165,7 +180,6 @@ mingw-w64_URL      := https://github.com/mirror/mingw-w64/tarball/$(mingw-w64_VE
 
 ## Patches that we override with our own
 
-libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
@@ -494,6 +508,9 @@ define librsvg_BUILD
             MXE_ENABLE_NETWORK=1 \
             $(TARGET)-cargo vendor -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/test/Cargo.toml')
 
+    $(if $(IS_ARM), \
+        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-arm.patch)
+
     # armv7 -> thumbv7a
     $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))
 
@@ -536,6 +553,7 @@ define poppler_BUILD
         -DENABLE_LIBCURL=OFF \
         -DBUILD_QT5_TESTS=OFF \
         -DBUILD_CPP_TESTS=OFF \
+        -DBUILD_MANUAL_TESTS=OFF \
         -DENABLE_GTK_DOC=OFF \
         $(if $(WIN32_THREADS), -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads') \
         '$(SOURCE_DIR)'
