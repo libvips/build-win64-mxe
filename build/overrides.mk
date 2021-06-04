@@ -19,6 +19,16 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
+# no longer needed by libvips, but some of the deps need it
+# upstream version is 2.9.10
+libxml2_VERSION  := 2.9.12
+libxml2_CHECKSUM := c8d6681e38c56f172892c85ddc0852e1fd4b53b4209e7f4ebf17f7e2eae71d92
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
+libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.gz
+libxml2_URL      := http://xmlsoft.org/sources/$(libxml2_FILE)
+libxml2_URL_2    := https://ftp.osuosl.org/pub/blfs/conglomeration/libxml2/$(libxml2_FILE)
+
 # upstream version is 1.5.2
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -30,22 +40,22 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-10
-imagemagick_CHECKSUM := 04e7050dc3c21a2c7d3189fe3b9c822ccacadc88651f26621200ab81775b2509
+imagemagick_VERSION  := 6.9.12-14
+imagemagick_CHECKSUM := f2831934ebccb444a7ced6dfe2e87fa065ece02a7b28627e3be57428df469c93
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.51.1
-librsvg_CHECKSUM := 7d72c0de6cd1a767922328a214e346ce7e12fbfaf0a50de59d0e502532c1c75e
+librsvg_VERSION  := 2.51.2
+librsvg_CHECKSUM := 6b80840ef3e4724624e715398bb4470fa68368943cdbd507e681708bbe32b289
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.48.4
-pango_CHECKSUM := 418913fb062071a075846244989d4a67aa5c80bf0eae8ee4555a092fd566a37a
+pango_VERSION  := 1.48.5
+pango_CHECKSUM := 501e74496173c02dcd024ded7fbb3f09efd37e2a488e248aa40799424dbb3b2a
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -62,8 +72,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.68.1
-glib_CHECKSUM := 241654b96bd36b88aaa12814efc4843b578e55d47440103727959ac346944333
+glib_VERSION  := 2.68.2
+glib_CHECKSUM := ecc7798a9cc034eabdfd7f246e6dd461cdbf1175fcc2e9867cc7da7b7309e0fb
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -77,23 +87,6 @@ libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
 libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)
 
-# upstream version is 4.2.0
-tiff_VERSION  := 4.3.0
-tiff_CHECKSUM := 0e46e5acb087ce7d1ac53cf4f56a09b221537fc86dfc5daaad1c2e89e1b37ac8
-tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
-tiff_SUBDIR   := tiff-$(tiff_VERSION)
-tiff_FILE     := tiff-$(tiff_VERSION).tar.gz
-tiff_URL      := https://download.osgeo.org/libtiff/$(tiff_FILE)
-
-# Override libjpeg-turbo patch with our own
-# upstream version is 2.0.6
-libjpeg-turbo_VERSION  := 2.1.0
-libjpeg-turbo_CHECKSUM := bef89803e506f27715c5627b1e3219c95b80fc31465d4452de2a909d382e4444
-libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
-libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
-libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
-libjpeg-turbo_URL      := https://$(SOURCEFORGE_MIRROR)/project/libjpeg-turbo/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
-
 # upstream version is 1.16.0
 cairo_VERSION  := 1.17.4
 cairo_CHECKSUM := 74b24c1ed436bbe87499179a3b27c43f4143b8676d8ad237a6fa787401959705
@@ -105,8 +98,8 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.0.1
-openexr_CHECKSUM := 6d14a8df938bbbd55dd6e55b24c527fe9323fe6a45f704e56967dfbf477cecc1
+openexr_VERSION  := 3.0.4
+openexr_CHECKSUM := 64daae95d406fe3f59ee11ad8586d03fe7df2552b9630eac1a4f9152b8015fb9
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -129,12 +122,6 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 2.8.0
-harfbuzz_VERSION  := 2.8.1
-harfbuzz_CHECKSUM := 4124f663ec4bf4e294d9cf230668370b4249a48ff34deaf0f06e8fc82d891300
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
-
 # upstream version is 2.13.1
 fontconfig_VERSION  := 2.13.93
 fontconfig_CHECKSUM := ea968631eadc5739bc7c8856cef5c77da812d1f67b763f5e51b57b8026c1a0a0
@@ -152,8 +139,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 21.02.0
-poppler_VERSION  := 21.05.0
-poppler_CHECKSUM := dafd537b680fad1215bc40fc53d1f38e8449d7c185bc60d5a89e1d26c90dbd8c
+poppler_VERSION  := 21.06.1
+poppler_CHECKSUM := 86b09e5a02de40081a3916ef8711c5128eaf4b1fc59d5f87d0ec66f04f595db4
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -168,19 +155,9 @@ nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
 nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
-# upstream version is 8.0.0
-# Update MinGW-w64 to 6ee9a4d
-# https://github.com/mirror/mingw-w64/tarball/6ee9a4d9d911b334af0c39869bcaa770788eeb41
-mingw-w64_VERSION  := 6ee9a4d
-mingw-w64_CHECKSUM := fdccabe1bb13cc507c5dd3855918f953310ebd36afc333aad6fa9dacb9314016
-mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
-mingw-w64_SUBDIR   := mirror-mingw-w64-$(mingw-w64_VERSION)
-mingw-w64_FILE     := mirror-mingw-w64-$(mingw-w64_VERSION).tar.gz
-mingw-w64_URL      := https://github.com/mirror/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
-
 ## Patches that we override with our own
 
-libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
@@ -670,7 +647,6 @@ define libxml2_BUILD
     # need to regenerate the configure script
     cd '$(SOURCE_DIR)' && autoreconf -fi
 
-    # TODO(kleisauke): remove --with-regexps flag from v2.10.0+
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-zlib='$(PREFIX)/$(TARGET)/lib' \
@@ -680,7 +656,6 @@ define libxml2_BUILD
         --with-valid \
         --with-http \
         --with-tree \
-        --with-regexps \
         $(if $(findstring .all,$(TARGET)), \
             --with-xpath \
             --with-sax1) \
@@ -733,12 +708,6 @@ endef
 
 # build with CMake.
 define openexr_BUILD
-    # Built OpenEXR without link-time garbage collection,
-    # to avoid a crash at runtime.
-    $(eval export CFLAGS   := -O3)
-    $(eval export CXXFLAGS := -O3)
-    $(eval export LDFLAGS  := -Wl,-s)
-
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DOPENEXR_INSTALL_PKG_CONFIG=ON \
         -DOPENEXR_ENABLE_THREADING=$(if $(WIN32_THREADS),OFF,ON) \

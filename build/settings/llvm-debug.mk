@@ -3,8 +3,8 @@
 #JOBS := 4
 
 # Turn on debugging
-export CFLAGS   := -g -fdata-sections -ffunction-sections
-export CXXFLAGS := -g -fdata-sections -ffunction-sections
+export CFLAGS   := -g -Og -fdata-sections -ffunction-sections
+export CXXFLAGS := -g -Og -fdata-sections -ffunction-sections
 export LDFLAGS  := -Wl,--gc-sections
 
 # Clang produces debug info in DWARF format by default.
@@ -19,8 +19,7 @@ export CARGO_PROFILE_RELEASE_DEBUG         := true
 export CARGO_PROFILE_RELEASE_CODEGEN_UNITS := 1
 export CARGO_PROFILE_RELEASE_INCREMENTAL   := false
 export CARGO_PROFILE_RELEASE_LTO           := true
-# TODO(kleisauke): -Zbuild-std doesn't seem to work with OPT_LEVEL=0
-export CARGO_PROFILE_RELEASE_OPT_LEVEL     := s
+export CARGO_PROFILE_RELEASE_OPT_LEVEL     := 1
 export CARGO_PROFILE_RELEASE_PANIC         := abort
 
 # We need debugging symbols.

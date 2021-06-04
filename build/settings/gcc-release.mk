@@ -12,7 +12,7 @@ export CARGO_PROFILE_RELEASE_DEBUG         := false
 export CARGO_PROFILE_RELEASE_CODEGEN_UNITS := 1
 export CARGO_PROFILE_RELEASE_INCREMENTAL   := false
 export CARGO_PROFILE_RELEASE_LTO           := true
-export CARGO_PROFILE_RELEASE_OPT_LEVEL     := s
+export CARGO_PROFILE_RELEASE_OPT_LEVEL     := z
 export CARGO_PROFILE_RELEASE_PANIC         := abort
 
 # We don't need debugging symbols.

@@ -51,7 +51,7 @@ fi
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="40cdd2a78f4110b857406f353f583384ecf6b6be"
+revision="baa4ed6b469c620afa6861c861dd9c9752ca5cca"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -122,7 +122,8 @@ plugins+=" $work_dir/plugins/proxy-libintl"
 # Build pe-util, handy for copying DLL dependencies.
 make pe-util \
   IGNORE_SETTINGS=yes \
-  MXE_TARGETS=`$mxe_dir/ext/config.guess`
+  MXE_TARGETS=`$mxe_dir/ext/config.guess` \
+  MXE_USE_CCACHE=
 
 # Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc),
 # gendef (a tool for generating def files from DLLs)

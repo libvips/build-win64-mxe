@@ -2,13 +2,13 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.10.6
-$(PKG)_CHECKSUM := 2468088d958e0e2de1be2991ff8940bf45664a826c0dad12342e1804e2805a6e
+$(PKG)_VERSION  := 8.11.0
+$(PKG)_CHECKSUM := 3d0bcffc0e00ce339fe151fd201b9d4318a7fa1a090fcd12e0e673e42817fc86
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,-rc1,,,-rc1.tar.gz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
-$(PKG)_DEPS     := cc libwebp librsvg giflib glib pango libgsf \
+$(PKG)_FILE     := vips-$($(PKG)_VERSION)-rc1.tar.gz
+$(PKG)_DEPS     := cc libwebp librsvg glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc
 
@@ -27,7 +27,6 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "freetype": "$(freetype_VERSION)",\n'; \
      printf '  "fribidi": "$(fribidi_VERSION)",\n'; \
      printf '  "gdkpixbuf": "$(gdk-pixbuf_VERSION)",\n'; \
-     printf '  "gif": "$(giflib_VERSION)",\n'; \
      printf '  "glib": "$(glib_VERSION)",\n'; \
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
@@ -69,6 +68,8 @@ define $(PKG)_BUILD
         --without-fftw \
         --without-magick \
         --without-openslide \
+        --without-libjxl \
+        --without-libopenjp2 \
         --without-pdfium \
         --without-poppler \
         --without-cfitsio \
@@ -80,6 +81,7 @@ define $(PKG)_BUILD
         --without-radiance \
         --disable-introspection \
         --disable-deprecated \
+        --disable-modules \
         $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all")
 
     # libtool should automatically generate a list

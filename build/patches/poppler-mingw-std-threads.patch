@@ -105,7 +105,7 @@ diff --git a/poppler/PDFDoc.h b/poppler/PDFDoc.h
 index 1111111..2222222 100644
 --- a/poppler/PDFDoc.h
 +++ b/poppler/PDFDoc.h
-@@ -43,7 +43,11 @@
+@@ -44,7 +44,11 @@
  #ifndef PDFDOC_H
  #define PDFDOC_H
  

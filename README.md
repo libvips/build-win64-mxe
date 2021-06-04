@@ -19,13 +19,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 |-----------------|-----------|--------------------------------------------------------------|
 | [aom]           | 3.1.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
-| [expat]         | 2.3.0     | MIT Licence                                                  |
+| [expat]         | 2.4.1     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.93   | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.10.4    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.10    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.6    | LGPLv3                                                       |
-| [giflib]        | 5.1.4     | MIT Licence                                                  |
-| [glib]          | 2.68.1    | LGPLv3                                                       |
+| [glib]          | 2.68.2    | LGPLv3                                                       |
 | [harfbuzz]      | 2.8.1     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
@@ -34,19 +33,21 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.12.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
-| [librsvg]       | 2.51.1    | LGPLv3                                                       |
+| [librsvg]       | 2.51.2    | LGPLv3                                                       |
 | [libspng]       | 0.6.3     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.10.6    | LGPLv3                                                       |
+| [libvips]       | 8.11.0²   | LGPLv3                                                       |
 | [libwebp]       | 1.2.0     | New BSD License                                              |
-| [libxml2]       | 2.9.10    | MIT Licence                                                  |
+| [libxml2]       | 2.9.12    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.48.4    | LGPLv3                                                       |
+| [pango]         | 1.48.5    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
-| [zlib-ng]       | 2.0.2     | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.0.3     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
+² libvips is built from the [`v8.11.0-rc1`](https://github.com/libvips/libvips/tree/v8.11.0-rc1) tag, see:
+https://github.com/libvips/libvips/releases/tag/v8.11.0-rc1
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -58,7 +59,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [freetype Licence]: https://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/FTL.TXT
 [fribidi]: https://github.com/fribidi/fribidi
 [gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
-[giflib]: https://sourceforge.net/projects/giflib/
 [glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
 [lcms]: https://github.com/mm2/Little-CMS
@@ -93,19 +93,21 @@ Same as libvips-web + these extra dependencies:
 |-----------------|-----------|--------------------------------------------------------------|
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
-| [imagemagick]   | 6.9.12-10 | [ImageMagick License] (GPL-like)                             |
+| [imagemagick]   | 6.9.12-14 | [ImageMagick License] (GPL-like)                             |
+| [imath]         | 3.0.4     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
-| [openexr]       | 3.0.1     | BSD 3-Clause                                                 |
+| [openexr]       | 3.0.4     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 21.05.0   | GPLv2                                                        |
+| [poppler]       | 21.06.1   | GPLv2                                                        |
 | [sqlite]        | 3.35.5    | Public domain                                                |
 
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [fftw]: https://github.com/FFTW/fftw3
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://imagemagick.org/script/license.php
+[imath]: https://github.com/AcademySoftwareFoundation/Imath
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://nifti.nimh.nih.gov/
 [openexr]: https://github.com/AcademySoftwareFoundation/openexr

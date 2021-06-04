@@ -298,15 +298,15 @@ diff --git a/vendor/compiler_builtins/src/arm.rs b/vendor/compiler_builtins/src/
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/src/arm.rs
 +++ b/vendor/compiler_builtins/src/arm.rs
-@@ -74,7 +74,7 @@ pub unsafe fn __aeabi_uldivmod() {
-     intrinsics::unreachable();
+@@ -74,7 +74,7 @@ pub unsafe extern "C" fn __aeabi_uldivmod() {
+     );
  }
  
 -#[cfg(not(target_os = "ios"))]
 +#[cfg(not(any(target_os = "ios", target_os = "windows")))]
  #[naked]
  #[cfg_attr(not(feature = "mangled-names"), no_mangle)]
- pub unsafe fn __aeabi_idivmod() {
+ pub unsafe extern "C" fn __aeabi_idivmod() {
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
