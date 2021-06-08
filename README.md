@@ -91,10 +91,13 @@ Same as libvips-web + these extra dependencies:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
+| [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
+| [highway]       | 82b587d   | Apache-2.0 License                                           |
 | [imagemagick]   | 6.9.12-14 | [ImageMagick License] (GPL-like)                             |
 | [imath]         | 3.0.4     | BSD 3-Clause                                                 |
+| [libjxl]        | 37c8685   | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
 | [openexr]       | 3.0.4     | BSD 3-Clause                                                 |
@@ -103,11 +106,14 @@ Same as libvips-web + these extra dependencies:
 | [poppler]       | 21.06.1   | GPLv2                                                        |
 | [sqlite]        | 3.35.5    | Public domain                                                |
 
+[brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [fftw]: https://github.com/FFTW/fftw3
+[highway]: https://github.com/google/highway
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://imagemagick.org/script/license.php
 [imath]: https://github.com/AcademySoftwareFoundation/Imath
+[libjxl]: https://github.com/libjxl/libjxl
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://nifti.nimh.nih.gov/
 [openexr]: https://github.com/AcademySoftwareFoundation/openexr

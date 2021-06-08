@@ -1,0 +1,369 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 2 Jun 2021 14:07:04 +0200
+Subject: [PATCH 1/5] Remove LCMS mutex
+
+See: https://github.com/libjxl/libjxl/pull/112
+
+diff --git a/lib/jxl/enc_color_management.cc b/lib/jxl/enc_color_management.cc
+index 1111111..2222222 100644
+--- a/lib/jxl/enc_color_management.cc
++++ b/lib/jxl/enc_color_management.cc
+@@ -20,7 +20,6 @@
+ #include <array>
+ #include <atomic>
+ #include <memory>
+-#include <mutex>
+ #include <string>
+ #include <utility>
+ 
+@@ -236,14 +235,6 @@ namespace {
+ // Define to 1 on OS X as a workaround for older LCMS lacking MD5.
+ #define JXL_CMS_OLD_VERSION 0
+ 
+-// cms functions (even *THR) are not thread-safe, except cmsDoTransform.
+-// To ensure all functions are covered without frequent lock-taking nor risk of
+-// recursive lock, we lock in the top-level APIs.
+-static std::mutex& LcmsMutex() {
+-  static std::mutex m;
+-  return m;
+-}
+-
+ #if JPEGXL_ENABLE_SKCMS
+ 
+ JXL_MUST_USE_RESULT CIExy CIExyFromXYZ(const float XYZ[3]) {
+@@ -638,9 +629,6 @@ cmsContext GetContext() {
+ 
+ }  // namespace
+ 
+-// All functions that call lcms directly (except ColorSpaceTransform::Run) must
+-// lock LcmsMutex().
+-
+ Status ColorEncoding::SetFieldsFromICC() {
+   // In case parsing fails, mark the ColorEncoding as invalid.
+   SetColorSpace(ColorSpace::kUnknown);
+@@ -679,7 +667,6 @@ Status ColorEncoding::SetFieldsFromICC() {
+   rendering_intent = static_cast<RenderingIntent>(rendering_intent32);
+ #else   // JPEGXL_ENABLE_SKCMS
+ 
+-  std::lock_guard<std::mutex> guard(LcmsMutex());
+   const cmsContext context = GetContext();
+ 
+   Profile profile;
+@@ -732,7 +719,6 @@ void ColorEncoding::DecideIfWantICC() {
+ 
+ ColorSpaceTransform::~ColorSpaceTransform() {
+ #if !JPEGXL_ENABLE_SKCMS
+-  std::lock_guard<std::mutex> guard(LcmsMutex());
+   TransformDeleter()(lcms_transform_);
+ #endif
+ }
+@@ -748,7 +734,6 @@ Status ColorSpaceTransform::Init(const ColorEncoding& c_src,
+                                  const ColorEncoding& c_dst,
+                                  float intensity_target, size_t xsize,
+                                  const size_t num_threads) {
+-  std::lock_guard<std::mutex> guard(LcmsMutex());
+ #if JXL_CMS_VERBOSE
+   printf("%s -> %s\n", Description(c_src).c_str(), Description(c_dst).c_str());
+ #endif
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 4 Jun 2021 12:46:13 +0200
+Subject: [PATCH 2/5] Use a threadsafe alternative of gmtime in LCMS
+
+
+diff --git a/third_party/lcms2.cmake b/third_party/lcms2.cmake
+index 1111111..2222222 100644
+--- a/third_party/lcms2.cmake
++++ b/third_party/lcms2.cmake
+@@ -60,4 +60,20 @@ target_compile_definitions(lcms2
+ target_compile_definitions(lcms2
+   PUBLIC "-DCMS_NO_REGISTER_KEYWORD=1")
+ 
++# Ensure that a thread safe alternative of gmtime is used in LCMS
++include(CheckFunctionExists)
++if (WIN32)
++  check_function_exists(_gmtime64_s HAVE__GMTIME64_S)
++else()
++  check_function_exists(gmtime_r HAVE_GMTIME_R)
++endif()
++if (HAVE__GMTIME64_S)
++  target_compile_definitions(lcms2
++    PUBLIC "-DHAVE__GMTIME64_S=1")
++endif()
++if (HAVE_GMTIME_R)
++  target_compile_definitions(lcms2
++    PUBLIC "-DHAVE_GMTIME_R=1")
++endif()
++
+ set_property(TARGET lcms2 PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 8 Jun 2021 12:40:01 +0200
+Subject: [PATCH 3/5] Allow to build with system-wide installed lcms
+
+See: https://gitlab.com/wg1/jpeg-xl/-/issues/124
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -118,6 +118,8 @@ set(JPEGXL_FORCE_SYSTEM_BROTLI false CACHE BOOL
+     "Force using system installed brotli instead of third_party/brotli source.")
+ set(JPEGXL_FORCE_SYSTEM_HWY false CACHE BOOL
+     "Force using system installed highway (libhwy-dev) instead of third_party/highway source.")
++set(JPEGXL_FORCE_SYSTEM_LCMS false CACHE BOOL
++    "Force using system installed lcms instead of third_party/lcms source.")
+ 
+ # Check minimum compiler versions. Older compilers are not supported and fail
+ # with hard to understand errors.
+diff --git a/deps.sh b/deps.sh
+index 1111111..2222222 100755
+--- a/deps.sh
++++ b/deps.sh
+@@ -16,6 +16,7 @@ MYDIR=$(dirname $(realpath "$0"))
+ THIRD_PARTY_HIGHWAY="82b587d64a3ee85987d86bab8209566f3f81da91"
+ THIRD_PARTY_LODEPNG="48e5364ef48ec2408f44c727657ac1b6703185f8"
+ THIRD_PARTY_SKCMS="64374756e03700d649f897dbd98c95e78c30c7da"
++THIRD_PARTY_LCMS="17eb080324a9f16e0e7ab37bbcda7ae42b946294"
+ THIRD_PARTY_SJPEG="868ab558fad70fcbe8863ba4e85179eeb81cc840"
+ 
+ # Download the target revision from GitHub.
+@@ -74,6 +75,7 @@ EOF
+   download_github third_party/sjpeg webmproject/sjpeg
+   download_github third_party/skcms \
+     "https://skia.googlesource.com/skcms/+archive/"
++  download_github third_party/lcms mm2/Little-CMS
+   echo "Done."
+ }
+ 
+diff --git a/third_party/CMakeLists.txt b/third_party/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/third_party/CMakeLists.txt
++++ b/third_party/CMakeLists.txt
+@@ -202,12 +202,37 @@ if (JPEGXL_ENABLE_SKCMS)
+                  ${PROJECT_BINARY_DIR}/LICENSE.skcms COPYONLY)
+ endif ()
+ if (JPEGXL_ENABLE_VIEWERS OR NOT JPEGXL_ENABLE_SKCMS)
+-  if( NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lcms/.git" )
+-    message(SEND_ERROR "Please run git submodule update --init")
++  if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lcms/include/lcms2.h" OR
++      JPEGXL_FORCE_SYSTEM_LCMS)
++    pkg_check_modules(lcms2 lcms2>=2.11)
++    if (lcms2_FOUND)
++      add_library(lcms2 INTERFACE IMPORTED GLOBAL)
++      if(${CMAKE_VERSION} VERSION_LESS "3.13.5")
++        set_property(TARGET lcms2 PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${lcms2_INCLUDE_DIR})
++        target_link_libraries(lcms2 INTERFACE ${lcms2_LDFLAGS})
++        set_property(TARGET lcms2 PROPERTY INTERFACE_COMPILE_OPTIONS ${lcms2_CFLAGS_OTHER})
++      else()
++        target_include_directories(lcms2
++            INTERFACE ${lcms2_INCLUDE_DIRS})
++        target_link_libraries(lcms2
++            INTERFACE ${lcms2_LINK_LIBRARIES})
++        target_link_options(lcms2
++            INTERFACE ${lcms2_LDFLAGS_OTHER})
++        target_compile_options(lcms2
++            INTERFACE ${lcms2_CFLAGS_OTHER})
++      endif()
++    else()
++      message(FATAL_ERROR
++              "lcms2 not found, install liblcms2-dev or download lcms2 source code to"
++              " third_party/lcms from https://github.com/mm2/little-cms. You can use"
++              " ${PROJECT_SOURCE_DIR}/deps.sh to download this dependency.")
++    endif()
++  else()
++    # Compile lcms from sources.
++    include(lcms2.cmake)
++    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/lcms/COPYING"
++                   ${PROJECT_BINARY_DIR}/LICENSE.lcms COPYONLY)
+   endif()
+-  include(lcms2.cmake)
+-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/lcms/COPYING"
+-                 ${PROJECT_BINARY_DIR}/LICENSE.lcms COPYONLY)
+ endif()
+ 
+ # sjpeg
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 8 Jun 2021 13:14:53 +0200
+Subject: [PATCH 4/5] Allow to build without LodePNG
+
+Since there's no official release available.
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -83,6 +83,8 @@ set(JPEGXL_ENABLE_EXAMPLES true CACHE BOOL
+     "Build JPEGXL library usage examples.")
+ set(JPEGXL_ENABLE_SJPEG true CACHE BOOL
+     "Build JPEGXL with support for encoding with sjpeg.")
++set(JPEGXL_ENABLE_LODEPNG true CACHE BOOL
++    "Build JPEGXL with support for LodePNG.")
+ set(JPEGXL_ENABLE_OPENEXR true CACHE BOOL
+     "Build JPEGXL with support for OpenEXR if available.")
+ set(JPEGXL_ENABLE_SKCMS true CACHE BOOL
+diff --git a/lib/extras/codec.cc b/lib/extras/codec.cc
+index 1111111..2222222 100644
+--- a/lib/extras/codec.cc
++++ b/lib/extras/codec.cc
+@@ -6,6 +6,9 @@
+ #include "lib/extras/codec.h"
+ 
+ #include "lib/jxl/base/file_io.h"
++#if JPEGXL_ENABLE_LODEPNG
++#include "lib/extras/codec_png.h"
++#endif
+ #if JPEGXL_ENABLE_APNG
+ #include "lib/extras/codec_apng.h"
+ #endif
+@@ -17,7 +20,6 @@
+ #endif
+ #include "lib/extras/codec_jpg.h"
+ #include "lib/extras/codec_pgx.h"
+-#include "lib/extras/codec_png.h"
+ #include "lib/extras/codec_pnm.h"
+ #include "lib/extras/codec_psd.h"
+ #include "lib/jxl/image_bundle.h"
+@@ -91,19 +93,21 @@ Status SetFromBytes(const Span<const uint8_t> bytes, CodecInOut* io,
+   io->metadata.m.bit_depth.bits_per_sample = 0;  // (For is-set check below)
+ 
+   Codec codec;
+-  if (DecodeImagePNG(bytes, pool, io)) {
++  if (DecodeImagePGX(bytes, pool, io)) {
++    codec = Codec::kPGX;
++  } else if (DecodeImagePNM(bytes, pool, io)) {
++    codec = Codec::kPNM;
++  }
++#if JPEGXL_ENABLE_LODEPNG
++  else if (DecodeImagePNG(bytes, pool, io)) {
+     codec = Codec::kPNG;
+   }
++#endif
+ #if JPEGXL_ENABLE_APNG
+   else if (DecodeImageAPNG(bytes, pool, io)) {
+     codec = Codec::kPNG;
+   }
+ #endif
+-  else if (DecodeImagePGX(bytes, pool, io)) {
+-    codec = Codec::kPGX;
+-  } else if (DecodeImagePNM(bytes, pool, io)) {
+-    codec = Codec::kPNM;
+-  }
+ #if JPEGXL_ENABLE_GIF
+   else if (DecodeImageGIF(bytes, pool, io)) {
+     codec = Codec::kGIF;
+@@ -152,7 +156,11 @@ Status Encode(const CodecInOut& io, const Codec codec,
+ 
+   switch (codec) {
+     case Codec::kPNG:
++#if JPEGXL_ENABLE_LODEPNG
+       return EncodeImagePNG(&io, c_desired, bits_per_sample, pool, bytes);
++#else
++      return JXL_FAILURE("JPEG XL was built without PNG support");
++#endif
+     case Codec::kJPG:
+ #if JPEGXL_ENABLE_JPEG
+       return EncodeImageJPG(
+diff --git a/lib/jxl_extras.cmake b/lib/jxl_extras.cmake
+index 1111111..2222222 100644
+--- a/lib/jxl_extras.cmake
++++ b/lib/jxl_extras.cmake
+@@ -13,8 +13,6 @@ set(JPEGXL_EXTRAS_SOURCES
+   extras/codec_jpg.h
+   extras/codec_pgx.cc
+   extras/codec_pgx.h
+-  extras/codec_png.cc
+-  extras/codec_png.h
+   extras/codec_pnm.cc
+   extras/codec_pnm.h
+   extras/codec_psd.cc
+@@ -32,9 +30,17 @@ set_property(TARGET jxl_extras-static PROPERTY POSITION_INDEPENDENT_CODE ON)
+ target_include_directories(jxl_extras-static PUBLIC "${PROJECT_SOURCE_DIR}")
+ target_link_libraries(jxl_extras-static PUBLIC
+   jxl-static
+-  lodepng
+ )
+ 
++if (JPEGXL_ENABLE_LODEPNG)
++  target_sources(jxl_extras-static PRIVATE
++    extras/codec_png.cc
++    extras/codec_png.h
++  )
++  target_compile_definitions(jxl_extras-static PUBLIC -DJPEGXL_ENABLE_LODEPNG=1)
++  target_link_libraries(jxl_extras-static PUBLIC lodepng)
++endif()
++
+ find_package(GIF 5)
+ if(GIF_FOUND)
+   target_sources(jxl_extras-static PRIVATE
+diff --git a/third_party/CMakeLists.txt b/third_party/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/third_party/CMakeLists.txt
++++ b/third_party/CMakeLists.txt
+@@ -114,13 +114,15 @@ else()
+ endif()
+ 
+ # lodepng
+-if( NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lodepng/lodepng.h" )
+-  message(FATAL_ERROR "Please run ${PROJECT_SOURCE_DIR}/deps.sh to fetch the "
+-          "build dependencies.")
++if (JPEGXL_ENABLE_LODEPNG)
++  if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lodepng/lodepng.h")
++    message(FATAL_ERROR "Please run ${PROJECT_SOURCE_DIR}/deps.sh to fetch the "
++            "build dependencies.")
++  endif()
++  include(lodepng.cmake)
++  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/lodepng/LICENSE"
++                 ${PROJECT_BINARY_DIR}/LICENSE.lodepng COPYONLY)
+ endif()
+-include(lodepng.cmake)
+-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/lodepng/LICENSE"
+-               ${PROJECT_BINARY_DIR}/LICENSE.lodepng COPYONLY)
+ 
+ # brotli
+ if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/brotli/c/include/brotli/decode.h" OR
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 8 Jun 2021 13:30:49 +0200
+Subject: [PATCH 5/5] Ensure DLLs are installed in the bin directory
+
+
+diff --git a/lib/jxl.cmake b/lib/jxl.cmake
+index 1111111..2222222 100644
+--- a/lib/jxl.cmake
++++ b/lib/jxl.cmake
+@@ -534,7 +534,10 @@ endforeach()
+ # contains symbols also in libjxl which would conflict if programs try to use
+ # both.
+ install(TARGETS jxl
+-  DESTINATION ${CMAKE_INSTALL_LIBDIR})
++  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++)
+ else()
+ add_library(jxl ALIAS jxl-static)
+ add_library(jxl_dec ALIAS jxl_dec-static)
+diff --git a/lib/jxl_threads.cmake b/lib/jxl_threads.cmake
+index 1111111..2222222 100644
+--- a/lib/jxl_threads.cmake
++++ b/lib/jxl_threads.cmake
+@@ -43,7 +43,11 @@ set_target_properties(${_target} PROPERTIES
+ if (NOT WIN32)
+   set_target_properties(${_target} PROPERTIES OUTPUT_NAME "jxl_threads")
+ endif()
+-install(TARGETS ${_target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
++install(TARGETS ${_target}
++  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++)
+ 
+ endfunction()
+ 
