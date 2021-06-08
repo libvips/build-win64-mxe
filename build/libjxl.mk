@@ -7,7 +7,7 @@ $(PKG)_VERSION  := 37c8685
 $(PKG)_CHECKSUM := 179d2f46705c8001b399b2e9157e25b5cc3185ed9e22afb793d86c46389b45a0
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjxl-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libjxl/libjxl/branches/main
-$(PKG)_DEPS     := cc highway brotli lcms
+$(PKG)_DEPS     := cc brotli highway lcms libjpeg-turbo libpng
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
