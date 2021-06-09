@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 4 Jun 2021 12:12:02 +0200
-Subject: [PATCH 1/1] Ensure threadsafe alternative of gmtime is used
+Subject: [PATCH 1/2] Ensure threadsafe alternative of gmtime is used
 
 
 diff --git a/configure.ac b/configure.ac
@@ -62,3 +62,97 @@ index 1111111..2222222 100644
  }
  
  cmsContext CMSEXPORT cmsGetProfileContextID(cmsHPROFILE hProfile)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Marti Maria <marti.maria@littlecms.com>
+Date: Wed, 9 Jun 2021 20:45:45 +0200
+Subject: [PATCH 2/2] Provide a thread-safe get time function
+
+Use the context pool mutex in the case of none of the re-entrant alternatives to gmtime() is available
+
+diff --git a/src/cmsio0.c b/src/cmsio0.c
+index 1111111..2222222 100644
+--- a/src/cmsio0.c
++++ b/src/cmsio0.c
+@@ -488,11 +488,6 @@ cmsIOHANDLER* CMSEXPORT cmsGetProfileIOhandler(cmsHPROFILE hProfile)
+ // Creates an empty structure holding all required parameters
+ cmsHPROFILE CMSEXPORT cmsCreateProfilePlaceholder(cmsContext ContextID)
+ {
+-    struct tm *t;
+-#if defined(HAVE_GMTIME_R) || defined(HAVE__GMTIME64_S)
+-    struct tm tm;
+-#endif
+-    time_t now = time(NULL);
+     _cmsICCPROFILE* Icc = (_cmsICCPROFILE*) _cmsMallocZero(ContextID, sizeof(_cmsICCPROFILE));
+     if (Icc == NULL) return NULL;
+ 
+@@ -503,18 +498,10 @@ cmsHPROFILE CMSEXPORT cmsCreateProfilePlaceholder(cmsContext ContextID)
+ 
+     // Set default version
+     Icc ->Version =  0x02100000;
+-
+-#ifdef HAVE_GMTIME_R
+-    t = gmtime_r(&now, &tm);
+-#elif defined(HAVE__GMTIME64_S)
+-    t = _gmtime64_s(&tm, &now) == 0 ? &tm : NULL;
+-#else
+-    t = gmtime(&now);
+-#endif
+-    if (t == NULL) goto Error;
+-
++    
+     // Set creation date/time
+-    memmove(&Icc ->Created, t, sizeof(Icc ->Created));
++    if (!_cmsGetTime(&Icc->Created))
++        goto Error;
+ 
+     // Create a mutex if the user provided proper plugin. NULL otherwise
+     Icc ->UsrMutex = _cmsCreateMutex(ContextID);
+diff --git a/src/cmsplugin.c b/src/cmsplugin.c
+index 1111111..2222222 100644
+--- a/src/cmsplugin.c
++++ b/src/cmsplugin.c
+@@ -989,3 +989,30 @@ void* CMSEXPORT cmsGetContextUserData(cmsContext ContextID)
+ }
+ 
+ 
++// Use context mutex to provide thread-safe time
++cmsBool _cmsGetTime(struct tm* ptr_time)
++{
++    struct tm* t;
++#if defined(HAVE_GMTIME_R) || defined(HAVE__GMTIME64_S)
++    struct tm tm;
++#endif
++
++    time_t now = time(NULL);
++
++#ifdef HAVE_GMTIME_R
++    t = gmtime_r(&now, &tm);
++#elif defined(HAVE__GMTIME64_S)
++    t = _gmtime64_s(&tm, &now) == 0 ? &tm : NULL;
++#else
++    _cmsEnterCriticalSectionPrimitive(&_cmsContextPoolHeadMutex);
++    t = gmtime(&now);
++    _cmsLeaveCriticalSectionPrimitive(&_cmsContextPoolHeadMutex);
++#endif
++
++    if (t == NULL) 
++        return FALSE;
++    else {
++        *ptr_time = *t;
++        return TRUE;
++    }
++}
+diff --git a/src/lcms2_internal.h b/src/lcms2_internal.h
+index 1111111..2222222 100644
+--- a/src/lcms2_internal.h
++++ b/src/lcms2_internal.h
+@@ -1118,5 +1118,8 @@ cmsBool   _cmsAdaptationMatrix(cmsMAT3* r, const cmsMAT3* ConeMatrix, const cmsC
+ cmsBool   _cmsBuildRGB2XYZtransferMatrix(cmsMAT3* r, const cmsCIExyY* WhitePoint, const cmsCIExyYTRIPLE* Primaries);
+ 
+ 
++// thread-safe gettime
++cmsBool _cmsGetTime(struct tm* ptr_time);
++
+ #define _lcms_internal_H
+ #endif
