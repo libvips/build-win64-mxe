@@ -94,7 +94,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
-| [highway]       | 82b587d   | Apache-2.0 License                                           |
+| [highway]       | 96ece0b   | Apache-2.0 License                                           |
 | [imagemagick]   | 6.9.12-14 | [ImageMagick License] (GPL-like)                             |
 | [imath]         | 3.0.4     | BSD 3-Clause                                                 |
 | [libjxl]        | 91204ed   | BSD 3-Clause                                                 |
