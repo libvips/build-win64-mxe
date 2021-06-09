@@ -97,7 +97,7 @@ Same as libvips-web + these extra dependencies:
 | [highway]       | 82b587d   | Apache-2.0 License                                           |
 | [imagemagick]   | 6.9.12-14 | [ImageMagick License] (GPL-like)                             |
 | [imath]         | 3.0.4     | BSD 3-Clause                                                 |
-| [libjxl]        | 37c8685   | BSD 3-Clause                                                 |
+| [libjxl]        | 91204ed   | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
 | [openexr]       | 3.0.4     | BSD 3-Clause                                                 |
