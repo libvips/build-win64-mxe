@@ -158,6 +158,7 @@ nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 ## Patches that we override with our own
 
 libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
@@ -387,6 +388,9 @@ endef
 # build with -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT to avoid a
 # horrible hack (we don't target pre-Windows XP, so it should be safe)
 define lcms_BUILD
+    # need to regenerate the configure script
+    cd '$(SOURCE_DIR)' && autoreconf -fi
+
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-zlib \
@@ -409,6 +413,7 @@ define imagemagick_BUILD
         --without-gdi32 \
         --without-gvc \
         --without-heic \
+        --without-jxl \
         --without-ltdl \
         --without-lqr \
         --without-lzma \

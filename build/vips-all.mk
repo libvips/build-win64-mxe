@@ -11,7 +11,7 @@ $(PKG)_FILE     := vips-$($(PKG)_VERSION)-rc1.tar.gz
 $(PKG)_DEPS     := cc libwebp librsvg glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc imagemagick matio openexr \
-                   cfitsio nifticlib poppler fftw openslide
+                   cfitsio nifticlib poppler fftw openslide libjxl
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -20,6 +20,7 @@ define $(PKG)_PRE_CONFIGURE
 
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \
+     printf '  "brotli": "$(brotli_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
      printf '  "cfitsio": "$(cfitsio_VERSION)",\n'; \
      $(if $(IS_HEVC),printf '  "de265": "$(libde265_VERSION)"$(comma)\n';) \
@@ -35,9 +36,11 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
+     printf '  "highway": "$(highway_VERSION)",\n'; \
      printf '  "imagemagick": "$(imagemagick_VERSION)",\n'; \
      printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
+     printf '  "jxl": "$(libjxl_VERSION)",\n'; \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      printf '  "matio": "$(matio_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
@@ -71,7 +74,6 @@ define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
-        --without-libjxl \
         --without-pdfium \
         --disable-introspection \
         --disable-deprecated \
