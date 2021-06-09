@@ -346,17 +346,23 @@ diff --git a/lib/profiler/tsc_timer.h b/lib/profiler/tsc_timer.h
 index 1111111..2222222 100644
 --- a/lib/profiler/tsc_timer.h
 +++ b/lib/profiler/tsc_timer.h
-@@ -10,6 +10,23 @@
+@@ -10,6 +10,29 @@
  // ensure exactly the desired regions are measured.
  
  #include <stdint.h>
 +#include <time.h>    // clock_gettime
 +
 +#if defined(_WIN32) || defined(_WIN64)
++#ifndef WIN32_LEAN_AND_MEAN
++#define WIN32_LEAN_AND_MEAN
++#endif  // WIN32_LEAN_AND_MEAN
 +#ifndef NOMINMAX
 +#define NOMINMAX
 +#endif  // NOMINMAX
 +#include <windows.h>
++// Undef macros to avoid collisions
++#undef LoadFence
++#undef StoreFence
 +#endif
 +
 +#if defined(__MACH__)
@@ -370,7 +376,7 @@ index 1111111..2222222 100644
  
  #include <ctime>
  #include <hwy/base.h>
-@@ -17,9 +34,13 @@
+@@ -17,9 +40,13 @@
  
  namespace profiler {
  
@@ -386,7 +392,7 @@ index 1111111..2222222 100644
  //
  // Background: RDTSC is not 'serializing'; earlier instructions may complete
  // after it, and/or later instructions may complete before it. 'Fences' ensure
-@@ -55,7 +76,7 @@ namespace profiler {
+@@ -55,7 +82,7 @@ namespace profiler {
  // Using Before+Before leads to higher variance and overhead than After+After.
  // However, After+After includes an LFENCE in the region measurements, which
  // adds a delay dependent on earlier loads. The combination of Before+After
@@ -395,7 +401,7 @@ index 1111111..2222222 100644
  // the first LFENCE already delayed subsequent loads before the measured
  // region. This combination seems not to have been considered in prior work:
  // http://akaros.cs.berkeley.edu/lxr/akaros/kern/arch/x86/rdtsc_test.c
-@@ -67,19 +88,18 @@ namespace profiler {
+@@ -67,19 +94,18 @@ namespace profiler {
  // by several under/over-count errata, so we use the TSC instead.
  
  // Returns a 64-bit timestamp in unit of 'ticks'; to convert to seconds,
@@ -420,7 +426,7 @@ index 1111111..2222222 100644
    asm volatile(
        "lfence\n\t"
        "rdtsc\n\t"
-@@ -91,7 +111,17 @@ static HWY_INLINE HWY_MAYBE_UNUSED uint64_t TicksBefore() {
+@@ -91,7 +117,17 @@ static HWY_INLINE HWY_MAYBE_UNUSED uint64_t TicksBefore() {
        // "memory" avoids reordering. rdx = TSC >> 32.
        // "cc" = flags modified by SHL.
        : "rdx", "memory", "cc");
@@ -439,7 +445,7 @@ index 1111111..2222222 100644
    // Fall back to OS - unsure how to reliably query cntvct_el0 frequency.
    timespec ts;
    clock_gettime(CLOCK_MONOTONIC, &ts);
-@@ -100,15 +130,17 @@ static HWY_INLINE HWY_MAYBE_UNUSED uint64_t TicksBefore() {
+@@ -100,15 +136,17 @@ static HWY_INLINE HWY_MAYBE_UNUSED uint64_t TicksBefore() {
    return t;
  }
  
