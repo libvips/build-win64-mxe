@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 2 Jun 2021 14:07:04 +0200
-Subject: [PATCH 1/4] Remove LCMS mutex
+Subject: [PATCH 1/5] Remove LCMS mutex
 
 See: https://github.com/libjxl/libjxl/pull/112
 
@@ -70,7 +70,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 8 Jun 2021 12:40:01 +0200
-Subject: [PATCH 2/4] Allow to build with system-wide installed lcms
+Subject: [PATCH 2/5] Allow to build with system-wide installed lcms
 
 See: https://gitlab.com/wg1/jpeg-xl/-/issues/124
 
@@ -158,7 +158,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 8 Jun 2021 13:14:53 +0200
-Subject: [PATCH 3/4] Allow to build without LodePNG
+Subject: [PATCH 3/5] Allow to build without LodePNG
 
 Since there's no official release available.
 
@@ -299,7 +299,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 8 Jun 2021 13:30:49 +0200
-Subject: [PATCH 4/4] Ensure DLLs are installed in the bin directory
+Subject: [PATCH 4/5] Ensure DLLs are installed in the bin directory
 
 
 diff --git a/lib/jxl.cmake b/lib/jxl.cmake
@@ -335,3 +335,129 @@ index 1111111..2222222 100644
  
  endfunction()
  
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 9 Jun 2021 19:38:33 +0200
+Subject: [PATCH 5/5] tsc_timer: sync with highway
+
+Fixes compilation with llvm-mingw targeting i686.
+
+diff --git a/lib/profiler/tsc_timer.h b/lib/profiler/tsc_timer.h
+index 1111111..2222222 100644
+--- a/lib/profiler/tsc_timer.h
++++ b/lib/profiler/tsc_timer.h
+@@ -10,6 +10,23 @@
+ // ensure exactly the desired regions are measured.
+ 
+ #include <stdint.h>
++#include <time.h>    // clock_gettime
++
++#if defined(_WIN32) || defined(_WIN64)
++#ifndef NOMINMAX
++#define NOMINMAX
++#endif  // NOMINMAX
++#include <windows.h>
++#endif
++
++#if defined(__MACH__)
++#include <mach/mach.h>
++#include <mach/mach_time.h>
++#endif
++
++#if defined(__HAIKU__)
++#include <OS.h>
++#endif
+ 
+ #include <ctime>
+ #include <hwy/base.h>
+@@ -17,9 +34,13 @@
+ 
+ namespace profiler {
+ 
++// Ticks := platform-specific timer values (CPU cycles on x86). Must be
++// unsigned to guarantee wraparound on overflow.
++using Ticks = uint64_t;
++
+ // TicksBefore/After return absolute timestamps and must be placed immediately
+-// before and after the region to measure. The functions are distinct because
+-// they use different fences.
++// before and after the region to measure. We provide separate Before/After
++// functions because they use different fences.
+ //
+ // Background: RDTSC is not 'serializing'; earlier instructions may complete
+ // after it, and/or later instructions may complete before it. 'Fences' ensure
+@@ -55,7 +76,7 @@ namespace profiler {
+ // Using Before+Before leads to higher variance and overhead than After+After.
+ // However, After+After includes an LFENCE in the region measurements, which
+ // adds a delay dependent on earlier loads. The combination of Before+After
+-// is faster than Before+Before and more consistent than Stop+Stop because
++// is faster than Before+Before and more consistent than After+After because
+ // the first LFENCE already delayed subsequent loads before the measured
+ // region. This combination seems not to have been considered in prior work:
+ // http://akaros.cs.berkeley.edu/lxr/akaros/kern/arch/x86/rdtsc_test.c
+@@ -67,19 +88,18 @@ namespace profiler {
+ // by several under/over-count errata, so we use the TSC instead.
+ 
+ // Returns a 64-bit timestamp in unit of 'ticks'; to convert to seconds,
+-// divide by InvariantTicksPerSecond. Although 32-bit ticks are faster to read,
+-// they overflow too quickly to measure long regions.
+-static HWY_INLINE HWY_MAYBE_UNUSED uint64_t TicksBefore() {
+-  uint64_t t;
++// divide by InvariantTicksPerSecond.
++static HWY_INLINE HWY_MAYBE_UNUSED Ticks TicksBefore() {
++  Ticks t;
+ #if HWY_ARCH_PPC
+   asm volatile("mfspr %0, %1" : "=r"(t) : "i"(268));
+-#elif HWY_ARCH_X86_64 && HWY_COMPILER_MSVC
++#elif HWY_ARCH_X86 && HWY_COMPILER_MSVC
+   hwy::LoadFence();
+   HWY_FENCE;
+   t = __rdtsc();
+   hwy::LoadFence();
+   HWY_FENCE;
+-#elif HWY_ARCH_X86_64 && (HWY_COMPILER_CLANG || HWY_COMPILER_GCC)
++#elif HWY_ARCH_X86_64
+   asm volatile(
+       "lfence\n\t"
+       "rdtsc\n\t"
+@@ -91,7 +111,17 @@ static HWY_INLINE HWY_MAYBE_UNUSED uint64_t TicksBefore() {
+       // "memory" avoids reordering. rdx = TSC >> 32.
+       // "cc" = flags modified by SHL.
+       : "rdx", "memory", "cc");
+-#else
++#elif HWY_ARCH_RVV
++  asm volatile("rdcycle %0" : "=r"(t));
++#elif defined(_WIN32) || defined(_WIN64)
++  LARGE_INTEGER counter;
++  (void)QueryPerformanceCounter(&counter);
++  t = counter.QuadPart;
++#elif defined(__MACH__)
++  t = mach_absolute_time();
++#elif defined(__HAIKU__)
++  t = system_time_nsecs();  // since boot
++#else  // POSIX
+   // Fall back to OS - unsure how to reliably query cntvct_el0 frequency.
+   timespec ts;
+   clock_gettime(CLOCK_MONOTONIC, &ts);
+@@ -100,15 +130,17 @@ static HWY_INLINE HWY_MAYBE_UNUSED uint64_t TicksBefore() {
+   return t;
+ }
+ 
+-static HWY_INLINE HWY_MAYBE_UNUSED uint64_t TicksAfter() {
+-  uint64_t t;
+-#if HWY_ARCH_X86_64 && HWY_COMPILER_MSVC
++static HWY_INLINE HWY_MAYBE_UNUSED Ticks TicksAfter() {
++  Ticks t;
++#if HWY_ARCH_PPC
++  asm volatile("mfspr %0, %1" : "=r"(t) : "i"(268));
++#elif HWY_ARCH_X86 && HWY_COMPILER_MSVC
+   HWY_FENCE;
+   unsigned aux;
+   t = __rdtscp(&aux);
+   hwy::LoadFence();
+   HWY_FENCE;
+-#elif HWY_ARCH_X86_64 && (HWY_COMPILER_CLANG || HWY_COMPILER_GCC)
++#elif HWY_ARCH_X86_64
+   // Use inline asm because __rdtscp generates code to store TSC_AUX (ecx).
+   asm volatile(
+       "rdtscp\n\t"
