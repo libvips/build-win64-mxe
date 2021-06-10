@@ -17,7 +17,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.1.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.1.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
 | [expat]         | 2.4.1     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.93   | [fontconfig Licence] (BSD-like)                              |
@@ -36,7 +36,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.51.2    | LGPLv3                                                       |
 | [libspng]       | 0.6.3     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.11.0²   | LGPLv3                                                       |
+| [libvips]       | 8.11.0    | LGPLv3                                                       |
 | [libwebp]       | 1.2.0     | New BSD License                                              |
 | [libxml2]       | 2.9.12    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
@@ -46,8 +46,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [zlib-ng]       | 2.0.3     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
-² libvips is built from the [`v8.11.0-rc1`](https://github.com/libvips/libvips/tree/v8.11.0-rc1) tag, see:
-https://github.com/libvips/libvips/releases/tag/v8.11.0-rc1
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -94,10 +92,10 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
-| [highway]       | e8ab731   | Apache-2.0 License                                           |
+| [highway]       | [e8ab731] | Apache-2.0 License                                           |
 | [imagemagick]   | 6.9.12-14 | [ImageMagick License] (GPL-like)                             |
 | [imath]         | 3.0.4     | BSD 3-Clause                                                 |
-| [libjxl]        | 91204ed   | BSD 3-Clause                                                 |
+| [libjxl]        | [91204ed] | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
 | [openexr]       | 3.0.4     | BSD 3-Clause                                                 |
@@ -105,6 +103,9 @@ Same as libvips-web + these extra dependencies:
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
 | [poppler]       | 21.06.1   | GPLv2                                                        |
 | [sqlite]        | 3.35.5    | Public domain                                                |
+
+[e8ab731]: https://github.com/google/highway/commit/e8ab731e4eff6df5415771518345af85f9bffa0f
+[91204ed]: https://github.com/libjxl/libjxl/commit/91204ed4521a304f983163137283d35c7021de5b
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
