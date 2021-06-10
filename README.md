@@ -93,7 +93,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
 | [highway]       | [e8ab731] | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-14 | [ImageMagick License] (GPL-like)                             |
+| [imagemagick]   | 6.9.12-14 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.0.4     | BSD 3-Clause                                                 |
 | [libjxl]        | [91204ed] | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
