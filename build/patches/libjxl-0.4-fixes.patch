@@ -92,7 +92,7 @@ index 1111111..2222222 100755
 --- a/deps.sh
 +++ b/deps.sh
 @@ -16,6 +16,7 @@ MYDIR=$(dirname $(realpath "$0"))
- THIRD_PARTY_HIGHWAY="82b587d64a3ee85987d86bab8209566f3f81da91"
+ THIRD_PARTY_HIGHWAY="e2397743fe092df68b760d358253773699a16c93"
  THIRD_PARTY_LODEPNG="48e5364ef48ec2408f44c727657ac1b6703185f8"
  THIRD_PARTY_SKCMS="64374756e03700d649f897dbd98c95e78c30c7da"
 +THIRD_PARTY_LCMS="17eb080324a9f16e0e7ab37bbcda7ae42b946294"
@@ -306,7 +306,7 @@ diff --git a/lib/jxl.cmake b/lib/jxl.cmake
 index 1111111..2222222 100644
 --- a/lib/jxl.cmake
 +++ b/lib/jxl.cmake
-@@ -534,7 +534,10 @@ endforeach()
+@@ -545,7 +545,10 @@ endforeach()
  # contains symbols also in libjxl which would conflict if programs try to use
  # both.
  install(TARGETS jxl

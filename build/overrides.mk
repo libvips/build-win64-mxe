@@ -3,8 +3,8 @@ $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 ## Update dependencies
 
 # upstream version is 3.2.1
-libffi_VERSION  := 3.3
-libffi_CHECKSUM := 72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056
+libffi_VERSION  := 3.4.2
+libffi_CHECKSUM := 540fb721619a6aba3bdeef7d940d8e9e0e6d2c193595bc243241b77ff9e93620
 libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
 libffi_SUBDIR   := libffi-$(libffi_VERSION)
 libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
@@ -40,14 +40,14 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-14
-imagemagick_CHECKSUM := f2831934ebccb444a7ced6dfe2e87fa065ece02a7b28627e3be57428df469c93
+imagemagick_VERSION  := 6.9.12-17
+imagemagick_CHECKSUM := 453c42cb1c837b3a125150743d3f6591d157e3ca753aee760a9b5f1c070c52ac
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.51.2
-librsvg_CHECKSUM := 6b80840ef3e4724624e715398bb4470fa68368943cdbd507e681708bbe32b289
+librsvg_VERSION  := 2.51.3
+librsvg_CHECKSUM := 4f83d40484bd69d1944d203090b50b812ec6aa553195e4f6d67d03d135897c7f
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -72,8 +72,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.68.2
-glib_CHECKSUM := ecc7798a9cc034eabdfd7f246e6dd461cdbf1175fcc2e9867cc7da7b7309e0fb
+glib_VERSION  := 2.68.3
+glib_CHECKSUM := e7e1a3c20c026109c45c9ec4a31d8dcebc22e86c69486993e565817d64be3138
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -123,8 +123,8 @@ pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # upstream version is 2.13.1
-fontconfig_VERSION  := 2.13.93
-fontconfig_CHECKSUM := ea968631eadc5739bc7c8856cef5c77da812d1f67b763f5e51b57b8026c1a0a0
+fontconfig_VERSION  := 2.13.94
+fontconfig_CHECKSUM := a5f052cb73fd479ffb7b697980510903b563bbb55b8f7a2b001fcfb94026003c
 fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
@@ -158,6 +158,7 @@ nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 ## Patches that we override with our own
 
 libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must

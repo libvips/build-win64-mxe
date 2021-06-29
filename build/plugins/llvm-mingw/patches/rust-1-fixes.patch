@@ -53,7 +53,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -823,10 +823,12 @@ supported_targets! {
+@@ -827,10 +827,12 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  
@@ -285,7 +285,7 @@ diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/build.rs
 +++ b/vendor/compiler_builtins/build.rs
-@@ -303,7 +303,7 @@ mod c {
+@@ -308,7 +308,7 @@ mod c {
              }
          }
  
@@ -298,7 +298,7 @@ diff --git a/vendor/compiler_builtins/src/arm.rs b/vendor/compiler_builtins/src/
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/src/arm.rs
 +++ b/vendor/compiler_builtins/src/arm.rs
-@@ -74,7 +74,7 @@ pub unsafe extern "C" fn __aeabi_uldivmod() {
+@@ -75,7 +75,7 @@ pub unsafe extern "C" fn __aeabi_uldivmod() {
      );
  }
  
@@ -342,7 +342,7 @@ index 1111111..2222222 100644
 -    if #[cfg(all(target_arch = "arm", not(target_os = "ios"), not(target_os = "netbsd")))] {
 +    if #[cfg(all(target_arch = "arm", not(target_os = "ios"), not(target_os = "netbsd"), not(target_os = "windows")))] {
          // ARM EHABI personality routine.
-         // http://infocenter.arm.com/help/topic/com.arm.doc.ihi0038b/IHI0038B_ehabi.pdf
+         // https://infocenter.arm.com/help/topic/com.arm.doc.ihi0038b/IHI0038B_ehabi.pdf
          //
 diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644

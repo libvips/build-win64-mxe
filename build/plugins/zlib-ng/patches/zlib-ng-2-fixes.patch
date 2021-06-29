@@ -12,15 +12,17 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -912,7 +912,10 @@ foreach(ZLIB_INSTALL_LIBRARY ${ZLIB_INSTALL_LIBRARIES})
-         ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
- endforeach()
- 
--if(WIN32)
-+if(MINGW)
-+    # When cross-compiling with MinGW-w64, we want to make libz, not libzlib
-+    set_target_properties(${ZLIB_INSTALL_LIBRARIES} PROPERTIES OUTPUT_NAME z${SUFFIX})
-+elseif(WIN32)
-     set_target_properties(${ZLIB_INSTALL_LIBRARIES} PROPERTIES OUTPUT_NAME zlib${SUFFIX})
- else()
-     # On unix-like platforms the library is almost always called libz
+@@ -897,7 +897,12 @@ endforeach()
+ if(WIN32)
+     # Shared library
+     if(NOT DEFINED BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
+-        set_target_properties(zlib PROPERTIES OUTPUT_NAME zlib${SUFFIX})
++        if(MINGW)
++            # When cross-compiling with MinGW-w64, we want to make libz, not libzlib
++            set_target_properties(${ZLIB_INSTALL_LIBRARIES} PROPERTIES OUTPUT_NAME z${SUFFIX})
++        else()
++            set_target_properties(${ZLIB_INSTALL_LIBRARIES} PROPERTIES OUTPUT_NAME zlib${SUFFIX})
++        endif()
+     endif()
+     # Static library
+     if(NOT DEFINED BUILD_SHARED_LIBS)

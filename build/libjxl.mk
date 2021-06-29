@@ -2,9 +2,9 @@ PKG             := libjxl
 $(PKG)_WEBSITE  := https://github.com/libjxl/libjxl
 $(PKG)_DESCR    := JPEG XL image format reference implementation
 $(PKG)_IGNORE   :=
-# https://github.com/libjxl/libjxl/tarball/91204ed4521a304f983163137283d35c7021de5b
-$(PKG)_VERSION  := 91204ed
-$(PKG)_CHECKSUM := 2d710002e828b066e962b4bed294e2ae7dddff737a6f938f8e83443981032c88
+# https://github.com/libjxl/libjxl/tarball/6783d48aa68dbca76b2259f3414efbbffa14eeab
+$(PKG)_VERSION  := 6783d48
+$(PKG)_CHECKSUM := 2ff471794b0d85f705faaea4a13a1c0cdd9da9533639c57e82ef8e1f689f00df
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjxl-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libjxl/libjxl/branches/main
 $(PKG)_DEPS     := cc brotli highway lcms libjpeg-turbo libpng

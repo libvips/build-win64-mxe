@@ -17,7 +17,7 @@ diff --git a/src/fcxml.c b/src/fcxml.c
 index 1111111..2222222 100644
 --- a/src/fcxml.c
 +++ b/src/fcxml.c
-@@ -3641,8 +3641,6 @@ bail0:
+@@ -3686,8 +3686,6 @@ bail0:
      {
  	if (name)
  	    FcConfigMessage (0, FcSevereError, "Cannot %s config file \"%s\": %s", load ? "load" : "scan", name, FcStrBufDoneStatic (&reason));

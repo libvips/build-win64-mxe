@@ -20,20 +20,20 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.1.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
 | [expat]         | 2.4.1     | MIT Licence                                                  |
-| [fontconfig]    | 2.13.93   | [fontconfig Licence] (BSD-like)                              |
+| [fontconfig]    | 2.13.94   | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.10.4    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.10    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.6    | LGPLv3                                                       |
-| [glib]          | 2.68.2    | LGPLv3                                                       |
+| [glib]          | 2.68.3    | LGPLv3                                                       |
 | [harfbuzz]      | 2.8.1     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
-| [libffi]        | 3.3       | MIT Licence                                                  |
+| [libffi]        | 3.4.2     | MIT Licence                                                  |
 | [libgsf]        | 1.14.47   | LGPLv3                                                       |
 | [libheif]       | 1.12.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
-| [librsvg]       | 2.51.2    | LGPLv3                                                       |
+| [librsvg]       | 2.51.3    | LGPLv3                                                       |
 | [libspng]       | 0.6.3     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.11.0    | LGPLv3                                                       |
@@ -43,7 +43,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.48.5    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
-| [zlib-ng]       | 2.0.3     | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.0.5     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 
@@ -92,20 +92,20 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
-| [highway]       | [e8ab731] | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-14 | [ImageMagick License] (Apache-2.0-like)                      |
+| [highway]       | [9fefc7c] | Apache-2.0 License                                           |
+| [imagemagick]   | 6.9.12-17 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.0.4     | BSD 3-Clause                                                 |
-| [libjxl]        | [91204ed] | BSD 3-Clause                                                 |
+| [libjxl]        | [6783d48] | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
 | [openexr]       | 3.0.4     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
 | [poppler]       | 21.06.1   | GPLv2                                                        |
-| [sqlite]        | 3.35.5    | Public domain                                                |
+| [sqlite]        | 3.36.0    | Public domain                                                |
 
-[e8ab731]: https://github.com/google/highway/commit/e8ab731e4eff6df5415771518345af85f9bffa0f
-[91204ed]: https://github.com/libjxl/libjxl/commit/91204ed4521a304f983163137283d35c7021de5b
+[9fefc7c]: https://github.com/google/highway/commit/9fefc7cef1dd5ee83221b3446a1415020a64eabf
+[6783d48]: https://github.com/libjxl/libjxl/commit/6783d48aa68dbca76b2259f3414efbbffa14eeab
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
