@@ -3,7 +3,7 @@
 vips_package=vips
 vips_version=8.11
 vips_patch_version=2
-vips_pre_version=d07dee8
+vips_pre_version=16f32d2
 
 # build-win64-mxe/build dir we are building
 work_dir=$(pwd)
