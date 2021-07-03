@@ -94,7 +94,7 @@ strip=$mxe_prefix/bin/$target.$deps-strip
 # Directories
 install_dir=$mxe_prefix/$target.$deps
 bin_dir=$install_dir/bin
-module_dir=$install_dir/lib/vips-modules-$vips_version
+module_dir=$install_dir/bin/vips-modules-$vips_version
 
 echo "Copying libvips and dependencies"
 
@@ -120,6 +120,8 @@ if [ -d "$module_dir" ]; then
       cp -n $dll $repackage_dir/bin
     done
   done
+  mkdir -p $repackage_dir/bin/vips-modules-$vips_version
+  cp $module_dir/*.dll $repackage_dir/bin/vips-modules-$vips_version
 fi
 
 echo "Copying install area $install_dir/"
@@ -161,7 +163,7 @@ echo "Strip unneeded symbols"
 # Remove all symbols that are not needed
 if [ "$DEBUG" = "false" ]; then
   $strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
-  [ -d "$module_dir" ] && $strip --strip-unneeded $repackage_dir/lib/vips-modules-$vips_version/*.dll
+  [ -d "$module_dir" ] && $strip --strip-unneeded $repackage_dir/bin/vips-modules-$vips_version/*.dll
 fi
 
 echo "Copying packaging files"

@@ -250,7 +250,7 @@ index 1111111..2222222 100644
    extras/codec_pnm.cc
    extras/codec_pnm.h
    extras/codec_psd.cc
-@@ -32,9 +30,17 @@ set_property(TARGET jxl_extras-static PROPERTY POSITION_INDEPENDENT_CODE ON)
+@@ -34,9 +32,17 @@ set_property(TARGET jxl_extras-static PROPERTY POSITION_INDEPENDENT_CODE ON)
  target_include_directories(jxl_extras-static PUBLIC "${PROJECT_SOURCE_DIR}")
  target_link_libraries(jxl_extras-static PUBLIC
    jxl-static
@@ -306,7 +306,7 @@ diff --git a/lib/jxl.cmake b/lib/jxl.cmake
 index 1111111..2222222 100644
 --- a/lib/jxl.cmake
 +++ b/lib/jxl.cmake
-@@ -545,7 +545,10 @@ endforeach()
+@@ -543,7 +543,10 @@ endforeach()
  # contains symbols also in libjxl which would conflict if programs try to use
  # both.
  install(TARGETS jxl

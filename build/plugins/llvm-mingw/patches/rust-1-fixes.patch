@@ -53,7 +53,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -827,10 +827,12 @@ supported_targets! {
+@@ -863,10 +863,12 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  
@@ -72,7 +72,7 @@ index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs
 @@ -0,0 +1,35 @@
-+use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
++use crate::spec::{FramePointer, LinkerFlavor, LinkOutputKind, LldFlavor, Target};
 +
 +pub fn target() -> Target {
 +    let mut base = super::windows_gnu_base::opts();
@@ -81,7 +81,7 @@ index 0000000..1111111
 +    base.pre_link_args
 +        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "thumb2pe".to_string()]);
 +    base.max_atomic_width = Some(64);
-+    base.eliminate_frame_pointer = false; // Required for backtraces
++    base.frame_pointer = FramePointer::Always; // Required for backtraces
 +    base.linker = Some("ld.lld".to_string());
 +    base.linker_flavor = LinkerFlavor::Lld(LldFlavor::Ld);
 +
@@ -180,8 +180,8 @@ index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs
 +++ b/compiler/rustc_target/src/spec/i686_pc_windows_gnu.rs
 @@ -1,4 +1,4 @@
--use crate::spec::{LinkerFlavor, LldFlavor, Target};
-+use crate::spec::{LinkerFlavor, LinkOutputKind, LldFlavor, Target};
+-use crate::spec::{FramePointer, LinkerFlavor, LldFlavor, Target};
++use crate::spec::{FramePointer, LinkerFlavor, LinkOutputKind, LldFlavor, Target};
  
  pub fn target() -> Target {
      let mut base = super::windows_gnu_base::opts();

@@ -54,8 +54,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.48.5
-pango_CHECKSUM := 501e74496173c02dcd024ded7fbb3f09efd37e2a488e248aa40799424dbb3b2a
+pango_VERSION  := 1.48.6
+pango_CHECKSUM := 3027cd6b5e34bff49c38c769ca651a5f9ef6e0d54cadaa1263d872044bedc7dd
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -98,8 +98,8 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.0.4
-openexr_CHECKSUM := 64daae95d406fe3f59ee11ad8586d03fe7df2552b9630eac1a4f9152b8015fb9
+openexr_VERSION  := 3.0.5
+openexr_CHECKSUM := 7aa6645da70e9a0cce8215d25030cfd4f4b17b4abf1ceec314f7eae15674e8e4
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -139,8 +139,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 21.02.0
-poppler_VERSION  := 21.06.1
-poppler_CHECKSUM := 86b09e5a02de40081a3916ef8711c5128eaf4b1fc59d5f87d0ec66f04f595db4
+poppler_VERSION  := 21.07.0
+poppler_CHECKSUM := e26ab29f68065de4d6562f0a3e2b5435a83ca92be573b99a1c81998fa286a4d4
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -468,6 +468,9 @@ endef
 # build with the Meson build system
 # force FontConfig since the Win32 font backend within Cairo is disabled
 define pango_BUILD
+    # Disable utils, examples, tests and tools
+    $(SED) -i "/subdir('utils')/{N;N;N;d;}" '$(SOURCE_DIR)/meson.build'
+
     '$(TARGET)-meson' \
         --buildtype=release \
         $(if $(STRIP_LIB), --strip) \
@@ -528,13 +531,14 @@ define poppler_BUILD
         -DENABLE_DCTDECODER='libjpeg' \
         -DFONT_CONFIGURATION=win32 \
         -DENABLE_UNSTABLE_API_ABI_HEADERS=OFF \
-        -DENABLE_SPLASH=OFF \
+        -DENABLE_BOOST=OFF \
         -DENABLE_CPP=OFF \
         -DBUILD_GTK_TESTS=OFF \
         -DENABLE_UTILS=OFF \
         -DENABLE_QT5=OFF \
         -DENABLE_LIBCURL=OFF \
         -DBUILD_QT5_TESTS=OFF \
+        -DBUILD_QT6_TESTS=OFF \
         -DBUILD_CPP_TESTS=OFF \
         -DBUILD_MANUAL_TESTS=OFF \
         -DENABLE_GTK_DOC=OFF \

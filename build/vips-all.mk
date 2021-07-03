@@ -2,8 +2,8 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.11.1
-$(PKG)_CHECKSUM := 426f04d245e57341165ac7e8c1d201eb34c8ed5720a192787dba22ef98ff3605
+$(PKG)_VERSION  := 8.11.2
+$(PKG)_CHECKSUM := bb5ab776ee4c61ae94b4496c63ef523ca7367ebceabcba78ceb1bf97b1d36e06
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libvips/libvips/releases,v
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
@@ -71,8 +71,14 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
+    # --libdir argument ensures that the dynamic modules
+    # are installed and found in /bin (Windows convention).
+    # --with-pkgconfigdir argument is needed since we have
+    # overwritten the $libdir variable.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
+        --libdir='$(PREFIX)/$(TARGET)/bin' \
+        --with-pkgconfigdir='$(PREFIX)/$(TARGET)/lib/pkgconfig' \
         --enable-debug=no \
         --without-pdfium \
         --disable-introspection \

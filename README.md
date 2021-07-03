@@ -36,12 +36,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.51.3    | LGPLv3                                                       |
 | [libspng]       | 0.6.3     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.11.0    | LGPLv3                                                       |
+| [libvips]       | 8.11.2    | LGPLv3                                                       |
 | [libwebp]       | 1.2.0     | New BSD License                                              |
 | [libxml2]       | 2.9.12    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.48.5    | LGPLv3                                                       |
+| [pango]         | 1.48.6    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [zlib-ng]       | 2.0.5     | [zlib-ng Licence]                                            |
 
@@ -92,20 +92,20 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
-| [highway]       | [9fefc7c] | Apache-2.0 License                                           |
+| [highway]       | [91017e4] | Apache-2.0 License                                           |
 | [imagemagick]   | 6.9.12-17 | [ImageMagick License] (Apache-2.0-like)                      |
-| [imath]         | 3.0.4     | BSD 3-Clause                                                 |
-| [libjxl]        | [6783d48] | BSD 3-Clause                                                 |
+| [imath]         | 3.0.5     | BSD 3-Clause                                                 |
+| [libjxl]        | [c8b0bf3] | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
-| [openexr]       | 3.0.4     | BSD 3-Clause                                                 |
+| [openexr]       | 3.0.5     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 21.06.1   | GPLv2                                                        |
+| [poppler]       | 21.07.0   | GPLv2                                                        |
 | [sqlite]        | 3.36.0    | Public domain                                                |
 
-[9fefc7c]: https://github.com/google/highway/commit/9fefc7cef1dd5ee83221b3446a1415020a64eabf
-[6783d48]: https://github.com/libjxl/libjxl/commit/6783d48aa68dbca76b2259f3414efbbffa14eeab
+[91017e4]: https://github.com/google/highway/commit/91017e4f3bb7e3a178e3f2b1f393adea60a6df0d
+[c8b0bf3]: https://github.com/libjxl/libjxl/commit/c8b0bf3789351c9ccd8c48441354c522fd9ab188
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
