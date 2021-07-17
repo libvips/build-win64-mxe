@@ -12,10 +12,6 @@ $(PKG)_DEPS     := cc
 define $(PKG)_BUILD
     '$(TARGET)-meson' \
         --default-library=static \
-        --buildtype=release \
-        $(if $(STRIP_LIB), --strip) \
-        --libdir='lib' \
-        --includedir='include' \
         -Dc_args='-DG_INTL_STATIC_COMPILATION' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'

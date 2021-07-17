@@ -12,7 +12,7 @@ diff --git a/gio/giomodule.c b/gio/giomodule.c
 index 1111111..2222222 100644
 --- a/gio/giomodule.c
 +++ b/gio/giomodule.c
-@@ -1094,28 +1094,6 @@ extern GType _g_win32_network_monitor_get_type (void);
+@@ -1096,28 +1096,6 @@ extern GType _g_win32_network_monitor_get_type (void);
  
  static HMODULE gio_dll = NULL;
  
@@ -84,7 +84,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 24 Jan 2021 13:45:03 +0100
-Subject: [PATCH 2/2] Define INITGUID before including shlobj.h
+Subject: [PATCH 2/2] Add missing {init,shl}guid.h include directives
 
 Fixes undefined symbol errors during static linking:
 
@@ -94,15 +94,32 @@ lld-link: error: undefined symbol: CLSID_ApplicationActivationManager
 lld-link: error: undefined symbol: IID_IApplicationActivationManager
 >>> referenced by libgio-2.0.a(gwin32appinfo.c.obj):(.refptr.IID_IApplicationActivationManager)
 
+lld-link: error: undefined symbol: IID_IExtractIconW
+>>> referenced by libgio-2.0.a(gwin32mount.c.obj):(.refptr.IID_IExtractIconW)
+
 diff --git a/gio/gwin32appinfo.c b/gio/gwin32appinfo.c
 index 1111111..2222222 100644
 --- a/gio/gwin32appinfo.c
 +++ b/gio/gwin32appinfo.c
-@@ -23,6 +23,7 @@
- #include "config.h"
- 
+@@ -34,6 +34,7 @@
+ #include <glib/gstdio.h>
+ #include "glibintl.h"
+ #include <gio/gwin32registrykey.h>
++#include <initguid.h>
+ #include <shlobj.h>
+ /* Contains the definitions from shlobj.h that are
+  * guarded as Windows8-or-newer and are unavailable
+diff --git a/gio/gwin32mount.c b/gio/gwin32mount.c
+index 1111111..2222222 100644
+--- a/gio/gwin32mount.c
++++ b/gio/gwin32mount.c
+@@ -27,7 +27,9 @@
+ #define WIN32_MEAN_AND_LEAN
  #define COBJMACROS
-+#define INITGUID
+ #include <windows.h>
++#include <initguid.h>
+ #include <shlobj.h>
++#include <shlguid.h>
+ #include <shlwapi.h>
  
- #include <string.h>
- 
+ /* At the moment of writing IExtractIconW interface in Mingw-w64

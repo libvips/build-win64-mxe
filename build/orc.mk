@@ -18,10 +18,6 @@ endef
 
 define $(PKG)_BUILD
     '$(TARGET)-meson' \
-        --buildtype=release \
-        $(if $(STRIP_LIB), --strip) \
-        --libdir='lib' \
-        --includedir='include' \
         -Dbenchmarks=disabled \
         -Dexamples=disabled \
         -Dgtk_doc=disabled \

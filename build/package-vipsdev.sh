@@ -44,6 +44,8 @@ type="${target#*.}"
 type="${type%%.*}"
 build_os=`$mxe_dir/ext/config.guess`
 
+export PATH="$mxe_prefix/$build_os/bin:$mxe_prefix/bin:$mxe_prefix/$target.$deps/bin:$PATH"
+
 if [ "$arch" = "i686" ]; then
   arch="w32"
 elif [ "$arch" = "x86_64" ]; then
@@ -88,8 +90,7 @@ if [ "$ZLIB_NG" = "false" ]; then
 fi
 
 # Utilities
-peldd=$mxe_prefix/$build_os/bin/peldd
-strip=$mxe_prefix/bin/$target.$deps-strip
+strip=$target.$deps-strip
 
 # Directories
 install_dir=$mxe_prefix/$target.$deps
@@ -106,7 +107,7 @@ whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math
 whitelist+=(userenv.dll)
 
 # Copy libvips and dependencies with pe-util
-binaries=$($peldd $bin_dir/$target_dll --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
+binaries=$(peldd $bin_dir/$target_dll --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
 for dll in $binaries; do
   cp $dll $repackage_dir/bin
 done
@@ -115,7 +116,7 @@ done
 # which are not yet present in the bin directory.
 if [ -d "$module_dir" ]; then
   for module in $module_dir/*.dll; do
-    binaries=$($peldd $module --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --transitive)
+    binaries=$(peldd $module --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --transitive)
     for dll in $binaries; do
       cp -n $dll $repackage_dir/bin
     done

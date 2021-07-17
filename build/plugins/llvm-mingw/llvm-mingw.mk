@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/fc1b1ba1109db28533f53fdf3587f84156cb754d
-$(PKG)_VERSION  := fc1b1ba
-$(PKG)_CHECKSUM := f7fdec8afdff9ceaa1e7a8136b42b7bc6b88397377c8b3380da06710e169da36
+# https://github.com/mstorsjo/llvm-mingw/tarball/277b8c4c27ad2eb3ce6db00f735e9399cc71cd4d
+$(PKG)_VERSION  := 277b8c4
+$(PKG)_CHECKSUM := a36ea84add164dd3ae6befc652098ce8a1caf997d07ee0fb3d17dd8c73fce0d6
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := mingw-w64
@@ -64,7 +64,7 @@ define $(PKG)_PRE_BUILD
                  > '$(PREFIX)/bin/$(TARGET)-$(EXEC)'; \
         chmod 0755 '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
 
-    $(foreach EXEC, clang-target dlltool ld objdump, \
+    $(foreach EXEC, clang-target ld objdump, \
         $(SED) -i -e 's|^DEFAULT_TARGET=.*|DEFAULT_TARGET=$(TARGET)|' \
                   -e 's|^DIR=.*|DIR="$(PREFIX)/$(TARGET)/bin"|' '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh'; \
         $(INSTALL) -m755 '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh' '$(PREFIX)/$(TARGET)/bin';)
@@ -72,11 +72,15 @@ define $(PKG)_PRE_BUILD
     $(foreach EXEC, clang clang++ gcc g++ cc c99 c11 c++, \
         ln -sf '$(PREFIX)/$(TARGET)/bin/clang-target-wrapper.sh' '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
 
-    $(BUILD_CC) $(SOURCE_DIR)/wrappers/windres-wrapper.c \
+    $(BUILD_CC) '$(SOURCE_DIR)/wrappers/dlltool-wrapper.c' \
+        -o '$(PREFIX)/bin/$(TARGET)-dlltool' \
+        -O2 -Wl,-s -DDEFAULT_TARGET="\"$(TARGET)\""
+
+    $(BUILD_CC) '$(SOURCE_DIR)/wrappers/windres-wrapper.c' \
         -o '$(PREFIX)/bin/$(TARGET)-windres' \
         -O2 -Wl,-s -DLLVM_RC="\"rc\"" -DLLVM_CVTRES="\"cvtres\"" -DDEFAULT_TARGET="\"$(TARGET)\""
 
-    $(foreach EXEC, dlltool ld objdump, \
+    $(foreach EXEC, ld objdump, \
         ln -sf '$(PREFIX)/$(TARGET)/bin/$(EXEC)-wrapper.sh' '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
 endef
 

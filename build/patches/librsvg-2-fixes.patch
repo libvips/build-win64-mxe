@@ -33,7 +33,7 @@ diff --git a/Cargo.toml b/Cargo.toml
 index 1111111..2222222 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -30,7 +30,7 @@ edition = "2018"
+@@ -36,7 +36,7 @@ edition = "2018"
  
  [lib]
  name = "librsvg"

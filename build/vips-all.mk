@@ -16,7 +16,8 @@ $(PKG)_DEPS     := cc libwebp librsvg glib pango libgsf \
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
     mkdir -p $(PREFIX)/$(TARGET)/vips-packaging
-    $(foreach f,COPYING ChangeLog README.md AUTHORS, cp '$(SOURCE_DIR)/$f' '$(PREFIX)/$(TARGET)/vips-packaging';)
+    $(foreach f, COPYING ChangeLog README.md AUTHORS, \
+        cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
 
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \
@@ -92,4 +93,8 @@ define $(PKG)_BUILD
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
+
+    # some files were misplaced in bin/ due to --libdir
+    $(foreach f, libvips.dll.a libvips-cpp.dll.a, \
+        mv '$(PREFIX)/$(TARGET)/bin/$(f)' '$(PREFIX)/$(TARGET)/lib';)
 endef

@@ -42,8 +42,7 @@ fi
 
 deps="${1:-web}"
 target="${2:-x86_64-w64-mingw32.shared.win32}"
-dlltool=$mxe_prefix/bin/$target.$deps-dlltool
-gendeftool=$mxe_prefix/$target.$deps/bin/gendef
+dlltool=$target.$deps-dlltool
 
 cd $repackage_dir
 
@@ -62,7 +61,7 @@ for dllfile in bin/*.dll; do
 
   if [ ! -f lib/$defname ]; then
     echo "Generating lib/$defname file for $base"
-    $gendeftool - $dllfile > lib/$defname 2> /dev/null
+    gendef - $dllfile > lib/$defname 2> /dev/null
   fi
 
   if [ ! -f lib/$libname ]; then

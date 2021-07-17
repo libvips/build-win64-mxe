@@ -12,7 +12,7 @@ diff --git a/configure.ac b/configure.ac
 index 1111111..2222222 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -78,13 +78,20 @@ dnl if the system support linker version scripts for symbol versioning
+@@ -83,13 +83,20 @@ dnl if the system support linker version scripts for symbol versioning
  dnl then add it
  dnl
  VERSION_SCRIPT_FLAGS=

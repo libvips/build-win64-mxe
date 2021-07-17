@@ -24,8 +24,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.10.4    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.10    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.6    | LGPLv3                                                       |
-| [glib]          | 2.68.3    | LGPLv3                                                       |
-| [harfbuzz]      | 2.8.1     | MIT Licence                                                  |
+| [glib]          | 2.69.0    | LGPLv3                                                       |
+| [harfbuzz]      | 2.8.2     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
@@ -33,7 +33,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.12.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
-| [librsvg]       | 2.51.3    | LGPLv3                                                       |
+| [librsvg]       | 2.51.4    | LGPLv3                                                       |
 | [libspng]       | 0.6.3     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.11.2    | LGPLv3                                                       |
@@ -41,7 +41,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.9.12    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.48.6    | LGPLv3                                                       |
+| [pango]         | 1.48.7    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [zlib-ng]       | 2.0.5     | [zlib-ng Licence]                                            |
 
@@ -92,10 +92,10 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 3.49      | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
-| [highway]       | [91017e4] | Apache-2.0 License                                           |
+| [highway]       | [c7d83de] | Apache-2.0 License                                           |
 | [imagemagick]   | 6.9.12-17 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.0.5     | BSD 3-Clause                                                 |
-| [libjxl]        | [c8b0bf3] | BSD 3-Clause                                                 |
+| [libjxl]        | [2db3204] | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 2.0.0     | Public domain                                                |
 | [openexr]       | 3.0.5     | BSD 3-Clause                                                 |
@@ -104,8 +104,8 @@ Same as libvips-web + these extra dependencies:
 | [poppler]       | 21.07.0   | GPLv2                                                        |
 | [sqlite]        | 3.36.0    | Public domain                                                |
 
-[91017e4]: https://github.com/google/highway/commit/91017e4f3bb7e3a178e3f2b1f393adea60a6df0d
-[c8b0bf3]: https://github.com/libjxl/libjxl/commit/c8b0bf3789351c9ccd8c48441354c522fd9ab188
+[c7d83de]: https://github.com/google/highway/commit/c7d83dee21a55607a3032a751de57eb72eaa4987
+[2db3204]: https://github.com/libjxl/libjxl/commit/2db3204b23b96a169ae851faffdef2ae1c41b018
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/

@@ -46,16 +46,16 @@ imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.51.3
-librsvg_CHECKSUM := 4f83d40484bd69d1944d203090b50b812ec6aa553195e4f6d67d03d135897c7f
+librsvg_VERSION  := 2.51.4
+librsvg_CHECKSUM := 0b87d61de9b973aac1fdb9583368b9a893e67f5f7cb75c3e8f7de142557aca00
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.48.6
-pango_CHECKSUM := 3027cd6b5e34bff49c38c769ca651a5f9ef6e0d54cadaa1263d872044bedc7dd
+pango_VERSION  := 1.48.7
+pango_CHECKSUM := 28a82f6a6cab60aa3b75a90f04197ead2d311fa8fe8b7bfdf8666e2781d506dc
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -72,8 +72,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.68.3
-glib_CHECKSUM := e7e1a3c20c026109c45c9ec4a31d8dcebc22e86c69486993e565817d64be3138
+glib_VERSION  := 2.69.0
+glib_CHECKSUM := 1cdb3fd8610f3c57b6622e5cd68e0a3210561d80b0eceb971eb51fb8b63dbfae
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -279,12 +279,6 @@ endef
 # build with Meson.
 define harfbuzz_BUILD
     '$(TARGET)-meson' \
-        --buildtype=release \
-        $(if $(STRIP_LIB), --strip) \
-        --libdir='lib' \
-        --bindir='bin' \
-        --libexecdir='bin' \
-        --includedir='include' \
         -Dicu=disabled \
         -Dtests=disabled \
         -Dintrospection=disabled \
@@ -295,6 +289,24 @@ define harfbuzz_BUILD
 
     ninja -C '$(BUILD_DIR)' install
 endef
+
+# TODO(kleisauke): build with the Meson build system once a new version is available
+#define freetype_BUILD_COMMON
+#    '$(TARGET)-meson' \
+#        -Dharfbuzz=enabled \
+#        -Dpng=enabled \
+#        -Dzlib=enabled \
+#        -Dbrotli=disabled \
+#        -Dbzip2=disabled \
+#        '$(SOURCE_DIR)' \
+#        '$(BUILD_DIR)'
+#
+#    ninja -C '$(BUILD_DIR)' install
+#endef
+
+#define freetype-bootstrap_BUILD
+#    $(subst harfbuzz=enabled,harfbuzz=disabled,$(freetype_BUILD_COMMON))
+#endef
 
 define freetype_BUILD
     # alias libharfbuzz and libfreetype to satisfy circular dependence
@@ -320,7 +332,6 @@ define libgsf_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --without-gdk-pixbuf \
-        --without-python \
         --without-bz2 \
         --with-zlib \
         --disable-nls \
@@ -334,12 +345,6 @@ endef
 # build with the Meson build system
 define gdk-pixbuf_BUILD
     '$(TARGET)-meson' \
-        --buildtype=release \
-        $(if $(STRIP_LIB), --strip) \
-        --libdir='lib' \
-        --bindir='bin' \
-        --libexecdir='bin' \
-        --includedir='include' \
         -Dbuiltin_loaders='jpeg,png,tiff' \
         -Dintrospection=disabled \
         $(if $(IS_INTL_DUMMY), -Dc_link_args='-lintl') \
@@ -355,12 +360,6 @@ define pixman_BUILD
     $(SED) -i "/subdir('test')/{N;d;}" '$(SOURCE_DIR)/meson.build'
 
     '$(TARGET)-meson' \
-        --buildtype=release \
-        $(if $(STRIP_LIB), --strip) \
-        --libdir='lib' \
-        --bindir='bin' \
-        --libexecdir='bin' \
-        --includedir='include' \
         -Dopenmp=disabled \
         -Dgtk=disabled \
         '$(SOURCE_DIR)' \
@@ -372,12 +371,6 @@ endef
 # build fribidi with the Meson build system
 define fribidi_BUILD
     '$(TARGET)-meson' \
-        --buildtype=release \
-        $(if $(STRIP_LIB), --strip) \
-        --libdir='lib' \
-        --bindir='bin' \
-        --libexecdir='bin' \
-        --includedir='include' \
         -Ddocs=false \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
@@ -472,11 +465,6 @@ define pango_BUILD
     $(SED) -i "/subdir('utils')/{N;N;N;d;}" '$(SOURCE_DIR)/meson.build'
 
     '$(TARGET)-meson' \
-        --buildtype=release \
-        $(if $(STRIP_LIB), --strip) \
-        --libdir='lib' \
-        --libexecdir='bin' \
-        --includedir='include' \
         -Dintrospection=disabled \
         -Dfontconfig=enabled \
         '$(SOURCE_DIR)' \
@@ -504,9 +492,6 @@ define librsvg_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-introspection \
-        --disable-nls \
-        --without-libiconv-prefix \
-        --without-libintl-prefix \
         RUST_TARGET='$(ARCH_NAME)-pc-windows-gnu' \
         CARGO='$(TARGET)-cargo' \
         RUSTC='$(TARGET)-rustc'
@@ -582,7 +567,6 @@ define libwebp_BUILD
         --disable-jpeg \
         --disable-tiff \
         --disable-gif \
-        --disable-nls \
         --enable-libwebpmux \
         --enable-libwebpdemux
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
@@ -692,19 +676,13 @@ define glib_BUILD
     $(if $(BUILD_STATIC), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(glib_PATCHES))))/glib-static.patch)
 
-    # cross build
-    # build as shared library, since we need `libgobject-2.0-0.dll`
+    # Build as shared library, since we need `libgobject-2.0-0.dll`
     # and `libglib-2.0-0.dll` for the language bindings.
-    '$(TARGET)-meson' \
+    # Enable networking to allow libpcre to be downloaded from WrapDB
+    MXE_ENABLE_NETWORK=1 '$(TARGET)-meson' \
         --default-library=shared \
-        --buildtype=release \
-        $(if $(STRIP_LIB), --strip) \
-        --libdir='lib' \
-        --bindir='bin' \
-        --libexecdir='bin' \
-        --includedir='include' \
+        --force-fallback-for=libpcre \
         -Dforce_posix_threads=false \
-        -Dinternal_pcre=true \
         -Dnls=disabled \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'

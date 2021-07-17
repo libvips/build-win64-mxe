@@ -5,8 +5,8 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the compiler-rt-sanitizers package
-$(PKG)_VERSION  := 12.0.0
-$(PKG)_CHECKSUM := 9ed1688943a4402d7c904cc4515798cdb20080066efa010fe7e1f2551b423628
+$(PKG)_VERSION  := 12.0.1
+$(PKG)_CHECKSUM := 129cb25cd13677aad951ce5c2deb0fe4afc1e9d98950f53b51bdcfb5a73afa0e
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-project-$(subst -,,$($(PKG)_VERSION)).src
@@ -83,18 +83,13 @@ define $(PKG)_BUILD_LIBUNWIND
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DLLVM_PATH='$(SOURCE_DIR)/llvm' \
-        -DLLVM_COMPILER_CHECKED=TRUE \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
-        -DCXX_SUPPORTS_CXX11=TRUE \
-        -DCXX_SUPPORTS_CXX_STD=TRUE \
         -DLIBUNWIND_USE_COMPILER_RT=TRUE \
         -DLIBUNWIND_ENABLE_THREADS=TRUE \
         -DLIBUNWIND_ENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
         -DLIBUNWIND_ENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
-        -DLIBUNWIND_ENABLE_CROSS_UNWINDING=FALSE \
-        -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -Wno-dll-attribute-on-redeclaration' \
-        -DCMAKE_C_FLAGS='$(CFLAGS) -Wno-dll-attribute-on-redeclaration'
+        -DLIBUNWIND_ENABLE_CROSS_UNWINDING=FALSE
     $(MAKE) -C '$(BUILD_DIR).libunwind' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).libunwind' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
 
@@ -111,7 +106,6 @@ define $(PKG)_BUILD_LIBCXX
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DLLVM_PATH='$(SOURCE_DIR)/llvm' \
-        -DLLVM_COMPILER_CHECKED=TRUE \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
         -DLIBCXX_USE_COMPILER_RT=ON \
@@ -129,7 +123,6 @@ define $(PKG)_BUILD_LIBCXX
         -DLIBCXX_CXX_ABI_LIBRARY_PATH='$(BUILD_DIR).libcxxabi/lib' \
         -DLIBCXX_LIBDIR_SUFFIX='' \
         -DLIBCXX_INCLUDE_TESTS=FALSE \
-        -DCMAKE_CXX_FLAGS='$(CXXFLAGS) $(if $(BUILD_SHARED),-D_LIBCXXABI_BUILDING_LIBRARY,-D_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS)' \
         -DCMAKE_SHARED_LINKER_FLAGS='-lunwind' \
         -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=FALSE
     $(MAKE) -C '$(BUILD_DIR).libcxx' -j '$(JOBS)' generate-cxx-headers
@@ -140,7 +133,6 @@ define $(PKG)_BUILD_LIBCXX
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DLLVM_PATH='$(SOURCE_DIR)/llvm' \
-        -DLLVM_COMPILER_CHECKED=TRUE \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
         -DLIBCXXABI_USE_COMPILER_RT=ON \
@@ -151,8 +143,8 @@ define $(PKG)_BUILD_LIBCXX
         -DLIBCXXABI_LIBCXX_INCLUDES='$(BUILD_DIR).libcxx/include/c++/v1' \
         -DLIBCXXABI_LIBDIR_SUFFIX='' \
         -DLIBCXXABI_ENABLE_NEW_DELETE_DEFINITIONS=ON \
-        -DCXX_SUPPORTS_CXX_STD=TRUE \
-        $(if $(BUILD_SHARED), -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -U_LIBCPP_BUILDING_LIBRARY -D_LIBCPP_BUILDING_LIBRARY= -U_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS')
+        -DLIBCXX_ENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
+        -DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=TRUE
     $(MAKE) -C '$(BUILD_DIR).libcxxabi' -j '$(JOBS)'
 
     $(MAKE) -C '$(BUILD_DIR).libcxx' -j '$(JOBS)'

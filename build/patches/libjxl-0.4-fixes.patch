@@ -306,7 +306,7 @@ diff --git a/lib/jxl.cmake b/lib/jxl.cmake
 index 1111111..2222222 100644
 --- a/lib/jxl.cmake
 +++ b/lib/jxl.cmake
-@@ -543,7 +543,10 @@ endforeach()
+@@ -545,7 +545,10 @@ endforeach()
  # contains symbols also in libjxl which would conflict if programs try to use
  # both.
  install(TARGETS jxl
