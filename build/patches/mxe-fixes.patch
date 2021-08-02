@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 14 Feb 2020 15:20:00 +0100
-Subject: [PATCH 1/4] Add support for targeting ARM/ARM64
+Subject: [PATCH 1/6] Add support for targeting ARM/ARM64
 
 See: mxe/mxe#2330
 
@@ -86,7 +86,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 17 Jul 2021 15:00:00 +0200
-Subject: [PATCH 2/4] Improve meson wrapper
+Subject: [PATCH 2/6] Improve meson wrapper
 
 
 diff --git a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in b/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
@@ -151,8 +151,74 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 18 Jul 2021 11:30:00 +0200
+Subject: [PATCH 3/6] Ensure grep is non-recursive and done only on *.mk files
+
+For example, this prevents all files under log/, usr/, pkg/, etc.
+from being grep'd when MXE_PLUGIN_DIRS is set to $PWD.
+
+diff --git a/mxe.updates.mk b/mxe.updates.mk
+index 1111111..2222222 100644
+--- a/mxe.updates.mk
++++ b/mxe.updates.mk
+@@ -24,9 +24,9 @@ define GET_LATEST_VERSION
+     tail -1
+ endef
+ 
+-ALL_DIRS := $(MXE_PLUGIN_DIRS) $(shell find $(realpath $(TOP_DIR)/plugins) -type d)
++ALL_DIRS := $(MXE_PLUGIN_DIRS) $(shell find $(realpath $(TOP_DIR)/plugins) -mindepth 1 -type d)
+ GET_LATEST_VERSION_PKGS := $(sort \
+-    $(basename $(notdir $(shell grep -l GET_LATEST_VERSION -r $(ALL_DIRS)))))
++    $(basename $(notdir $(shell grep -s -l GET_LATEST_VERSION $(addsuffix /*.mk,$(ALL_DIRS))))))
+ 
+ .PHONY: check-get-latest-version
+ check-get-latest-version:
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 18 Jul 2021 12:00:00 +0200
+Subject: [PATCH 4/6] Use recursively expanded variables where possible
+
+This should be safe in terms of performance, since these variables
+are evaluated only once.
+
+diff --git a/mxe.patch.mk b/mxe.patch.mk
+index 1111111..2222222 100644
+--- a/mxe.patch.mk
++++ b/mxe.patch.mk
+@@ -115,9 +115,9 @@ $(PREFIX)/installed/patch/%:
+ 	@touch '$@'
+ 
+ 
+-PATCH_FORMAT_PATCHES := $(shell find $(MXE_PLUGIN_DIRS) plugins -name "*-$(PATCH_NAME).patch")
+-PATCH_FORMAT_PKGS    := $(sort $(subst -$(PATCH_NAME),,$(basename $(notdir $(PATCH_FORMAT_PATCHES)))))
+-PATCH_FORMAT_DIRS    := $(sort $(basename $(dir $(PATCH_FORMAT_PATCHES))))
++PATCH_FORMAT_PATCHES = $(shell find $(MXE_PLUGIN_DIRS) plugins -name "*-$(PATCH_NAME).patch")
++PATCH_FORMAT_PKGS    = $(sort $(subst -$(PATCH_NAME),,$(basename $(notdir $(PATCH_FORMAT_PATCHES)))))
++PATCH_FORMAT_DIRS    = $(sort $(basename $(dir $(PATCH_FORMAT_PATCHES))))
+ 
+ .PHONY: refresh-patches
+ refresh-patches:
+diff --git a/mxe.updates.mk b/mxe.updates.mk
+index 1111111..2222222 100644
+--- a/mxe.updates.mk
++++ b/mxe.updates.mk
+@@ -24,8 +24,8 @@ define GET_LATEST_VERSION
+     tail -1
+ endef
+ 
+-ALL_DIRS := $(MXE_PLUGIN_DIRS) $(shell find $(realpath $(TOP_DIR)/plugins) -mindepth 1 -type d)
+-GET_LATEST_VERSION_PKGS := $(sort \
++ALL_DIRS = $(MXE_PLUGIN_DIRS) $(shell find $(realpath $(TOP_DIR)/plugins) -mindepth 1 -type d)
++GET_LATEST_VERSION_PKGS = $(sort \
+     $(basename $(notdir $(shell grep -s -l GET_LATEST_VERSION $(addsuffix /*.mk,$(ALL_DIRS))))))
+ 
+ .PHONY: check-get-latest-version
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 3 Mar 2020 15:00:00 +0100
-Subject: [PATCH 3/4] Update libffi test
+Subject: [PATCH 5/6] Update libffi test
 
 See:
 http://www.chiark.greenend.org.uk/doc/libffi-dev/html/Simple-Example.html#Simple-Example
@@ -203,7 +269,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 2 Mar 2021 13:00:00 +0100
-Subject: [PATCH 4/4] Allow networking when MXE_ENABLE_NETWORK is set
+Subject: [PATCH 6/6] Allow networking when MXE_ENABLE_NETWORK is set
 
 
 diff --git a/Makefile b/Makefile

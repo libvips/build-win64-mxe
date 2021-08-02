@@ -40,8 +40,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-17
-imagemagick_CHECKSUM := 453c42cb1c837b3a125150743d3f6591d157e3ca753aee760a9b5f1c070c52ac
+imagemagick_VERSION  := 6.9.12-19
+imagemagick_CHECKSUM := 2f184f1f5c3e19849347b2b4acb6dd074290903d36fa5924956ee06c85ddf783
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -98,8 +98,8 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.0.5
-openexr_CHECKSUM := 7aa6645da70e9a0cce8215d25030cfd4f4b17b4abf1ceec314f7eae15674e8e4
+openexr_VERSION  := 3.1.0
+openexr_CHECKSUM := 8c2ff765368a28e8210af741ddf91506cef40f1ed0f1a08b6b73bb3a7faf8d93
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -138,9 +138,9 @@ fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
-# upstream version is 21.02.0
-poppler_VERSION  := 21.07.0
-poppler_CHECKSUM := e26ab29f68065de4d6562f0a3e2b5435a83ca92be573b99a1c81998fa286a4d4
+# upstream version is 21.06.1
+poppler_VERSION  := 21.08.0
+poppler_CHECKSUM := e9cf5dc5964bce4bb0264d1c4f8122706c910588b421cfc30abc97d6b23e602d
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -700,7 +700,7 @@ define openexr_BUILD
         -DOPENEXR_INSTALL_PKG_CONFIG=ON \
         -DOPENEXR_ENABLE_THREADING=$(if $(WIN32_THREADS),OFF,ON) \
         -DOPENEXR_INSTALL_TOOLS=OFF \
-        -DOPENEXR_BUILD_UTILS=OFF \
+        -DOPENEXR_BUILD_TOOLS=OFF \
         -DBUILD_TESTING=OFF \
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'

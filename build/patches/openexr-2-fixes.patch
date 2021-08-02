@@ -172,6 +172,28 @@ index 1111111..2222222 100644
  	_fromYca->readPixels (scanLine1, scanLine2);
      }
      else
+diff --git a/src/lib/OpenEXRCore/unpack.c b/src/lib/OpenEXRCore/unpack.c
+index 1111111..2222222 100644
+--- a/src/lib/OpenEXRCore/unpack.c
++++ b/src/lib/OpenEXRCore/unpack.c
+@@ -11,7 +11,7 @@
+ #include <string.h>
+ 
+ #if defined(__x86_64__) || defined(_M_X64)
+-#    ifndef _WIN32
++#    if !defined(_MSC_VER) || defined(__clang__)
+ #        include <cpuid.h>
+ #    endif
+ #endif
+@@ -143,7 +143,7 @@ static void (*half_to_float_buffer) (float*, const uint16_t*, int) =
+ static void
+ choose_half_to_float_impl ()
+ {
+-#        ifdef _WIN32
++#        if defined(_MSC_VER) && !defined(__clang__)
+     int regs[4];
+ 
+     __cpuid (regs, 0);
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
