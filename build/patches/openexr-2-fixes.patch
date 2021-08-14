@@ -58,21 +58,6 @@ index 1111111..2222222 100644
  
  #include "IlmThreadSemaphore.h"
  #include "Iex.h"
-diff --git a/src/lib/OpenEXR/ImfKeyCode.h b/src/lib/OpenEXR/ImfKeyCode.h
-index 1111111..2222222 100644
---- a/src/lib/OpenEXR/ImfKeyCode.h
-+++ b/src/lib/OpenEXR/ImfKeyCode.h
-@@ -90,8 +90,9 @@ class IMF_EXPORT_TYPE KeyCode
- 
-     IMF_EXPORT
-     KeyCode (const KeyCode &other);
--    IMF_EXPORT
-+
-     ~KeyCode() = default;
-+
-     IMF_EXPORT
-     KeyCode & operator = (const KeyCode &other);
- 
 diff --git a/src/lib/OpenEXR/ImfRgbaFile.cpp b/src/lib/OpenEXR/ImfRgbaFile.cpp
 index 1111111..2222222 100644
 --- a/src/lib/OpenEXR/ImfRgbaFile.cpp
@@ -176,8 +161,8 @@ diff --git a/src/lib/OpenEXRCore/unpack.c b/src/lib/OpenEXRCore/unpack.c
 index 1111111..2222222 100644
 --- a/src/lib/OpenEXRCore/unpack.c
 +++ b/src/lib/OpenEXRCore/unpack.c
-@@ -11,7 +11,7 @@
- #include <string.h>
+@@ -12,7 +12,7 @@
+ #include <stdbool.h>
  
  #if defined(__x86_64__) || defined(_M_X64)
 -#    ifndef _WIN32
@@ -185,7 +170,7 @@ index 1111111..2222222 100644
  #        include <cpuid.h>
  #    endif
  #endif
-@@ -143,7 +143,7 @@ static void (*half_to_float_buffer) (float*, const uint16_t*, int) =
+@@ -144,7 +144,7 @@ static void (*half_to_float_buffer) (float*, const uint16_t*, int) =
  static void
  choose_half_to_float_impl ()
  {

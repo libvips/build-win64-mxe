@@ -54,8 +54,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.48.7
-pango_CHECKSUM := 28a82f6a6cab60aa3b75a90f04197ead2d311fa8fe8b7bfdf8666e2781d506dc
+pango_VERSION  := 1.48.8
+pango_CHECKSUM := 009d9d830ecbe11911d6637e48eec1c51390d3d12eb286035ef7c641f3c87410
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -71,9 +71,17 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
+# upstream version is 1.2.0
+libwebp_VERSION  := 1.2.1
+libwebp_CHECKSUM := 808b98d2f5b84e9b27fdef6c5372dac769c3bda4502febbfa5031bd3c4d7d018
+libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
+libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
+libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
+libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
+
 # upstream version is 2.50.2
-glib_VERSION  := 2.69.0
-glib_CHECKSUM := 1cdb3fd8610f3c57b6622e5cd68e0a3210561d80b0eceb971eb51fb8b63dbfae
+glib_VERSION  := 2.69.1
+glib_CHECKSUM := f92f34057a091fc8638d91f10cece842cb8618e9a1090b0ddb19cc15a21bf39c
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -87,6 +95,15 @@ libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
 libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)
 
+# Override libjpeg-turbo patch with our own
+# upstream version is 2.1.0
+libjpeg-turbo_VERSION  := 2.1.1
+libjpeg-turbo_CHECKSUM := b76aaedefb71ba882cbad4e9275b30c2ae493e3195be0a099425b5c6b99bd510
+libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
+libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
+libjpeg-turbo_URL      := https://$(SOURCEFORGE_MIRROR)/project/libjpeg-turbo/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
+
 # upstream version is 1.16.0
 cairo_VERSION  := 1.17.4
 cairo_CHECKSUM := 74b24c1ed436bbe87499179a3b27c43f4143b8676d8ad237a6fa787401959705
@@ -98,16 +115,16 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.1.0
-openexr_CHECKSUM := 8c2ff765368a28e8210af741ddf91506cef40f1ed0f1a08b6b73bb3a7faf8d93
+openexr_VERSION  := 3.1.1
+openexr_CHECKSUM := 045254e201c0f87d1d1a4b2b5815c4ae54845af2e6ec0ab88e979b5fdb30a86e
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 3410
-cfitsio_VERSION  := 3.49
-cfitsio_CHECKSUM := 5b65a20d5c53494ec8f638267fca4a629836b7ac8dd0ef0266834eab270ed4b3
+cfitsio_VERSION  := 4.0.0
+cfitsio_CHECKSUM := b2a8efba0b9f86d3e1bd619f662a476ec18112b4f27cc441cc680a4e3777425e
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
@@ -155,9 +172,18 @@ nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
 nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
+# upstream version is 9.0.0
+# Update MinGW-w64 to 4613211
+# https://github.com/mirror/mingw-w64/tarball/4613211c6bfcb220dec9a116a76c5c9aff1939a3
+mingw-w64_VERSION  := 4613211
+mingw-w64_CHECKSUM := 8062c83070a599b3480e1ee128438350d476e5f79d53a2130b6a9502aa9bb6aa
+mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
+mingw-w64_SUBDIR   := mirror-mingw-w64-$(mingw-w64_VERSION)
+mingw-w64_FILE     := mirror-mingw-w64-$(mingw-w64_VERSION).tar.gz
+mingw-w64_URL      := https://github.com/mirror/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
+
 ## Patches that we override with our own
 
-libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 
@@ -710,7 +736,7 @@ endef
 define cfitsio_BUILD_SHARED
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DBUILD_SHARED_LIBS=ON \
-        -DUseCurl=OFF \
+        -DUSE_CURL=OFF \
         '$(SOURCE_DIR)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'

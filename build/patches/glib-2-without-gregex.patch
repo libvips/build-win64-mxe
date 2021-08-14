@@ -103,7 +103,7 @@ diff --git a/gobject/gboxed.c b/gobject/gboxed.c
 index ae48df566..9f1ca04c8 100644
 --- a/gobject/gboxed.c
 +++ b/gobject/gboxed.c
-@@ -147,9 +147,6 @@ G_DEFINE_BOXED_TYPE (GByteArray, g_byte_array, g_byte_array_ref, g_byte_array_un
+@@ -148,9 +148,6 @@ G_DEFINE_BOXED_TYPE (GByteArray, g_byte_array, g_byte_array_ref, g_byte_array_un
  G_DEFINE_BOXED_TYPE (GBytes, g_bytes, g_bytes_ref, g_bytes_unref)
  G_DEFINE_BOXED_TYPE (GTree, g_tree, g_tree_ref, g_tree_unref)
  

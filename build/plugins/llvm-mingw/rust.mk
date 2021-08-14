@@ -2,14 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# Temporarily pin to 2021-08-01 since 2021-08-02 fails to compile
-# https://static.rust-lang.org/dist/2021-08-01/rustc-nightly-src.tar.gz.sha256
+# https://static.rust-lang.org/dist/2021-08-14/rustc-nightly-src.tar.gz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 84163262e4e0f62a38acef9c5bd413b1aa6d1353869939da51f7cf0e9f35f297
+$(PKG)_CHECKSUM := 10a4866f209fec00e2b52e4b5adc46975df4b6ed89d1b7b5b389c1349f1a58e1
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.gz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2021-08-01/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2021-08-14/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -45,8 +44,9 @@ define $(PKG)_BUILD_$(BUILD)
         --disable-codegen-tests \
         --python='$(PYTHON)' \
         --llvm-root='$(PREFIX)/$(BUILD)' \
-        --set target.$(BUILD_RUST).cc='$(BUILD_CC)' \
-        --set target.$(BUILD_RUST).cxx='$(BUILD_CXX)' \
+        --set target.$(BUILD_RUST).cc='$(PREFIX)/$(BUILD)/bin/clang' \
+        --set target.$(BUILD_RUST).cxx='$(PREFIX)/$(BUILD)/bin/clang++' \
+        --set target.$(BUILD_RUST).linker='$(PREFIX)/$(BUILD)/bin/clang' \
         --set target.$(BUILD_RUST).ar='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         --set target.$(BUILD_RUST).ranlib='$(PREFIX)/$(BUILD)/bin/llvm-ranlib'
 
@@ -82,12 +82,10 @@ define $(PKG)_BUILD
     mv -vf '$(BUILD_DIR)/'rs{begin,end}.o '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
 
     # Install Cargo config
-    # Note: -Clinker-flavor=ld.lld will force LLD as linker flavor for targets that
-    # have not set this by default (i.e. {i686,x86_64}-pc-windows-gnu).
-    # Note 2: -Clink-self-contained=yes will link against the {,dll}crt2.o (defined in
+    # Note: -Clink-self-contained=yes will link against the {,dll}crt2.o (defined in
     # pre_link_objects_fallback) from our MinGW distribution.
-    # Note 3: The -Clink-arg=* options adds our MinGW distribution and the compiler-rt
-    # builtins to the standard set of searched paths.
+    # Note 2: The -Lnative=* option adds our MinGW distribution to the standard set
+    # of searched paths.
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
     (echo '[unstable]'; \
      echo 'build-std = ["std", "panic_abort"]'; \
@@ -97,17 +95,10 @@ define $(PKG)_BUILD
      echo '[target.$(TARGET_RUST)]'; \
      echo 'rustflags = ['; \
      echo '    "-C",'; \
-     echo '    "linker-flavor=ld.lld",'; \
-     echo '    "-C",'; \
      echo '    "link-self-contained=yes",'; \
-     echo '    "-C",'; \
-     echo '    "link-arg=-L$(PREFIX)/$(TARGET)/lib",'; \
-     echo '    "-C",'; \
-     echo '    "link-arg=-L$(PREFIX)/$(TARGET)/mingw/lib",'; \
-     echo '    "-C",'; \
-     echo '    "link-arg=-L$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)/lib/windows"'; \
+     echo '    "-Lnative=$(PREFIX)/$(TARGET)/mingw/lib"'; \
      echo ']'; \
-     echo 'linker = "$(PREFIX)/$(BUILD)/bin/ld.lld"'; \
+     echo 'linker = "$(TARGET)-clang"'; \
      echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"';) \
              > '$(PREFIX)/$(TARGET)/.cargo/config'
 
