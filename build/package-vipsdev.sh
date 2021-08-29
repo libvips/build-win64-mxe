@@ -75,10 +75,6 @@ if [ "$DEBUG" = "true" ]; then
   zip_suffix+="-debug"
 fi
 
-if [ "$LLVM" = "false" ]; then
-  zip_suffix+="-gcc"
-fi
-
 if [ "$JPEG_IMPL" != "mozjpeg" ]; then
   zip_suffix+="-$JPEG_IMPL"
 fi
@@ -157,14 +153,9 @@ echo "Generating import files"
 
 echo "Cleaning unnecessary files / directories"
 
-if [ "$LLVM" = "true" ]; then
-  # Ensure that the header files of libc++/libunwind are not distributed
-  rm -rf $repackage_dir/include/c++
-  rm -rf $repackage_dir/include/{*unwind*,mach-o}
-else
-  # Remove native build files of Rust
-  rm -rf $repackage_dir/lib/{*.so*,ldscripts,rustlib}
-fi
+# Ensure that the header files of libc++/libunwind are not distributed
+rm -rf $repackage_dir/include/c++
+rm -rf $repackage_dir/include/{*unwind*,mach-o}
 
 rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
 rm -rf $repackage_dir/etc/bash_completion.d
@@ -211,11 +202,9 @@ echo "Creating $zipfile"
 rm -f $zipfile
 zip -r -qq $zipfile $repackage_dir
 
-if [ "$LLVM" = "true" ]; then
-  zipfile=$vips_package-pdb-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
+zipfile=$vips_package-pdb-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
 
-  echo "Creating $zipfile"
+echo "Creating $zipfile"
 
-  rm -f $zipfile
-  zip -r -qq $zipfile $pdb_dir
-fi
+rm -f $zipfile
+zip -r -qq $zipfile $pdb_dir
