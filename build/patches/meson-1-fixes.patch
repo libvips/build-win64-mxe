@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 25 Nov 2019 12:00:00 +0100
-Subject: [PATCH 1/1] Avoid linking against -pthread on Windows
+Subject: [PATCH 1/1] Avoid linking against -pthread on llvm-mingw
 
 
 diff --git a/mesonbuild/compilers/mixins/clike.py b/mesonbuild/compilers/mixins/clike.py
@@ -13,7 +13,7 @@ index 1111111..2222222 100644
          # TODO: does this belong here or in GnuLike or maybe PosixLike?
          host_m = env.machines[self.for_machine]
 -        if host_m.is_haiku() or host_m.is_darwin():
-+        if host_m.is_haiku() or host_m.is_darwin() or host_m.is_windows():
++        if host_m.is_haiku() or host_m.is_darwin() or (host_m.is_windows() and self.id == 'clang'):
              return []
          return ['-pthread']
  
@@ -27,7 +27,7 @@ index 1111111..2222222 100644
      def thread_flags(self, env: 'Environment') -> T.List[str]:
 -        if env.machines[self.for_machine].is_haiku():
 +        m = env.machines[self.for_machine]
-+        if m.is_haiku() or m.is_windows():
++        if m.is_haiku() or (m.is_windows() and self.id == 'ld.lld'):
              return []
          return ['-pthread']
  

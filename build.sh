@@ -18,7 +18,6 @@ OPTIONS:
 	--with-debug		Build binaries without optimizations to improve debuggability
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
 	--with-jpeg-turbo	Build binaries with libjpeg-turbo instead of mozjpeg
-	--without-llvm		Build binaries with GCC
 	--without-zlib-ng	Build binaries with vanilla zlib
 
 DEPS:
@@ -34,7 +33,7 @@ ARCH:
 	Possible values are:
 	    - x86_64
 	    - i686
-	    - aarch64 (disables --without-llvm)
+	    - aarch64
 
 TYPE:
 	Specifies the type of binary to be created,
@@ -60,7 +59,6 @@ with_ffi_compat=false
 with_disp=false
 with_hevc=false
 with_debug=false
-with_llvm=true
 with_zlib_ng=true
 
 # Parse arguments
@@ -77,7 +75,6 @@ while [ $# -gt 0 ]; do
     --with-disp) with_disp=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
-    --without-llvm) with_llvm=false ;;
     --with-jpegli) jpeg_impl="jpegli" ;;
     --with-jpeg-turbo) jpeg_impl="libjpeg-turbo" ;;
     --without-mozjpeg) jpeg_impl="libjpeg-turbo" ;; # For compat
@@ -97,28 +94,6 @@ set -- "${POSITIONAL[@]}"
 deps="${1:-web}"
 arch="${2:-x86_64}"
 type="${3:-shared}"
-
-if [ "$arch" = "aarch64" ]; then
-  # Force the LLVM toolchain for the ARM64 target,
-  # GCC 14.x does not support Windows on ARM64.
-  with_llvm=true
-fi
-
-if [ "$with_llvm" = "false" ]; then
-  # Use native Win32 threading functions when compiling with
-  # GCC because POSIX threads functionality is significantly
-  # slower than the native Win32 implementation.
-  threads="win32"
-  # Use Dwarf-2 (DW2) stack frame unwinding for i686, as
-  # there is a performance overhead when using SJLJ.
-  # Furthermore, the dwarf exception model is basically
-  # used by default by all popular native GCC-based MinGW
-  # toolchains (such as Rust, MSYS2, Fedora 32+, etc.).
-  # See: https://fedoraproject.org/wiki/Changes/Mingw32GccDwarf2
-  if [ "$arch" = "i686" ]; then
-    unwind="dw2"
-  fi
-fi
 
 if [ "$with_hevc" = "true" ] && [ "$deps" = "web" ]; then
   echo "ERROR: The HEVC-related dependencies can only be built for the \"all\" variant." >&2
@@ -156,7 +131,7 @@ fi
 # GitHub's tarball API requires the short SHA commit as the directory name
 git_commit="${git_commit:0:7}"
 
-target="$arch-w64-mingw32.$type${threads:+.$threads}${unwind:+.$unwind}"
+target="$arch-w64-mingw32.$type"
 
 if [ "$with_ffi_compat" = "true" ]; then
   target+=".ffi"
@@ -203,7 +178,6 @@ $oci_runtime run --rm -t \
   -e "DISP=$with_disp" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
-  -e "LLVM=$with_llvm" \
   -e "ZLIB_NG=$with_zlib_ng" \
   libvips-build-win-mxe \
   $deps \

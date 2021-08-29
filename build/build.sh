@@ -69,18 +69,10 @@ if [ "$initialize" = "true" ]; then
   git apply $work_dir/patches/mxe-fixes.patch
 fi
 
-if [ "$DEBUG" = "false" ]; then
-  settings_suffix="release"
+if [ "$DEBUG" = "true" ]; then
+  cp -f $work_dir/settings/debug.mk $mxe_dir/settings.mk
 else
-  settings_suffix="debug"
-fi
-
-if [ "$LLVM" = "true" ]; then
-  # Copy LLVM settings
-  cp -f $work_dir/settings/llvm-$settings_suffix.mk $mxe_dir/settings.mk
-else
-  # Copy GCC settings
-  cp -f $work_dir/settings/gcc-$settings_suffix.mk $mxe_dir/settings.mk
+  cp -f $work_dir/settings/release.mk $mxe_dir/settings.mk
 fi
 
 # The 'plugins' variable controls which plugins are in use
@@ -106,11 +98,7 @@ if [ "$ZLIB_NG" = "true" ]; then
   plugins+=" $work_dir/plugins/zlib-ng"
 fi
 
-if [ "$LLVM" = "true" ]; then
-  plugins+=" $work_dir/plugins/llvm-mingw"
-else
-  plugins+=" plugins/gcc14 $work_dir/plugins/gcc"
-fi
+plugins+=" $work_dir/plugins/llvm-mingw"
 
 # Avoid shipping the gettext DLL (libintl-8.dll),
 # use a statically build dummy implementation instead.
@@ -148,7 +136,7 @@ if [ "$DISP" = "true" ]; then
 fi
 
 # Build and bundle llvm-mingw tests when debugging
-if [ "$LLVM" = "true" ] && [ "$DEBUG" = "true" ]; then
+if [ "$DEBUG" = "true" ]; then
   make test-llvm-mingw \
     MXE_PLUGIN_DIRS="$plugins" \
     MXE_TARGETS=$target.$deps

@@ -314,7 +314,7 @@ define widl_BUILD
         --build='$(BUILD)' \
         --prefix='$(PREFIX)' \
         --target='$(TARGET)' \
-        $(if $(IS_LLVM), --with-widl-includedir='$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/include')
+        --with-widl-includedir='$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/include'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
 
@@ -355,7 +355,7 @@ define libffi_BUILD
         $(if $(BUILD_STATIC), \
             --disable-structs \
             --disable-raw-api) \
-        $(if $(IS_LLVM), --disable-symvers)
+        --disable-symvers
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
@@ -508,8 +508,7 @@ define imagemagick_BUILD
         --disable-largefile \
         --disable-opencl \
         --disable-openmp \
-        --disable-deprecated \
-        $(if $(IS_GCC), CFLAGS='$(CFLAGS) -Wno-incompatible-pointer-types')
+        --disable-deprecated
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
 endef
@@ -583,8 +582,8 @@ define librsvg_BUILD
         -Ddocs=disabled \
         -Dvala=disabled \
         -Dtests=false \
-        -Dtriplet='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
-        $(if $(IS_LLVM), -Dc_link_args='$(LDFLAGS) -lntdll -luserenv') \
+        -Dtriplet='$(PROCESSOR)-pc-windows-gnullvm' \
+        -Dc_link_args='$(LDFLAGS) -lntdll -luserenv' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -593,8 +592,7 @@ define librsvg_BUILD
     # Add native libraries needed for static linking to .pc file.
     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
     # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
-    $(if $(IS_LLVM), \
-        $(SED) -i "/^Libs.private:/s/$$/ -lntdll -luserenv/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
+    $(SED) -i "/^Libs.private:/s/$$/ -lntdll -luserenv/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc'
 endef
 
 # compile with CMake
@@ -806,7 +804,6 @@ define openexr_BUILD
         -DOPENEXR_INSTALL_TOOLS=OFF \
         -DOPENEXR_BUILD_TOOLS=OFF \
         -DBUILD_TESTING=OFF \
-        $(if $(IS_GCC), -DCMAKE_C_FLAGS='$(CFLAGS) -Wno-incompatible-pointer-types') \
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
