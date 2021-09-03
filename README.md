@@ -21,11 +21,11 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
 | [expat]         | 2.4.1     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.94   | [fontconfig Licence] (BSD-like)                              |
-| [freetype]      | 2.10.4    | [freetype Licence] (BSD-like)                                |
+| [freetype]      | 2.11.0    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.10    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.6    | LGPLv3                                                       |
-| [glib]          | 2.69.1    | LGPLv3                                                       |
-| [harfbuzz]      | 2.8.2     | MIT Licence                                                  |
+| [glib]          | 2.69.2    | LGPLv3                                                       |
+| [harfbuzz]      | 2.9.0     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.22    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
@@ -41,7 +41,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.9.12    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.48.8    | LGPLv3                                                       |
+| [pango]         | 1.49.1    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [zlib-ng]       | 2.0.5     | [zlib-ng Licence]                                            |
 
@@ -53,8 +53,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [expat]: https://github.com/libexpat/libexpat
 [fontconfig]: https://gitlab.freedesktop.org/fontconfig/fontconfig
 [fontconfig Licence]: https://gitlab.freedesktop.org/fontconfig/fontconfig/blob/master/COPYING
-[freetype]: https://git.savannah.gnu.org/cgit/freetype/freetype2.git
-[freetype Licence]: https://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/FTL.TXT
+[freetype]: https://gitlab.freedesktop.org/freetype/freetype
+[freetype Licence]: https://gitlab.freedesktop.org/freetype/freetype/blob/master/docs/FTL.TXT
 [fribidi]: https://github.com/fribidi/fribidi
 [gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [glib]: https://gitlab.gnome.org/GNOME/glib
@@ -93,7 +93,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.0.0     | BSD-like                                                     |
 | [fftw]          | 3.3.9     | GPLv2                                                        |
 | [highway]       | 0.14.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-19 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-20 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.2     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.5       | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
@@ -101,7 +101,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.1     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 21.08.0   | GPLv2                                                        |
+| [poppler]       | 21.09.0   | GPLv2                                                        |
 | [sqlite]        | 3.36.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli

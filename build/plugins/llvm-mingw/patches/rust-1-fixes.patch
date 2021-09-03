@@ -290,7 +290,7 @@ diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -93,7 +93,7 @@ extern "C" {
+@@ -102,7 +102,7 @@ extern "C" {
  }
  
  cfg_if::cfg_if! {
@@ -299,12 +299,12 @@ index 1111111..2222222 100644
      // Not ARM EHABI
      #[repr(C)]
      #[derive(Copy, Clone, PartialEq)]
-@@ -107,7 +107,7 @@ if #[cfg(all(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm
+@@ -116,7 +116,7 @@ if #[cfg(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm")))
      pub use _Unwind_Action::*;
  
-     #[cfg_attr(all(feature = "llvm-libunwind",
--                   any(target_os = "fuchsia", target_os = "linux")),
-+                   any(target_os = "fuchsia", target_os = "linux", target_os = "windows")),
-                link(name = "unwind", kind = "static"))]
+     #[cfg_attr(
+-        all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux")),
++        all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux", target_os = "windows")),
+         link(name = "unwind", kind = "static", modifiers = "-bundle")
+     )]
      extern "C" {
-         pub fn _Unwind_GetGR(ctx: *mut _Unwind_Context, reg_index: c_int) -> _Unwind_Word;

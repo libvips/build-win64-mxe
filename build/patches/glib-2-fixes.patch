@@ -42,7 +42,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2042,40 +2042,17 @@ endif
+@@ -2046,40 +2046,17 @@ endif
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.
@@ -104,7 +104,7 @@ index 1111111..2222222 100644
    test_extra_programs += {
      # These three are manual-run tests because they need a session bus but don't bring one up themselves
      # FIXME: these build but don't seem to work!
-@@ -568,7 +568,7 @@ if installed_tests_enabled
+@@ -570,7 +570,7 @@ if installed_tests_enabled
    endforeach
  endif
  
