@@ -126,6 +126,10 @@ fi
 
 target="$arch-w64-mingw32.$type.$threads${unwind:+.$unwind}"
 
+if [ "$with_debug" = "true" ]; then
+  target+=".debug"
+fi
+
 # Is docker available?
 if ! [ -x "$(command -v docker)" ]; then
   echo "ERROR: Please install docker." >&2

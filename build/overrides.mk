@@ -40,14 +40,14 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-20
-imagemagick_CHECKSUM := 8fa7addb7eac2dd417c7fbed46ff9dd5614abf7cefea4d786375306bec2659b1
+imagemagick_VERSION  := 6.9.12-23
+imagemagick_CHECKSUM := 17fd6629d4e14f0cd8432ff1a4f1d65ec312549dcfd409eb062b0966e314e7ac
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.51.4
-librsvg_CHECKSUM := 0b87d61de9b973aac1fdb9583368b9a893e67f5f7cb75c3e8f7de142557aca00
+librsvg_VERSION  := 2.52.0
+librsvg_CHECKSUM := bd821fb3e16494b61f5185addd23b726b064f203122b3ab4b3d5d7a44e6bf393
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -72,8 +72,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.69.2
-glib_CHECKSUM := a62249e35a8635175a697b3215f1df2b89e0fbb4adb520dcbe21a3ae1ebb8882
+glib_VERSION  := 2.70.0
+glib_CHECKSUM := 200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -131,8 +131,8 @@ fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
 
 # upstream version is 3.3.8
-fftw_VERSION  := 3.3.9
-fftw_CHECKSUM := bf2c7ce40b04ae811af714deb512510cc2c17b9ab9d6ddcf49fe4487eea7af3d
+fftw_VERSION  := 3.3.10
+fftw_CHECKSUM := 56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467
 fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fftw-[0-9]*.patch)))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
@@ -156,14 +156,14 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 9.0.0
-# Update MinGW-w64 to 4613211
-# https://github.com/mirror/mingw-w64/tarball/4613211c6bfcb220dec9a116a76c5c9aff1939a3
-mingw-w64_VERSION  := 4613211
-mingw-w64_CHECKSUM := 8062c83070a599b3480e1ee128438350d476e5f79d53a2130b6a9502aa9bb6aa
+# Update MinGW-w64 to 586baa1
+# https://github.com/mingw-w64/mingw-w64/tarball/586baa17bb41dd78addd8cbb6415cfd24d24e925
+mingw-w64_VERSION  := 586baa1
+mingw-w64_CHECKSUM := 24d0892f9f96e998abd610f0ec5194f1c4f60400b887045360992083dc8b549f
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
-mingw-w64_SUBDIR   := mirror-mingw-w64-$(mingw-w64_VERSION)
-mingw-w64_FILE     := mirror-mingw-w64-$(mingw-w64_VERSION).tar.gz
-mingw-w64_URL      := https://github.com/mirror/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
+mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
+mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
+mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
 
 ## Patches that we override with our own
 
@@ -244,6 +244,22 @@ fontconfig_DEPS         := $(filter-out  gettext,$(fontconfig_DEPS))
 cfitsio_DEPS            := cc zlib
 
 ## Override build scripts
+
+# Unexport target specific compiler / linker flags
+define gendef_BUILD
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
+    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/mingw-w64-tools/gendef/configure' \
+        CFLAGS='-Wno-implicit-fallthrough' \
+        --host='$(BUILD)' \
+        --build='$(BUILD)' \
+        --prefix='$(PREFIX)/$(TARGET)' \
+        --target='$(TARGET)'
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
+endef
 
 # libasprintf isn't needed, so build with --disable-libasprintf
 # this definition is for reference purposes only, we use the
@@ -615,7 +631,7 @@ define cairo_BUILD
         --enable-fc \
         --enable-ft \
         --without-x \
-        CPPFLAGS="$(if $(BUILD_STATIC),-DCAIRO_WIN32_STATIC_BUILD)" \
+        $(if $(BUILD_STATIC), CPPFLAGS='-DCAIRO_WIN32_STATIC_BUILD') \
         ax_cv_c_float_words_bigendian=no
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)

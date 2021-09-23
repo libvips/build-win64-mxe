@@ -2,8 +2,8 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.11.3
-$(PKG)_CHECKSUM := 9b0a1d2f477d6fb4298d383a61232bcb4b2ea91ab76a1113d31883b50f3cdf01
+$(PKG)_VERSION  := 8.11.4
+$(PKG)_CHECKSUM := 5043f38828a0ff9f2275f9252f69e14f701ef11f55786cda8aa6ce2c4fbed2f7
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libvips/libvips/releases,v
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
@@ -72,19 +72,14 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
-    # --libdir argument ensures that the dynamic modules
-    # are installed and found in /bin (Windows convention).
-    # --with-pkgconfigdir argument is needed since we have
-    # overwritten the $libdir variable.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
-        --libdir='$(PREFIX)/$(TARGET)/bin' \
-        --with-pkgconfigdir='$(PREFIX)/$(TARGET)/lib/pkgconfig' \
         --enable-debug=no \
         --without-pdfium \
         --disable-introspection \
         --disable-deprecated \
-        --with-heif=$(if $(IS_HEVC),module,yes)
+        --with-heif=$(if $(IS_HEVC),module,yes) \
+        CPPFLAGS='-DVIPS_DLLDIR_AS_LIBDIR'
 
     # remove -nostdlib from linker commandline options
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
@@ -93,8 +88,4 @@ define $(PKG)_BUILD
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
-
-    # some files were misplaced in bin/ due to --libdir
-    $(foreach f, libvips.dll.a libvips-cpp.dll.a, \
-        mv '$(PREFIX)/$(TARGET)/bin/$(f)' '$(PREFIX)/$(TARGET)/lib';)
 endef

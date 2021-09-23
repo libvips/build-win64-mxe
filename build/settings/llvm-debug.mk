@@ -5,7 +5,7 @@
 # Turn on debugging
 export CFLAGS   := -g -Og -fdata-sections -ffunction-sections
 export CXXFLAGS := -g -Og -fdata-sections -ffunction-sections
-export LDFLAGS  := -Wl,--gc-sections
+export LDFLAGS  := -Wl,--gc-sections -Wl,-lucrtbased
 
 # Clang produces debug info in DWARF format by default.
 # To debug with WinDbg (PDB format) use:

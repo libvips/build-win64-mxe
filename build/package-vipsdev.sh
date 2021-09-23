@@ -95,16 +95,21 @@ strip=$target.$deps-strip
 # Directories
 install_dir=$mxe_prefix/$target.$deps
 bin_dir=$install_dir/bin
-module_dir=$install_dir/bin/vips-modules-$vips_version
+module_dir=$install_dir/lib/vips-modules-$vips_version
 
 echo "Copying libvips and dependencies"
 
-# Need to whitelist the Universal C Runtime (CRT) DLLs
-# Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
-whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
+if [ "$DEBUG" = "true" ]; then
+  # Whitelist ucrtbased.dll for debug builds
+  whitelist=(ucrtbased.dll)
+else
+  # Whitelist the API set DLLs
+  # Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
+  whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
 
-# CreateEnvironmentBlock, GetUserProfileDirectoryA, etc.
-whitelist+=(userenv.dll)
+  # CreateEnvironmentBlock, GetUserProfileDirectoryA, etc.
+  whitelist+=(userenv.dll)
+fi
 
 # Copy libvips and dependencies with pe-util
 binaries=$(peldd $bin_dir/$target_dll --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
@@ -142,7 +147,7 @@ fi
 
 rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
 rm -rf $repackage_dir/include/cairo
-rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,*_too.a,ldscripts,rustlib,xml2Conf.sh}
+rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,*_too.a,vips-modules-*,ldscripts,rustlib,xml2Conf.sh}
 rm -rf $repackage_dir/etc/bash_completion.d
 
 find $repackage_dir/lib -name "*.la" -exec rm -f {} \;
