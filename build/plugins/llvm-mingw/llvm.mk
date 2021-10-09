@@ -5,8 +5,8 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the compiler-rt-sanitizers package
-$(PKG)_VERSION  := 13.0.0-rc4
-$(PKG)_CHECKSUM := 21e60d76cd1efd6ee23d5e0bb74653f865f3a6cab538d27504a05137d9f42d93
+$(PKG)_VERSION  := 13.0.0
+$(PKG)_CHECKSUM := 6075ad30f1ac0e15f07c1bf062c1e1268c241d674f11bd32cdf0e040c71f2bf3
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-project-$(subst -,,$($(PKG)_VERSION)).src
@@ -113,7 +113,6 @@ define $(PKG)_BUILD_LIBCXX
         -DLIBCXX_CXX_ABI_LIBRARY_PATH='$(BUILD_DIR).libcxxabi/lib' \
         -DLIBCXX_LIBDIR_SUFFIX='' \
         -DLIBCXX_INCLUDE_TESTS=FALSE \
-        -DCMAKE_SHARED_LINKER_FLAGS='-lunwind' \
         -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=FALSE
     $(MAKE) -C '$(BUILD_DIR).libcxx' -j '$(JOBS)' generate-cxx-headers
 
@@ -138,15 +137,6 @@ define $(PKG)_BUILD_LIBCXX
 
     $(MAKE) -C '$(BUILD_DIR).libcxx' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).libcxx' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
-
-    $(if $(BUILD_STATIC), \
-        $(TARGET)-ar qcsL \
-            '$(PREFIX)/$(TARGET)/lib/libc++.a' \
-            '$(PREFIX)/$(TARGET)/lib/libunwind.a' \
-    $(else), \
-        $(TARGET)-ar qcsL \
-            '$(PREFIX)/$(TARGET)/lib/libc++.dll.a' \
-            '$(PREFIX)/$(TARGET)/lib/libunwind.dll.a')
 endef
 
 define $(PKG)_BUILD
