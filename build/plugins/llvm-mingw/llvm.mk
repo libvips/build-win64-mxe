@@ -54,15 +54,12 @@ define $(PKG)_BUILD_$(BUILD)
 endef
 
 define $(PKG)_BUILD_COMPILER_RT
-    # i686 -> i386
-    $(eval COMPILER_RT_ARCH := $(if $(findstring i686,$(PROCESSOR)),i386,$(PROCESSOR)))
-
     mkdir '$(BUILD_DIR).compiler-rt'
     cd '$(BUILD_DIR).compiler-rt' && $(TARGET)-cmake '$(SOURCE_DIR)/compiler-rt/lib/builtins' \
         -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)' \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
-        -DCMAKE_C_COMPILER_TARGET='$(COMPILER_RT_ARCH)-windows-gnu' \
+        -DCMAKE_C_COMPILER_TARGET='$(PROCESSOR)-windows-gnu' \
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE \
         -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE
     $(MAKE) -C '$(BUILD_DIR).compiler-rt' -j '$(JOBS)'
@@ -70,6 +67,10 @@ define $(PKG)_BUILD_COMPILER_RT
 endef
 
 define $(PKG)_BUILD_LIBUNWIND
+    # Workaround to avoid needing to specify -unwindlib=none
+    # for all linking until libunwind has been built
+    $(PREFIX)/$(BUILD)/bin/llvm-ar rcs '$(PREFIX)/$(TARGET)/lib/libunwind.a'
+
     mkdir '$(BUILD_DIR).libunwind'
     cd '$(BUILD_DIR).libunwind' && $(TARGET)-cmake '$(SOURCE_DIR)/libunwind' \
         -DCMAKE_CROSSCOMPILING=TRUE \
@@ -85,6 +86,10 @@ define $(PKG)_BUILD_LIBUNWIND
         -DLIBUNWIND_ENABLE_CROSS_UNWINDING=FALSE
     $(MAKE) -C '$(BUILD_DIR).libunwind' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).libunwind' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
+
+    # Remove dummy placeholder libunwind.a for shared builds
+    $(if $(BUILD_SHARED), \
+        rm -f '$(PREFIX)/$(TARGET)/lib/libunwind.a')
 endef
 
 define $(PKG)_BUILD_LIBCXX
