@@ -40,14 +40,14 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-23
-imagemagick_CHECKSUM := 17fd6629d4e14f0cd8432ff1a4f1d65ec312549dcfd409eb062b0966e314e7ac
+imagemagick_VERSION  := 6.9.12-25
+imagemagick_CHECKSUM := a6de8acc96c48a3934b1389f051efbacc1536900362c22ad0c23d8756deaae9a
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.52.0
-librsvg_CHECKSUM := bd821fb3e16494b61f5185addd23b726b064f203122b3ab4b3d5d7a44e6bf393
+librsvg_VERSION  := 2.52.1
+librsvg_CHECKSUM := 949dffcb0414865409e17a6c89ae30bc8bb014a51fba5186f73d1a46c6c5ccde
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -64,8 +64,8 @@ pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERS
 # upstream version is 1.0.8
 # cannot use GH_CONF:
 # fribidi_GH_CONF  := fribidi/fribidi/releases,v
-fribidi_VERSION  := 1.0.10
-fribidi_CHECKSUM := 7f1c687c7831499bcacae5e8675945a39bacbad16ecaa945e9454a32df653c01
+fribidi_VERSION  := 1.0.11
+fribidi_CHECKSUM := 30f93e9c63ee627d1a2cedcf59ac34d45bf30240982f99e44c6e015466b4e73d
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
@@ -98,8 +98,8 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.1.1
-openexr_CHECKSUM := 045254e201c0f87d1d1a4b2b5815c4ae54845af2e6ec0ab88e979b5fdb30a86e
+openexr_VERSION  := 3.1.2
+openexr_CHECKSUM := f5c8f148e8f972e76b47e802aada1c59ef1837f0a9259c6677756e7cd347640f
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -139,8 +139,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 21.06.1
-poppler_VERSION  := 21.09.0
-poppler_CHECKSUM := 5a47fef738c2b99471f9b459a8bf8b40aefb7eed92caa4861c3798b2e126d05b
+poppler_VERSION  := 21.10.0
+poppler_CHECKSUM := 964b5b16290fbec3fae57c2a5bcdea49bb0736bd750c3a3711c47995c9efc394
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -156,10 +156,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 9.0.0
-# Update MinGW-w64 to 586baa1
-# https://github.com/mingw-w64/mingw-w64/tarball/586baa17bb41dd78addd8cbb6415cfd24d24e925
-mingw-w64_VERSION  := 586baa1
-mingw-w64_CHECKSUM := 24d0892f9f96e998abd610f0ec5194f1c4f60400b887045360992083dc8b549f
+# Update MinGW-w64 to acdc7ad
+# https://github.com/mingw-w64/mingw-w64/tarball/acdc7adc9c4dbc7517dac13bce21409229316248
+mingw-w64_VERSION  := acdc7ad
+mingw-w64_CHECKSUM := 76627885148d9707fb721ce7d87c492695c7d5c2f342e285e8bee5abd7646fb4
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz

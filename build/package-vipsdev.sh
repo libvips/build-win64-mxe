@@ -140,10 +140,8 @@ echo "Generating import files"
 
 echo "Cleaning unnecessary files / directories"
 
-# Unnecessary LLVM files
-if [ "$LLVM" = "true" ]; then
-  rm -rf $repackage_dir/include/{c++,fuzzer,profile,sanitizer,xray}
-fi
+# Ensure that the header files of libc++ are not distributed
+[ "$LLVM" = "true" ] && rm -rf $repackage_dir/include/c++
 
 rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
 rm -rf $repackage_dir/include/cairo

@@ -2,41 +2,32 @@
 
 PKG             := compiler-rt-sanitizers
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
-$(PKG)_VERSION  := 12.0.1
+$(PKG)_VERSION  := 13.0.0
 $(PKG)_DEPS     := cc
 $(PKG)_TYPE     := meta
 
 # Note: Ubsan includes <typeinfo> from the C++ headers, so
 # this has to be built after libcxx.
 define $(PKG)_BUILD
-    # i686 -> i386
-    $(eval BUILD_ARCH_NAME := $(if $(findstring i686,$(PROCESSOR)),i386,$(PROCESSOR)))
-
     $(call PREPARE_PKG_SOURCE,llvm,$(SOURCE_DIR))
 
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)/$(llvm_SUBDIR)/compiler-rt' \
+        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)' \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
-        -DCMAKE_C_COMPILER_WORKS=TRUE \
-        -DCMAKE_CXX_COMPILER_WORKS=TRUE \
-        -DCMAKE_C_COMPILER_TARGET='$(BUILD_ARCH_NAME)-windows-gnu' \
+        -DCMAKE_C_COMPILER_TARGET='$(PROCESSOR)-windows-gnu' \
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE \
         -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE \
         -DCOMPILER_RT_BUILD_BUILTINS=FALSE \
         -DCOMPILER_RT_BUILD_LIBFUZZER=FALSE \
         -DCOMPILER_RT_BUILD_PROFILE=FALSE \
         -DCOMPILER_RT_BUILD_MEMPROF=FALSE \
-        -DSANITIZER_CXX_ABI=libc++
+        -DSANITIZER_CXX_ABI=libc++ \
+        $(if $(BUILD_STATIC), -DCMAKE_REQUIRED_LIBRARIES='unwind')
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' install-compiler-rt-headers -j 1
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
 
-    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)/lib/windows'
-
-    find '$(BUILD_DIR)/lib/windows' -name 'libclang_rt.*.a' \
-        -exec $(INSTALL) -m644 {} '$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)/lib/windows' \;
-
-    find '$(BUILD_DIR)/lib/windows' -type f -name 'libclang_rt.*.dll' \
-        -exec $(INSTALL) -m644 {} '$(PREFIX)/$(TARGET)/bin' \;
+    mv -v '$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)/lib/windows/'*.dll '$(PREFIX)/$(TARGET)/bin/'
 endef
 
 # Sanitizers on windows only support x86.
