@@ -343,15 +343,17 @@ Subject: [PATCH 5/6] tsc_timer: sync with highway
 
 Fixes compilation with llvm-mingw targeting i686.
 
+See: https://github.com/libjxl/libjxl/pull/797
+
 diff --git a/lib/profiler/tsc_timer.h b/lib/profiler/tsc_timer.h
 index 1111111..2222222 100644
 --- a/lib/profiler/tsc_timer.h
 +++ b/lib/profiler/tsc_timer.h
-@@ -10,6 +10,29 @@
+@@ -10,20 +10,43 @@
  // ensure exactly the desired regions are measured.
  
  #include <stdint.h>
-+#include <time.h>    // clock_gettime
++#include <time.h>  // clock_gettime
 +
 +#if defined(_WIN32) || defined(_WIN64)
 +#ifndef WIN32_LEAN_AND_MEAN
@@ -377,8 +379,12 @@ index 1111111..2222222 100644
  
  #include <ctime>
  #include <hwy/base.h>
-@@ -21,9 +44,13 @@
+ #include <hwy/cache_control.h>  // LoadFence
  
+-#if HWY_COMPILER_MSVC
+-#include <chrono>
+-#endif  // HWY_COMPILER_MSVC
+-
  namespace profiler {
  
 +// Ticks := platform-specific timer values (CPU cycles on x86). Must be
@@ -393,7 +399,7 @@ index 1111111..2222222 100644
  //
  // Background: RDTSC is not 'serializing'; earlier instructions may complete
  // after it, and/or later instructions may complete before it. 'Fences' ensure
-@@ -59,7 +86,7 @@ namespace profiler {
+@@ -59,7 +82,7 @@ namespace profiler {
  // Using Before+Before leads to higher variance and overhead than After+After.
  // However, After+After includes an LFENCE in the region measurements, which
  // adds a delay dependent on earlier loads. The combination of Before+After
@@ -402,7 +408,7 @@ index 1111111..2222222 100644
  // the first LFENCE already delayed subsequent loads before the measured
  // region. This combination seems not to have been considered in prior work:
  // http://akaros.cs.berkeley.edu/lxr/akaros/kern/arch/x86/rdtsc_test.c
-@@ -71,19 +98,18 @@ namespace profiler {
+@@ -71,19 +94,18 @@ namespace profiler {
  // by several under/over-count errata, so we use the TSC instead.
  
  // Returns a 64-bit timestamp in unit of 'ticks'; to convert to seconds,
@@ -428,7 +434,7 @@ index 1111111..2222222 100644
    asm volatile(
        "lfence\n\t"
        "rdtsc\n\t"
-@@ -95,30 +121,36 @@ static HWY_INLINE HWY_MAYBE_UNUSED uint64_t TicksBefore() {
+@@ -95,30 +117,35 @@ static HWY_INLINE HWY_MAYBE_UNUSED uint64_t TicksBefore() {
        // "memory" avoids reordering. rdx = TSC >> 32.
        // "cc" = flags modified by SHL.
        : "rdx", "memory", "cc");
@@ -439,6 +445,7 @@ index 1111111..2222222 100644
 -          .time_since_epoch()
 -          .count();
 -#else
+-  // Fall back to OS - unsure how to reliably query cntvct_el0 frequency.
 +#elif HWY_ARCH_RVV
 +  asm volatile("rdcycle %0" : "=r"(t));
 +#elif defined(_WIN32) || defined(_WIN64)
@@ -450,7 +457,6 @@ index 1111111..2222222 100644
 +#elif defined(__HAIKU__)
 +  t = system_time_nsecs();  // since boot
 +#else  // POSIX
-   // Fall back to OS - unsure how to reliably query cntvct_el0 frequency.
    timespec ts;
    clock_gettime(CLOCK_MONOTONIC, &ts);
 -  t = ts.tv_sec * 1000000000LL + ts.tv_nsec;

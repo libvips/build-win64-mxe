@@ -40,14 +40,14 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-25
-imagemagick_CHECKSUM := a6de8acc96c48a3934b1389f051efbacc1536900362c22ad0c23d8756deaae9a
+imagemagick_VERSION  := 6.9.12-27
+imagemagick_CHECKSUM := 2dc8037c98e7cef54018bf12659a0a1602cb41c512e72763269fd4625361c069
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.52.1
-librsvg_CHECKSUM := 949dffcb0414865409e17a6c89ae30bc8bb014a51fba5186f73d1a46c6c5ccde
+librsvg_VERSION  := 2.52.3
+librsvg_CHECKSUM := 36e7f5bc88d78608ea7f6c05e4afe4acc1606b9af13c2845d4385073d082b8a4
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -72,8 +72,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.70.0
-glib_CHECKSUM := 200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742
+glib_VERSION  := 2.70.1
+glib_CHECKSUM := f9b7bce7f51753a1f43853bbcaca8bf09e15e994268e29cfd7a76f65636263c0
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -98,8 +98,8 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.1.2
-openexr_CHECKSUM := f5c8f148e8f972e76b47e802aada1c59ef1837f0a9259c6677756e7cd347640f
+openexr_VERSION  := 3.1.3
+openexr_CHECKSUM := 6f70a624d1321319d8269a911c4032f24950cde52e76f46e9ecbebfcb762f28c
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -407,7 +407,7 @@ define lcms_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-zlib \
-        CPPFLAGS="-DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT"
+        CPPFLAGS='-DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef
@@ -507,13 +507,16 @@ define librsvg_BUILD
     # armv7 -> thumbv7a
     $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))
 
+    # Need to link against bcrypt after PR:
+    # https://github.com/rust-lang/rust/pull/84096
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-introspection \
         RUST_TARGET='$(ARCH_NAME)-pc-windows-gnu' \
         CARGO='$(TARGET)-cargo' \
-        RUSTC='$(TARGET)-rustc'
+        RUSTC='$(TARGET)-rustc' \
+        LIBS='-lbcrypt'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_SCRIPTS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=

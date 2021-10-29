@@ -45,7 +45,7 @@ diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -804,7 +804,7 @@ else
+@@ -804,13 +804,10 @@ else
    gio_dtrace_hdr = []
  endif
  
@@ -54,32 +54,46 @@ index 1111111..2222222 100644
    gioenumtypes_h, gioenumtypes_c, gnetworking_h, gio_sources,
    gio_dtrace_hdr, gio_dtrace_obj,
    objects : internal_objects,
+-  version : library_version,
+-  soversion : soversion,
+-  darwin_versions : darwin_versions,
+   install : true,
+   include_directories : [configinc, gioinc],
+   #  '$(gio_win32_res_ldflag)',
 diff --git a/gmodule/meson.build b/gmodule/meson.build
 index 1111111..2222222 100644
 --- a/gmodule/meson.build
 +++ b/gmodule/meson.build
-@@ -72,7 +72,7 @@ if host_system == 'windows'
+@@ -72,11 +72,8 @@ if host_system == 'windows'
    gmodule_sources += [gmodule_win_res]
  endif
  
 -libgmodule = library('gmodule-2.0',
 +libgmodule = static_library('gmodule-2.0',
    sources : gmodule_sources,
-   version : library_version,
-   soversion : soversion,
+-  version : library_version,
+-  soversion : soversion,
+-  darwin_versions : darwin_versions,
+   install : true,
+   include_directories : [configinc, gmoduleinc],
+   dependencies : [libdl_dep, libglib_dep],
 diff --git a/gthread/meson.build b/gthread/meson.build
 index 1111111..2222222 100644
 --- a/gthread/meson.build
 +++ b/gthread/meson.build
-@@ -12,7 +12,7 @@ if host_system == 'windows'
+@@ -12,11 +12,8 @@ if host_system == 'windows'
    gthread_sources += [gthread_win_res]
  endif
  
 -libgthread = library('gthread-2.0',
 +libgthread = static_library('gthread-2.0',
    sources : gthread_sources,
-   version : library_version,
-   soversion : soversion,
+-  version : library_version,
+-  soversion : soversion,
+-  darwin_versions : darwin_versions,
+   install : true,
+   dependencies : [libglib_dep],
+   c_args : ['-DG_LOG_DOMAIN="GThread"' ] + glib_hidden_visibility_args,
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>

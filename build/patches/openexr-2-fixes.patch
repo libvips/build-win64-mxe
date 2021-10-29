@@ -170,10 +170,10 @@ index 1111111..2222222 100644
  #        include <cpuid.h>
  #    endif
  #endif
-@@ -144,7 +144,7 @@ static void (*half_to_float_buffer) (float*, const uint16_t*, int) =
- static void
+@@ -145,7 +145,7 @@ static void (*half_to_float_buffer) (float*, const uint16_t*, int) =
  choose_half_to_float_impl ()
  {
+     // regs[2] in the extended block is ECX, where f16c indicator lives
 -#        ifdef _WIN32
 +#        if defined(_MSC_VER) && !defined(__clang__)
      int regs[4];
