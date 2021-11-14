@@ -40,22 +40,22 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-27
-imagemagick_CHECKSUM := 2dc8037c98e7cef54018bf12659a0a1602cb41c512e72763269fd4625361c069
+imagemagick_VERSION  := 6.9.12-28
+imagemagick_CHECKSUM := 31564e017110287d675bb997233b73a6fb5bd62671ca7f708503d26232f8598b
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.52.3
-librsvg_CHECKSUM := 36e7f5bc88d78608ea7f6c05e4afe4acc1606b9af13c2845d4385073d082b8a4
+librsvg_VERSION  := 2.52.4
+librsvg_CHECKSUM := 660ec8836a3a91587bc9384920132d4c38d1d1718c67fe160c5213fe4dec2928
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.49.1
-pango_CHECKSUM := c4266dc06c01bf0133d3815502426d209de5ea7abd895899e73e7edebaf48f6f
+pango_VERSION  := 1.49.3
+pango_CHECKSUM := 45c403b89910a121ad8eb6d57b5be1d8f19499d39b686435dc6f29b106d2be93
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -139,8 +139,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 21.06.1
-poppler_VERSION  := 21.10.0
-poppler_CHECKSUM := 964b5b16290fbec3fae57c2a5bcdea49bb0736bd750c3a3711c47995c9efc394
+poppler_VERSION  := 21.11.0
+poppler_CHECKSUM := 31b76b5cac0a48612fdd154c02d9eca01fd38fb8eaa77c1196840ecdeb53a584
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz

@@ -3,7 +3,7 @@ From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 23 Sep 2021 17:55:19 +0200
 Subject: [PATCH 1/1] Support for using the DLL directory as libdir
 
-See: https://github.com/libvips/build-win64-mxe/issues/34.
+Upstream-Status: Pending [https://github.com/libvips/build-win64-mxe/issues/34]
 
 diff --git a/libvips/include/vips/util.h b/libvips/include/vips/util.h
 index 1111111..2222222 100644
@@ -21,7 +21,7 @@ diff --git a/libvips/iofuncs/init.c b/libvips/iofuncs/init.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/init.c
 +++ b/libvips/iofuncs/init.c
-@@ -1210,6 +1210,12 @@ vips_guess_prefix( const char *argv0, const char *env_name )
+@@ -1224,6 +1224,12 @@ vips_guess_prefix( const char *argv0, const char *env_name )
  const char *
  vips_guess_libdir( const char *argv0, const char *env_name )
  {
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
  	const char *prefix = vips_guess_prefix( argv0, env_name );
  	static char *libdir = NULL;
  
-@@ -1234,6 +1240,7 @@ vips_guess_libdir( const char *argv0, const char *env_name )
+@@ -1248,6 +1254,7 @@ vips_guess_libdir( const char *argv0, const char *env_name )
  		libdir = g_strdup_printf( "%s/lib", prefix );
  
  	return( libdir );
@@ -46,7 +46,7 @@ diff --git a/libvips/iofuncs/util.c b/libvips/iofuncs/util.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/util.c
 +++ b/libvips/iofuncs/util.c
-@@ -2002,6 +2002,54 @@ DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
+@@ -1975,6 +1975,54 @@ DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
  	return( TRUE );
  }
  #endif

@@ -11,6 +11,8 @@ Preparation for next commit.
 
 [Starting with this commit, my contributions are copyright Benjamin Gilbert.]
 
+Upstream-Status: Accepted [https://github.com/openslide/openslide/commit/fa3e3355ec48924dafc0ff3894ab448c6c6a9ef0]
+
 diff --git a/src/openslide-decode-jp2k.c b/src/openslide-decode-jp2k.c
 index 1111111..2222222 100644
 --- a/src/openslide-decode-jp2k.c
@@ -72,6 +74,8 @@ opj_decode() from failing with the message
 "opj_j2k_apply_nb_tile_parts_correction error".
 
 https://lists.andrew.cmu.edu/pipermail/openslide-users/2015-August/001086.html
+
+Upstream-Status: Accepted [https://github.com/openslide/openslide/commit/64017b5d8dcbf091e55bda59b88d9bb7f87013ad]
 
 diff --git a/src/openslide-decode-jp2k.c b/src/openslide-decode-jp2k.c
 index 1111111..2222222 100644
@@ -159,6 +163,8 @@ can't handle arbitrary characters.  Assume filenames are in UTF-8,
 convert to UTF-16, and pass to _wfopen().
 
 http://lists.andrew.cmu.edu/pipermail/openslide-users/2015-September/001098.html
+
+Upstream-Status: Accepted [https://github.com/openslide/openslide/commit/89bba00be872c27fdd1f7ef08a59e15546165c72]
 
 diff --git a/configure.ac b/configure.ac
 index 1111111..2222222 100644
@@ -286,6 +292,8 @@ beginning of the returned string, causing _wfopen() to fail.  Switch to
 g_utf8_to_utf16(), which should also be more efficient.
 
 Fixes #176.
+
+Upstream-Status: Accepted [https://github.com/openslide/openslide/commit/bbc8ae2757a0e62187a7f79e427445c960f35ff7]
 
 diff --git a/src/openslide-util.c b/src/openslide-util.c
 index 1111111..2222222 100644

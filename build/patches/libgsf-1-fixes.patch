@@ -279,6 +279,7 @@ From: Morten Welinder <terra@gnome.org>
 Date: Sat, 2 May 2020 21:24:12 -0400
 Subject: [PATCH 4/4] Compilation: fix win32 build
 
+Upstream-Status: Accepted [https://gitlab.gnome.org/GNOME/libgsf/-/commit/8441d5863cb90ed48199d6976bc6e2fcfbe3365a]
 
 diff --git a/gsf/Makefile.am b/gsf/Makefile.am
 index 1111111..2222222 100644

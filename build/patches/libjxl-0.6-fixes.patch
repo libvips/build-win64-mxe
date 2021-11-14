@@ -3,7 +3,7 @@ From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 2 Jun 2021 14:07:04 +0200
 Subject: [PATCH 1/6] Remove LCMS mutex
 
-See: https://github.com/libjxl/libjxl/pull/112
+Upstream-Status: Submitted [https://github.com/libjxl/libjxl/pull/112]
 
 diff --git a/lib/jxl/enc_color_management.cc b/lib/jxl/enc_color_management.cc
 index 1111111..2222222 100644
@@ -339,11 +339,17 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Jun 2021 19:38:33 +0200
-Subject: [PATCH 5/6] tsc_timer: sync with highway
+Subject: [PATCH 5/6] tsc_timer.h: sync with nanobenchmark.cc from Highway (#797)
 
-Fixes compilation with llvm-mingw targeting i686.
+This file was originally originated from nanobenchmark.cc on the
+Highway project. Re-syncing this file ensures that the fixes from
+commit google/highway@3769cb2, google/highway@1df8ed4 and
+google/highway@f2efb75 are incorporated.
 
-See: https://github.com/libjxl/libjxl/pull/797
+Including these commits also resolves the compilation with
+llvm-mingw targeting i686 when build with support for profiling.
+
+Upstream-Status: Accepted [https://github.com/libjxl/libjxl/commit/0b70567432ab630c2d71a70ebdf3792fbdbf5768]
 
 diff --git a/lib/profiler/tsc_timer.h b/lib/profiler/tsc_timer.h
 index 1111111..2222222 100644

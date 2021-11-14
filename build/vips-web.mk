@@ -2,15 +2,15 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.11.4
-$(PKG)_CHECKSUM := 5043f38828a0ff9f2275f9252f69e14f701ef11f55786cda8aa6ce2c4fbed2f7
+$(PKG)_VERSION  := 8.12.0
+$(PKG)_CHECKSUM := f19948eaa8663e3d1734ad681cc353db79dd12147bb9e6aec7d942645bb4dd14
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,-rc1,,,-rc1.tar.gz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
+$(PKG)_FILE     := vips-$($(PKG)_VERSION)-rc1.tar.gz
 $(PKG)_DEPS     := cc libwebp librsvg glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
-                   libspng libimagequant orc
+                   libspng libimagequant orc cgif
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -21,6 +21,7 @@ define $(PKG)_PRE_CONFIGURE
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
+     printf '  "cgif": "$(cgif_VERSION)",\n'; \
      printf '  "exif": "$(libexif_VERSION)",\n'; \
      printf '  "expat": "$(expat_VERSION)",\n'; \
      printf '  "ffi": "$(libffi_VERSION)",\n'; \

@@ -201,7 +201,7 @@ diff --git a/src/bootstrap/dist.rs b/src/bootstrap/dist.rs
 index 1111111..2222222 100644
 --- a/src/bootstrap/dist.rs
 +++ b/src/bootstrap/dist.rs
-@@ -290,7 +290,7 @@ impl Step for Mingw {
+@@ -288,7 +288,7 @@ impl Step for Mingw {
      /// without any extra installed software (e.g., we bundle gcc, libraries, etc).
      fn run(self, builder: &Builder<'_>) -> Option<GeneratedTarball> {
          let host = self.host;
