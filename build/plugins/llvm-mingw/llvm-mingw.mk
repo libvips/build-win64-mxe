@@ -7,6 +7,7 @@ $(PKG)_IGNORE   :=
 # https://github.com/mstorsjo/llvm-mingw/tarball/fe57d608deef017c4ac15ab2b9cb156ae4050604
 $(PKG)_VERSION  := fe57d60
 $(PKG)_CHECKSUM := fdfdf95c5a2a5f39cfdb5ab6663c7780074087ba03eb93ef1c23ccf1aa24e04e
+# TODO(kleisauke): Remove this if we omit any dots from our target
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := mingw-w64
@@ -57,20 +58,42 @@ define $(PKG)_PRE_BUILD
     # setup target wrappers
     # Can't symlink here, it will break the basename detection of LLVM. See:
     # sys::path::stem("x86_64-w64-mingw32.shared-ranlib"); -> x86_64-w64-mingw32
-    # https://github.com/llvm/llvm-project/blob/9a432161c68774e6c717616e3d688142e89bbb42/llvm/tools/llvm-ar/llvm-ar.cpp#L1181-L1192
-    $(foreach EXEC, addr2line ar cvtres dlltool nm objcopy ranlib rc strings strip, \
+    # TODO(kleisauke): Remove this if we omit any dots from our target, see:
+    # https://github.com/llvm/llvm-project/blob/llvmorg-13.0.0/llvm/tools/llvm-ar/llvm-ar.cpp#L1272-L1291
+    $(foreach EXEC, addr2line ar cvtres nm objcopy ranlib rc strings strip, \
         (echo '#!/bin/sh'; \
          echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-$(EXEC)" "$$@"') \
                  > '$(PREFIX)/bin/$(TARGET)-$(EXEC)'; \
         chmod 0755 '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
 
     # We need to pass some additional arguments for windres
+    # TODO(kleisauke): Remove this if we omit any dots from our target, see:
+    # https://github.com/llvm/llvm-project/blob/llvmorg-13.0.0/llvm/tools/llvm-rc/llvm-rc.cpp#L266-L277
     (echo '#!/bin/sh'; \
      echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-windres" \
          --preprocessor-arg="--sysroot=$(PREFIX)/$(TARGET)" \
          --target="$(firstword $(subst ., ,$(TARGET)))" "$$@"') \
              > '$(PREFIX)/bin/$(TARGET)-windres'
     chmod 0755 '$(PREFIX)/bin/$(TARGET)-windres'
+
+    # And we need to hint the target machine for dlltool, ouch.
+    # i686 -> i386
+    # x86_64 -> i386:x86-64
+    # armv7 -> arm
+    # aarch64 -> arm64
+    # TODO(kleisauke): Remove this if we omit any dots from our target, see:
+    # https://github.com/llvm/llvm-project/blob/llvmorg-13.0.0/llvm/lib/ToolDrivers/llvm-dlltool/DlltoolDriver.cpp#L96-L107
+    $(eval DLLTOOL_ARCH := $(strip \
+        $(if $(findstring i686,$(PROCESSOR)),i386, \
+        $(if $(findstring x86_64,$(PROCESSOR)),i386:x86-64, \
+        $(if $(findstring armv7,$(PROCESSOR)),arm, \
+        $(if $(findstring aarch64,$(PROCESSOR)),arm64, \
+        $(PROCESSOR)))))))
+    (echo '#!/bin/sh'; \
+     echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-dlltool" \
+         -m $(DLLTOOL_ARCH) "$$@"') \
+             > '$(PREFIX)/bin/$(TARGET)-dlltool'
+    chmod 0755 '$(PREFIX)/bin/$(TARGET)-dlltool'
 
     $(foreach EXEC, clang-target ld objdump, \
         $(SED) -i -e 's|^DEFAULT_TARGET=.*|DEFAULT_TARGET=$(TARGET)|' \
