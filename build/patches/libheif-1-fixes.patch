@@ -96,7 +96,7 @@ diff --git a/libheif/heif_colorconversion.cc b/libheif/heif_colorconversion.cc
 index 1111111..2222222 100644
 --- a/libheif/heif_colorconversion.cc
 +++ b/libheif/heif_colorconversion.cc
-@@ -306,7 +306,7 @@ static inline uint8_t clip_int_u8(int x)
+@@ -303,7 +303,7 @@ static inline uint8_t clip_int_u8(int x)
  
  static inline uint16_t clip_f_u16(float fx, int32_t maxi)
  {
@@ -105,7 +105,7 @@ index 1111111..2222222 100644
    if (x < 0) return 0;
    if (x > maxi) return (uint16_t) maxi;
    return static_cast<uint16_t>(x);
-@@ -1961,7 +1961,7 @@ Op_RGB24_32_to_YCbCr::state_after_conversion(ColorState input_state,
+@@ -1937,7 +1937,7 @@ Op_RGB24_32_to_YCbCr::state_after_conversion(ColorState input_state,
  
  static inline uint8_t clip_f_u8(float fx)
  {
