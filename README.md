@@ -35,9 +35,9 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
 | [librsvg]       | 2.52.4    | LGPLv3                                                       |
-| [libspng]       | 0.7.0     | BSD 2-Clause                                                 |
+| [libspng]       | 0.7.1     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.12.0    | LGPLv3                                                       |
+| [libvips]       | 8.12.1    | LGPLv3                                                       |
 | [libwebp]       | 1.2.1     | New BSD License                                              |
 | [libxml2]       | 2.9.12    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
@@ -97,7 +97,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.0.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 0.15.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-29 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-31 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.3     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
