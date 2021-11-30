@@ -34,6 +34,7 @@ define $(PKG)_BUILD_$(BUILD)
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --prefix='$(PREFIX)/$(BUILD)' \
+        --sysconfdir='etc' \
         --release-channel=nightly \
         --enable-extended \
         --tools=cargo,src \

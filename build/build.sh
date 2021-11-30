@@ -6,7 +6,7 @@ set -e
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
 Usage: $(basename "$0") [OPTIONS] [DEPS] [TARGET]
-Build libvips for Windows
+Build Windows binaries for libvips
 
 OPTIONS:
 	--help	Show the help and exit

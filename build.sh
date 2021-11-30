@@ -4,7 +4,7 @@ function usage()
 {
   cat <<EOF
 Usage: $(basename "$0") [OPTIONS] [DEPS] [ARCH] [TYPE]
-Build libvips for Windows in a Docker container
+Build Windows binaries for libvips in a container
 
 OPTIONS:
 	--help			Show the help and exit
@@ -72,11 +72,6 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-if [ $EUID -eq 0 ]; then
-  echo "ERROR: Please don't run as root -- instead, add yourself to the docker group." >&2
-  exit 1
-fi
-
 # Restore positional parameters
 set -- "${POSITIONAL[@]}"
 
@@ -130,23 +125,24 @@ if [ "$with_debug" = "true" ]; then
   target+=".debug"
 fi
 
-# Is docker available?
-if ! [ -x "$(command -v docker)" ]; then
-  echo "ERROR: Please install docker." >&2
+# Check whether we can build and run OCI-compliant containers
+if [ -x "$(command -v podman)" ]; then
+  oci_runtime=podman
+elif [ -x "$(command -v docker)" ]; then
+  oci_runtime=docker
+else
+  echo "ERROR: OCI-compliant container runtime not found. Please install Podman or Docker." >&2
   exit 1
 fi
 
 # Ensure latest Debian stable base image.
-docker pull buildpack-deps:buster
+$oci_runtime pull buildpack-deps:buster
 
 # Create a machine image with all the required build tools pre-installed.
-docker build -t libvips-build-win-mxe container
+$oci_runtime build -t libvips-build-win-mxe container
 
-# Run build scripts inside container
-# - inheriting the current uid and gid
-# - build dir mounted at /data
-docker run --rm -t \
-  -u $(id -u):$(id -g) \
+# Run build scripts inside a container with the build dir mounted at /data
+$oci_runtime run --rm -t \
   -v $PWD/build:/data \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
