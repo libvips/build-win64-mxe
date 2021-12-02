@@ -135,14 +135,17 @@ else
   exit 1
 fi
 
-# Ensure latest Debian stable base image.
+# Ensure latest Debian stable base image
 $oci_runtime pull buildpack-deps:buster
 
-# Create a machine image with all the required build tools pre-installed.
+# Create a machine image with all the required build tools pre-installed
 $oci_runtime build -t libvips-build-win-mxe container
 
-# Run build scripts inside a container with the build dir mounted at /data
+# Run build scripts inside a container with the:
+# - current UID and GID inherited
+# - build dir mounted at /data
 $oci_runtime run --rm -t \
+  -u $(id -u):$(id -g) \
   -v $PWD/build:/data \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
@@ -153,7 +156,7 @@ $oci_runtime run --rm -t \
   $deps \
   $target
 
-# test outside the container ... saves us having to install wine inside docker
+# Test vips utility outside the container
 if [ -x "$(command -v wine)" ]; then
   echo -n "testing build ... "
   wine $PWD/build/$repackage_dir/bin/vips.exe --help > /dev/null

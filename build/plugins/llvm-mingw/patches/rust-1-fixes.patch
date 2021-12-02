@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 15 Sep 2020 11:50:00 +0200
-Subject: [PATCH 1/6] Add llvm-mingw ARM/ARM64 targets
+Subject: [PATCH 1/5] Add llvm-mingw ARM/ARM64 targets
 
 
 diff --git a/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs
@@ -38,7 +38,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -870,10 +870,12 @@ supported_targets! {
+@@ -923,10 +923,12 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  
@@ -82,7 +82,7 @@ index 0000000..1111111
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 15 Sep 2020 15:20:00 +0200
-Subject: [PATCH 2/6] Make Windows GNU targets compatible with llvm-mingw
+Subject: [PATCH 2/5] Make Windows GNU targets compatible with llvm-mingw
 
 By ensuring that we use the standard system libraries when linking
 (i.e. remove -nodefaultlibs) and by avoiding to link against GCC
@@ -169,7 +169,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 26 Jul 2021 13:00:00 +0200
-Subject: [PATCH 3/6] Enable -ffunction-sections
+Subject: [PATCH 3/5] Enable -ffunction-sections
 
 
 diff --git a/compiler/rustc_target/src/spec/windows_gnu_base.rs b/compiler/rustc_target/src/spec/windows_gnu_base.rs
@@ -189,7 +189,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 18 Sep 2020 21:00:00 +0200
-Subject: [PATCH 4/6] Do not distribute Windows-specific files while
+Subject: [PATCH 4/5] Do not distribute Windows-specific files while
  cross-compiling
 
 These files (gcc.exe, ld.exe, dlltool.exe, etc.) are not available on
@@ -212,48 +212,8 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Mon, 21 Sep 2020 11:00:00 +0200
-Subject: [PATCH 5/6] Ensure that compiler_builtins can be successfully built on
- llvm-mingw
-
-Fixes an undefined symbol error while linking the compiler_builtins crate on
-llvm-mingw (targeting ARMv7).
-
-Details:
-lld-link: error: undefined symbol: __aeabi_idiv
->>> referenced by libcompiler_builtins-<HASH>.rlib(<O_FILE>):(__aeabi_idivmod)
-
-diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.rs
-index 1111111..2222222 100644
---- a/vendor/compiler_builtins/build.rs
-+++ b/vendor/compiler_builtins/build.rs
-@@ -308,7 +308,7 @@ mod c {
-             }
-         }
- 
--        if target_arch == "arm" && target_os != "ios" && target_env != "msvc" {
-+        if target_arch == "arm" && target_os != "ios" && target_os != "windows" {
-             sources.extend(&[
-                 ("__aeabi_div0", "arm/aeabi_div0.c"),
-                 ("__aeabi_drsub", "arm/aeabi_drsub.c"),
-diff --git a/vendor/compiler_builtins/src/arm.rs b/vendor/compiler_builtins/src/arm.rs
-index 1111111..2222222 100644
---- a/vendor/compiler_builtins/src/arm.rs
-+++ b/vendor/compiler_builtins/src/arm.rs
-@@ -75,7 +75,7 @@ pub unsafe extern "C" fn __aeabi_uldivmod() {
-     );
- }
- 
--#[cfg(not(target_os = "ios"))]
-+#[cfg(not(any(target_os = "ios", target_os = "windows")))]
- #[naked]
- #[cfg_attr(not(feature = "mangled-names"), no_mangle)]
- pub unsafe extern "C" fn __aeabi_idivmod() {
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 22 Sep 2020 10:00:00 +0200
-Subject: [PATCH 6/6] Ensure that panic_unwind/unwind can be successfully built on
+Subject: [PATCH 5/5] Ensure that panic_unwind/unwind can be successfully built on
  llvm-mingw
 
 Fixes undefined symbol errors while linking these crates on llvm-mingw

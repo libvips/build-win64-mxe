@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2021-11-14/rustc-nightly-src.tar.gz.sha256
+# https://static.rust-lang.org/dist/2021-12-02/rustc-nightly-src.tar.gz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 88bbe21af0a49b2ea0bfa373d1fe106addf9a7771ea3e8d90a674016a2475864
+$(PKG)_CHECKSUM := f45225be518a998d62a193a10c325ee592a61047a9dfa19e7806b9d0522e61fc
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.gz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2021-11-14/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2021-12-02/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -52,6 +52,10 @@ define $(PKG)_BUILD_$(BUILD)
     # that the Rust build is reproducible.
     $(eval export MXE_ENABLE_NETWORK := 1)
 
+    # Ensure that the downloaded build dependencies of Cargo are
+    # stored in the build directory.
+    $(eval export CARGO_HOME := $(BUILD_DIR)/.cargo)
+
     # Build Rust
     cd '$(BUILD_DIR)' && \
         $(PYTHON) $(SOURCE_DIR)/x.py build -j '$(JOBS)' -v
@@ -63,6 +67,12 @@ define $(PKG)_BUILD_$(BUILD)
     # Copy the Cargo.lock for Rust to places `vendor` will see
     # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524
     cp '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/Cargo.lock' '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/test'
+
+    # `c` feature of the `compiler-builtins` crate needs the
+    # compiler-rt sources from LLVM
+    $(call PREPARE_PKG_SOURCE,llvm,$(BUILD_DIR))
+    rm -rf '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/src/llvm-project/compiler-rt'
+    mv '$(BUILD_DIR)/$(llvm_SUBDIR)/compiler-rt' '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/src/llvm-project'
 endef
 
 define $(PKG)_BUILD
@@ -87,13 +97,15 @@ define $(PKG)_BUILD
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
     (echo '[unstable]'; \
      echo 'build-std = ["std", "panic_abort"]'; \
-     echo 'build-std-features = ["panic_immediate_abort"]'; \
+     echo 'build-std-features = ["panic_immediate_abort", "compiler-builtins-c"]'; \
      echo '[build]'; \
      echo 'target = "$(TARGET_RUST)"'; \
+     echo '[env]'; \
+     echo 'CC_$(TARGET_RUST) = "$(TARGET)-clang"'; \
+     echo 'RUST_COMPILER_RT_ROOT = "$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/src/llvm-project/compiler-rt"'; \
      echo '[target.$(TARGET_RUST)]'; \
      echo 'rustflags = ['; \
-     echo '    "-C",'; \
-     echo '    "link-self-contained=yes",'; \
+     echo '    "-Clink-self-contained=yes",'; \
      echo '    "-Lnative=$(PREFIX)/$(TARGET)/mingw/lib"'; \
      echo ']'; \
      echo 'linker = "$(TARGET)-clang"'; \

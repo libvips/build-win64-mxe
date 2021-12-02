@@ -122,6 +122,12 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
+# upstream version is 3.1.1
+harfbuzz_VERSION  := 3.1.2
+harfbuzz_CHECKSUM := 4056b1541dd8bbd8ec29207fe30e568805c0705515632d7fec53a94399bc7945
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
 # upstream version is 2.13.1
 fontconfig_VERSION  := 2.13.94
 fontconfig_CHECKSUM := a5f052cb73fd479ffb7b697980510903b563bbb55b8f7a2b001fcfb94026003c
@@ -139,8 +145,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 21.06.1
-poppler_VERSION  := 21.11.0
-poppler_CHECKSUM := 31b76b5cac0a48612fdd154c02d9eca01fd38fb8eaa77c1196840ecdeb53a584
+poppler_VERSION  := 21.12.0
+poppler_CHECKSUM := acb840c2c1ec07d07e53c57c4b3a1ff3e3ee2d888d44e1e9f2f01aaf16814de7
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -502,7 +508,10 @@ define librsvg_BUILD
             $(TARGET)-cargo vendor -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/test/Cargo.toml')
 
     $(if $(IS_ARM), \
-        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-arm.patch)
+        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-arm.patch \
+        # Update expected Cargo SHA256 hashes for the files we have patched
+        $(SED) -i 's/5c0901bc8110a622f31d14e5f89f20e423d5e5e87ee70ff44af2856002d67638/a814ce5a589922c50157a4c92376144e6ee0e6b62e1ea77cc9df08327ed3bd08/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/075eb4e2bdea7538bfebe0f8217ed1ee76d4562a4b1ee15c305b16935ea52078/d054f363267413828694ce0df918d21d6c1561b5bdf2035dabc14e2196594d88/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
 
     # armv7 -> thumbv7a
     $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))

@@ -19,14 +19,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 |-----------------|-----------|--------------------------------------------------------------|
 | [aom]           | 3.2.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
-| [cgif]          | 0.0.2     | MIT Licence                                                  |
+| [cgif]          | 0.0.3     | MIT Licence                                                  |
 | [expat]         | 2.4.1     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.94   | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.11.0    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.11    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.6    | LGPLv3                                                       |
 | [glib]          | 2.70.1    | LGPLv3                                                       |
-| [harfbuzz]      | 3.1.1     | MIT Licence                                                  |
+| [harfbuzz]      | 3.1.2     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.23    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
@@ -105,8 +105,8 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.3     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 21.11.0   | GPLv2                                                        |
-| [sqlite]        | 3.36.0    | Public domain                                                |
+| [poppler]       | 21.12.0   | GPLv2                                                        |
+| [sqlite]        | 3.37.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -138,7 +138,7 @@ In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 2.1.1     | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 2.1.2     | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
