@@ -40,8 +40,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-31
-imagemagick_CHECKSUM := b9c14457bafc5f94097009a52bad8835d86729f42d9944622d2d58fdff9d7797
+imagemagick_VERSION  := 6.9.12-32
+imagemagick_CHECKSUM := 61943b71ae01bdace5a8d15bee4c3ee607001d026e94c0bfe2a4c3b2a312c91a
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -54,8 +54,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.49.3
-pango_CHECKSUM := 45c403b89910a121ad8eb6d57b5be1d8f19499d39b686435dc6f29b106d2be93
+pango_VERSION  := 1.50.0
+pango_CHECKSUM := dba8b62ddf86e10f73f93c3d2256b73238b2bcaf87037ca229b40bdc040eb3f3
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -72,8 +72,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.70.1
-glib_CHECKSUM := f9b7bce7f51753a1f43853bbcaca8bf09e15e994268e29cfd7a76f65636263c0
+glib_VERSION  := 2.70.2
+glib_CHECKSUM := 0551459c85cd3da3d58ddc9016fd28be5af503f5e1615a71ba5b512ac945806f
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -121,6 +121,22 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
+
+# upstream version is 2.11.0
+freetype_VERSION  := 2.11.1
+freetype_CHECKSUM := 3333ae7cfda88429c97a7ae63b7d01ab398076c3b67182e960e5684050f2c5c8
+freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
+freetype_SUBDIR   := freetype-$(freetype_VERSION)
+freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
+freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
+
+# upstream version is 2.11.0
+freetype-bootstrap_VERSION  := $(freetype_VERSION)
+freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
+freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
+freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
+freetype-bootstrap_FILE     := $(freetype_FILE)
+freetype-bootstrap_URL      := $(freetype_URL)
 
 # upstream version is 3.1.1
 harfbuzz_VERSION  := 3.1.2
@@ -173,8 +189,6 @@ mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64
 
 ## Patches that we override with our own
 
-freetype_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
-freetype-bootstrap_PATCHES := $(freetype_PATCHES)
 libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))

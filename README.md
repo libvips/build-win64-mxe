@@ -22,10 +22,10 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [cgif]          | 0.0.3     | MIT Licence                                                  |
 | [expat]         | 2.4.1     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.94   | [fontconfig Licence] (BSD-like)                              |
-| [freetype]      | 2.11.0    | [freetype Licence] (BSD-like)                                |
+| [freetype]      | 2.11.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.11    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.6    | LGPLv3                                                       |
-| [glib]          | 2.70.1    | LGPLv3                                                       |
+| [glib]          | 2.70.2    | LGPLv3                                                       |
 | [harfbuzz]      | 3.1.2     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
 | [libexif]       | 0.6.23    | LGPLv3                                                       |
@@ -42,9 +42,9 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.9.12    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.49.3    | LGPLv3                                                       |
+| [pango]         | 1.50.0    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
-| [proxy-libintl] | 0.2       | LGPLv3                                                       |
+| [proxy-libintl] | 0.3       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.5     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
@@ -97,7 +97,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.0.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 0.15.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-31 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-32 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.3     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |

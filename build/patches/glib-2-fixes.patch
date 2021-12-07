@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 1 Jul 2020 12:30:21 +0200
-Subject: [PATCH 1/3] Revert "meson: Fix underlinking of static libintl by trying
+Subject: [PATCH 1/2] Revert "meson: Fix underlinking of static libintl by trying
  iconv and pthread"
 
 This reverts commit 56271ff27119f0b6b7dc6cc0c081d64bec06b473 as it causes
@@ -88,7 +88,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 13 May 2019 18:00:00 +0200
-Subject: [PATCH 2/3] Disable some tests
+Subject: [PATCH 2/2] Disable some tests
 
 
 diff --git a/gio/tests/meson.build b/gio/tests/meson.build
@@ -113,25 +113,3 @@ index 1111111..2222222 100644
  
    plugin_resources_c = custom_target('plugin-resources.c',
      input : 'test4.gresource.xml',
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Albert Astals Cid <aacid@kde.org>
-Date: Sun, 7 Nov 2021 00:22:21 +0100
-Subject: [PATCH 3/3] Fix link to pcre-8.37.tar.bz2
-
-ftp.pcre.org FTP site is no longer available
-
-Upstream-Status: Accepted [https://gitlab.gnome.org/GNOME/glib/-/commit/e5dc299701df7189685d322cb709649ce3c9c81d]
-
-diff --git a/subprojects/libpcre.wrap b/subprojects/libpcre.wrap
-index 1111111..2222222 100644
---- a/subprojects/libpcre.wrap
-+++ b/subprojects/libpcre.wrap
-@@ -1,6 +1,6 @@
- [wrap-file]
- directory = pcre-8.37
--source_url = https://ftp.pcre.org/pub/pcre/pcre-8.37.tar.bz2
-+source_url = https://sourceforge.net/projects/pcre/files/pcre/8.37/pcre-8.37.tar.bz2
- source_filename = pcre-8.37.tar.bz2
- source_hash = 51679ea8006ce31379fb0860e46dd86665d864b5020fc9cd19e71260eef4789d
- patch_filename = pcre_8.37-2_patch.zip
