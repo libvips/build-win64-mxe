@@ -40,22 +40,22 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-32
-imagemagick_CHECKSUM := 61943b71ae01bdace5a8d15bee4c3ee607001d026e94c0bfe2a4c3b2a312c91a
+imagemagick_VERSION  := 6.9.12-33
+imagemagick_CHECKSUM := 80158d010b16d1e8e53fb6b0fe3ddc3bec7ed0f9212cd649e64e0b649b8c595c
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.52.4
-librsvg_CHECKSUM := 660ec8836a3a91587bc9384920132d4c38d1d1718c67fe160c5213fe4dec2928
+librsvg_VERSION  := 2.52.5
+librsvg_CHECKSUM := 407cbbab518137ea18a3f3220bea180fbee75f3e5bd6ba10a7a862c1a6f74d82
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.50.0
-pango_CHECKSUM := dba8b62ddf86e10f73f93c3d2256b73238b2bcaf87037ca229b40bdc040eb3f3
+pango_VERSION  := 1.50.2
+pango_CHECKSUM := 5de9b7ebeaac20b0ea3a194d69b5381bc5589570da596746acb699a3eb62b3de
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -72,8 +72,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.70.2
-glib_CHECKSUM := 0551459c85cd3da3d58ddc9016fd28be5af503f5e1615a71ba5b512ac945806f
+glib_VERSION  := 2.71.0
+glib_CHECKSUM := 926816526f6e4bba9af726970ff87be7dac0b70d5805050c6207b7bb17ea4fca
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -122,28 +122,6 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 2.11.0
-freetype_VERSION  := 2.11.1
-freetype_CHECKSUM := 3333ae7cfda88429c97a7ae63b7d01ab398076c3b67182e960e5684050f2c5c8
-freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
-freetype_SUBDIR   := freetype-$(freetype_VERSION)
-freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
-freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
-
-# upstream version is 2.11.0
-freetype-bootstrap_VERSION  := $(freetype_VERSION)
-freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
-freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
-freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
-freetype-bootstrap_FILE     := $(freetype_FILE)
-freetype-bootstrap_URL      := $(freetype_URL)
-
-# upstream version is 3.1.1
-harfbuzz_VERSION  := 3.1.2
-harfbuzz_CHECKSUM := 4056b1541dd8bbd8ec29207fe30e568805c0705515632d7fec53a94399bc7945
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
-
 # upstream version is 2.13.1
 fontconfig_VERSION  := 2.13.94
 fontconfig_CHECKSUM := a5f052cb73fd479ffb7b697980510903b563bbb55b8f7a2b001fcfb94026003c
@@ -159,14 +137,6 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
-
-# upstream version is 21.06.1
-poppler_VERSION  := 21.12.0
-poppler_CHECKSUM := acb840c2c1ec07d07e53c57c4b3a1ff3e3ee2d888d44e1e9f2f01aaf16814de7
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -189,7 +159,11 @@ mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64
 
 ## Patches that we override with our own
 
+freetype_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
+freetype-bootstrap_PATCHES := $(freetype_PATCHES)
 libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+harfbuzz_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 
@@ -524,22 +498,19 @@ define librsvg_BUILD
     $(if $(IS_ARM), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-arm.patch \
         # Update expected Cargo SHA256 hashes for the files we have patched
-        $(SED) -i 's/5c0901bc8110a622f31d14e5f89f20e423d5e5e87ee70ff44af2856002d67638/a814ce5a589922c50157a4c92376144e6ee0e6b62e1ea77cc9df08327ed3bd08/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/075eb4e2bdea7538bfebe0f8217ed1ee76d4562a4b1ee15c305b16935ea52078/d054f363267413828694ce0df918d21d6c1561b5bdf2035dabc14e2196594d88/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
+        $(SED) -i 's/684a00322da501bc84ba800b012b27fe10f960331bfdc007d8178e6d07c27a31/b36d5981a94908d0aeccb2ec9c6f45b0053ae73e4d607451a0662cd7393cf03a/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/26e242c3bc36a4de132531ac402e421011aa0ab5bdd5cb615c948a12320aad7d/88218b96bb4d6b3f30a2b88fde39b0a3ddd0ff318e72dff6263d9da1ec12753c/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
 
     # armv7 -> thumbv7a
     $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))
 
-    # Need to link against bcrypt after PR:
-    # https://github.com/rust-lang/rust/pull/84096
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-introspection \
         RUST_TARGET='$(ARCH_NAME)-pc-windows-gnu' \
         CARGO='$(TARGET)-cargo' \
-        RUSTC='$(TARGET)-rustc' \
-        LIBS='-lbcrypt'
+        RUSTC='$(TARGET)-rustc'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_SCRIPTS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=

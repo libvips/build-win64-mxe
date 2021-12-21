@@ -29,7 +29,7 @@ index 0000000..1111111
 +        options: TargetOptions {
 +            features: "+neon,+fp-armv8".to_string(),
 +            max_atomic_width: Some(64),
-+            has_elf_tls: true,
++            has_thread_local: true,
 +            ..base
 +        },
 +    }
@@ -38,7 +38,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -923,10 +923,12 @@ supported_targets! {
+@@ -925,10 +925,12 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  

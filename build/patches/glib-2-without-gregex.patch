@@ -1,5 +1,5 @@
 diff --git a/gio/gsettingsschema.c b/gio/gsettingsschema.c
-index ec0caf655..c6799a2ba 100644
+index 1111111..2222222 100644
 --- a/gio/gsettingsschema.c
 +++ b/gio/gsettingsschema.c
 @@ -551,58 +551,7 @@ start_element (GMarkupParseContext  *context,
@@ -63,7 +63,7 @@ index ec0caf655..c6799a2ba 100644
  
  static void
 diff --git a/glib/glib-autocleanups.h b/glib/glib-autocleanups.h
-index 6457eaff8..f72031fb1 100644
+index 1111111..2222222 100644
 --- a/glib/glib-autocleanups.h
 +++ b/glib/glib-autocleanups.h
 @@ -71,8 +71,6 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(GPatternSpec, g_pattern_spec_free)
@@ -88,10 +88,10 @@ index e72c09da5..d639e645e 100644
  #include <glib/gsequence.h>
  #include <glib/gshell.h>
 diff --git a/glib/meson.build b/glib/meson.build
-index 93600b29e..3ebcbeb02 100644
+index 1111111..2222222 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -187,7 +187,6 @@ glib_sub_headers = files(
+@@ -180,7 +180,6 @@ glib_sub_headers = files(
    'grcbox.h',
    'grefcount.h',
    'grefstring.h',
@@ -100,7 +100,7 @@ index 93600b29e..3ebcbeb02 100644
    'gsequence.h',
    'gshell.h',
 diff --git a/gobject/gboxed.c b/gobject/gboxed.c
-index ae48df566..9f1ca04c8 100644
+index 1111111..2222222 100644
 --- a/gobject/gboxed.c
 +++ b/gobject/gboxed.c
 @@ -148,9 +148,6 @@ G_DEFINE_BOXED_TYPE (GByteArray, g_byte_array, g_byte_array_ref, g_byte_array_un

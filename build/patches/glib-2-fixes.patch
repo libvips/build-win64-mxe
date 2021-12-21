@@ -15,10 +15,10 @@ diff --git a/glib/meson.build b/glib/meson.build
 index 1111111..2222222 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -367,19 +367,19 @@ libglib = library('glib-2.0',
-   # intl.lib is not compatible with SAFESEH
+@@ -360,19 +360,19 @@ libglib = library('glib-2.0',
    link_args : [noseh_link_args, glib_link_flags, win32_ldflags],
    include_directories : configinc,
+   link_with: [charset_lib, gnulib_lib],
 -  dependencies : [pcre, thread_dep, librt] + libintl_deps + libiconv + platform_deps + [gnulib_libm_dependency, libm] + [libsysprof_capture_dep],
 +  dependencies : [pcre, thread_dep, libintl, librt] + libiconv + platform_deps + [gnulib_libm_dependency, libm] + [libsysprof_capture_dep],
    c_args : glib_c_args,
@@ -42,7 +42,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2046,40 +2046,17 @@ endif
+@@ -2060,40 +2060,17 @@ endif
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.
@@ -95,7 +95,7 @@ diff --git a/gio/tests/meson.build b/gio/tests/meson.build
 index 1111111..2222222 100644
 --- a/gio/tests/meson.build
 +++ b/gio/tests/meson.build
-@@ -454,7 +454,7 @@ gdbus_example_objectmanager_sources = files(
+@@ -457,7 +457,7 @@ gdbus_example_objectmanager_sources = files(
    'gdbus-example-objectmanager-server.c',
  )
  
@@ -104,7 +104,7 @@ index 1111111..2222222 100644
    test_extra_programs += {
      # These three are manual-run tests because they need a session bus but don't bring one up themselves
      # FIXME: these build but don't seem to work!
-@@ -570,7 +570,7 @@ if installed_tests_enabled
+@@ -573,7 +573,7 @@ if installed_tests_enabled
    endforeach
  endif
  
