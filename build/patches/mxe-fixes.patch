@@ -244,14 +244,14 @@ index 1111111..2222222 100644
 -    (void)argv;
 +    ffi_arg rc;
  
-+    /* Initialize the argument info vectors */    
++    /* Initialize the argument info vectors */
      args[0] = &ffi_type_pointer;
      values[0] = &s;
  
 -    if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
 -                           &ffi_type_uint, args) == FFI_OK)
 +    /* Initialize the cif */
-+    if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1, 
++    if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
 +                           &ffi_type_sint, args) == FFI_OK)
      {
          s = "Hello World!";
@@ -259,8 +259,8 @@ index 1111111..2222222 100644
 -        s = "Goodbye!";
 +        /* rc now holds the result of the call to puts */
 +
-+        /* values holds a pointer to the function's arg, so to 
-+           call puts() again all we need to do is change the 
++        /* values holds a pointer to the function's arg, so to
++           call puts() again all we need to do is change the
 +           value of s */
 +        s = "This is cool!";
          ffi_call(&cif, FFI_FN(puts), &rc, values);
