@@ -2,18 +2,11 @@
 
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [DEPS] [TARGET]
+Usage: $(basename "$0") [OPTIONS] [TARGET]
 Package libvips in mxe/usr/TARGET/
 
 OPTIONS:
 	--help	Show the help and exit
-
-DEPS:
-	The group of dependencies to build libvips with,
-	    defaults to 'web'
-	Possible values are:
-	    - web
-	    - all
 
 TARGET:
 	The binary target,
@@ -31,14 +24,13 @@ fi
 
 . variables.sh
 
-deps="${1:-web}"
-target="${2:-x86_64-w64-mingw32.shared}"
+target="${1:-x86_64-w64-mingw32.shared}"
 arch="${target%%-*}"
 type="${target#*.}"
 type="${type%%.*}"
 build_os=`$mxe_dir/ext/config.guess`
 
-export PATH="$mxe_prefix/$build_os/bin:$mxe_prefix/bin:$mxe_prefix/$target.$deps/bin:$PATH"
+export PATH="$mxe_prefix/$build_os/bin:$mxe_prefix/bin:$mxe_prefix/$target/bin:$PATH"
 
 case "$arch" in
   x86_64) arch=w64 ;;
@@ -48,32 +40,19 @@ esac
 
 # Make sure that the repackaging dir is empty
 rm -rf $repackage_dir $pdb_dir
-mkdir -p $repackage_dir/bin
+mkdir -p $repackage_dir/{bin,include,lib}
 mkdir $pdb_dir
 
 # Utilities
-strip=$target.$deps-strip
+strip=$target-strip
 
 # Directories
-install_dir=$mxe_prefix/$target.$deps
+install_dir=$mxe_prefix/$target
 bin_dir=$install_dir/bin
 lib_dir=$install_dir/lib
 
-# Ensure module_dir is set correctly when building nightly versions
-if [ -n "$GIT_COMMIT" ]; then
-  module_dir=$(printf '%s\n' $lib_dir/vips-modules-* | sort -n | tail -1)
-else
-  module_dir=$lib_dir/vips-modules-$vips_version
-fi
-module_dir_base=$(basename $module_dir)
-
 # List of PE targets that need to be copied, including their transitive dependencies and PDBs
 pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{vips,vipsedit,vipsheader,vipsthumbnail}.exe)
-
-if [ -d "$module_dir" ]; then
-  mkdir -p $repackage_dir/bin/$module_dir_base
-  pe_targets+=($module_dir/*.dll)
-fi
 
 zip_suffix="${vips_pre_version:+-$vips_pre_version}"
 
@@ -137,54 +116,22 @@ for pe_target in "${pe_targets[@]}"; do
   for pe_dep in $pe_deps; do
     dir=$(dirname $pe_dep)
     base=$(basename $pe_dep .${pe_dep##*.})
-    target_dir="$repackage_dir/bin"
-    [ "$dir" = "$module_dir" ] && target_dir+="/$module_dir_base"
 
-    cp -n $pe_dep $target_dir
+    cp -n $pe_dep $repackage_dir/bin
 
     # Copy PDB files
     [ -f $lib_dir/$base.pdb ] && cp -n $lib_dir/$base.pdb $pdb_dir
   done
 done
 
-echo "Copying install area $install_dir/"
+echo "Copying include directories"
 
-# Follow symlinks when copying /share, /etc, /lib and /include
-cp -Lr $install_dir/{share,etc,lib,include} $repackage_dir
+# Follow symlinks when copying include directories
+cp -Lr $install_dir/include/{glib-2.0,vips} $repackage_dir/include
+cp -Lr $lib_dir/glib-2.0 $repackage_dir/lib
 
 echo "Generating import files"
-./gendeflibs.sh $deps $target
-
-echo "Cleaning unnecessary files / directories"
-
-# Ensure that the header files of libc++/libunwind are not distributed
-rm -rf $repackage_dir/include/c++
-rm -rf $repackage_dir/include/{*unwind*,mach-o}
-
-if [ "$DISP" = "true" ]; then
-  # We need to distribute share/glib-2.0/schemas/* for vipsdisp
-  # Note: you may also need to set the XDG_DATA_DIRS env variable, see:
-  # https://stackoverflow.com/a/28962391
-  rm -rf $repackage_dir/share/glib-2.0/{codegen,dtds,gdb}
-else
-  rm -rf $repackage_dir/share/glib-2.0
-fi
-
-rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
-rm -rf $repackage_dir/etc/bash_completion.d
-
-# Remove dynamic modules
-rm -rf $repackage_dir/lib/{gdk-pixbuf-2.0,vips-modules-*}
-
-find $repackage_dir/lib -name "*.a" -and ! -name "*.dll.a" -exec rm -f {} \;
-find $repackage_dir/lib \( -name "*.la" -o -name "*.pdb" \) -exec rm -f {} \;
-
-# We intentionally disabled the i18n features of (GNU) gettext,
-# so the locales are not needed.
-rm -rf $repackage_dir/share/locale
-
-# Remove those .gitkeep files
-rm $repackage_dir/{share,lib,include}/.gitkeep
+./gendeflibs.sh $target
 
 # Allow sharp to import GLib symbols from libvips-42.dll
 sed -i -e 's|#define GLIB_STATIC_COMPILATION 1|/* #undef GLIB_STATIC_COMPILATION */|' \
@@ -196,7 +143,6 @@ echo "Strip unneeded symbols"
 # Remove all symbols that are not needed
 if [ "$DEBUG" = "false" ]; then
   $strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
-  [ -d "$module_dir" ] && $strip --strip-unneeded $repackage_dir/bin/$module_dir_base/*.dll
 fi
 
 echo "Copying packaging files"
@@ -204,14 +150,14 @@ echo "Copying packaging files"
 cp $install_dir/vips-packaging/{ChangeLog,LICENSE,README.md,versions.json} $repackage_dir
 [ "$DISP" = "true" ] && cp $install_dir/vips-packaging/versions-disp.json $repackage_dir
 
-zipfile=$vips_package-dev-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
+zipfile=$vips_package-dev-$arch-web-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
 
 echo "Creating $zipfile"
 
 rm -f $zipfile
 zip -r -qq $zipfile $repackage_dir
 
-zipfile=$vips_package-pdb-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
+zipfile=$vips_package-pdb-$arch-web-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
 
 echo "Creating $zipfile"
 
