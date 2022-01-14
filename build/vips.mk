@@ -11,7 +11,72 @@ $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libspng \
                    libimagequant highway cgif
 
+define $(PKG)_PRE_CONFIGURE
+    # Copy some files to the packaging directory
+    mkdir -p '$(PREFIX)/$(TARGET)/vips-packaging'
+    $(foreach f, ChangeLog LICENSE README.md, \
+        cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
+
+    (printf '{\n'; \
+     printf '  "aom": "$(aom_VERSION)",\n'; \
+     printf '  "archive": "$(libarchive_VERSION)",\n'; \
+     printf '  "cairo": "$(cairo_VERSION)",\n'; \
+     printf '  "cgif": "$(cgif_VERSION)",\n'; \
+     printf '  "exif": "$(libexif_VERSION)",\n'; \
+     printf '  "expat": "$(expat_VERSION)",\n'; \
+     printf '  "ffi": "$(libffi_VERSION)",\n'; \
+     printf '  "fontconfig": "$(fontconfig_VERSION)",\n'; \
+     printf '  "freetype": "$(freetype_VERSION)",\n'; \
+     printf '  "fribidi": "$(fribidi_VERSION)",\n'; \
+     $(if $(IS_INTL_DUMMY),,printf '  "gettext": "$(gettext_VERSION)"$(comma)\n';) \
+     printf '  "glib": "$(glib_VERSION)",\n'; \
+     printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
+     printf '  "heif": "$(libheif_VERSION)",\n'; \
+     printf '  "highway": "$(highway_VERSION)",\n'; \
+     printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
+     $(if $(IS_JPEGLI), \
+          printf '  "jpegli": "$(jpegli_VERSION)"$(comma)\n';, \
+          $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';)) \
+     printf '  "lcms": "$(lcms_VERSION)",\n'; \
+     $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
+     printf '  "pango": "$(pango_VERSION)",\n'; \
+     printf '  "pixman": "$(pixman_VERSION)",\n'; \
+     printf '  "png": "$(libpng_VERSION)",\n'; \
+     $(if $(IS_INTL_DUMMY),printf '  "proxy-libintl": "$(proxy-libintl_VERSION)"$(comma)\n';) \
+     printf '  "rsvg": "$(librsvg_VERSION)",\n'; \
+     printf '  "spng": "$(libspng_VERSION)",\n'; \
+     printf '  "tiff": "$(tiff_VERSION)",\n'; \
+     printf '  "vips": "$(vips_VERSION)",\n'; \
+     printf '  "webp": "$(libwebp_VERSION)",\n'; \
+     printf '  "xml2": "$(libxml2_VERSION)",\n'; \
+     $(if $(IS_ZLIB_NG), \
+          printf '  "zlib-ng": "$(zlib-ng_VERSION)"\n';, \
+          printf '  "zlib": "$(zlib_VERSION)"\n';) \
+     printf '}';) \
+     > '$(PREFIX)/$(TARGET)/vips-packaging/versions.json'
+
+    $(if $(IS_MODULAR), \
+        (printf '{\n'; \
+         printf '  "brotli": "$(brotli_VERSION)",\n'; \
+         $(if $(IS_HEVC),printf '  "de265": "$(libde265_VERSION)"$(comma)\n';) \
+         printf '  "dicom": "$(libdicom_VERSION)",\n'; \
+         printf '  "gdkpixbuf": "$(gdk-pixbuf_VERSION)",\n'; \
+         $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), \
+              printf '  "graphicsmagick": "$(graphicsmagick_VERSION)"$(comma)\n';, \
+              printf '  "imagemagick": "$(imagemagick_VERSION)"$(comma)\n';) \
+         printf '  "jxl": "$(libjxl_VERSION)",\n'; \
+         printf '  "openjpeg": "$(openjpeg_VERSION)",\n'; \
+         printf '  "openslide": "$(openslide_VERSION)",\n'; \
+         printf '  "poppler": "$(poppler_VERSION)",\n'; \
+         printf '  "sqlite": "$(sqlite_VERSION)"$(if $(IS_HEVC),$(comma))\n'; \
+         $(if $(IS_HEVC),printf '  "x265": "$(x265_VERSION)"\n';) \
+         printf '}';) \
+         > '$(PREFIX)/$(TARGET)/vips-packaging/versions-modules.json')
+endef
+
 define $(PKG)_BUILD
+    $($(PKG)_PRE_CONFIGURE)
+
     $(eval export CFLAGS += -O3)
     $(eval export CXXFLAGS += -O3)
 
@@ -22,7 +87,27 @@ define $(PKG)_BUILD
         -Ddeprecated=false \
         -Dexamples=false \
         -Dintrospection=disabled \
-        $(vips_MESON_OPTS) \
+        -Dmodules=enabled \
+        -Dheif-module=$(if $(IS_HEVC),enabled,disabled) \
+        $(if $(IS_MODULAR), \
+            $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), -Dmagick-package=GraphicsMagick) \
+        $(else), \
+            -Djpeg-xl=disabled \
+            -Dmagick=disabled \
+            -Dopenjpeg=disabled \
+            -Dopenslide=disabled \
+            -Dpoppler=disabled) \
+        -Dcfitsio=disabled \
+        -Dfftw=disabled \
+        -Dmatio=disabled \
+        -Dnifti=disabled \
+        -Dopenexr=disabled \
+        -Dpdfium=disabled \
+        -Dquantizr=disabled \
+   		-Draw=disabled \
+        -Dppm=false \
+        -Danalyze=false \
+        -Dradiance=false \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

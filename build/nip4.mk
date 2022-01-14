@@ -7,7 +7,7 @@ $(PKG)_CHECKSUM := ab144b3702eb2376b58df9c39c9a53161e6960fea4c7c71eb5e5fd9cab9af
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := jcupitt/nip4/releases,v,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$(firstword $(subst -, ,$($(PKG)_VERSION)))
-$(PKG)_DEPS     := cc meson-wrapper gtk4 adwaita-icon-theme gsl vips-all
+$(PKG)_DEPS     := cc meson-wrapper gtk4 adwaita-icon-theme gsl vips
 
 define $(PKG)_PRE_CONFIGURE
     (printf '{\n'; \

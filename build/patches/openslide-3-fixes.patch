@@ -1,0 +1,24 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 15 Jan 2022 13:40:00 +0100
+Subject: [PATCH 1/1] Only use dllexport/dllimport on MSVC
+
+GCC and Clang has autoimport and autoexport.
+
+diff --git a/src/openslide-features.h b/src/openslide-features.h
+index 1111111..2222222 100644
+--- a/src/openslide-features.h
++++ b/src/openslide-features.h
+@@ -24,7 +24,7 @@
+ 
+ 
+ // for exporting from shared libraries or DLLs
+-#if defined _WIN32
++#if defined _MSC_VER
+ #  ifdef _OPENSLIDE_BUILDING_DLL
+ #    define OPENSLIDE_PUBLIC() __declspec(dllexport)
+ #  else

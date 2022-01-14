@@ -4,9 +4,9 @@
 set -e
 
 for pkg in $PKGS; do
-  if [ "$pkg" = "vips-web" ] || [ "$pkg" = "vips-all" ]; then
+  if [ "$pkg" = "vips" ]; then
     for target in $MXE_TARGETS; do
-      ./package-vips.sh ${pkg/#vips-} $target
+      ./package-vips.sh $target
     done
   elif [ "$pkg" = "nip4" ] || [ "$pkg" = "vipsdisp" ]; then
     for target in $MXE_TARGETS; do

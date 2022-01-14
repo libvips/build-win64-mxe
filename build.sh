@@ -18,6 +18,7 @@ OPTIONS:
 	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaries without optimizations to improve debuggability
+	--with-modules		Build the dynamically loadable modules
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
 	--with-jpeg-turbo	Build binaries with libjpeg-turbo instead of mozjpeg
 	--without-prebuilt	Avoid using a prebuilt OCI image from GitHub Container Registry
@@ -25,7 +26,7 @@ OPTIONS:
 
 PKGS:
 	The packages and their dependencies to build,
-	    defaults to 'vips-web'
+	    defaults to 'vips'
 
 TARGET:
 	The binary target,
@@ -52,6 +53,7 @@ jpeg_impl="mozjpeg"
 with_ffi_compat=false
 with_hevc=false
 with_debug=false
+with_modules=false
 with_prebuilt=true
 with_zlib_ng=true
 
@@ -66,8 +68,12 @@ while [ $# -gt 0 ]; do
     -r|--ref) git_ref="$2"; shift ;;
     --nightly) git_ref="master" ;;
     --with-ffi-compat) with_ffi_compat=true ;;
-    --with-hevc) with_hevc=true ;;
+    --with-hevc)
+      with_hevc=true
+      with_modules=true # --with-hevc implies --with-modules
+      ;;
     --with-debug) with_debug=true ;;
+    --with-modules) with_modules=true ;;
     --with-jpegli) jpeg_impl="jpegli" ;;
     --with-jpeg-turbo) jpeg_impl="libjpeg-turbo" ;;
     --without-mozjpeg) jpeg_impl="libjpeg-turbo" ;; # For compat
@@ -88,14 +94,11 @@ set -- "${POSITIONAL[@]}"
 pkgs=("$@")
 
 if [ ${#pkgs[@]} -eq 0 ]; then
-  pkgs=(vips-web)
+  pkgs=(vips)
 fi
 
-# Note: GTK apps depends on vips-all
 { [[ ${pkgs[*]} =~ "nip4" ]] || [[ ${pkgs[*]} =~ "vipsdisp" ]]; } && build_gtk=true || build_gtk=false
-[[ ${pkgs[*]} =~ "vips-all" ]] && build_all_variant=true || build_all_variant=$build_gtk
-[[ ${pkgs[*]} =~ "vips-web" ]] && build_web_variant=true || build_web_variant=false
-[ "$with_hevc" = true ] && contains_gpl_libs=true || contains_gpl_libs=$build_all_variant
+contains_gpl_libs=$with_modules
 
 if [ ${#mxe_targets[@]} -eq 0 ]; then
   if [ "$contains_gpl_libs" = true ]; then
@@ -112,11 +115,6 @@ fi
 
 [[ ${mxe_targets[*]} =~ ".static" ]] && targets_static=true || targets_static=false
 [[ ${mxe_targets[*]} =~ ".shared" ]] && targets_shared=true || targets_shared=false
-
-if [ "$build_web_variant" = true ] && [ "$build_all_variant" = true ]; then
-  echo "ERROR: Cannot build both vips-web and vips-all simultaneously." >&2
-  exit 1
-fi
 
 if [ "$targets_static" = true ] && [ "$contains_gpl_libs" = true ]; then
   echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
@@ -179,6 +177,10 @@ if [ "$jpeg_impl" != "libjpeg-turbo" ]; then
   plugin_dirs+=" /data/plugins/$jpeg_impl"
 fi
 
+if [ "$with_modules" = true ]; then
+  plugin_dirs+=" /data/plugins/modular"
+fi
+
 if [ "$with_hevc" = true ]; then
   plugin_dirs+=" /data/plugins/hevc-deps"
 fi
@@ -189,12 +191,6 @@ fi
 
 if [ "$with_ffi_compat" = true ]; then
   plugin_dirs+=" /data/plugins/ffi-compat"
-fi
-
-if [ "$build_web_variant" = true ]; then
-  plugin_dirs+=" /data/plugins/web-deps"
-elif [ "$build_all_variant" = true ]; then
-  plugin_dirs+=" /data/plugins/all-deps"
 fi
 
 if [ "$build_gtk" = true ]; then
@@ -239,5 +235,6 @@ $oci_runtime run --rm -t \
   -e JPEG_IMPL="$jpeg_impl" \
   -e HEVC="$with_hevc" \
   -e DEBUG="$with_debug" \
+  -e MODULES="$with_modules" \
   -e ZLIB_NG="$with_zlib_ng" \
   libvips-build-win-mxe

@@ -5,18 +5,11 @@ set -e
 
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [DEPS] [TARGET]
+Usage: $(basename "$0") [OPTIONS] [TARGET]
 Package libvips in /usr/local/mxe/usr/TARGET/
 
 OPTIONS:
 	--help	Show the help and exit
-
-DEPS:
-	The group of dependencies with which libvips was built,
-	    defaults to 'web'
-	Possible values are:
-	    - web
-	    - all
 
 TARGET:
 	The binary target,
@@ -34,8 +27,7 @@ fi
 
 . variables.sh
 
-deps="${1:-web}"
-target="${2:-x86_64-w64-mingw32.shared}"
+target="${1:-x86_64-w64-mingw32.shared}"
 arch="${target%%-*}"
 type="${target#*.}"
 type="${type%%.*}"
@@ -61,8 +53,6 @@ pdb_dir=/var/tmp/vips-pdb-$(without_patch $vips_version)
 install_dir=$mxe_prefix/$target
 bin_dir=$install_dir/bin
 lib_dir=$install_dir/lib
-module_dir=$(printf '%s\n' $lib_dir/vips-modules-* | sort -n | tail -1)
-module_dir_base=$(basename $module_dir)
 
 # Make sure that the repackaging dir is empty
 rm -rf $repackage_dir $pdb_dir
@@ -77,11 +67,6 @@ search_paths=($bin_dir)
 
 if [ "$type" = "shared" ]; then
   search_paths+=($install_dir/${target%%.*}/bin)
-fi
-
-if [ -d "$module_dir" ]; then
-  mkdir -p $repackage_dir/bin/$module_dir_base
-  pe_targets+=($module_dir/*.dll)
 fi
 
 zip_suffix="$vips_version"
@@ -120,44 +105,24 @@ for pe_target in "${pe_targets[@]}"; do
   for pe_dep in $pe_deps; do
     dir=$(dirname $pe_dep)
     base=$(basename $pe_dep .${pe_dep##*.})
-    target_dir="$repackage_dir/bin"
-    [ "$dir" = "$module_dir" ] && target_dir+="/$module_dir_base" || true
 
-    cp -n $pe_dep $target_dir
+    cp -n $pe_dep $repackage_dir/bin
 
     # Copy PDB files
     [ -f $lib_dir/$base.pdb ] && cp -n $lib_dir/$base.pdb $pdb_dir || true
   done
 done
 
-echo "Copying install area $install_dir/"
+echo "Copying include directories"
 
-# Follow symlinks when copying /share, /etc and include directories
-cp -Lr $install_dir/{share,etc} $repackage_dir
+# Follow symlinks when copying include directories
 cp -Lr $install_dir/include/{glib-2.0,vips} $repackage_dir/include
-cp -Lr $install_dir/lib/{glib-2.0,pkgconfig} $repackage_dir/lib
+cp -Lr $install_dir/lib/glib-2.0 $repackage_dir/lib
 
 cd $repackage_dir
 
 echo "Generating import files"
 . $work_dir/gendeflibs.sh $target
-
-echo "Cleaning unnecessary files / directories"
-
-rm -rf share/glib-2.0
-
-# pkg-config files for OpenGL/GLU are not needed
-rm -f lib/pkgconfig/{gl,glu}.pc
-
-rm -rf share/{aclocal,bash-completion,cmake,config.site,doc,gdb,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
-rm -rf etc/bash_completion.d
-
-# We intentionally disabled the i18n features of (GNU) gettext,
-# so the locales are not needed.
-rm -rf share/locale
-
-# Remove .gitkeep files
-rm -f share/.gitkeep
 
 # Allow sharp to import GLib symbols from libvips-42.dll
 sed -i -e 's|#define GLIB_STATIC_COMPILATION 1|/* #undef GLIB_STATIC_COMPILATION */|' \
@@ -169,7 +134,6 @@ echo "Strip unneeded symbols"
 # Remove all symbols that are not needed
 if [ "$DEBUG" = false ]; then
   $strip --strip-unneeded bin/*.{exe,dll}
-  [ -d "$module_dir" ] && $strip --strip-unneeded bin/$module_dir_base/*.dll || true
 fi
 
 echo "Copying packaging files"
@@ -178,16 +142,20 @@ cp $install_dir/vips-packaging/{ChangeLog,LICENSE,README.md,versions.json} .
 
 cd $work_dir
 
-zipfile=vips-dev-$arch-$deps-$zip_suffix.zip
+zipfile=vips-dev-$arch-web-$zip_suffix.zip
 
 echo "Creating $zipfile"
 
 rm -f $zipfile
 (cd /var/tmp && zip -r -qq $work_dir/$zipfile $(basename $repackage_dir))
 
-zipfile=vips-pdb-$arch-$deps-$zip_suffix.zip
+zipfile=vips-pdb-$arch-web-$zip_suffix.zip
 
 echo "Creating $zipfile"
 
 rm -f $zipfile
 (cd /var/tmp && zip -r -qq $work_dir/$zipfile $(basename $pdb_dir))
+
+if [ "$MODULES" = true ]; then
+  . package-modules.sh $target
+fi

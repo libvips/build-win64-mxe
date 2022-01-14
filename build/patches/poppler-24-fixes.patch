@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 19 Feb 2021 16:00:00 +0100
-Subject: [PATCH 1/1] Fix bogus volatile caught by clang 11
+Subject: [PATCH 1/2] Fix bogus volatile caught by clang 11
 
 
 diff --git a/glib/poppler-enums.c.template b/glib/poppler-enums.c.template
@@ -21,3 +21,24 @@ index 1111111..2222222 100644
   
    if (g_once_init_enter (&g_define_type_id)) {
      static const G@Type@Value values[] = {
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Stefan=20L=C3=B6ffler?= <st.loeffler@gmail.com>
+Date: Thu, 4 Feb 2021 20:44:30 +0100
+Subject: [PATCH 2/2] Fix static linking for libopenjpeg >= 2.4
+
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -330,6 +330,9 @@ else()
+   message(FATAL_ERROR "Invalid ENABLE_LIBOPENJPEG value: ${ENABLE_LIBOPENJPEG}")
+ endif()
+ set(ENABLE_LIBOPENJPEG "${WITH_OPENJPEG}")
++if(ENABLE_LIBOPENJPEG AND NOT BUILD_SHARED_LIBS)
++  add_definitions(-DOPJ_STATIC)
++endif()
+ 
+ find_soft_mandatory_package(ENABLE_LCMS LCMS2 ${LCMS2_REQUIRED_VERSION})
+ set(USE_CMS ${ENABLE_LCMS})

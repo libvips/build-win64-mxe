@@ -202,3 +202,7 @@ echo "Creating $zipfile"
 
 rm -f $zipfile
 (cd $pdb_dir && zip -r -qq $work_dir/$zipfile .)
+
+if [ "$MODULES" = true ]; then
+  . package-modules.sh $target
+fi
