@@ -84,40 +84,28 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [zlib-ng]: https://github.com/zlib-ng/zlib-ng
 [zlib-ng Licence]: https://github.com/zlib-ng/zlib-ng/blob/develop/LICENSE.md
 
-## libvips-all dependencies
+## libvips-modules dependencies
 
-Same as libvips-web + these extra dependencies:
+Includes these extra dependencies:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
-| [cfitsio]       | 4.6.2     | BSD-like                                                     |
-| [fftw]          | 3.3.10    | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.42.12   | LGPLv3                                                       |
 | [imagemagick]   | 6.9.13-25 | [ImageMagick License] (Apache-2.0-like)                      |
-| [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0     | MIT Licence                                                  |
 | [libjxl]        | 0.11.1    | BSD 3-Clause                                                 |
-| [matio]         | 1.5.28    | BSD 2-Clause                                                 |
-| [nifticlib]     | 3.0.1     | Public domain                                                |
-| [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.3     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
 | [poppler]       | 25.04.0   | GPLv2                                                        |
 | [sqlite]        | 3.49.1    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
-[cfitsio]: https://github.com/HEASARC/cfitsio
-[fftw]: https://github.com/FFTW/fftw3
 [gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://github.com/ImageMagick/ImageMagick6/blob/main/LICENSE
-[imath]: https://github.com/AcademySoftwareFoundation/Imath
 [libdicom]: https://github.com/ImagingDataCommons/libdicom
 [libjxl]: https://github.com/libjxl/libjxl
-[matio]: https://github.com/tbeu/matio
-[nifticlib]: https://github.com/NIFTI-Imaging/nifti_clib
-[openexr]: https://github.com/AcademySoftwareFoundation/openexr
 [openjpeg]: https://github.com/uclouvain/openjpeg
 [openslide]: https://github.com/openslide/openslide
 [poppler]: https://gitlab.freedesktop.org/poppler/poppler

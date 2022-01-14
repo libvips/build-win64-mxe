@@ -9,8 +9,7 @@ graphicsmagick_DEPS := $(subst libjpeg-turbo,mozjpeg,$(graphicsmagick_DEPS))
 openslide_DEPS      := $(subst libjpeg-turbo,mozjpeg,$(openslide_DEPS))
 poppler_DEPS        := $(subst libjpeg-turbo,mozjpeg,$(poppler_DEPS))
 tiff_DEPS           := $(subst libjpeg-turbo,mozjpeg,$(tiff_DEPS))
-vips-all_DEPS       := $(subst libjpeg-turbo,mozjpeg,$(vips-all_DEPS))
-vips-web_DEPS       := $(subst libjpeg-turbo,mozjpeg,$(vips-web_DEPS))
+vips_DEPS           := $(subst libjpeg-turbo,mozjpeg,$(vips_DEPS))
 
 # Disable the libjpeg-turbo build, just to be sure
 libjpeg-turbo_BUILD_x86_64-w64-mingw32  =
