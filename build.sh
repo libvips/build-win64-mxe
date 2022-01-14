@@ -3,7 +3,7 @@
 function usage()
 {
   cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [DEPS] [ARCH] [TYPE]
+Usage: $(basename "$0") [OPTIONS] [ARCH] [TYPE]
 Build Windows binaries for libvips in a container
 
 OPTIONS:
@@ -15,16 +15,10 @@ OPTIONS:
 	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaries without optimizations to improve debuggability
+	--with-modules		Build the dynamically loadable modules
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
 	--with-jpeg-turbo	Build binaries with libjpeg-turbo instead of mozjpeg
 	--without-zlib-ng	Build binaries with vanilla zlib
-
-DEPS:
-	The group of dependencies to build libvips with,
-	    defaults to 'web'
-	Possible values are:
-	    - web
-	    - all
 
 ARCH:
 	The Windows architecture to target,
@@ -58,6 +52,7 @@ jpeg_impl="mozjpeg"
 with_ffi_compat=false
 with_hevc=false
 with_debug=false
+with_modules=false
 with_zlib_ng=true
 
 # Parse arguments
@@ -71,8 +66,12 @@ while [ $# -gt 0 ]; do
     --tmpdir) tmpdir="$2"; shift ;;
     --nightly) git_ref="master" ;;
     --with-ffi-compat) with_ffi_compat=true ;;
-    --with-hevc) with_hevc=true ;;
+    --with-hevc)
+      with_hevc=true
+      with_modules=true # --with-hevc implies --with-modules
+      ;;
     --with-debug) with_debug=true ;;
+    --with-modules) with_modules=true ;;
     --with-jpegli) jpeg_impl="jpegli" ;;
     --with-jpeg-turbo) jpeg_impl="libjpeg-turbo" ;;
     --without-mozjpeg) jpeg_impl="libjpeg-turbo" ;; # For compat
@@ -89,19 +88,8 @@ done
 # Restore positional parameters
 set -- "${POSITIONAL[@]}"
 
-deps="${1:-web}"
-arch="${2:-x86_64}"
-type="${3:-shared}"
-
-if [ "$with_hevc" = "true" ] && [ "$deps" = "web" ]; then
-  echo "ERROR: The HEVC-related dependencies can only be built for the \"all\" variant." >&2
-  exit 1
-fi
-
-if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
-  echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
-  exit 1
-fi
+arch="${1:-x86_64}"
+type="${2:-shared}"
 
 if [ "$type" = "shared" ] && [ "$with_ffi_compat" = "true" ]; then
   echo "WARNING: The --with-ffi-compat option makes only sense when building static binaries." >&2
@@ -166,9 +154,9 @@ $oci_runtime run --rm -t \
   -e "JPEG_IMPL=$jpeg_impl" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
+  -e "MODULES=$with_modules" \
   -e "ZLIB_NG=$with_zlib_ng" \
   libvips-build-win-mxe \
-  $deps \
   $target
 
 # Test vips utility outside the container

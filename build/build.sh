@@ -5,18 +5,11 @@ set -e
 
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [DEPS] [TARGET]
+Usage: $(basename "$0") [OPTIONS] [TARGET]
 Build Windows binaries for libvips
 
 OPTIONS:
 	--help	Show the help and exit
-
-DEPS:
-	The group of dependencies to build libvips with,
-	    defaults to 'web'
-	Possible values are:
-	    - web
-	    - all
 
 TARGET:
 	The binary target,
@@ -36,13 +29,7 @@ fi
 
 . variables.sh
 
-deps="${1:-web}"
-target="${2:-x86_64-w64-mingw32.shared}"
-
-if [[ "$target" == *.static* ]] && [ "$deps" = "all" ]; then
-  echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
-  exit 1
-fi
+target="${1:-x86_64-w64-mingw32.shared}"
 
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
@@ -84,6 +71,10 @@ if [ -n "$GIT_COMMIT" ]; then
   plugins+=" $work_dir/plugins/nightly"
 fi
 
+if [ "$MODULES" = "true" ]; then
+  plugins+=" $work_dir/plugins/modular"
+fi
+
 if [ "$JPEG_IMPL" != "libjpeg-turbo" ]; then
   plugins+=" $work_dir/plugins/$JPEG_IMPL"
 fi
@@ -116,24 +107,28 @@ make pe-util \
 
 if [ -n "$GIT_COMMIT" ]; then
   # Invalidate build cache, if exists
-  rm -f $mxe_dir/usr/$target.$deps/installed/vips-$deps
+  rm -f $mxe_dir/usr/$target/installed/vips
 fi
 
 # Build gendef (a tool for generating def files from DLLs) 
 # and libvips (+ dependencies)
-make gendef vips-$deps \
+make gendef vips \
   MXE_PLUGIN_DIRS="$plugins" \
-  MXE_TARGETS=$target.$deps \
+  MXE_TARGETS=$target \
   GIT_COMMIT=$GIT_COMMIT
 
 # Build and bundle llvm-mingw tests when debugging
 if [ "$DEBUG" = "true" ]; then
   make test-llvm-mingw \
     MXE_PLUGIN_DIRS="$plugins" \
-    MXE_TARGETS=$target.$deps
+    MXE_TARGETS=$target
 fi
 
 cd $work_dir
 
 # Packaging
-. $work_dir/package-vipsdev.sh $deps $target
+. $work_dir/package-vipsdev.sh $target
+
+if [ "$MODULES" = "true" ]; then
+  . $work_dir/package-modules.sh $target
+fi

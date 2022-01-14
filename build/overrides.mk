@@ -29,16 +29,6 @@ libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
-# upstream version is 1.5.23
-# cannot use GH_CONF:
-# matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.27
-matio_CHECKSUM := 0a6aa00b18c4512b63a8d27906b079c8c6ed41d4b2844f7a4ae598e18d22d3b3
-matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
-matio_SUBDIR   := matio-$(matio_VERSION)
-matio_FILE     := matio-$(matio_VERSION).tar.gz
-matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
-
 # upstream version is 3.4.0
 libarchive_VERSION  := 3.7.4
 libarchive_CHECKSUM := f887755c434a736a609cbd28d87ddbfbe9d6a3bb5b703c22c02f6af80a802735
@@ -101,26 +91,6 @@ libexif_CHECKSUM := d47564c433b733d83b6704c70477e0a4067811d184ec565258ac563d8223
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.bz2
 
-# upstream version is 2.2.0
-# cannot use GH_CONF:
-# openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-# 3.2.0 requires libdeflate instead of zlib
-openexr_VERSION  := 3.1.11
-openexr_CHECKSUM := 06b4a20d0791b5ec0f804c855d320a0615ce8445124f293616a086e093f1f1e1
-openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
-openexr_SUBDIR   := openexr-$(openexr_VERSION)
-openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
-openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
-
-# upstream version is 3410
-cfitsio_VERSION  := 4.4.0
-cfitsio_CHECKSUM := 95900cf95ae760839e7cb9678a7b2fad0858d6ac12234f934bd1cb6bfc246ba9
-cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
-cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
-cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
-cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
-cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
-
 # upstream version is 2.14.2
 fontconfig_VERSION  := 2.15.0
 fontconfig_CHECKSUM := 63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
@@ -167,7 +137,6 @@ mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64
 ## Patches that we override with our own
 
 cairo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
-fftw_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fftw-[0-9]*.patch)))
 fontconfig_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 freetype_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
 freetype-bootstrap_PATCHES := $(freetype_PATCHES)
@@ -206,8 +175,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: libxml2, openjpeg
 #  Removed: bzip2, ffmpeg, fftw, freetype, jasper, liblqr-1, libltdl, libpng, libraw, openexr, pthreads, tiff, zlib
 #  Replaced: jpeg with libjpeg-turbo
-# OpenEXR:
-#  Removed: pthreads
 # Poppler:
 #  Added: libjpeg-turbo, lcms
 #  Removed: boost, curl, qt6-qtbase, libwebp
@@ -216,8 +183,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: gdk-pixbuf, libcroco, libgsf
 # Cairo:
 #  Removed: lzo
-# matio:
-#  Removed: hdf5
 # libjpeg-turbo:
 #  Replaced: yasm with $(BUILD)~nasm
 # libxml2:
@@ -225,8 +190,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # Fontconfig:
 #  Added: meson-wrapper
 #  Removed: gettext
-# CFITSIO:
-#  Added: zlib
 # libexif:
 #  Removed: gettext
 # HarfBuzz:
@@ -242,15 +205,12 @@ lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
 tiff_DEPS               := cc libjpeg-turbo libwebp zlib
 imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
 graphicsmagick_DEPS     := $(imagemagick_DEPS)
-openexr_DEPS            := cc imath zlib
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 librsvg_DEPS            := cc cairo glib pango libxml2 rust $(BUILD)~cargo-c
 cairo_DEPS              := $(filter-out lzo ,$(cairo_DEPS))
-matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
 libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
 fontconfig_DEPS         := cc meson-wrapper expat freetype-bootstrap
-cfitsio_DEPS            := cc zlib
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 harfbuzz_DEPS           := cc meson-wrapper cairo freetype-bootstrap glib
 libarchive_DEPS         := cc zlib
@@ -621,7 +581,12 @@ endef
 
 # compile with CMake
 define poppler_BUILD
+    # Add missing libs to .pc file
+    echo 'Requires.private: lcms2 libjpeg libopenjp2' >> '$(SOURCE_DIR)/poppler.pc.cmake'
+    echo 'Libs.private: -lc++' >> '$(SOURCE_DIR)/poppler.pc.cmake'
+
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DENABLE_RELOCATABLE=$(CMAKE_SHARED_BOOL) \
         -DENABLE_LIBTIFF=ON \
         -DENABLE_LIBPNG=ON \
         -DENABLE_GLIB=ON \
@@ -730,19 +695,6 @@ define cairo_BUILD
     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
-define matio_BUILD
-    # https://github.com/tbeu/matio/issues/78 for ac_cv_va_copy
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        ac_cv_va_copy=C99
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
-endef
-
-define matio_BUILD_SHARED
-    $($(PKG)_BUILD)
-endef
-
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
 # OpenSlide needs --with-xpath
 # ImageMagick's internal MSVG parser needs --with-sax1
@@ -758,7 +710,7 @@ define libxml2_BUILD
         --with-valid \
         --with-http \
         --with-tree \
-        $(if $(findstring .all,$(TARGET)), \
+        $(if $(IS_MODULAR), \
             --with-xpath \
             --with-sax1) \
         --without-lzma \
@@ -816,33 +768,6 @@ define glib_BUILD
         '$(BUILD_DIR)'
 
     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
-endef
-
-# build with CMake.
-define openexr_BUILD
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-        -DOPENEXR_INSTALL_PKG_CONFIG=ON \
-        -DOPENEXR_INSTALL_TOOLS=OFF \
-        -DOPENEXR_BUILD_TOOLS=OFF \
-        -DBUILD_TESTING=OFF \
-        '$(SOURCE_DIR)'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
-endef
-
-define cfitsio_BUILD_SHARED
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-        -DBUILD_SHARED_LIBS=ON \
-        -DUSE_CURL=OFF \
-        '$(SOURCE_DIR)'
-
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
-
-    '$(TARGET)-gcc' \
-        -W -Wall -Werror -ansi \
-        '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-cfitsio.exe' \
-        `'$(TARGET)-pkg-config' cfitsio --cflags --libs`
 endef
 
 # Disable tests

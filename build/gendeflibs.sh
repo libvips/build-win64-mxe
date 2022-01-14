@@ -5,18 +5,11 @@ set -e
 
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [DEPS] [TARGET]
+Usage: $(basename "$0") [OPTIONS] [TARGET]
 Make .def and .lib files for all the DLLs we've built
 
 OPTIONS:
 	--help	Show the help and exit
-
-DEPS:
-	The group of dependencies to build libvips with,
-	    defaults to 'web'
-	Possible values are:
-	    - web
-	    - all
 
 TARGET:
 	The binary target,
@@ -39,9 +32,8 @@ fi
 # Enable extended globbing to suppport +(pattern-list) below
 shopt -s extglob
 
-deps="${1:-web}"
-target="${2:-x86_64-w64-mingw32.shared}"
-dlltool=$target.$deps-dlltool
+target="${1:-x86_64-w64-mingw32.shared}"
+dlltool=$target-dlltool
 
 cd $repackage_dir
 
