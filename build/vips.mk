@@ -1,13 +1,13 @@
-PKG             := vips-web
+PKG             := vips
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 8.15.3
 $(PKG)_CHECKSUM := 3e27d9f536eafad64013958fe9e8a1964c90b564c731d49db7c1a1c11b1052a0
-$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
+$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
+$(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
+$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant highway cgif
@@ -47,7 +47,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "rsvg": "$(librsvg_VERSION)",\n'; \
      printf '  "spng": "$(libspng_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
-     printf '  "vips": "$(vips-web_VERSION)",\n'; \
+     printf '  "vips": "$(vips_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
      printf '  "xml": "$(libxml2_VERSION)",\n'; \
      $(if $(IS_ZLIB_NG), \
@@ -55,6 +55,24 @@ define $(PKG)_PRE_CONFIGURE
           printf '  "zlib": "$(zlib_VERSION)"\n';) \
      printf '}';) \
      > '$(PREFIX)/$(TARGET)/vips-packaging/versions.json'
+
+    $(if $(IS_MODULAR), \
+        (printf '{\n'; \
+         printf '  "brotli": "$(brotli_VERSION)",\n'; \
+         $(if $(IS_HEVC),printf '  "de265": "$(libde265_VERSION)"$(comma)\n';) \
+         printf '  "dicom": "$(libdicom_VERSION)",\n'; \
+         printf '  "gdkpixbuf": "$(gdk-pixbuf_VERSION)",\n'; \
+         $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), \
+              printf '  "graphicsmagick": "$(graphicsmagick_VERSION)"$(comma)\n';, \
+              printf '  "imagemagick": "$(imagemagick_VERSION)"$(comma)\n';) \
+         printf '  "jxl": "$(libjxl_VERSION)",\n'; \
+         printf '  "openjpeg": "$(openjpeg_VERSION)",\n'; \
+         printf '  "openslide": "$(openslide_VERSION)",\n'; \
+         printf '  "poppler": "$(poppler_VERSION)",\n'; \
+         printf '  "sqlite": "$(sqlite_VERSION)"$(if $(IS_HEVC),$(comma))\n'; \
+         $(if $(IS_HEVC),printf '  "x265": "$(x265_VERSION)"\n';) \
+         printf '}';) \
+         > '$(PREFIX)/$(TARGET)/vips-packaging/versions-modules.json')
 endef
 
 define $(PKG)_BUILD
@@ -70,22 +88,27 @@ define $(PKG)_BUILD
         -Ddeprecated=false \
         -Dexamples=false \
         -Dintrospection=disabled \
-        -Dmodules=disabled \
+        -Dmodules=enabled \
+        -Dheif-module=$(if $(IS_HEVC),enabled,disabled) \
+        $(if $(IS_MODULAR), \
+            $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), -Dmagick-package=GraphicsMagick) \
+        $(else), \
+            -Djpeg-xl=disabled \
+            -Dmagick=disabled \
+            -Dopenjpeg=disabled \
+            -Dopenslide=disabled \
+            -Dpoppler=disabled) \
         -Dcfitsio=disabled \
         -Dfftw=disabled \
-        -Djpeg-xl=disabled \
-        -Dmagick=disabled \
         -Dmatio=disabled \
         -Dnifti=disabled \
         -Dopenexr=disabled \
-        -Dopenjpeg=disabled \
-        -Dopenslide=disabled \
         -Dpdfium=disabled \
-        -Dpoppler=disabled \
         -Dquantizr=disabled \
         -Dppm=false \
         -Danalyze=false \
         -Dradiance=false \
+        -Dc_args='$(CFLAGS) -DVIPS_DLLDIR_AS_LIBDIR' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

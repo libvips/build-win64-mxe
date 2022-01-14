@@ -3,7 +3,7 @@
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
 Usage: $(basename "$0") [OPTIONS] [TARGET]
-Package libvips in mxe/usr/TARGET/
+Package libvips modules in mxe/usr/TARGET/
 
 OPTIONS:
 	--help	Show the help and exit
@@ -40,7 +40,7 @@ esac
 
 # Make sure that the repackaging dir is empty
 rm -rf $repackage_dir $pdb_dir
-mkdir -p $repackage_dir/{bin,include,lib}
+mkdir -p $repackage_dir/bin
 mkdir $pdb_dir
 
 # Utilities
@@ -51,18 +51,15 @@ install_dir=$mxe_prefix/$target
 bin_dir=$install_dir/bin
 lib_dir=$install_dir/lib
 
-# List of PE targets that need to be copied, including their transitive dependencies and PDBs
-pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{vips,vipsedit,vipsheader,vipsthumbnail}.exe)
+# Ensure module_dir is set correctly when building nightly versions
+if [ -n "$GIT_COMMIT" ]; then
+  module_dir=$(printf '%s\n' $lib_dir/vips-modules-* | sort -n | tail -1)
+else
+  module_dir=$lib_dir/vips-modules-$vips_version
+fi
+module_dir_base=$(basename $module_dir)
 
 zip_suffix="${vips_pre_version:+-$vips_pre_version}"
-
-if [ "$type" = "static" ]; then
-  zip_suffix+="-static"
-fi
-
-if [ "$FFI_COMPAT" = "true" ]; then
-  zip_suffix+="-ffi"
-fi
 
 if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
@@ -72,15 +69,7 @@ if [ "$DEBUG" = "true" ]; then
   zip_suffix+="-debug"
 fi
 
-if [ "$JPEG_IMPL" != "mozjpeg" ]; then
-  zip_suffix+="-$JPEG_IMPL"
-fi
-
-if [ "$ZLIB_NG" = "false" ]; then
-  zip_suffix+="-zlib-vanilla"
-fi
-
-echo "Copying libvips and dependencies"
+echo "Copying libvips modules and dependencies"
 
 # Whitelist the API set DLLs
 # Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
@@ -98,55 +87,54 @@ whitelist+=(ntdll.dll)
 # See: https://github.com/rust-lang/rust/pull/121317
 whitelist+=(api-ms-win-core-synch-l1-2-0.dll)
 
-# Copy libvips and dependencies with pe-util
-for pe_target in "${pe_targets[@]}"; do
-  [ -f "$pe_target" ] || { echo "WARNING: $pe_target doesn't exist." >&2 ; continue; }
+# Avoiding copying libvips and glib
+whitelist+=(lib{glib-2.0-0,gobject-2.0-0,vips-42}.dll)
 
-  pe_deps=$(peldd $pe_target --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
-  for pe_dep in $pe_deps; do
-    dir=$(dirname $pe_dep)
-    base=$(basename $pe_dep .${pe_dep##*.})
+mkdir -p $repackage_dir/bin/$module_dir_base
 
-    cp -n $pe_dep $repackage_dir/bin
+# Copy loadable modules
+for module in $module_dir/*.dll; do
+  base=$(basename $module .dll)
+  cp $module $repackage_dir/bin/$module_dir_base
+  [ -f $lib_dir/$base.pdb ] && cp $lib_dir/$base.pdb $pdb_dir
 
-    # Copy PDB files
+  # Copy the transitive dependencies of the modules
+  # which are not yet present in the bin directory.
+  binaries=$(peldd $module --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --transitive)
+  for dll in $binaries; do
+    base=$(basename $dll .dll)
+    cp -n $dll $repackage_dir/bin
     [ -f $lib_dir/$base.pdb ] && cp -n $lib_dir/$base.pdb $pdb_dir
   done
 done
-
-echo "Copying include directories"
-
-# Follow symlinks when copying include directories
-cp -Lr $install_dir/include/{glib-2.0,vips} $repackage_dir/include
-cp -Lr $lib_dir/glib-2.0 $repackage_dir/lib
-
-echo "Generating import files"
-./gendeflibs.sh $target
-
-# Allow sharp to import GLib symbols from libvips-42.dll
-sed -i -e 's|#define GLIB_STATIC_COMPILATION 1|/* #undef GLIB_STATIC_COMPILATION */|' \
-       -e 's|#define GOBJECT_STATIC_COMPILATION 1|/* #undef GOBJECT_STATIC_COMPILATION */|' \
-       $repackage_dir/lib/glib-2.0/include/glibconfig.h
 
 echo "Strip unneeded symbols"
 
 # Remove all symbols that are not needed
 if [ "$DEBUG" = "false" ]; then
-  $strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
+  [ "$type" = "shared" ] && $strip --strip-unneeded $repackage_dir/bin/*.dll
+  $strip --strip-unneeded $repackage_dir/bin/$module_dir_base/*.dll
+fi
+
+if [ "$type" = "shared" ]; then
+  mkdir -p $repackage_dir/lib
+  echo "Generating import files"
+  ./gendeflibs.sh $target
 fi
 
 echo "Copying packaging files"
 
-cp $install_dir/vips-packaging/{ChangeLog,LICENSE,README.md,versions.json} $repackage_dir
+cp $install_dir/vips-packaging/{ChangeLog,LICENSE,README.md} $repackage_dir
+cp $install_dir/vips-packaging/versions-modules.json $repackage_dir/versions.json
 
-zipfile=$vips_package-dev-$arch-web-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
+zipfile=$vips_package-dev-$arch-modules-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
 
 echo "Creating $zipfile"
 
 rm -f $zipfile
 zip -r -qq $zipfile $repackage_dir
 
-zipfile=$vips_package-pdb-$arch-web-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
+zipfile=$vips_package-pdb-$arch-modules-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
 
 echo "Creating $zipfile"
 
