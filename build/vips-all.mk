@@ -2,12 +2,11 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.12.1
-$(PKG)_CHECKSUM := 474d8439244cd26c504812fd623259f806c32553b38d2a54798c9766135f5a5c
+# https://github.com/libvips/libvips/tarball/545933255e3310a8cbf1ce56c048bc4fb49e7a91
+$(PKG)_VERSION  := 5459332
+$(PKG)_CHECKSUM := e374a5aace9da6d51157ed260d73ad8296866c04e08c9d06b11380754860a761
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
+$(PKG)_GH_CONF  := libvips/libvips/branches/master
 $(PKG)_DEPS     := cc libwebp librsvg glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc imagemagick matio openexr \
@@ -75,7 +74,7 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/autogen.sh \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
         --without-pdfium \
