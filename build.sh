@@ -8,6 +8,7 @@ Build Windows binaries for libvips in a container
 
 OPTIONS:
 	--help			Show the help and exit
+	--nightly		Build libvips from tip-of-tree
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaires with debug symbols
 	--without-llvm		Build binaires with GCC
@@ -46,6 +47,7 @@ EOF
 . $PWD/build/variables.sh
 
 # Default arguments
+nightly=false
 with_hevc=false
 with_debug=false
 with_llvm=true
@@ -58,6 +60,7 @@ POSITIONAL=()
 while [ $# -gt 0 ]; do
   case $1 in
     -h|--help) usage 0 ;;
+    --nightly) nightly=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --without-llvm) with_llvm=false ;;
@@ -147,6 +150,7 @@ $oci_runtime build -t libvips-build-win-mxe container
 $oci_runtime run --rm -t \
   -u $(id -u):$(id -g) \
   -v $PWD/build:/data \
+  -e "NIGHTLY=$nightly" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "LLVM=$with_llvm" \

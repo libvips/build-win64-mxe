@@ -92,6 +92,10 @@ fi
 # The 'plugins' variable controls which plugins are in use
 plugins="plugins/meson-wrapper $work_dir"
 
+if [ "$NIGHTLY" = "true" ]; then
+  plugins+=" $work_dir/plugins/nightly"
+fi
+
 if [ "$MOZJPEG" = "true" ]; then
   plugins+=" $work_dir/plugins/mozjpeg"
 fi
@@ -125,12 +129,20 @@ make pe-util \
   MXE_TARGETS=`$mxe_dir/ext/config.guess` \
   MXE_USE_CCACHE=
 
+if [ "$NIGHTLY" = "true" ]; then
+  nightly_version=$(wget -q -O- 'https://api.github.com/repos/libvips/libvips/git/refs/heads/master' | sed -n 's#.*"sha": "\([^"]\{7\}\).*#\1#p' | head -1)
+
+  # Invalidate build cache
+  rm $mxe_dir/usr/$target.$deps/installed/vips-$deps
+fi
+
 # Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc),
 # gendef (a tool for generating def files from DLLs)
 # and libvips (+ dependencies).
 make meson-wrapper gendef vips-$deps \
   MXE_PLUGIN_DIRS="$plugins" \
-  MXE_TARGETS=$target.$deps
+  MXE_TARGETS=$target.$deps \
+  NIGHTLY_VERSION=$nightly_version
 
 # Build and bundle llvm-mingw tests
 if [ "$LLVM" = "true" ]; then
