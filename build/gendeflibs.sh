@@ -40,6 +40,9 @@ fi
 
 . variables.sh
 
+# Enable extended globbing to suppport +(pattern-list) below
+shopt -s extglob
+
 deps="${1:-web}"
 target="${2:-x86_64-w64-mingw32.shared.win32}"
 dlltool=$target.$deps-dlltool
@@ -51,10 +54,7 @@ for dllfile in bin/*.dll; do
 
   # dll names can have extra versioning in ... remove any trailing
   # "-\d+" pattern
-  pure=$base
-  if [[ $pure =~ (.*)-[0-9]+$ ]]; then
-    pure=${BASH_REMATCH[1]}
-  fi
+  pure="${base%-+([[:digit:]])}"
 
   defname=$pure.def
   libname=$pure.lib

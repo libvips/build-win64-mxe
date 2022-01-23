@@ -1,7 +1,7 @@
 # build-win64-mxe
 
-libvips and its dependencies cross-compiled for all four Windows architectures (`i686`, `x86_64`,
-`armv7` and `arm64`).
+libvips and its dependencies cross-compiled for all four Windows architectures (`x86_64`, `i686`,
+`aarch64` and `armv7`).
 
 Uses [MXE](https://github.com/mxe/mxe) as base environment. A custom plugin based upon the
 [llvm-mingw](https://github.com/mstorsjo/llvm-mingw) repository is used to swap GCC and binutils
@@ -20,7 +20,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.2.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.1.0     | MIT Licence                                                  |
-| [expat]         | 2.4.2     | MIT Licence                                                  |
+| [expat]         | 2.4.3     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.94   | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.11.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.11    | LGPLv3                                                       |
@@ -28,17 +28,17 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [glib]          | 2.71.0    | LGPLv3                                                       |
 | [harfbuzz]      | 3.2.0     | MIT Licence                                                  |
 | [lcms]          | 2.12      | MIT Licence                                                  |
-| [libexif]       | 0.6.23    | LGPLv3                                                       |
+| [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
 | [libgsf]        | 1.14.48   | LGPLv3                                                       |
 | [libheif]       | 1.12.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
-| [librsvg]       | 2.52.5    | LGPLv3                                                       |
+| [librsvg]       | 2.53.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.1     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.12.1    | LGPLv3                                                       |
-| [libwebp]       | 1.2.1     | New BSD License                                              |
+| [libwebp]       | 1.2.2     | New BSD License                                              |
 | [libxml2]       | 2.9.12    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
@@ -97,16 +97,16 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.0.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 0.15.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-34 | [ImageMagick License] (Apache-2.0-like)                      |
-| [imath]         | 3.1.3     | BSD 3-Clause                                                 |
+| [imagemagick]   | 6.9.12-35 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imath]         | 3.1.4     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
-| [nifticlib]     | 2.0.0     | Public domain                                                |
+| [nifticlib]     | 3.0.0     | Public domain                                                |
 | [openexr]       | 3.1.3     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 21.12.0   | GPLv2                                                        |
-| [sqlite]        | 3.37.0    | Public domain                                                |
+| [poppler]       | 22.01.0   | GPLv2                                                        |
+| [sqlite]        | 3.37.2    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -117,7 +117,7 @@ Same as libvips-web + these extra dependencies:
 [imath]: https://github.com/AcademySoftwareFoundation/Imath
 [libjxl]: https://github.com/libjxl/libjxl
 [matio]: https://github.com/tbeu/matio
-[nifticlib]: https://nifti.nimh.nih.gov/
+[nifticlib]: https://github.com/NIFTI-Imaging/nifti_clib
 [openexr]: https://github.com/AcademySoftwareFoundation/openexr
 [openjpeg]: https://github.com/uclouvain/openjpeg
 [openslide]: https://github.com/openslide/openslide

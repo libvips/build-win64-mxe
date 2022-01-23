@@ -46,15 +46,12 @@ build_os=`$mxe_dir/ext/config.guess`
 
 export PATH="$mxe_prefix/$build_os/bin:$mxe_prefix/bin:$mxe_prefix/$target.$deps/bin:$PATH"
 
-if [ "$arch" = "i686" ]; then
-  arch="w32"
-elif [ "$arch" = "x86_64" ]; then
-  arch="w64"
-elif [ "$arch" = "armv7" ]; then
-  arch="arm32"
-elif [ "$arch" = "aarch64" ]; then
-  arch="arm64"
-fi
+case "$arch" in
+  x86_64) arch=w64 ;;
+  i686) arch=w32 ;;
+  aarch64) arch=arm64 ;;
+  armv7) arch=arm32 ;;
+esac
 
 # Make sure that the repackaging dir is empty
 rm -rf $repackage_dir
@@ -95,7 +92,7 @@ strip=$target.$deps-strip
 # Directories
 install_dir=$mxe_prefix/$target.$deps
 bin_dir=$install_dir/bin
-module_dir=$install_dir/lib/vips-modules-$vips_version
+module_dir=$(printf '%s\n' $install_dir/lib/vips-modules-* | sort -n | tail -1)
 
 echo "Copying libvips and dependencies"
 
@@ -106,9 +103,6 @@ else
   # Whitelist the API set DLLs
   # Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
   whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
-
-  # CreateEnvironmentBlock, GetUserProfileDirectoryA, etc.
-  whitelist+=(userenv.dll)
 fi
 
 # Copy libvips and dependencies with pe-util
@@ -126,8 +120,8 @@ if [ -d "$module_dir" ]; then
       cp -n $dll $repackage_dir/bin
     done
   done
-  mkdir -p $repackage_dir/bin/vips-modules-$vips_version
-  cp $module_dir/*.dll $repackage_dir/bin/vips-modules-$vips_version
+  mkdir -p $repackage_dir/bin/${module_dir##*/}
+  cp $module_dir/*.dll $repackage_dir/bin/${module_dir##*/}
 fi
 
 echo "Copying install area $install_dir/"
@@ -167,15 +161,16 @@ echo "Strip unneeded symbols"
 # Remove all symbols that are not needed
 if [ "$DEBUG" = "false" ]; then
   $strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
-  [ -d "$module_dir" ] && $strip --strip-unneeded $repackage_dir/bin/vips-modules-$vips_version/*.dll
+  [ -d "$module_dir" ] && $strip --strip-unneeded $repackage_dir/bin/${module_dir##*/}/*.dll
 fi
 
 echo "Copying packaging files"
 
 cp $install_dir/vips-packaging/{AUTHORS,ChangeLog,COPYING,README.md,versions.json} $repackage_dir
 
+zipfile=$vips_package-dev-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
+
 echo "Creating $zipfile"
 
-zipfile=$vips_package-dev-$arch-$deps-$vips_version.$vips_patch_version$zip_suffix.zip
 rm -f $zipfile
 zip -r -qq $zipfile $repackage_dir

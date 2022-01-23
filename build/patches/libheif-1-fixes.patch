@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Lovell Fuller <github@lovell.info>
 Date: Fri, 7 May 2021 21:43:51 +0100
-Subject: [PATCH 1/4] aom encoder: improve performance by ~2x using new 'all intra'
+Subject: [PATCH 1/5] aom encoder: improve performance by ~2x using new 'all intra'
  mode
 
 Available from aom v3.1.0, this usage mode is considered the
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Lovell Fuller <github@lovell.info>
 Date: Sat, 8 May 2021 10:02:18 +0100
-Subject: [PATCH 2/4] aom: expose decoder error messages
+Subject: [PATCH 2/5] aom: expose decoder error messages
 
 Upstream-Status: Accepted [https://github.com/strukturag/libheif/commit/7e1c1888023f6dd68cf33e537e7eb8e4d5e17588]
 
@@ -63,7 +63,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Lovell Fuller <github@lovell.info>
 Date: Thu, 13 May 2021 09:37:26 +0100
-Subject: [PATCH 3/4] Detect and prevent negative overflow of clap box dimensions
+Subject: [PATCH 3/5] Detect and prevent negative overflow of clap box dimensions
  in the 32-bit unsigned to signed conversion, which can cause a divide-by-zero
  floating point exception when rounded.
 
@@ -88,7 +88,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Alexander Karpinsky <homm86@gmail.com>
 Date: Sun, 17 Oct 2021 13:57:05 +0300
-Subject: [PATCH 4/4] Avoid lroundf using
+Subject: [PATCH 4/5] Avoid lroundf using
 
 Upstream-Status: Submitted [https://github.com/strukturag/libheif/pull/551]
 
@@ -114,3 +114,87 @@ index 1111111..2222222 100644
    if (x < 0) return 0;
    if (x > 255) return 255;
    return static_cast<uint8_t>(x);
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Lovell Fuller <github@lovell.info>
+Date: Mon, 3 Jan 2022 20:24:51 +0000
+Subject: [PATCH 5/5] aom: verify NCLX values against known bounds
+
+Helps prevent casting to unknown enum values
+
+Upstream-Status: Submitted [https://github.com/strukturag/libheif/pull/583]
+
+diff --git a/go/heif/heif.go b/go/heif/heif.go
+index 1111111..2222222 100644
+--- a/go/heif/heif.go
++++ b/go/heif/heif.go
+@@ -283,6 +283,8 @@ const (
+ 
+ 	SuberrorUnsupportedItemConstructionMethod = C.heif_suberror_Unsupported_item_construction_method
+ 
++	SuberrorUnsupportedNclxProfile = C.heif_suberror_Unsupported_nclx_profile
++
+ 	// --- Encoder_plugin_error ---
+ 
+ 	SuberrorUnsupportedBitDepth = C.heif_suberror_Unsupported_bit_depth
+diff --git a/libheif/error.cc b/libheif/error.cc
+index 1111111..2222222 100644
+--- a/libheif/error.cc
++++ b/libheif/error.cc
+@@ -185,6 +185,8 @@ const char* heif::Error::get_error_string(heif_suberror_code err)
+       return "Unsupported color conversion";
+     case heif_suberror_Unsupported_item_construction_method:
+       return "Unsupported item construction method";
++    case heif_suberror_Unsupported_nclx_profile:
++      return "Unsupported NCLX profile";
+ 
+       // --- Encoder_plugin_error --
+ 
+diff --git a/libheif/heif.h b/libheif/heif.h
+index 1111111..2222222 100644
+--- a/libheif/heif.h
++++ b/libheif/heif.h
+@@ -255,6 +255,8 @@ enum heif_suberror_code
+ 
+   heif_suberror_Unsupported_item_construction_method = 3004,
+ 
++  heif_suberror_Unsupported_nclx_profile = 3005,
++
+ 
+   // --- Encoder_plugin_error ---
+ 
+diff --git a/libheif/heif_decoder_aom.cc b/libheif/heif_decoder_aom.cc
+index 1111111..2222222 100644
+--- a/libheif/heif_decoder_aom.cc
++++ b/libheif/heif_decoder_aom.cc
+@@ -199,6 +199,18 @@ struct heif_error aom_decode_image(void* decoder_raw, struct heif_image** out_im
+ 
+   // --- read nclx parameters from decoded AV1 bitstream
+ 
++  if (img->cp < AOM_CICP_CP_BT_709 ||
++      img->cp > AOM_CICP_CP_EBU_3213 ||
++      img->tc < AOM_CICP_TC_BT_709 ||
++      img->tc > AOM_CICP_TC_HLG ||
++      img->mc < AOM_CICP_MC_IDENTITY ||
++      img->mc > AOM_CICP_MC_ICTCP) {
++    struct heif_error err = {heif_error_Decoder_plugin_error,
++                             heif_suberror_Unsupported_nclx_profile,
++                             kEmptyString};
++    return err;
++  }
++
+   heif_color_profile_nclx nclx;
+   nclx.color_primaries = (heif_color_primaries) img->cp;
+   nclx.transfer_characteristics = (heif_transfer_characteristics) img->tc;
+diff --git a/libheif/heif_emscripten.h b/libheif/heif_emscripten.h
+index 1111111..2222222 100644
+--- a/libheif/heif_emscripten.h
++++ b/libheif/heif_emscripten.h
+@@ -247,6 +247,7 @@ EMSCRIPTEN_BINDINGS(libheif) {
+     .value("heif_suberror_Unsupported_data_version", heif_suberror_Unsupported_data_version)
+     .value("heif_suberror_Unsupported_color_conversion", heif_suberror_Unsupported_color_conversion)
+     .value("heif_suberror_Unsupported_item_construction_method", heif_suberror_Unsupported_item_construction_method)
++    .value("heif_suberror_Unsupported_nclx_profile", heif_suberror_Unsupported_nclx_profile)
+     .value("heif_suberror_Unsupported_bit_depth", heif_suberror_Unsupported_bit_depth)
+     .value("heif_suberror_Wrong_tile_image_pixel_depth", heif_suberror_Wrong_tile_image_pixel_depth);
+     emscripten::enum_<heif_compression_format>("heif_compression_format")

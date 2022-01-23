@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: "fix@me" <fix@me>
 Date: Mon, 27 Sep 2010 12:00:52 +0200
-Subject: [PATCH 1/2] fix .pc requirements
+Subject: [PATCH 1/3] fix .pc requirements
 
 
 diff --git a/librsvg.pc.in b/librsvg.pc.in
@@ -26,7 +26,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 9 Jun 2020 18:50:00 +0200
-Subject: [PATCH 2/2] Remove rlib from the C API crate type
+Subject: [PATCH 2/3] Remove rlib from the C API crate type
 
 Since LTO optimization does not work for staticlib+rlib compilation.
 
@@ -43,3 +43,69 @@ index 1111111..2222222 100644
  
  [dependencies]
  # Keep these in sync with respect to the cairo-rs version:
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 11 Jan 2022 11:29:11 +0100
+Subject: [PATCH 3/3] Make rst2man and gi-docgen optional
+
+
+diff --git a/Makefile.am b/Makefile.am
+index 1111111..2222222 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,4 +1,8 @@
+-SUBDIRS = . gdk-pixbuf-loader tests doc win32
++if HAVE_GI_DOCGEN
++RSVG_DOC = doc
++endif
++
++SUBDIRS = . gdk-pixbuf-loader tests $(RSVG_DOC) win32
+ 
+ NULL =
+ 
+@@ -229,11 +233,20 @@ rsvg-convert$(EXEEXT): $(RSVG_CONVERT_BIN)
+ 	cd $(LIBRSVG_BUILD_DIR) && mv $(RSVG_CONVERT_BIN) rsvg-convert$(EXEEXT)
+ 
+ rsvg-convert.1: rsvg-convert.rst
++if HAVE_RST2MAN
+ 	$(RST2MAN) $(top_srcdir)/rsvg-convert.rst rsvg-convert.1
++else
++	@echo "========================================"
++	@echo "You need rst2man installed to make dist"
++	@echo "========================================"
++	@false
++endif
+ 
++if HAVE_RST2MAN
+ man1_MANS = rsvg-convert.1
+ 
+ CLEANFILES += rsvg-convert.1
++endif
+ 
+ dist_doc_DATA =				\
+ 	COMPILING.md			\
+diff --git a/configure.ac b/configure.ac
+index 1111111..2222222 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -117,15 +117,17 @@ dnl Man page generator
+ 
+ AC_CHECK_PROGS(RST2MAN, [rst2man rst2man.py], [no])
+ AS_IF(test x$RST2MAN = xno,
+-    AC_MSG_ERROR([rst2man is required.  Please install python3-docutils.])
++    AC_MSG_WARN([rst2man not found - not building man pages])
+ )
++AM_CONDITIONAL(HAVE_RST2MAN, [test "x$RST2MAN" != "xno"])
+ 
+ dnl Gi-docgen
+ 
+ AC_CHECK_TOOL(GI_DOCGEN, [gi-docgen], [no])
+ AS_IF(test x$GI_DOCGEN = xno,
+-    AC_MSG_ERROR([gi-docgen is required.  Please install it.])
++    AC_MSG_WARN([gi-docgen not found - not building docs])
+ )
++AM_CONDITIONAL(HAVE_GI_DOCGEN, [test "x$GI_DOCGEN" != "xno"])
+ 
+ dnl ===========================================================================
+ 
