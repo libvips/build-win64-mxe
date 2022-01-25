@@ -46,7 +46,7 @@ diff --git a/libvips/iofuncs/util.c b/libvips/iofuncs/util.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/util.c
 +++ b/libvips/iofuncs/util.c
-@@ -1975,6 +1975,54 @@ DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
+@@ -1983,6 +1983,54 @@ DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
  	return( TRUE );
  }
  #endif

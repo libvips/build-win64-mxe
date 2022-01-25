@@ -132,8 +132,8 @@ make pe-util \
 if [ "$NIGHTLY" = "true" ]; then
   nightly_version=$(wget -q -O- 'https://api.github.com/repos/libvips/libvips/git/refs/heads/master' | sed -n 's#.*"sha": "\([^"]\{7\}\).*#\1#p' | head -1)
 
-  # Invalidate build cache
-  rm $mxe_dir/usr/$target.$deps/installed/vips-$deps
+  # Invalidate build cache, if exits
+  rm -f $mxe_dir/usr/$target.$deps/installed/vips-$deps
 fi
 
 # Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc),

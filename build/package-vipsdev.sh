@@ -92,7 +92,14 @@ strip=$target.$deps-strip
 # Directories
 install_dir=$mxe_prefix/$target.$deps
 bin_dir=$install_dir/bin
-module_dir=$(printf '%s\n' $install_dir/lib/vips-modules-* | sort -n | tail -1)
+
+# Ensure module_dir is set correctly when building nightly versions
+if [ "$NIGHTLY" = "true" ]; then
+  module_dir=$(printf '%s\n' $install_dir/lib/vips-modules-* | sort -n | tail -1)
+else
+  module_dir=$install_dir/lib/vips-modules-$vips_version
+fi
+module_dir_base=${module_dir##*/}
 
 echo "Copying libvips and dependencies"
 
@@ -120,8 +127,8 @@ if [ -d "$module_dir" ]; then
       cp -n $dll $repackage_dir/bin
     done
   done
-  mkdir -p $repackage_dir/bin/${module_dir##*/}
-  cp $module_dir/*.dll $repackage_dir/bin/${module_dir##*/}
+  mkdir -p $repackage_dir/bin/$module_dir_base
+  cp $module_dir/*.dll $repackage_dir/bin/$module_dir_base
 fi
 
 echo "Copying install area $install_dir/"
@@ -161,7 +168,7 @@ echo "Strip unneeded symbols"
 # Remove all symbols that are not needed
 if [ "$DEBUG" = "false" ]; then
   $strip --strip-unneeded $repackage_dir/bin/*.{exe,dll}
-  [ -d "$module_dir" ] && $strip --strip-unneeded $repackage_dir/bin/${module_dir##*/}/*.dll
+  [ -d "$module_dir" ] && $strip --strip-unneeded $repackage_dir/bin/$module_dir_base/*.dll
 fi
 
 echo "Copying packaging files"

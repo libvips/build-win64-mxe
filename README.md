@@ -37,7 +37,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.53.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.1     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.12.1    | LGPLv3                                                       |
+| [libvips]       | 8.12.2    | LGPLv3                                                       |
 | [libwebp]       | 1.2.2     | New BSD License                                              |
 | [libxml2]       | 2.9.12    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |

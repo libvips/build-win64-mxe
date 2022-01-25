@@ -2,7 +2,7 @@
 
 vips_package=vips
 vips_version=8.12
-vips_patch_version=1
+vips_patch_version=2
 #vips_pre_version=rc1
 
 if [ "$NIGHTLY" = "true" ]; then
