@@ -20,14 +20,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.2.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.1.0     | MIT Licence                                                  |
-| [expat]         | 2.4.3     | MIT Licence                                                  |
+| [expat]         | 2.4.4     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.94   | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.11.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.11    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.6    | LGPLv3                                                       |
-| [glib]          | 2.71.0    | LGPLv3                                                       |
+| [glib]          | 2.71.1    | LGPLv3                                                       |
 | [harfbuzz]      | 3.2.0     | MIT Licence                                                  |
-| [lcms]          | 2.12      | MIT Licence                                                  |
+| [lcms]          | 2.13      | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
 | [libgsf]        | 1.14.48   | LGPLv3                                                       |
@@ -97,12 +97,12 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.0.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 0.15.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-35 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-37 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.4     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.0     | Public domain                                                |
-| [openexr]       | 3.1.3     | BSD 3-Clause                                                 |
+| [openexr]       | 3.1.4     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
 | [poppler]       | 22.01.0   | GPLv2                                                        |

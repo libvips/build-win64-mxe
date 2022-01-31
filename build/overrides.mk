@@ -30,8 +30,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-35
-imagemagick_CHECKSUM := d698b4bfb18249180d3fdc7f225823cf04bc339e35e7dd960da1119bae6c4e83
+imagemagick_VERSION  := 6.9.12-37
+imagemagick_CHECKSUM := 5cc24677145105c9187978e1575ce66eac26dc26096f927a365abd4c58b523c5
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -62,12 +62,20 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.71.0
-glib_CHECKSUM := 926816526f6e4bba9af726970ff87be7dac0b70d5805050c6207b7bb17ea4fca
+glib_VERSION  := 2.71.1
+glib_CHECKSUM := bf1807108bceb802bb6e837baae421edb8d78d463154beaab447cc5f4fb56792
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
+# upstream version is 2.4.3
+expat_VERSION  := 2.4.4
+expat_CHECKSUM := b5d25d6e373351c2ed19b562b4732d01d2589ac8c8e9e7962d8df1207cc311b8
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
 
 # upstream version is 1.14.30
 libgsf_VERSION  := 1.14.48
@@ -94,8 +102,8 @@ cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.1.3
-openexr_CHECKSUM := 6f70a624d1321319d8269a911c4032f24950cde52e76f46e9ecbebfcb762f28c
+openexr_VERSION  := 3.1.4
+openexr_CHECKSUM := cb019c3c69ada47fe340f7fa6c8b863ca0515804dc60bdb25c942c1da886930b
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -117,6 +125,14 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
+
+# upstream version is 2.12
+lcms_VERSION  := 2.13
+lcms_CHECKSUM := 0c67a5cc144029cfa34647a52809ec399aae488db4258a6a66fba318474a070f
+lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
+lcms_SUBDIR   := lcms2-$(lcms_VERSION)
+lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
+lcms_URL      := https://$(SOURCEFORGE_MIRROR)/project/lcms/lcms/$(lcms_VERSION)/$(lcms_FILE)
 
 # upstream version is 2.13.1
 fontconfig_VERSION  := 2.13.94
@@ -162,7 +178,6 @@ harfbuzz_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
-lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
@@ -404,9 +419,6 @@ endef
 # build with -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT to avoid a
 # horrible hack (we don't target pre-Windows XP, so it should be safe)
 define lcms_BUILD
-    # need to regenerate the configure script
-    cd '$(SOURCE_DIR)' && autoreconf -fi
-
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-zlib \
@@ -466,17 +478,18 @@ define libjpeg-turbo_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef
 
-# build with --disable-nls
+# build with the Meson build system
+# build with -Dnls=disabled
 define fontconfig_BUILD
-    cd '$(SOURCE_DIR)' && autoreconf -fi
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --with-arch='$(TARGET)' \
-        --with-expat='$(PREFIX)/$(TARGET)' \
-        --disable-docs \
-        --disable-nls
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
+    '$(TARGET)-meson' \
+        -Ddoc=disabled \
+        -Dnls=disabled \
+        -Dtests=disabled \
+        -Dtools=disabled \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+    ninja -C '$(BUILD_DIR)' install
 endef
 
 # disable GObject introspection

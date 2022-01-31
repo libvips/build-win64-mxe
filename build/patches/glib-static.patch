@@ -5,18 +5,18 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 13 May 2019 17:00:00 +0200
-Subject: [PATCH 1/2] Build gio, gmodule and gthread static
+Subject: [PATCH 1/1] Build gio, gmodule and gthread static
 
 
 diff --git a/gio/giomodule.c b/gio/giomodule.c
 index 1111111..2222222 100644
 --- a/gio/giomodule.c
 +++ b/gio/giomodule.c
-@@ -1102,28 +1102,6 @@ extern GType _g_win32_network_monitor_get_type (void);
+@@ -1110,27 +1110,8 @@ extern GType _g_win32_network_monitor_get_type (void);
  
  static HMODULE gio_dll = NULL;
  
--#ifdef DLL_EXPORT
+-#ifndef GLIB_STATIC_COMPILATION
 -
 -BOOL WINAPI DllMain (HINSTANCE hinstDLL,
 -                     DWORD     fdwReason,
@@ -36,16 +36,25 @@ index 1111111..2222222 100644
 -  return TRUE;
 -}
 -
--#endif
--
+-#elif defined(G_HAS_CONSTRUCTORS) /* && G_PLATFORM_WIN32 && GLIB_STATIC_COMPILATION */
++#ifdef GLIB_STATIC_COMPILATION
++#ifdef G_HAS_CONSTRUCTORS /* && G_PLATFORM_WIN32 && GLIB_STATIC_COMPILATION */
+ extern void glib_win32_init (void);
+ extern void gobject_win32_init (void);
+ 
+@@ -1162,6 +1143,7 @@ giomodule_init_ctor (void)
+ 
+ #else /* G_PLATFORM_WIN32 && GLIB_STATIC_COMPILATION && !G_HAS_CONSTRUCTORS */
+ #error Your platform/compiler is missing constructor support
++#endif /* G_HAS_CONSTRUCTORS */
+ #endif /* GLIB_STATIC_COMPILATION */
+ 
  void *
- _g_io_win32_get_module (void)
- {
 diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -783,12 +783,9 @@ else
+@@ -792,12 +792,9 @@ else
    gio_dtrace_hdr = []
  endif
  
@@ -93,46 +102,3 @@ index 1111111..2222222 100644
    install : true,
    dependencies : [libglib_dep],
    c_args : ['-DG_LOG_DOMAIN="GThread"' ] + glib_hidden_visibility_args,
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sun, 24 Jan 2021 13:45:03 +0100
-Subject: [PATCH 2/2] Add missing {init,shl}guid.h include directives
-
-Fixes undefined symbol errors during static linking:
-
-lld-link: error: undefined symbol: CLSID_ApplicationActivationManager
->>> referenced by libgio-2.0.a(gwin32appinfo.c.obj):(.refptr.CLSID_ApplicationActivationManager)
-
-lld-link: error: undefined symbol: IID_IApplicationActivationManager
->>> referenced by libgio-2.0.a(gwin32appinfo.c.obj):(.refptr.IID_IApplicationActivationManager)
-
-lld-link: error: undefined symbol: IID_IExtractIconW
->>> referenced by libgio-2.0.a(gwin32mount.c.obj):(.refptr.IID_IExtractIconW)
-
-diff --git a/gio/gwin32appinfo.c b/gio/gwin32appinfo.c
-index 1111111..2222222 100644
---- a/gio/gwin32appinfo.c
-+++ b/gio/gwin32appinfo.c
-@@ -34,6 +34,7 @@
- #include <glib/gstdio.h>
- #include "glibintl.h"
- #include <gio/gwin32registrykey.h>
-+#include <initguid.h>
- #include <shlobj.h>
- /* Contains the definitions from shlobj.h that are
-  * guarded as Windows8-or-newer and are unavailable
-diff --git a/gio/gwin32mount.c b/gio/gwin32mount.c
-index 1111111..2222222 100644
---- a/gio/gwin32mount.c
-+++ b/gio/gwin32mount.c
-@@ -27,7 +27,9 @@
- #define WIN32_MEAN_AND_LEAN
- #define COBJMACROS
- #include <windows.h>
-+#include <initguid.h>
- #include <shlobj.h>
-+#include <shlguid.h>
- #include <shlwapi.h>
- 
- /* At the moment of writing IExtractIconW interface in Mingw-w64
