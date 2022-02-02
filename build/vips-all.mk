@@ -2,13 +2,12 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.12.2
-$(PKG)_CHECKSUM := 565252992aff2c7cd10c866c7a58cd57bc536e03924bde29ae0f0cb9e074010b
+# https://github.com/libvips/libvips/tarball/4fab8beae9c863ceece67c0fddc639707392bf59
+$(PKG)_VERSION  := 4fab8be
+$(PKG)_CHECKSUM := 4e457a28e515cd057c6a4afb29f7af235b82f2628f9a84e24be55d7754156057
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
-$(PKG)_DEPS     := cc libwebp librsvg glib pango libgsf \
+$(PKG)_GH_CONF  := libvips/libvips/branches/master
+$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc imagemagick matio openexr \
                    cfitsio nifticlib poppler fftw openslide libjxl cgif
@@ -76,25 +75,18 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
-    # Allow libtool to statically link against libintl
-    # by specifying lt_cv_deplibs_check_method="pass_all"
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --enable-debug=no \
-        $(if $(IS_LLVM),, --without-libjxl) \
-        --without-pdfium \
-        --disable-introspection \
-        --disable-deprecated \
-        --with-heif=$(if $(IS_HEVC),module,yes) \
-        $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), --with-magickpackage=GraphicsMagick) \
-        CPPFLAGS='-DVIPS_DLLDIR_AS_LIBDIR' \
-        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all")
+    $(MXE_MESON_WRAPPER) \
+        -Ddeprecated=false \
+        -Dintrospection=false \
+        -Dmodules=enabled \
+        -Dheif-module=$(if $(IS_HEVC),enabled,disabled) \
+        -Djpeg-xl=$(if $(IS_LLVM),enabled,disabled) \
+        $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), -Dmagick-package=GraphicsMagick) \
+        -Dpdfium=disabled \
+        -Dquantizr=disabled \
+        -Dc_args='$(CFLAGS) -DVIPS_DLLDIR_AS_LIBDIR' \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
 
-    # remove -nostdlib from linker commandline options
-    # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
-    $(if $(IS_LLVM), \
-        $(SED) -i '/^archive_cmds=/s/\-nostdlib//g' '$(BUILD_DIR)/libtool')
-
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
