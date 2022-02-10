@@ -21,7 +21,7 @@ define $(PKG)_PRE_CONFIGURE
 
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \
-     printf '  "brotli": "$(brotli_VERSION)",\n'; \
+     $(if $(IS_LLVM),printf '  "brotli": "$(brotli_VERSION)"$(comma)\n';) \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
      printf '  "cfitsio": "$(cfitsio_VERSION)",\n'; \
      printf '  "cgif": "$(cgif_VERSION)",\n'; \
@@ -39,11 +39,11 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
-     printf '  "highway": "$(highway_VERSION)",\n'; \
+     $(if $(IS_LLVM),printf '  "highway": "$(highway_VERSION)"$(comma)\n';) \
      printf '  "imagemagick": "$(imagemagick_VERSION)",\n'; \
      printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
-     printf '  "jxl": "$(libjxl_VERSION)",\n'; \
+     $(if $(IS_LLVM),printf '  "jxl": "$(libjxl_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      printf '  "matio": "$(matio_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
@@ -78,6 +78,7 @@ define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
+        $(if $(IS_LLVM),, --without-libjxl) \
         --without-pdfium \
         --disable-introspection \
         --disable-deprecated \

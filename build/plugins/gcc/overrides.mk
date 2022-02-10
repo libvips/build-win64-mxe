@@ -21,6 +21,9 @@ _gcc_CONFIGURE_OPTS= \
 libde265_DEPS := $(libde265_DEPS) mingw-std-threads
 poppler_DEPS  := $(poppler_DEPS) mingw-std-threads
 
+# libjxl is not build-able with GCC 
+vips-all_DEPS := $(filter-out libjxl ,$(vips-all_DEPS))
+
 ## Override build scripts
 
 # The minimum Windows version we support is Windows 7, so build with:

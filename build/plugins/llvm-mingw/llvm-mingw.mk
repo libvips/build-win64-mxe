@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/fe57d608deef017c4ac15ab2b9cb156ae4050604
-$(PKG)_VERSION  := fe57d60
-$(PKG)_CHECKSUM := fdfdf95c5a2a5f39cfdb5ab6663c7780074087ba03eb93ef1c23ccf1aa24e04e
+# https://github.com/mstorsjo/llvm-mingw/tarball/8009a236b8dc5c3e2446bc901e8d94855864f04a
+$(PKG)_VERSION  := 8009a23
+$(PKG)_CHECKSUM := 94edce799f533cabcb7231b74cb8a55e1ae0ad108bdad6c2fd7902cc10164faf
 # TODO(kleisauke): Remove this if we omit any dots from our target
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
@@ -16,7 +16,7 @@ $(PKG)_DEPS     := mingw-w64
 # TryAcquireSRWLockExclusive which didn't exist until Windows 7. See:
 # https://github.com/mstorsjo/llvm-mingw/commit/dcf34a9a35ee3d490a85bdec02999cf96615d406
 # https://github.com/mstorsjo/llvm-mingw/blob/master/build-mingw-w64.sh#L5-L6
-# Install the headers in $(PREFIX)/$(TARGET)/mingw since
+# Install the headers in $(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32 since
 # we need to distribute the /include and /lib directories
 define $(PKG)_BUILD_mingw-w64
     # Unexport target specific compiler / linker flags
@@ -32,7 +32,7 @@ define $(PKG)_BUILD_mingw-w64
     mkdir '$(BUILD_DIR).headers'
     cd '$(BUILD_DIR).headers' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-headers/configure' \
         --host='$(TARGET)' \
-        --prefix='$(PREFIX)/$(TARGET)/mingw' \
+        --prefix='$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32' \
         --enable-idl \
         --with-default-msvcrt=ucrt \
         --with-default-win32-winnt=0x601 \
@@ -43,7 +43,7 @@ define $(PKG)_BUILD_mingw-w64
     mkdir '$(BUILD_DIR).crt'
     cd '$(BUILD_DIR).crt' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-crt/configure' \
         --host='$(TARGET)' \
-        --prefix='$(PREFIX)/$(TARGET)/mingw' \
+        --prefix='$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32' \
         --with-default-msvcrt=$(if $(findstring .debug,$(TARGET)),ucrtbased,ucrt) \
         @mingw-crt-config-opts@
     $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'
@@ -59,7 +59,7 @@ define $(PKG)_PRE_BUILD
     # Can't symlink here, it will break the basename detection of LLVM. See:
     # sys::path::stem("x86_64-w64-mingw32.shared-ranlib"); -> x86_64-w64-mingw32
     # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-13.0.0/llvm/tools/llvm-ar/llvm-ar.cpp#L1272-L1291
+    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.0/llvm/tools/llvm-ar/llvm-ar.cpp#L1285-L1304
     $(foreach EXEC, addr2line ar cvtres nm objcopy ranlib rc strings strip, \
         (echo '#!/bin/sh'; \
          echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-$(EXEC)" "$$@"') \
@@ -68,7 +68,7 @@ define $(PKG)_PRE_BUILD
 
     # We need to pass some additional arguments for windres
     # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-13.0.0/llvm/tools/llvm-rc/llvm-rc.cpp#L266-L277
+    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.0/llvm/tools/llvm-rc/llvm-rc.cpp#L266-L277
     (echo '#!/bin/sh'; \
      echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-windres" \
          --preprocessor-arg="--sysroot=$(PREFIX)/$(TARGET)" \
@@ -82,7 +82,7 @@ define $(PKG)_PRE_BUILD
     # armv7 -> arm
     # aarch64 -> arm64
     # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-13.0.0/llvm/lib/ToolDrivers/llvm-dlltool/DlltoolDriver.cpp#L96-L107
+    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.0/llvm/lib/ToolDrivers/llvm-dlltool/DlltoolDriver.cpp#L97-L108
     $(eval DLLTOOL_ARCH := $(strip \
         $(if $(findstring i686,$(PROCESSOR)),i386, \
         $(if $(findstring x86_64,$(PROCESSOR)),i386:x86-64, \

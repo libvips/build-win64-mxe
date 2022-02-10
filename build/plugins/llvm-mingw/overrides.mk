@@ -4,7 +4,7 @@ IS_LLVM := $(true)
 
 # [major].[minor].[patch]-[label] -> [major].[minor].[patch]
 #clang_VERSION := $(firstword $(subst -, ,$(llvm_VERSION)))
-clang_VERSION := 13.0.0
+clang_VERSION := 14.0.0
 
 # Override sub-dependencies
 cc_DEPS := llvm
