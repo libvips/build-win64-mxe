@@ -30,8 +30,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-37
-imagemagick_CHECKSUM := 5cc24677145105c9187978e1575ce66eac26dc26096f927a365abd4c58b523c5
+imagemagick_VERSION  := 6.9.12-38
+imagemagick_CHECKSUM := 209d2c60e19372da6da308004826f8e5004489bc281b6d9410c108655915634c
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -68,14 +68,6 @@ glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
-
-# upstream version is 2.4.3
-expat_VERSION  := 2.4.4
-expat_CHECKSUM := b5d25d6e373351c2ed19b562b4732d01d2589ac8c8e9e7962d8df1207cc311b8
-expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
-expat_SUBDIR   := expat-$(expat_VERSION)
-expat_FILE     := expat-$(expat_VERSION).tar.xz
-expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
 
 # upstream version is 1.14.30
 libgsf_VERSION  := 1.14.48
@@ -126,17 +118,25 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 2.12
-lcms_VERSION  := 2.13
-lcms_CHECKSUM := 0c67a5cc144029cfa34647a52809ec399aae488db4258a6a66fba318474a070f
+# upstream version is 3.3.1
+harfbuzz_VERSION  := 3.3.2
+harfbuzz_CHECKSUM := 1c13bca136c4f66658059853e2c1253f34c88f4b5c5aba6050aba7b5e0ce2503
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
+# upstream version is 2.13
+# cannot use GH_CONF:
+# lcms_GH_CONF  := mm2/Little-CMS,lcms
+lcms_VERSION  := 2.13.1
+lcms_CHECKSUM := d473e796e7b27c5af01bd6d1552d42b45b43457e7182ce9903f38bb748203b88
 lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 lcms_SUBDIR   := lcms2-$(lcms_VERSION)
 lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
-lcms_URL      := https://$(SOURCEFORGE_MIRROR)/project/lcms/lcms/$(lcms_VERSION)/$(lcms_FILE)
+lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
 
 # upstream version is 2.13.1
-fontconfig_VERSION  := 2.13.94
-fontconfig_CHECKSUM := a5f052cb73fd479ffb7b697980510903b563bbb55b8f7a2b001fcfb94026003c
+fontconfig_VERSION  := 2.13.96
+fontconfig_CHECKSUM := d816a920384aa91bc0ebf20c3b51c59c2153fdf65de0b5564bf9e8473443d637
 fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
@@ -228,6 +228,8 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: gettext
 # CFITSIO:
 #  Added: zlib
+# libexif:
+#  Removed: gettext
 
 harfbuzz_DEPS           := $(filter-out icu4c,$(harfbuzz_DEPS))
 libgsf_DEPS             := $(filter-out bzip2 ,$(libgsf_DEPS))
@@ -248,6 +250,7 @@ libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
 libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
 fontconfig_DEPS         := $(filter-out  gettext,$(fontconfig_DEPS))
 cfitsio_DEPS            := cc zlib
+libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 
 ## Override build scripts
 
@@ -384,7 +387,7 @@ define gdk-pixbuf_BUILD
     '$(TARGET)-meson' \
         -Dbuiltin_loaders='jpeg,png,tiff' \
         -Dintrospection=disabled \
-        $(if $(IS_INTL_DUMMY), -Dc_link_args='-lintl') \
+        $(if $(IS_INTL_DUMMY), -Dc_link_args='$(LDFLAGS) -lintl') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -521,7 +524,7 @@ define librsvg_BUILD
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-arm.patch \
         # Update expected Cargo SHA256 hashes for the files we have patched
         $(SED) -i 's/684a00322da501bc84ba800b012b27fe10f960331bfdc007d8178e6d07c27a31/b36d5981a94908d0aeccb2ec9c6f45b0053ae73e4d607451a0662cd7393cf03a/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/26e242c3bc36a4de132531ac402e421011aa0ab5bdd5cb615c948a12320aad7d/88218b96bb4d6b3f30a2b88fde39b0a3ddd0ff318e72dff6263d9da1ec12753c/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
+        $(SED) -i 's/799d0747bb208ad2e8896e8b313e4460a5ef2e0ba3861bf62ea51f2b14a63b3b/ebff9286a98126c70bbb1e1502b58c746c4098ea6b5c64eaa2b15c9a0527f167/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
 
     # armv7 -> thumbv7a
     $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))

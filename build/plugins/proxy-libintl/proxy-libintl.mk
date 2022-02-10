@@ -11,7 +11,7 @@ $(PKG)_DEPS     := cc
 define $(PKG)_BUILD
     '$(TARGET)-meson' \
         --default-library=static \
-        -Dc_args='-DG_INTL_STATIC_COMPILATION' \
+        -Dc_args='$(CFLAGS) -DG_INTL_STATIC_COMPILATION' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
