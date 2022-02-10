@@ -27,7 +27,7 @@ index 1111111..2222222 100644
  src_libm=_libm_dummy.c
  
  if ENABLE_DFP
-@@ -828,7 +834,7 @@ lib32_libmingwthrd_a_SOURCES = $(src_libmingwthrd)
+@@ -852,7 +858,7 @@ lib32_libmingwthrd_a_SOURCES = $(src_libmingwthrd)
  lib32_libmingwthrd_a_CPPFLAGS=$(CPPFLAGS32) $(sysincludes)
  
  processed_defs += lib32/msvcrt.def lib32/msvcr80.def lib32/msvcr90.def lib32/msvcr90d.def lib32/msvcr100.def lib32/msvcr110.def lib32/msvcr120.def lib32/msvcr120d.def \
@@ -36,7 +36,7 @@ index 1111111..2222222 100644
  				  lib32/api-ms-win-crt-math-l1-1-0.def lib32/api-ms-win-crt-private-l1-1-0.def lib32/api-ms-win-crt-runtime-l1-1-0.def \
  				  lib32/vcruntime140_app.def
  
-@@ -879,6 +885,10 @@ lib32_DATA += lib32/libucrtbase.a
+@@ -903,6 +909,10 @@ lib32_DATA += lib32/libucrtbase.a
  lib32/libucrtbase.a: lib-common/ucrtbase.mri lib32/libucrtbase_def.a lib32/libucrt_extra.a
  	cd $(dir $@) && $(AR) -M < $(abspath $<)
  
@@ -45,9 +45,9 @@ index 1111111..2222222 100644
 +	cd $(dir $@) && $(AR) -M < $(abspath $<)
 +
  lib32_DATA += lib32/libucrt.a lib32/libucrtapp.a
- noinst_LIBRARIES += lib32/libmsvcrt_common.a lib32/libmsvcrt_extra.a lib32/libmsvcr120_app_extra.a lib32/libucrt_extra.a lib32/libucrtapp_extra.a
- lib32_libmsvcrt_common_a_SOURCES = $(src_msvcrt_common)
-@@ -1150,7 +1160,7 @@ lib64_libmingwthrd_a_CPPFLAGS=$(CPPFLAGS64) $(sysincludes)
+ noinst_LIBRARIES += lib32/libcrtdll_extra.a lib32/libmsvcrt_common.a lib32/libmsvcrt_extra.a lib32/libmsvcr120_app_extra.a lib32/libucrt_extra.a lib32/libucrtapp_extra.a
+ lib32_libcrtdll_extra_a_SOURCES = $(src_crtdll)
+@@ -1180,7 +1190,7 @@ lib64_libmingwthrd_a_CPPFLAGS=$(CPPFLAGS64) $(sysincludes)
  
  processed_defs += lib64/msvcrt.def lib64/msvcr80.def lib64/msvcr90.def lib64/msvcr90d.def \
  				  lib64/msvcr100.def lib64/msvcr110.def lib64/msvcr120.def lib64/msvcr120d.def \
@@ -56,7 +56,7 @@ index 1111111..2222222 100644
  				  lib64/advapi32.def lib64/clbcatq.def lib64/kernel32.def lib64/ole32.def \
  				  lib64/oleaut32.def lib64/user32.def lib64/ws2_32.def \
  				  lib64/api-ms-win-crt-math-l1-1-0.def lib64/api-ms-win-crt-private-l1-1-0.def lib64/api-ms-win-crt-runtime-l1-1-0.def \
-@@ -1203,6 +1213,10 @@ lib64_DATA += lib64/libucrtbase.a
+@@ -1229,6 +1239,10 @@ lib64_DATA += lib64/libucrtbase.a
  lib64/libucrtbase.a: lib-common/ucrtbase.mri lib64/libucrtbase_def.a lib64/libucrt_extra.a
  	cd $(dir $@) && $(AR) -M < $(abspath $<)
  
@@ -67,7 +67,7 @@ index 1111111..2222222 100644
  lib64_DATA += lib64/libucrt.a lib64/libucrtapp.a
  noinst_LIBRARIES += lib64/libmsvcrt_common.a lib64/libmsvcrt_extra.a lib64/libmsvcr80_extra.a lib64/libmsvcr120_app_extra.a lib64/libucrt_extra.a lib64/libucrtapp_extra.a
  lib64_libmsvcrt_common_a_SOURCES = $(src_msvcrt_common)
-@@ -1478,7 +1492,7 @@ libarm32_LIBRARIES += libarm32/libmingwthrd.a
+@@ -1508,7 +1522,7 @@ libarm32_LIBRARIES += libarm32/libmingwthrd.a
  libarm32_libmingwthrd_a_SOURCES = $(src_libmingwthrd)
  libarm32_libmingwthrd_a_CPPFLAGS=$(CPPFLAGSARM32) $(sysincludes)
  
@@ -76,7 +76,7 @@ index 1111111..2222222 100644
  				  libarm32/advapi32.def libarm32/clbcatq.def libarm32/kernel32.def libarm32/ole32.def libarm32/oleaut32.def \
  				  libarm32/user32.def libarm32/ws2_32.def \
  				  libarm32/api-ms-win-crt-math-l1-1-0.def libarm32/api-ms-win-crt-private-l1-1-0.def libarm32/api-ms-win-crt-runtime-l1-1-0.def \
-@@ -1503,6 +1517,10 @@ libarm32_DATA += libarm32/libucrtbase.a
+@@ -1533,6 +1547,10 @@ libarm32_DATA += libarm32/libucrtbase.a
  libarm32/libucrtbase.a: lib-common/ucrtbase.mri libarm32/libucrtbase_def.a libarm32/libucrt_extra.a
  	cd $(dir $@) && $(AR) -M < $(abspath $<)
  
@@ -87,7 +87,7 @@ index 1111111..2222222 100644
  libarm32_DATA += libarm32/libucrt.a libarm32/libucrtapp.a
  noinst_LIBRARIES += libarm32/libmsvcrt_common.a libarm32/libmsvcrt_extra.a libarm32/libmsvcr120_app_extra.a libarm32/libucrt_extra.a libarm32/libucrtapp_extra.a
  libarm32_libmsvcrt_common_a_SOURCES = $(src_msvcrt_common)
-@@ -1756,7 +1774,7 @@ libarm64_LIBRARIES += libarm64/libmingwthrd.a
+@@ -1790,7 +1808,7 @@ libarm64_LIBRARIES += libarm64/libmingwthrd.a
  libarm64_libmingwthrd_a_SOURCES = $(src_libmingwthrd)
  libarm64_libmingwthrd_a_CPPFLAGS=$(CPPFLAGSARM64) $(sysincludes)
  
@@ -96,7 +96,7 @@ index 1111111..2222222 100644
  				  libarm64/advapi32.def libarm64/clbcatq.def libarm64/kernel32.def libarm64/ole32.def libarm64/oleaut32.def \
  				  libarm64/user32.def libarm64/ws2_32.def \
  				  libarm64/api-ms-win-crt-math-l1-1-0.def libarm64/api-ms-win-crt-private-l1-1-0.def libarm64/api-ms-win-crt-runtime-l1-1-0.def \
-@@ -1771,6 +1789,10 @@ libarm64_DATA += libarm64/libucrtbase.a
+@@ -1805,6 +1823,10 @@ libarm64_DATA += libarm64/libucrtbase.a
  libarm64/libucrtbase.a: lib-common/ucrtbase.mri libarm64/libucrtbase_def.a libarm64/libucrt_extra.a
  	cd $(dir $@) && $(AR) -M < $(abspath $<)
  
@@ -137,7 +137,7 @@ index 1111111..2222222 100644
 +@LIB32_TRUE@@W32API_FALSE@	lib32/libucrtbased.a lib32/libucrt.a \
  @LIB32_TRUE@@W32API_FALSE@	lib32/libucrtapp.a \
  @LIB32_TRUE@@W32API_FALSE@	lib32/libvcruntime140_app.a
- @LIB32_TRUE@@W32API_FALSE@am__append_10 = lib32/libmsvcrt_common.a lib32/libmsvcrt_extra.a lib32/libmsvcr120_app_extra.a lib32/libucrt_extra.a lib32/libucrtapp_extra.a
+ @LIB32_TRUE@@W32API_FALSE@am__append_10 = lib32/libcrtdll_extra.a lib32/libmsvcrt_common.a lib32/libmsvcrt_extra.a lib32/libmsvcr120_app_extra.a lib32/libucrt_extra.a lib32/libucrtapp_extra.a
 @@ -256,7 +257,7 @@ host_triplet = @host@
  @LIB64_TRUE@@W32API_FALSE@	lib64/libmingwthrd.a
  @LIB64_TRUE@@W32API_FALSE@am__append_13 = lib64/msvcrt.def lib64/msvcr80.def lib64/msvcr90.def lib64/msvcr90d.def \
@@ -190,7 +190,7 @@ index 1111111..2222222 100644
  @LIBARM64_TRUE@@W32API_FALSE@	libarm64/libucrt.a \
  @LIBARM64_TRUE@@W32API_FALSE@	libarm64/libucrtapp.a \
  @LIBARM64_TRUE@@W32API_FALSE@	libarm64/libvcruntime140_app.a
-@@ -10105,7 +10109,7 @@ d3dcsxd = d3dcsxd_43
+@@ -10222,7 +10226,7 @@ d3dcsxd = d3dcsxd_43
  d3dcompiler = d3dcompiler_47
  
  # can move this into libsrc/dummy_libm.c or similar
@@ -199,7 +199,7 @@ index 1111111..2222222 100644
  src_libm = _libm_dummy.c
  @ENABLE_DFP_FALSE@src_dfp_math = 
  @ENABLE_DFP_TRUE@src_dfp_math = \
-@@ -75908,6 +75912,12 @@ uninstall-am: uninstall-crt32DATA uninstall-crt64DATA \
+@@ -76734,6 +76738,12 @@ uninstall-am: uninstall-crt32DATA uninstall-crt64DATA \
  
  _libm_dummy.c:
  	echo "static int __attribute__((unused)) __mingw_libm_dummy;" > _libm_dummy.c
@@ -210,9 +210,9 @@ index 1111111..2222222 100644
 +lib-common/ucrtbased.mri:
 +	cd $(top_srcdir)/lib-common && $(SED) 's|ucrtbase|&d|g' ucrtbase.mri > ucrtbased.mri
  @LIB32_TRUE@lib32/crt1.o: crt/crtexe.c
- @LIB32_TRUE@	$(COMPILE32) -c $< -o $@ -D__CRTDLL__ -U__MSVCRT__
- @LIB32_TRUE@lib32/crt2.o: crt/crtexe.c
-@@ -75954,6 +75964,8 @@ _libm_dummy.c:
+ @LIB32_TRUE@	$(COMPILE32) -c $< -o $@
+ @LIB32_TRUE@lib32/crt2.o: lib32/crt1.o
+@@ -76780,6 +76790,8 @@ _libm_dummy.c:
  @LIB32_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
  @LIB32_TRUE@@W32API_FALSE@lib32/libucrtbase.a: lib-common/ucrtbase.mri lib32/libucrtbase_def.a lib32/libucrt_extra.a
  @LIB32_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
@@ -221,7 +221,7 @@ index 1111111..2222222 100644
  
  @LIB32_TRUE@lib32/lib%.a: lib32/%.def
  @LIB32_TRUE@	$(DTDEF32) $<
-@@ -76029,6 +76041,8 @@ _libm_dummy.c:
+@@ -76853,6 +76865,8 @@ _libm_dummy.c:
  @LIB64_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
  @LIB64_TRUE@@W32API_FALSE@lib64/libucrtbase.a: lib-common/ucrtbase.mri lib64/libucrtbase_def.a lib64/libucrt_extra.a
  @LIB64_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
@@ -230,7 +230,7 @@ index 1111111..2222222 100644
  
  @LIB64_TRUE@lib64/lib%.a: lib64/%.def
  @LIB64_TRUE@	$(DTDEF64) $<
-@@ -76090,6 +76104,8 @@ _libm_dummy.c:
+@@ -76914,6 +76928,8 @@ _libm_dummy.c:
  @LIBARM32_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
  @LIBARM32_TRUE@@W32API_FALSE@libarm32/libucrtbase.a: lib-common/ucrtbase.mri libarm32/libucrtbase_def.a libarm32/libucrt_extra.a
  @LIBARM32_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
@@ -239,7 +239,7 @@ index 1111111..2222222 100644
  
  @LIBARM32_TRUE@libarm32/lib%.a: libarm32/%.def
  @LIBARM32_TRUE@	$(DTDEFARM32) $<
-@@ -76135,6 +76151,8 @@ _libm_dummy.c:
+@@ -76959,6 +76975,8 @@ _libm_dummy.c:
  @LIBARM64_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
  @LIBARM64_TRUE@@W32API_FALSE@libarm64/libucrtbase.a: lib-common/ucrtbase.mri libarm64/libucrtbase_def.a libarm64/libucrt_extra.a
  @LIBARM64_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)

@@ -76,9 +76,7 @@ define $(PKG)_BUILD_$(BUILD)
 endef
 
 define $(PKG)_BUILD
-    # armv7 -> thumbv7a
-    $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))
-    $(eval TARGET_RUST := $(ARCH_NAME)-pc-windows-gnu)
+    $(eval TARGET_RUST := $(PROCESSOR)-pc-windows-gnu)
 
     # Build and prepare startup objects like rsbegin.o and rsend.o
     $(foreach FILE, rsbegin rsend, \
@@ -86,14 +84,15 @@ define $(PKG)_BUILD
             '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/rtstartup/$(FILE).rs';)
 
     # Install the startup objects
-    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
+    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib/self-contained'
     mv -vf '$(BUILD_DIR)/'rs{begin,end}.o '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
 
+    # Copy CRT objects needed for self-contained linkage (-Clink-self-contained=yes)
+    $(foreach FILE, crt2.o dllcrt2.o, \
+        cp '$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/lib/$(FILE)' \
+            '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib/self-contained';)
+
     # Install Cargo config
-    # Note: -Clink-self-contained=yes will link against the {,dll}crt2.o (defined in
-    # pre_link_objects_fallback) from our MinGW distribution.
-    # Note 2: The -Lnative=* option adds our MinGW distribution to the standard set
-    # of searched paths.
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
     (echo '[unstable]'; \
      echo 'build-std = ["std", "panic_abort"]'; \
@@ -105,8 +104,7 @@ define $(PKG)_BUILD
      echo 'RUST_COMPILER_RT_ROOT = "$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/src/llvm-project/compiler-rt"'; \
      echo '[target.$(TARGET_RUST)]'; \
      echo 'rustflags = ['; \
-     echo '    "-Clink-self-contained=yes",'; \
-     echo '    "-Lnative=$(PREFIX)/$(TARGET)/mingw/lib"'; \
+     echo '    "-Clink-self-contained=yes"'; \
      echo ']'; \
      echo 'linker = "$(TARGET)-clang"'; \
      echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"';) \

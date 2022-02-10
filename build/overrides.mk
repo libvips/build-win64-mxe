@@ -160,10 +160,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 9.0.0
-# Update MinGW-w64 to acdc7ad
-# https://github.com/mingw-w64/mingw-w64/tarball/acdc7adc9c4dbc7517dac13bce21409229316248
-mingw-w64_VERSION  := acdc7ad
-mingw-w64_CHECKSUM := 76627885148d9707fb721ce7d87c492695c7d5c2f342e285e8bee5abd7646fb4
+# Update MinGW-w64 to 226a8ee
+# https://github.com/mingw-w64/mingw-w64/tarball/226a8eef5dd2b5014a482dbef1bac6d7792407b5
+mingw-w64_VERSION  := 226a8ee
+mingw-w64_CHECKSUM := 3a20d415c3b333cb574dd8abe8e74a1e6392627ad80eed05b4e6479896cacc33
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
@@ -523,11 +523,8 @@ define librsvg_BUILD
     $(if $(IS_ARM), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-arm.patch \
         # Update expected Cargo SHA256 hashes for the files we have patched
-        $(SED) -i 's/684a00322da501bc84ba800b012b27fe10f960331bfdc007d8178e6d07c27a31/b36d5981a94908d0aeccb2ec9c6f45b0053ae73e4d607451a0662cd7393cf03a/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/684a00322da501bc84ba800b012b27fe10f960331bfdc007d8178e6d07c27a31/fa3c9c554f3245dfa4e9d7ac0e089630a38389473356af94c6a46b304c39b313/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
         $(SED) -i 's/799d0747bb208ad2e8896e8b313e4460a5ef2e0ba3861bf62ea51f2b14a63b3b/ebff9286a98126c70bbb1e1502b58c746c4098ea6b5c64eaa2b15c9a0527f167/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
-
-    # armv7 -> thumbv7a
-    $(eval ARCH_NAME := $(if $(findstring armv7,$(PROCESSOR)),thumbv7a,$(PROCESSOR)))
 
     # need to regenerate the configure script
     cd '$(SOURCE_DIR)' && autoreconf -fi
@@ -536,7 +533,7 @@ define librsvg_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-introspection \
-        RUST_TARGET='$(ARCH_NAME)-pc-windows-gnu' \
+        RUST_TARGET='$(PROCESSOR)-pc-windows-gnu' \
         CARGO='$(TARGET)-cargo' \
         RUSTC='$(TARGET)-rustc'
 

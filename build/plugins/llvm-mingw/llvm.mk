@@ -5,8 +5,8 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the compiler-rt-sanitizers package
-$(PKG)_VERSION  := 13.0.0
-$(PKG)_CHECKSUM := 6075ad30f1ac0e15f07c1bf062c1e1268c241d674f11bd32cdf0e040c71f2bf3
+$(PKG)_VERSION  := 14.0.0-rc2
+$(PKG)_CHECKSUM := e728c13e56034894994eefe596d1edd97a66c798a504fabd65f63ceb6befade1
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-project-$(subst -,,$($(PKG)_VERSION)).src
@@ -66,77 +66,40 @@ define $(PKG)_BUILD_COMPILER_RT
     $(MAKE) -C '$(BUILD_DIR).compiler-rt' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
 endef
 
-define $(PKG)_BUILD_LIBUNWIND
-    # Workaround to avoid needing to specify -unwindlib=none
-    # for all linking until libunwind has been built
-    $(PREFIX)/$(BUILD)/bin/llvm-ar rcs '$(PREFIX)/$(TARGET)/lib/libunwind.a'
-
-    mkdir '$(BUILD_DIR).libunwind'
-    cd '$(BUILD_DIR).libunwind' && $(TARGET)-cmake '$(SOURCE_DIR)/libunwind' \
+# libunwind / libcxxabi / libcxx
+define $(PKG)_BUILD_RUNTIMES
+    mkdir '$(BUILD_DIR).runtimes'
+    cd '$(BUILD_DIR).runtimes' && $(TARGET)-cmake '$(SOURCE_DIR)/runtimes' \
+        -DCMAKE_CXX_COMPILER_TARGET='$(PROCESSOR)-w64-windows-gnu' \
         -DCMAKE_CROSSCOMPILING=TRUE \
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DLLVM_PATH='$(SOURCE_DIR)/llvm' \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
+        -DLLVM_ENABLE_RUNTIMES='libunwind;libcxxabi;libcxx' \
         -DLIBUNWIND_USE_COMPILER_RT=TRUE \
         -DLIBUNWIND_ENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
-        -DLIBUNWIND_ENABLE_STATIC=$(CMAKE_STATIC_BOOL)
-    $(MAKE) -C '$(BUILD_DIR).libunwind' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR).libunwind' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
-
-    # Remove dummy placeholder libunwind.a for shared builds
-    $(if $(BUILD_SHARED), \
-        rm -f '$(PREFIX)/$(TARGET)/lib/libunwind.a')
-endef
-
-define $(PKG)_BUILD_LIBCXX
-    # Configure, but don't build, libcxx, so that libcxxabi has
-    # proper headers to refer to
-    mkdir '$(BUILD_DIR).libcxx'
-    cd '$(BUILD_DIR).libcxx' && $(TARGET)-cmake '$(SOURCE_DIR)/libcxx' \
-        -DCMAKE_CROSSCOMPILING=TRUE \
-        -DCMAKE_C_COMPILER_WORKS=TRUE \
-        -DCMAKE_CXX_COMPILER_WORKS=TRUE \
-        -DLLVM_PATH='$(SOURCE_DIR)/llvm' \
-        -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
-        -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
+        -DLIBUNWIND_ENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
         -DLIBCXX_USE_COMPILER_RT=ON \
-        -DLIBCXX_HAS_WIN32_THREAD_API=ON \
         -DLIBCXX_ENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
         -DLIBCXX_ENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
         -DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF \
         -DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=TRUE \
         -DLIBCXX_CXX_ABI=libcxxabi \
-        -DLIBCXX_CXX_ABI_INCLUDE_PATHS='$(SOURCE_DIR)/libcxxabi/include' \
-        -DLIBCXX_CXX_ABI_LIBRARY_PATH='$(BUILD_DIR).libcxxabi/lib' \
         -DLIBCXX_LIBDIR_SUFFIX='' \
         -DLIBCXX_INCLUDE_TESTS=FALSE \
-        -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=FALSE
-    $(MAKE) -C '$(BUILD_DIR).libcxx' -j '$(JOBS)' generate-cxx-headers
-
-    mkdir '$(BUILD_DIR).libcxxabi'
-    cd '$(BUILD_DIR).libcxxabi' && $(TARGET)-cmake '$(SOURCE_DIR)/libcxxabi' \
-        -DCMAKE_CROSSCOMPILING=TRUE \
-        -DCMAKE_C_COMPILER_WORKS=TRUE \
-        -DCMAKE_CXX_COMPILER_WORKS=TRUE \
-        -DLLVM_PATH='$(SOURCE_DIR)/llvm' \
-        -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
-        -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
+        -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=FALSE \
         -DLIBCXXABI_USE_COMPILER_RT=ON \
         -DLIBCXXABI_ENABLE_SHARED=OFF \
-        -DLIBCXXABI_LIBCXX_INCLUDES='$(BUILD_DIR).libcxx/include/c++/v1' \
         -DLIBCXXABI_LIBDIR_SUFFIX='' \
-        -DLIBCXX_ENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
-        -DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=TRUE
-    $(MAKE) -C '$(BUILD_DIR).libcxxabi' -j '$(JOBS)'
+        $(if $(BUILD_SHARED), -DLIBCXXABI_USE_LLVM_UNWINDER=ON)
 
-    $(MAKE) -C '$(BUILD_DIR).libcxx' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR).libcxx' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
+    $(MAKE) -C '$(BUILD_DIR).runtimes' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR).runtimes' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
 endef
 
 define $(PKG)_BUILD
     $($(PKG)_BUILD_COMPILER_RT)
-    $($(PKG)_BUILD_LIBUNWIND)
-    $($(PKG)_BUILD_LIBCXX)
+    $($(PKG)_BUILD_RUNTIMES)
 endef

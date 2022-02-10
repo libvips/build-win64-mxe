@@ -38,24 +38,20 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -927,10 +927,12 @@ supported_targets! {
+@@ -927,6 +927,8 @@ supported_targets! {
  
      ("x86_64-unknown-illumos", x86_64_unknown_illumos),
  
 +    ("aarch64-pc-windows-gnu", aarch64_pc_windows_gnu),
++    ("armv7-pc-windows-gnu", armv7_pc_windows_gnu),
      ("x86_64-pc-windows-gnu", x86_64_pc_windows_gnu),
      ("i686-pc-windows-gnu", i686_pc_windows_gnu),
      ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
-     ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
-+    ("thumbv7a-pc-windows-gnu", thumbv7a_pc_windows_gnu),
- 
-     ("aarch64-pc-windows-msvc", aarch64_pc_windows_msvc),
-     ("aarch64-uwp-windows-msvc", aarch64_uwp_windows_msvc),
-diff --git a/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs
+diff --git a/compiler/rustc_target/src/spec/armv7_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/armv7_pc_windows_gnu.rs
 new file mode 100644
 index 0000000..1111111
 --- /dev/null
-+++ b/compiler/rustc_target/src/spec/thumbv7a_pc_windows_gnu.rs
++++ b/compiler/rustc_target/src/spec/armv7_pc_windows_gnu.rs
 @@ -0,0 +1,21 @@
 +use crate::spec::{FramePointer, LinkerFlavor, LldFlavor, Target, TargetOptions};
 +
@@ -65,12 +61,12 @@ index 0000000..1111111
 +        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".to_string(), "thumb2pe".to_string()]);
 +
 +    Target {
-+        llvm_target: "thumbv7a-pc-windows-gnu".to_string(),
++        llvm_target: "armv7-pc-windows-gnu".to_string(),
 +        pointer_width: 32,
 +        data_layout: "e-m:w-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".to_string(),
 +        arch: "arm".to_string(),
 +        options: TargetOptions {
-+            features: "+vfp3,+neon".to_string(),
++            features: "+v7,+thumb-mode,+thumb2,+vfp3,+neon".to_string(),
 +            max_atomic_width: Some(64),
 +            // Required for backtraces
 +            frame_pointer: FramePointer::Always,
