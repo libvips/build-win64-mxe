@@ -90,7 +90,7 @@ From: Alexander Karpinsky <homm86@gmail.com>
 Date: Sun, 17 Oct 2021 13:57:05 +0300
 Subject: [PATCH 4/5] Avoid lroundf using
 
-Upstream-Status: Submitted [https://github.com/strukturag/libheif/pull/551]
+Upstream-Status: Accepted [https://github.com/strukturag/libheif/commit/499a0a31d79936042c7abeef2513bb0b56b81489]
 
 diff --git a/libheif/heif_colorconversion.cc b/libheif/heif_colorconversion.cc
 index 1111111..2222222 100644

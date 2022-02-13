@@ -17,16 +17,16 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.2.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.3.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.4    | Mozilla Public License 2.0                                   |
-| [cgif]          | 0.1.0     | MIT Licence                                                  |
-| [expat]         | 2.4.4     | MIT Licence                                                  |
+| [cgif]          | 0.2.1     | MIT Licence                                                  |
+| [expat]         | 2.4.7     | MIT Licence                                                  |
 | [fontconfig]    | 2.13.96   | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.11.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.11    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.6    | LGPLv3                                                       |
-| [glib]          | 2.71.1    | LGPLv3                                                       |
-| [harfbuzz]      | 3.3.2     | MIT Licence                                                  |
+| [glib]          | 2.71.3    | LGPLv3                                                       |
+| [harfbuzz]      | 4.0.0     | MIT Licence                                                  |
 | [lcms]          | 2.13.1    | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
@@ -34,15 +34,15 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.12.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
-| [librsvg]       | 2.53.0    | LGPLv3                                                       |
-| [libspng]       | 0.7.1     | BSD 2-Clause                                                 |
+| [librsvg]       | 2.53.1    | LGPLv3                                                       |
+| [libspng]       | 0.7.2     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.12.2    | LGPLv3                                                       |
 | [libwebp]       | 1.2.2     | New BSD License                                              |
-| [libxml2]       | 2.9.12    | MIT Licence                                                  |
+| [libxml2]       | 2.9.13    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.50.4    | LGPLv3                                                       |
+| [pango]         | 1.50.5    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [proxy-libintl] | 0.3       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
@@ -96,17 +96,17 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 4.0.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [highway]       | 0.15.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-38 | [ImageMagick License] (Apache-2.0-like)                      |
+| [highway]       | 0.16.0    | Apache-2.0 License                                           |
+| [imagemagick]   | 6.9.12-41 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.4     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.21    | BSD 2-Clause                                                 |
-| [nifticlib]     | 3.0.0     | Public domain                                                |
+| [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.4     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 22.02.0   | GPLv2                                                        |
-| [sqlite]        | 3.37.2    | Public domain                                                |
+| [poppler]       | 22.03.0   | GPLv2                                                        |
+| [sqlite]        | 3.38.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -138,7 +138,7 @@ In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 2.1.2     | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 2.1.3     | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md

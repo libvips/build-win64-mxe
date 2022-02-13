@@ -19,6 +19,15 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
+# no longer needed by libvips, but some of the deps need it
+# upstream version is 2.9.12
+libxml2_VERSION  := 2.9.13
+libxml2_CHECKSUM := 276130602d12fe484ecc03447ee5e759d0465558fbc9d6bd144e3745306ebf0e
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
+libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
+libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
+
 # upstream version is 1.5.2
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -30,22 +39,22 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-38
-imagemagick_CHECKSUM := 209d2c60e19372da6da308004826f8e5004489bc281b6d9410c108655915634c
+imagemagick_VERSION  := 6.9.12-41
+imagemagick_CHECKSUM := c371bc0b9b688fab23e745d16635b5949129067ab8600bbffbdcfe6fb2e3b436
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.53.0
-librsvg_CHECKSUM := 21af2c474ecea4b1beb94102057417bb15c63b65c8f5e858aa282c468f93176e
+librsvg_VERSION  := 2.53.1
+librsvg_CHECKSUM := ba8e040074749f3845445c5602e0902f3007a18b074cf0cc6a10c8ddc5a65322
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.50.3
-pango_CHECKSUM := 4add05edf51c1fb375a1ccde7498914120e23cb280dd7395b1aeb441f1838a4c
+pango_VERSION  := 1.50.5
+pango_CHECKSUM := 6d136872da6207fe88c5cd2c95c36bcaf4ed29402b854663a86cd7efe99b0cf5
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -62,12 +71,20 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.71.1
-glib_CHECKSUM := bf1807108bceb802bb6e837baae421edb8d78d463154beaab447cc5f4fb56792
+glib_VERSION  := 2.71.3
+glib_CHECKSUM := 288549404c26db3d52cf7a37f2f42b495b31ccffce2b4cb2439a64099c740343
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
+# upstream version is 2.4.6
+expat_VERSION  := 2.4.7
+expat_CHECKSUM := 9875621085300591f1e64c18fd3da3a0eeca4a74f884b9abac2758ad1bd07a7d
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
 
 # upstream version is 1.14.30
 libgsf_VERSION  := 1.14.48
@@ -118,9 +135,9 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 3.3.1
-harfbuzz_VERSION  := 3.3.2
-harfbuzz_CHECKSUM := 1c13bca136c4f66658059853e2c1253f34c88f4b5c5aba6050aba7b5e0ce2503
+# upstream version is 3.4.0
+harfbuzz_VERSION  := 4.0.0
+harfbuzz_CHECKSUM := ab61d4e3fc0c30072e98b46aa7727fc3eed36a85d2b6b9274cec7eaadea97cb7
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
@@ -149,6 +166,14 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
+
+# upstream version is 22.02.0
+poppler_VERSION  := 22.03.0
+poppler_CHECKSUM := 728c78ba94d75a55f6b6355d4fbdaa6f49934d9616be58e5e679a9cfd0980e1e
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -184,8 +209,6 @@ tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
 ## Override sub-dependencies
-# HarfBuzz:
-#  Removed: icu4c
 # libgsf:
 #  Removed: bzip2
 # freetype:
@@ -231,7 +254,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # libexif:
 #  Removed: gettext
 
-harfbuzz_DEPS           := $(filter-out icu4c,$(harfbuzz_DEPS))
 libgsf_DEPS             := $(filter-out bzip2 ,$(libgsf_DEPS))
 freetype_DEPS           := $(filter-out bzip2 ,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(filter-out bzip2 ,$(freetype-bootstrap_DEPS))
@@ -523,8 +545,9 @@ define librsvg_BUILD
     $(if $(IS_ARM), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-arm.patch \
         # Update expected Cargo SHA256 hashes for the files we have patched
-        $(SED) -i 's/684a00322da501bc84ba800b012b27fe10f960331bfdc007d8178e6d07c27a31/fa3c9c554f3245dfa4e9d7ac0e089630a38389473356af94c6a46b304c39b313/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/799d0747bb208ad2e8896e8b313e4460a5ef2e0ba3861bf62ea51f2b14a63b3b/ebff9286a98126c70bbb1e1502b58c746c4098ea6b5c64eaa2b15c9a0527f167/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
+        $(SED) -i 's/413c48717a309eddba4bd940d94e293e4d4bbd62216f3e1d4c3284a80d7b3f41/6c358804a40c16723027694198c6a72c6bf9bf6499e5cebab7161d5f5cb673dc/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/799d0747bb208ad2e8896e8b313e4460a5ef2e0ba3861bf62ea51f2b14a63b3b/ebff9286a98126c70bbb1e1502b58c746c4098ea6b5c64eaa2b15c9a0527f167/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/ed8e92a9655ef164c62a7c033906c41601ca458b477ae32ad37f89228683c295/bfa574dfa19737edeeef6de682207009a9020e3a980d1bb3b554f46f49792c0d/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
 
     # need to regenerate the configure script
     cd '$(SOURCE_DIR)' && autoreconf -fi

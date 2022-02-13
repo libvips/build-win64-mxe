@@ -72,7 +72,7 @@ diff --git a/gmodule/meson.build b/gmodule/meson.build
 index 1111111..2222222 100644
 --- a/gmodule/meson.build
 +++ b/gmodule/meson.build
-@@ -72,11 +72,8 @@ if host_system == 'windows'
+@@ -77,11 +77,8 @@ if host_system == 'windows'
    gmodule_sources += [gmodule_win_res]
  endif
  

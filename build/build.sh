@@ -51,7 +51,7 @@ fi
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="eb16f5dec075a405e96f7862679acf09dd1d3230"
+revision="62a8c2a2395808c314af0e639a27bea5879064e7"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -125,6 +125,7 @@ plugins+=" $work_dir/plugins/proxy-libintl"
 
 # Build pe-util, handy for copying DLL dependencies.
 make pe-util \
+  pe-util_PATCHES="$work_dir/patches/pe-util-1-fixes.patch" \
   IGNORE_SETTINGS=yes \
   MXE_TARGETS=`$mxe_dir/ext/config.guess` \
   MXE_USE_CCACHE=
