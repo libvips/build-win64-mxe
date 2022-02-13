@@ -11,63 +11,111 @@ See:
 https://github.com/msys2/MINGW-packages/issues/5803
 https://sourceforge.net/p/mingw-w64/bugs/818/
 
-diff --git a/build/configure.ac.warnings b/build/configure.ac.warnings
+diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
---- a/build/configure.ac.warnings
-+++ b/build/configure.ac.warnings
-@@ -38,9 +38,6 @@ dnl We also abuse the warning-flag facility to enable other compiler
- dnl options.  Namely, the following:
- MAYBE_WARN="$MAYBE_WARN -fno-strict-aliasing -fno-common"
+--- a/meson.build
++++ b/meson.build
+@@ -68,10 +68,6 @@ if cc.get_id() != 'msvc'
+     '-fno-common'
+   ]
  
--dnl Also to turn various gcc/glibc-specific preprocessor checks
--MAYBE_WARN="$MAYBE_WARN -Wp,-D_FORTIFY_SOURCE=2"
+-  if get_option('optimization') in ['1', '2', '3']
+-    cflags += '-Wp,-D_FORTIFY_SOURCE=2'
+-  endif
 -
- # invalidate cached value if MAYBE_WARN has changed
- if test "x$cairo_cv_warn_maybe" != "x$MAYBE_WARN"; then
- 	unset cairo_cv_warn_cflags
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Peter Wang <novalazy@gmail.com>
-Date: Mon, 21 Oct 2019 12:22:44 +1100
-Subject: [PATCH 2/3] Always define _cairo_utf8_to_utf16 on Windows
-
-_cairo_utf8_to_utf16 is used by _cairo_fopen on Windows so it must
-be defined even if Win32 fonts or other features are disabled.
-
-Fixes #381
-
-Upstream-Status: Accepted [https://gitlab.freedesktop.org/cairo/cairo/-/commit/bd54a1bf9805ebb7905b857d7234271ae496f904]
-
-diff --git a/src/cairoint.h b/src/cairoint.h
-index 1111111..2222222 100644
---- a/src/cairoint.h
-+++ b/src/cairoint.h
-@@ -1913,7 +1913,7 @@ cairo_private int
- _cairo_ucs4_to_utf16 (uint32_t    unicode,
- 		      uint16_t   *utf16);
+   supported_cflags = cc.get_supported_arguments(cflags)
+   add_project_arguments(supported_cflags, language: 'c')
  
--#if CAIRO_HAS_WIN32_FONT || CAIRO_HAS_QUARTZ_FONT || CAIRO_HAS_PDF_OPERATORS
-+#if _WIN32 || CAIRO_HAS_WIN32_FONT || CAIRO_HAS_QUARTZ_FONT || CAIRO_HAS_PDF_OPERATORS
- # define CAIRO_HAS_UTF8_TO_UTF16 1
- #endif
- #if CAIRO_HAS_UTF8_TO_UTF16
-
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 20 Mar 2020 13:00:00 +0100
-Subject: [PATCH 3/3] Avoid mapping platform-specific functions on MinGW
+Subject: [PATCH 2/3] Avoid mapping platform-specific functions on MinGW
 
 
 diff --git a/src/cairo-compiler-private.h b/src/cairo-compiler-private.h
 index 1111111..2222222 100644
 --- a/src/cairo-compiler-private.h
 +++ b/src/cairo-compiler-private.h
-@@ -195,7 +195,7 @@
+@@ -201,7 +201,7 @@
  #define __attribute__(x)
  #endif
  
 -#if (defined(__WIN32__) && !defined(__WINE__)) || defined(_MSC_VER)
 +#if (defined(__WIN32__) && !defined(__WINE__) && !defined(__MINGW32__)) || defined(_MSC_VER)
  #define access _access
- #define fdopen _fdopen
- #define hypot _hypot
+ #ifndef R_OK
+ #define R_OK 4
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 20 Mar 2022 12:32:56 +0100
+Subject: [PATCH 3/3] Disable the Win32 surface and font backend
+
+To avoid having to link against -lgdi32 and -lmsimg32, see:
+https://github.com/kleisauke/net-vips/issues/61
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -474,60 +474,6 @@ if host_machine.system() == 'darwin' and not get_option('quartz').disabled()
+   endif
+ endif
+ 
+-if host_machine.system() == 'windows'
+-  win32_extra_deps = [
+-    cc.find_library('gdi32'),
+-    cc.find_library('msimg32'),
+-  ]
+-
+-  deps += win32_extra_deps
+-
+-  feature_conf.set('CAIRO_HAS_WIN32_SURFACE', 1)
+-  feature_conf.set('CAIRO_HAS_WIN32_FONT', 1)
+-
+-  built_features += [
+-    {
+-      'name': 'cairo-win32',
+-      'description': 'Microsoft Windows surface backend',
+-      'deps': win32_extra_deps,
+-    },
+-    {
+-      'name': 'cairo-win32-font',
+-      'description': 'Microsoft Windows font backend',
+-      'deps': win32_extra_deps,
+-    }
+-  ]
+-
+-  cpp_compiler = meson.get_compiler('cpp')
+-  d2d_dep = cpp_compiler.find_library('d2d1', required: false)
+-  dwrite_dep = cpp_compiler.find_library('dwrite', required: false)
+-  d2d_header = cpp_compiler.has_header('d2d1.h')
+-  d2d_3_header = cpp_compiler.has_header('d2d1_3.h')
+-  dwrite_header = cpp_compiler.has_header('dwrite.h')
+-  dwrite_3_header = cpp_compiler.has_header('dwrite_3.h')
+-  wincodec_dep = cpp_compiler.find_library('windowscodecs', required: false)
+-  wincodec_header = cpp_compiler.has_header('wincodec.h')
+-
+-  if d2d_dep.found() and dwrite_dep.found() and d2d_header and dwrite_header and wincodec_dep.found() and wincodec_header
+-    feature_conf.set('CAIRO_HAS_DWRITE_FONT', 1)
+-    built_features += [{
+-      'name': 'cairo-win32-dwrite-font',
+-      'description': 'Microsoft Windows DWrite font backend',
+-      'deps': [dwrite_dep, d2d_dep, wincodec_dep],
+-    }]
+-    deps += [dwrite_dep, d2d_dep, wincodec_dep]
+-
+-    if cpp_compiler.has_header('d2d1_3.h')
+-      conf.set('HAVE_D2D1_3_H', 1)
+-    endif
+-
+-    # Exclude MinGW dwrite_3.h because it has a broken definition of DWRITE_COLOR_GLYPH_RUN1.
+-    if cpp_compiler.has_header('dwrite_3.h') and cpp_compiler.get_define('__MINGW32__') == ''
+-      conf.set('HAVE_DWRITE_3_H', 1)
+-    endif
+-  endif
+-endif
+-
+ # GL / GLESV2 / GLESV3 are mutually exclusive
+ gl_backend = get_option('gl-backend')
+ need_egl_functions = false

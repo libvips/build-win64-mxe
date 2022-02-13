@@ -12,12 +12,21 @@ libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_
 libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
 # upstream version is 2.32.3
-gdk-pixbuf_VERSION  := 2.42.6
-gdk-pixbuf_CHECKSUM := c4a6b75b7ed8f58ca48da830b9fa00ed96d668d3ab4b1f723dcf902f78bde77f
+gdk-pixbuf_VERSION  := 2.42.8
+gdk-pixbuf_CHECKSUM := 84acea3acb2411b29134b32015a5b1aaa62844b19c4b1ef8b8971c6b0759f4c6
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
+
+# no longer needed by libvips, but some of the deps need it
+# upstream version is 2.9.12
+libxml2_VERSION  := 2.9.13
+libxml2_CHECKSUM := 276130602d12fe484ecc03447ee5e759d0465558fbc9d6bd144e3745306ebf0e
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
+libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
+libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 1.5.2
 # cannot use GH_CONF:
@@ -30,22 +39,22 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-38
-imagemagick_CHECKSUM := 209d2c60e19372da6da308004826f8e5004489bc281b6d9410c108655915634c
+imagemagick_VERSION  := 6.9.12-43
+imagemagick_CHECKSUM := b5474cbbb6f8d0400a3ab3521365881918137ffc20bd3c64f68b646305673890
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.53.0
-librsvg_CHECKSUM := 21af2c474ecea4b1beb94102057417bb15c63b65c8f5e858aa282c468f93176e
+librsvg_VERSION  := 2.54.0
+librsvg_CHECKSUM := baf8ebc147f146b4261bb3d0cd0fac944bf8dbb4b1f2347d23341f974dcc3085
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.37.4
-pango_VERSION  := 1.50.3
-pango_CHECKSUM := 4add05edf51c1fb375a1ccde7498914120e23cb280dd7395b1aeb441f1838a4c
+pango_VERSION  := 1.50.6
+pango_CHECKSUM := a998bcf36881c3ac20495d40bceb304f4eaa9175bd2967c85656434cbdafe86a
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -62,16 +71,24 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.50.2
-glib_VERSION  := 2.71.1
-glib_CHECKSUM := bf1807108bceb802bb6e837baae421edb8d78d463154beaab447cc5f4fb56792
+glib_VERSION  := 2.72.0
+glib_CHECKSUM := d7bef0d4c4e7a62e08efb8e5f252a01357007b9588a87ff2b463a3857011f79d
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
+# upstream version is 2.4.6
+expat_VERSION  := 2.4.7
+expat_CHECKSUM := 9875621085300591f1e64c18fd3da3a0eeca4a74f884b9abac2758ad1bd07a7d
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
+
 # upstream version is 1.14.30
-libgsf_VERSION  := 1.14.48
-libgsf_CHECKSUM := ff86d7f1d46dd0ebefb7bd830a74a41db64362b987bf8853fff6ab4c1132b837
+libgsf_VERSION  := 1.14.49
+libgsf_CHECKSUM := e9ebe36688f010c9e6e40c8903f3732948deb8aca032578d07d0751bd82cf857
 libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libgsf-[0-9]*.patch)))
 libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
@@ -84,12 +101,12 @@ libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.bz2
 
 # upstream version is 1.16.0
-cairo_VERSION  := 1.17.4
-cairo_CHECKSUM := 74b24c1ed436bbe87499179a3b27c43f4143b8676d8ad237a6fa787401959705
+cairo_VERSION  := 1.17.6
+cairo_CHECKSUM := 90496d135c9ef7612c98f8ee358390cdec0825534573778a896ea021155599d2
 cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
 cairo_SUBDIR   := cairo-$(cairo_VERSION)
-cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
-cairo_URL      := http://cairographics.org/snapshots/$(cairo_FILE)
+cairo_FILE     := cairo-$(cairo_VERSION).tar.bz2
+cairo_URL      := https://gitlab.freedesktop.org/cairo/cairo/-/archive/$(cairo_VERSION)/$(cairo_FILE)
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -118,9 +135,9 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 3.3.1
-harfbuzz_VERSION  := 3.3.2
-harfbuzz_CHECKSUM := 1c13bca136c4f66658059853e2c1253f34c88f4b5c5aba6050aba7b5e0ce2503
+# upstream version is 3.4.0
+harfbuzz_VERSION  := 4.0.1
+harfbuzz_CHECKSUM := 98f68777272db6cd7a3d5152bac75083cd52a26176d87bc04c8b3929d33bce49
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
@@ -149,6 +166,14 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
+
+# upstream version is 22.02.0
+poppler_VERSION  := 22.03.0
+poppler_CHECKSUM := 728c78ba94d75a55f6b6355d4fbdaa6f49934d9616be58e5e679a9cfd0980e1e
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -184,8 +209,6 @@ tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
 ## Override sub-dependencies
-# HarfBuzz:
-#  Removed: icu4c
 # libgsf:
 #  Removed: bzip2
 # freetype:
@@ -231,7 +254,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # libexif:
 #  Removed: gettext
 
-harfbuzz_DEPS           := $(filter-out icu4c,$(harfbuzz_DEPS))
 libgsf_DEPS             := $(filter-out bzip2 ,$(libgsf_DEPS))
 freetype_DEPS           := $(filter-out bzip2 ,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(filter-out bzip2 ,$(freetype-bootstrap_DEPS))
@@ -244,7 +266,7 @@ openexr_DEPS            := cc imath zlib
 pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust
-cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman zlib
+cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
 matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
 libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
@@ -268,6 +290,30 @@ define gendef_BUILD
         --target='$(TARGET)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
+endef
+
+define pkgconf_BUILD_$(BUILD)
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
+    cd '$(SOURCE_DIR)' && ./autogen.sh
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        --prefix='$(PREFIX)/$(TARGET)'
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+endef
+
+define nasm_BUILD_$(BUILD)
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
+    # build nasm compiler
+    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/configure' \
+        $(MXE_CONFIGURE_OPTS)
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
 
 # libasprintf isn't needed, so build with --disable-libasprintf
@@ -365,9 +411,6 @@ endef
 # exclude bz2 and gdk-pixbuf
 define libgsf_BUILD
     $(SED) -i 's,\ssed\s, $(SED) ,g'           '$(SOURCE_DIR)'/gsf/Makefile.in
-
-    # need to regenerate the configure script
-    cd '$(SOURCE_DIR)' && autoreconf -fi
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
@@ -523,8 +566,9 @@ define librsvg_BUILD
     $(if $(IS_ARM), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-arm.patch \
         # Update expected Cargo SHA256 hashes for the files we have patched
-        $(SED) -i 's/684a00322da501bc84ba800b012b27fe10f960331bfdc007d8178e6d07c27a31/fa3c9c554f3245dfa4e9d7ac0e089630a38389473356af94c6a46b304c39b313/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/799d0747bb208ad2e8896e8b313e4460a5ef2e0ba3861bf62ea51f2b14a63b3b/ebff9286a98126c70bbb1e1502b58c746c4098ea6b5c64eaa2b15c9a0527f167/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
+        $(SED) -i 's/3c7fe77a67a34e6641b798f3a67dd6904396011a428f6af82cbec993eb924f0c/1243dd219210ac5178311bd6bb438a845cce1963e0fcb88df8577b1584b9c2a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/799d0747bb208ad2e8896e8b313e4460a5ef2e0ba3861bf62ea51f2b14a63b3b/ebff9286a98126c70bbb1e1502b58c746c4098ea6b5c64eaa2b15c9a0527f167/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/ed8e92a9655ef164c62a7c033906c41601ca458b477ae32ad37f89228683c295/bfa574dfa19737edeeef6de682207009a9020e3a980d1bb3b554f46f49792c0d/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
 
     # need to regenerate the configure script
     cd '$(SOURCE_DIR)' && autoreconf -fi
@@ -614,50 +658,34 @@ define libwebp_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef
 
-# replace libpng12 with libpng16
-# node-canvas needs a Cairo with SVG support, so compile only with --disable-svg when building a statically linked binary
-# disable the PDF backend, we use Poppler for that
-# disable the Win32 surface and font backend to avoid having to link against -lgdi32 and -lmsimg32, see: https://github.com/kleisauke/net-vips/issues/61
-# disable the PostScript backend
+# node-canvas needs a Cairo with SVG support, so compile with -Dpng=enabled
 # ensure the FontConfig backend is enabled
+# build with -Dzlib=disabled to disable the script, PostScript, PDF and XML surfaces
 define cairo_BUILD
-    $(SED) -i 's,libpng12,libpng16,g'                        '$(SOURCE_DIR)/configure.ac'
-    $(SED) -i 's,^\(Libs:.*\),\1 @CAIRO_NONPKGCONFIG_LIBS@,' '$(SOURCE_DIR)/src/cairo.pc.in'
+    '$(TARGET)-meson' \
+        -Dfontconfig=enabled \
+        -Dfreetype=enabled \
+        -Dgl-backend=disabled \
+        -Dglesv2=disabled \
+        -Dglesv3=disabled \
+        -Dpng=enabled \
+        -Dquartz=disabled \
+        -Dtee=disabled \
+        -Dxcb=disabled \
+        -Dxlib=disabled \
+        -Dxlib-xcb=disabled \
+        -Dxml=disabled \
+        -Dzlib=disabled \
+        -Dtests=disabled \
+        -Dgtk2-utils=disabled \
+        -Dglib=enabled \
+        -Dspectre=disabled \
+        -Dsymbol-lookup=disabled \
+        -Dgtk_doc=false \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
 
-    # configure script is ancient so regenerate
-    cd '$(SOURCE_DIR)' && autoreconf -fi
-
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --disable-gl \
-        --disable-test-surfaces \
-        --disable-gcov \
-        --disable-xlib \
-        --disable-xlib-xrender \
-        --disable-xcb \
-        --disable-quartz \
-        --disable-quartz-font \
-        --disable-quartz-image \
-        --disable-os2 \
-        --disable-beos \
-        --disable-directfb \
-        --disable-atomic \
-        --disable-ps \
-        --disable-script \
-        --disable-pdf \
-        $(if $(BUILD_STATIC), --disable-svg) \
-        --disable-win32 \
-        --disable-win32-font \
-        --disable-interpreter \
-        --enable-png \
-        --enable-fc \
-        --enable-ft \
-        --without-x \
-        $(if $(BUILD_STATIC), CPPFLAGS='-DCAIRO_WIN32_STATIC_BUILD') \
-        ax_cv_c_float_words_bigendian=no
-
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
+    ninja -C '$(BUILD_DIR)' install
 endef
 
 define matio_BUILD

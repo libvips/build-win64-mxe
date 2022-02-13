@@ -3,7 +3,6 @@ $(PLUGIN_HEADER)
 IS_ZLIB_NG := $(true)
 
 # Override sub-dependencies
-cairo_DEPS              := $(subst zlib,zlib-ng,$(cairo_DEPS))
 freetype_DEPS           := $(subst zlib,zlib-ng,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(subst zlib,zlib-ng,$(freetype-bootstrap_DEPS))
 glib_DEPS               := $(subst zlib,zlib-ng,$(glib_DEPS))

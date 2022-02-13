@@ -93,10 +93,21 @@ diff --git a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in b/plugins/meson-w
 index 1111111..2222222 100644
 --- a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
 +++ b/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
-@@ -20,6 +20,16 @@ glib-compile-resources = '@PREFIX@/@TARGET@/bin/glib-compile-resources'
+@@ -10,6 +10,7 @@ strip = '@PREFIX@/bin/@TARGET@-strip'
+ windres = '@PREFIX@/bin/@TARGET@-windres'
+ windmc = '@PREFIX@/bin/@TARGET@-windmc'
+ pkgconfig = '@PREFIX@/bin/@TARGET@-pkg-config'
++cmake = '@PREFIX@/@BUILD@/bin/cmake'
+ glib-mkenums = '@PREFIX@/@TARGET@/bin/glib-mkenums'
+ glib-genmarshal = '@PREFIX@/@TARGET@/bin/glib-genmarshal'
+ glib-compile-schemas = '@PREFIX@/@TARGET@/bin/glib-compile-schemas'
+@@ -19,6 +20,18 @@ glib-compile-resources = '@PREFIX@/@TARGET@/bin/glib-compile-resources'
+ 
  [properties]
  needs_exe_wrapper = true
- 
++cmake_toolchain_file = '@PREFIX@/@TARGET@/share/cmake/mxe-conf.cmake'
++cmake_defaults = false
++
 +[built-in options]
 +bindir = 'bin'
 +includedir = 'include'
@@ -106,10 +117,9 @@ index 1111111..2222222 100644
 +buildtype = 'release'
 +default_library = '@LIBTYPE@'
 +strip = @STRIP@
-+
+ 
  [host_machine]
  system = 'windows'
- cpu_family = '@CPU_FAMILY@'
 diff --git a/plugins/meson-wrapper/conf/target-meson.in b/plugins/meson-wrapper/conf/target-meson.in
 index 1111111..2222222 100644
 --- a/plugins/meson-wrapper/conf/target-meson.in
