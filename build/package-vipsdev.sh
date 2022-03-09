@@ -86,6 +86,8 @@ if [ "$ZLIB_NG" = "false" ]; then
   zip_suffix+="-zlib-vanilla"
 fi
 
+zip_suffix+="-winxp"
+
 # Utilities
 strip=$target.$deps-strip
 

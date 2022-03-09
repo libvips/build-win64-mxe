@@ -26,9 +26,6 @@ vips-all_DEPS := $(filter-out libjxl ,$(vips-all_DEPS))
 
 ## Override build scripts
 
-# The minimum Windows version we support is Windows 7, so build with:
-#   --with-default-msvcrt=msvcrt \
-#   --with-default-win32-winnt=0x601 \
 # Install the headers in $(PREFIX)/$(TARGET)/mingw since
 # we need to distribute the /include and /lib directories
 # Note: Building with --with-default-msvcrt=ucrt breaks
@@ -48,7 +45,7 @@ define gcc_BUILD_mingw-w64
         --prefix='$(PREFIX)/$(TARGET)/mingw' \
         --enable-idl \
         --with-default-msvcrt=msvcrt \
-        --with-default-win32-winnt=0x601 \
+        --with-default-win32-winnt=0x501 \
         $(mingw-w64-headers_CONFIGURE_OPTS)
     $(MAKE) -C '$(BUILD_DIR).headers' install
 
