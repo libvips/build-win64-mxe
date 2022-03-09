@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 12:33:38 +0100
-Subject: [PATCH 1/14] Revert "Use SHGetKnownFolderPath() on Windows"
+Subject: [PATCH 1/15] Revert "Use SHGetKnownFolderPath() on Windows"
 
 This reverts commit d270d5b61551de80d36e4f98afd1490fa7c05258.
 
@@ -237,7 +237,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 12:52:03 +0100
-Subject: [PATCH 2/14] Revert "gio: Remove broken support for XP"
+Subject: [PATCH 2/15] Revert "gio: Remove broken support for XP"
 
 This reverts commit 4e485d76ac7867905efa47f9dcc12e3341641e23.
 
@@ -509,7 +509,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 11:11:12 +0100
-Subject: [PATCH 3/14] Revert "GWin32RegistryKey: add MUI capabilities to
+Subject: [PATCH 3/15] Revert "GWin32RegistryKey: add MUI capabilities to
  get_value()"
 
 This reverts commit a22a15dc5a1b383f0be74f6a4da8510412c61dba.
@@ -1194,7 +1194,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 13:00:36 +0100
-Subject: [PATCH 4/14] Revert "gio: Add g_win32_package_parser_enum_packages()"
+Subject: [PATCH 4/15] Revert "gio: Add g_win32_package_parser_enum_packages()"
 
 This reverts commit e9b09911f6288add60e5691471b543407f79ea48.
 
@@ -2081,7 +2081,7 @@ index 1111111..0000000
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 14:09:17 +0100
-Subject: [PATCH 5/14] Revert "GWin32AppInfo: read UWP handler metadata
+Subject: [PATCH 5/15] Revert "GWin32AppInfo: read UWP handler metadata
  (indirect strings)"
 
 This reverts commit a2f823113c734bc20e04432f0fe98e0d204e4cb6.
@@ -2322,7 +2322,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 13:45:26 +0100
-Subject: [PATCH 6/14] Revert "GWin32AppInfo: Support launching UWP
+Subject: [PATCH 6/15] Revert "GWin32AppInfo: Support launching UWP
  applications"
 
 This reverts commit f28b75e9ffe2fb764185e547d78abffa0f653cb0.
@@ -2631,7 +2631,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 13:45:46 +0100
-Subject: [PATCH 7/14] Revert "GWin32AppInfo: more checks for UWP apps"
+Subject: [PATCH 7/15] Revert "GWin32AppInfo: more checks for UWP apps"
 
 This reverts commit 0ea2f34723b1ba285252452b19cb2f9535ce1541.
 
@@ -2661,7 +2661,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 13:18:22 +0100
-Subject: [PATCH 8/14] Revert "GWin32AppInfo: Support getting information
+Subject: [PATCH 8/15] Revert "GWin32AppInfo: Support getting information
  about UWP apps"
 
 This reverts commit 720b51032ca28a32d86b90846ccee1f91e045b4e.
@@ -3544,7 +3544,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 12:26:43 +0100
-Subject: [PATCH 9/14] Revert "gio: add GWin32FileSyncStream"
+Subject: [PATCH 9/15] Revert "gio: add GWin32FileSyncStream"
 
 This reverts commit 895fc2eff2bc32f9936285c436003b587e9eda0b.
 
@@ -4128,8 +4128,127 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 9 Mar 2022 18:40:18 +0100
+Subject: [PATCH 12/15] Revert "win32: don't assume the format specifier for the
+ stdlib printf/scanf like functions"
+
+This reverts commit 6095b9bd3c9a1870e218d8773d2cd77670769af9.
+
+diff --git a/glib/gtimezone.c b/glib/gtimezone.c
+index 1111111..2222222 100644
+--- a/glib/gtimezone.c
++++ b/glib/gtimezone.c
+@@ -1016,7 +1016,7 @@ rules_from_windows_time_zone (const gchar   *identifier,
+       for (year = first, i = 0; *rules != NULL && year <= last; year++)
+         {
+           gboolean failed = FALSE;
+-          swprintf_s (s, 11, L"%d", year);
++          snwprintf (s, G_N_ELEMENTS (s), L"%d", year);
+ 
+           if (!failed)
+             {
+diff --git a/glib/gwin32-private.c b/glib/gwin32-private.c
+index 1111111..2222222 100644
+--- a/glib/gwin32-private.c
++++ b/glib/gwin32-private.c
+@@ -39,14 +39,13 @@ _g_win32_subst_pid_and_event_w (wchar_t       *local_debugger,
+   gsize pid_str_len;
+   wchar_t event_str[STR_BUFFER_SIZE] = {0};
+   gsize event_str_len;
+-
+-  _snwprintf_s (pid_str, STR_BUFFER_SIZE, G_N_ELEMENTS (pid_str), L"%lu", pid);
++#undef STR_BUFFER_SIZE
++  snwprintf (pid_str, G_N_ELEMENTS (pid_str), L"%lu", pid);
+   pid_str[G_N_ELEMENTS (pid_str) - 1] = 0;
+   pid_str_len = wcslen (pid_str);
+-  _snwprintf_s (event_str, STR_BUFFER_SIZE, G_N_ELEMENTS (pid_str), L"%Iu", event);
++  snwprintf (event_str, G_N_ELEMENTS (pid_str), L"%Iu", event);
+   event_str[G_N_ELEMENTS (pid_str) - 1] = 0;
+   event_str_len = wcslen (event_str);
+-#undef STR_BUFFER_SIZE
+ 
+   while (cmdline[i] != 0 && dbg_i < debugger_size)
+     {
+diff --git a/glib/gwin32.c b/glib/gwin32.c
+index 1111111..2222222 100644
+--- a/glib/gwin32.c
++++ b/glib/gwin32.c
+@@ -1076,7 +1076,7 @@ copy_chars (char       *buffer,
+ {
+   gsize copy_count = MIN (strlen (to_copy), *buffer_size - 1);
+   memset (buffer, 0x20, copy_count);
+-  strncpy_s (buffer, *buffer_size, to_copy, _TRUNCATE);
++  g_snprintf (buffer, *buffer_size, "%s", to_copy);
+   *buffer_size -= copy_count;
+   return &buffer[copy_count];
+ }
+@@ -1177,15 +1177,15 @@ g_win32_veh_handler (PEXCEPTION_POINTERS ExceptionInfo)
+ 
+       dbgp = copy_chars (dbgp, &dbgs, "Exception code=0x");
+       itoa_buffer[0] = 0;
+-      _ui64toa_s (er->ExceptionCode, itoa_buffer, ITOA_BUFFER_SIZE, 16);
++      g_snprintf (itoa_buffer, ITOA_BUFFER_SIZE, "%" G_GINT32_MODIFIER "x", (guint32) er->ExceptionCode);
+       dbgp = copy_chars (dbgp, &dbgs, itoa_buffer);
+       dbgp = copy_chars (dbgp, &dbgs, " flags=0x");
+       itoa_buffer[0] = 0;
+-      _ui64toa_s (er->ExceptionFlags, itoa_buffer, ITOA_BUFFER_SIZE, 16);
++      g_snprintf (itoa_buffer, ITOA_BUFFER_SIZE, "%" G_GINT32_MODIFIER "x", (guint32) er->ExceptionFlags);
+       dbgp = copy_chars (dbgp, &dbgs, itoa_buffer);
+       dbgp = copy_chars (dbgp, &dbgs, " at 0x");
+       itoa_buffer[0] = 0;
+-      _ui64toa_s ((guintptr) er->ExceptionAddress, itoa_buffer, ITOA_BUFFER_SIZE, 16);
++      g_snprintf (itoa_buffer, ITOA_BUFFER_SIZE, "%" G_GINTPTR_MODIFIER "x", (guintptr) er->ExceptionAddress);
+       dbgp = copy_chars (dbgp, &dbgs, itoa_buffer);
+ 
+       switch (er->ExceptionCode)
+@@ -1202,7 +1202,7 @@ g_win32_veh_handler (PEXCEPTION_POINTERS ExceptionInfo)
+             dbgp = copy_chars (dbgp, &dbgs, "do something bad");
+           dbgp = copy_chars (dbgp, &dbgs, " at address 0x");
+           itoa_buffer[0] = 0;
+-          _ui64toa_s (er->ExceptionInformation[1], itoa_buffer, ITOA_BUFFER_SIZE, 16);
++          g_snprintf (itoa_buffer, ITOA_BUFFER_SIZE, "%" G_GINTPTR_MODIFIER "x", (guintptr) er->ExceptionInformation[1]);
+           dbgp = copy_chars (dbgp, &dbgs, itoa_buffer);
+           break;
+         case EXCEPTION_IN_PAGE_ERROR:
+@@ -1217,11 +1217,11 @@ g_win32_veh_handler (PEXCEPTION_POINTERS ExceptionInfo)
+             dbgp = copy_chars (dbgp, &dbgs, "do something bad with a page");
+           dbgp = copy_chars (dbgp, &dbgs, " at address 0x");
+           itoa_buffer[0] = 0;
+-          _ui64toa_s (er->ExceptionInformation[1], itoa_buffer, ITOA_BUFFER_SIZE, 16);
++          g_snprintf (itoa_buffer, ITOA_BUFFER_SIZE, "%" G_GINTPTR_MODIFIER "x", (guintptr) er->ExceptionInformation[1]);
+           dbgp = copy_chars (dbgp, &dbgs, itoa_buffer);
+           dbgp = copy_chars (dbgp, &dbgs, " with status ");
+           itoa_buffer[0] = 0;
+-          _ui64toa_s (er->ExceptionInformation[2], itoa_buffer, ITOA_BUFFER_SIZE, 16);
++          g_snprintf (itoa_buffer, ITOA_BUFFER_SIZE, "%" G_GINTPTR_MODIFIER "x", (guintptr) er->ExceptionInformation[2]);
+           dbgp = copy_chars (dbgp, &dbgs, itoa_buffer);
+           break;
+         default:
+diff --git a/glib/tests/types.c b/glib/tests/types.c
+index 1111111..2222222 100644
+--- a/glib/tests/types.c
++++ b/glib/tests/types.c
+@@ -117,7 +117,6 @@ test_basic_types (void)
+ #ifndef G_OS_WIN32
+ #  define SCAN_FORMAT64 FORMAT64
+ #else
+-#  define sscanf sscanf_s
+ #  define SCAN_FORMAT64 "%I64d %I64u\n"
+ #endif
+   string = g_strdup_printf (FORMAT64, gi64t1, gu64t1);
+@@ -133,7 +132,6 @@ test_basic_types (void)
+ #ifndef G_OS_WIN32
+ #  define SCAN_FORMATSIZE FORMATSIZE
+ #else
+-#  define sscanf sscanf_s
+ #  define SCAN_FORMATSIZE "%Id %Iu\n"
+ #endif
+   string = g_strdup_printf (FORMATSIZE, gsst1, gst1);
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 11:16:59 +0100
-Subject: [PATCH 12/14] Revert "glib/gtimezone.c: Use RegLoadMUIStringW() to
+Subject: [PATCH 15/15] Revert "glib/gtimezone.c: Use RegLoadMUIStringW() to
  query Std/Dlt strings"
 
 This reverts commit 2e5d3aa91114ebc930393b74ff5a1af474c745bb.
@@ -4198,7 +4317,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 11:19:24 +0100
-Subject: [PATCH 11/14] Revert "win32: Remove all remaining WinXP compat code"
+Subject: [PATCH 11/15] Revert "win32: Remove all remaining WinXP compat code"
 
 This reverts commit a2aa91ae5d263eb00e440680262155b755077114.
 
@@ -4409,7 +4528,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 11:19:41 +0100
-Subject: [PATCH 11/14] Revert "gthread-win32: Remove WinXP compat code"
+Subject: [PATCH 11/15] Revert "gthread-win32: Remove WinXP compat code"
 
 This reverts commit cce29579389e892eb263d8507a71b3b3ca7433bb.
 
@@ -5113,7 +5232,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 13:52:35 +0100
-Subject: [PATCH 13/14] Revert "GNetworkMonitorWindows: Add IPv4/IPv6 network
+Subject: [PATCH 14/15] Revert "GNetworkMonitorWindows: Add IPv4/IPv6 network
  monitor backend for windows"
 
 This reverts commit f9aacf3952effff897ab42991b5ba9090de5d970.
@@ -5561,7 +5680,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 11:20:54 +0100
-Subject: [PATCH 14/14] Restore compatibility with Windows XP
+Subject: [PATCH 14/15] Restore compatibility with Windows XP
 
 
 diff --git a/gio/glocalfileinfo.c b/gio/glocalfileinfo.c
