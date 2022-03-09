@@ -45,8 +45,8 @@ imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.5
-librsvg_VERSION  := 2.53.1
-librsvg_CHECKSUM := ba8e040074749f3845445c5602e0902f3007a18b074cf0cc6a10c8ddc5a65322
+librsvg_VERSION  := 2.51.1
+librsvg_CHECKSUM := 7d72c0de6cd1a767922328a214e346ce7e12fbfaf0a50de59d0e502532c1c75e
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
