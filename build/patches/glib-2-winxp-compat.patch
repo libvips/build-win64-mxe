@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 12:33:38 +0100
-Subject: [PATCH 1/15] Revert "Use SHGetKnownFolderPath() on Windows"
+Subject: [PATCH 1/16] Revert "Use SHGetKnownFolderPath() on Windows"
 
 This reverts commit d270d5b61551de80d36e4f98afd1490fa7c05258.
 
@@ -237,7 +237,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 12:52:03 +0100
-Subject: [PATCH 2/15] Revert "gio: Remove broken support for XP"
+Subject: [PATCH 2/16] Revert "gio: Remove broken support for XP"
 
 This reverts commit 4e485d76ac7867905efa47f9dcc12e3341641e23.
 
@@ -509,7 +509,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 11:11:12 +0100
-Subject: [PATCH 3/15] Revert "GWin32RegistryKey: add MUI capabilities to
+Subject: [PATCH 3/16] Revert "GWin32RegistryKey: add MUI capabilities to
  get_value()"
 
 This reverts commit a22a15dc5a1b383f0be74f6a4da8510412c61dba.
@@ -1194,7 +1194,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 13:00:36 +0100
-Subject: [PATCH 4/15] Revert "gio: Add g_win32_package_parser_enum_packages()"
+Subject: [PATCH 4/16] Revert "gio: Add g_win32_package_parser_enum_packages()"
 
 This reverts commit e9b09911f6288add60e5691471b543407f79ea48.
 
@@ -2081,7 +2081,7 @@ index 1111111..0000000
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 14:09:17 +0100
-Subject: [PATCH 5/15] Revert "GWin32AppInfo: read UWP handler metadata
+Subject: [PATCH 5/16] Revert "GWin32AppInfo: read UWP handler metadata
  (indirect strings)"
 
 This reverts commit a2f823113c734bc20e04432f0fe98e0d204e4cb6.
@@ -2322,7 +2322,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 13:45:26 +0100
-Subject: [PATCH 6/15] Revert "GWin32AppInfo: Support launching UWP
+Subject: [PATCH 6/16] Revert "GWin32AppInfo: Support launching UWP
  applications"
 
 This reverts commit f28b75e9ffe2fb764185e547d78abffa0f653cb0.
@@ -2631,7 +2631,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 13:45:46 +0100
-Subject: [PATCH 7/15] Revert "GWin32AppInfo: more checks for UWP apps"
+Subject: [PATCH 7/16] Revert "GWin32AppInfo: more checks for UWP apps"
 
 This reverts commit 0ea2f34723b1ba285252452b19cb2f9535ce1541.
 
@@ -2661,7 +2661,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 13:18:22 +0100
-Subject: [PATCH 8/15] Revert "GWin32AppInfo: Support getting information
+Subject: [PATCH 8/16] Revert "GWin32AppInfo: Support getting information
  about UWP apps"
 
 This reverts commit 720b51032ca28a32d86b90846ccee1f91e045b4e.
@@ -3544,7 +3544,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 12:26:43 +0100
-Subject: [PATCH 9/15] Revert "gio: add GWin32FileSyncStream"
+Subject: [PATCH 9/16] Revert "gio: add GWin32FileSyncStream"
 
 This reverts commit 895fc2eff2bc32f9936285c436003b587e9eda0b.
 
@@ -4129,7 +4129,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 18:40:18 +0100
-Subject: [PATCH 12/15] Revert "win32: don't assume the format specifier for the
+Subject: [PATCH 12/16] Revert "win32: don't assume the format specifier for the
  stdlib printf/scanf like functions"
 
 This reverts commit 6095b9bd3c9a1870e218d8773d2cd77670769af9.
@@ -4248,7 +4248,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 11:16:59 +0100
-Subject: [PATCH 15/15] Revert "glib/gtimezone.c: Use RegLoadMUIStringW() to
+Subject: [PATCH 15/16] Revert "glib/gtimezone.c: Use RegLoadMUIStringW() to
  query Std/Dlt strings"
 
 This reverts commit 2e5d3aa91114ebc930393b74ff5a1af474c745bb.
@@ -4317,7 +4317,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 11:19:24 +0100
-Subject: [PATCH 11/15] Revert "win32: Remove all remaining WinXP compat code"
+Subject: [PATCH 11/16] Revert "win32: Remove all remaining WinXP compat code"
 
 This reverts commit a2aa91ae5d263eb00e440680262155b755077114.
 
@@ -4528,7 +4528,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 11:19:41 +0100
-Subject: [PATCH 11/15] Revert "gthread-win32: Remove WinXP compat code"
+Subject: [PATCH 11/16] Revert "gthread-win32: Remove WinXP compat code"
 
 This reverts commit cce29579389e892eb263d8507a71b3b3ca7433bb.
 
@@ -5232,7 +5232,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 13:52:35 +0100
-Subject: [PATCH 14/15] Revert "GNetworkMonitorWindows: Add IPv4/IPv6 network
+Subject: [PATCH 14/16] Revert "GNetworkMonitorWindows: Add IPv4/IPv6 network
  monitor backend for windows"
 
 This reverts commit f9aacf3952effff897ab42991b5ba9090de5d970.
@@ -5679,8 +5679,50 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 10 Mar 2022 12:35:14 +0100
+Subject: [PATCH 15/16] Revert "GModule win32: disable error dialog popup"
+
+This reverts commit 719edde63b1f4756c61c325e8457c7d033be8194.
+
+diff --git a/gmodule/gmodule-win32.c b/gmodule/gmodule-win32.c
+index 1111111..2222222 100644
+--- a/gmodule/gmodule-win32.c
++++ b/gmodule/gmodule-win32.c
+@@ -75,8 +75,6 @@ _g_module_open (const gchar *file_name,
+ {
+   HINSTANCE handle;
+   wchar_t *wfilename;
+-  DWORD old_mode;
+-  BOOL success;
+ #ifdef G_WITH_CYGWIN
+   gchar tmp[MAX_PATH];
+ 
+@@ -85,11 +83,6 @@ _g_module_open (const gchar *file_name,
+ #endif
+   wfilename = g_utf8_to_utf16 (file_name, -1, NULL, NULL, NULL);
+ 
+-  /* suppress error dialog */
+-  success = SetThreadErrorMode (SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS, &old_mode);
+-  if (!success)
+-    set_error (error, "");
+-
+   /* When building for UWP, load app asset DLLs instead of filesystem DLLs.
+    * Needs MSVC, Windows 8 and newer, and is only usable from apps. */
+ #if _WIN32_WINNT >= 0x0602 && defined(G_WINAPI_ONLY_APP)
+@@ -98,8 +91,6 @@ _g_module_open (const gchar *file_name,
+   handle = LoadLibraryW (wfilename);
+ #endif
+ 
+-  if (success)
+-    SetThreadErrorMode (old_mode, NULL);
+   g_free (wfilename);
+       
+   if (!handle)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Mar 2022 11:20:54 +0100
-Subject: [PATCH 14/15] Restore compatibility with Windows XP
+Subject: [PATCH 16/16] Restore compatibility with Windows XP
 
 
 diff --git a/gio/glocalfileinfo.c b/gio/glocalfileinfo.c
