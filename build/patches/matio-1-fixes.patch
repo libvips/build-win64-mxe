@@ -12,7 +12,7 @@ diff --git a/src/matio_private.h b/src/matio_private.h
 index 1111111..2222222 100644
 --- a/src/matio_private.h
 +++ b/src/matio_private.h
-@@ -64,7 +64,7 @@
+@@ -103,7 +103,7 @@
   */
  struct _mat_t
  {

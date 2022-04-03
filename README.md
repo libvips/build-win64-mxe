@@ -20,13 +20,13 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.3.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.6    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.2.1     | MIT Licence                                                  |
-| [expat]         | 2.4.7     | MIT Licence                                                  |
-| [fontconfig]    | 2.13.96   | [fontconfig Licence] (BSD-like)                              |
-| [freetype]      | 2.11.1    | [freetype Licence] (BSD-like)                                |
+| [expat]         | 2.4.8     | MIT Licence                                                  |
+| [fontconfig]    | 2.14.0    | [fontconfig Licence] (BSD-like)                              |
+| [freetype]      | 2.12.0    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.11    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.8    | LGPLv3                                                       |
 | [glib]          | 2.72.0    | LGPLv3                                                       |
-| [harfbuzz]      | 4.0.1     | MIT Licence                                                  |
+| [harfbuzz]      | 4.2.0     | MIT Licence                                                  |
 | [lcms]          | 2.13.1    | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
@@ -97,16 +97,16 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.0.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 0.16.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-43 | [ImageMagick License] (Apache-2.0-like)                      |
-| [imath]         | 3.1.4     | BSD 3-Clause                                                 |
+| [imagemagick]   | 6.9.12-44 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imath]         | 3.1.5     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
-| [matio]         | 1.5.21    | BSD 2-Clause                                                 |
+| [matio]         | 1.5.23    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.4     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 22.03.0   | GPLv2                                                        |
-| [sqlite]        | 3.38.1    | Public domain                                                |
+| [poppler]       | 22.04.0   | GPLv2                                                        |
+| [sqlite]        | 3.38.2    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -157,7 +157,7 @@ In that case, the following version of zlib is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [zlib]          | 1.2.11    | [zlib Licence]                                               |
+| [zlib]          | 1.2.12    | [zlib Licence]                                               |
 
 [zlib]: https://zlib.net/
 [zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h

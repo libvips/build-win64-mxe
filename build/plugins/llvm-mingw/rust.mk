@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2022-03-23/rustc-nightly-src.tar.gz.sha256
+# https://static.rust-lang.org/dist/2022-04-03/rustc-nightly-src.tar.gz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 81a8cc362330846c470a0e2a9650ecfdd5f9fd5ebd69b5fc6bcb0197b0332b3c
+$(PKG)_CHECKSUM := 37f4e088a5870982215903fca8d8ae38bd1e9f28cb5910845f19c8fe9beb2858
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.gz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2022-03-23/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2022-04-03/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -41,7 +41,7 @@ define $(PKG)_BUILD_$(BUILD)
         --tools=cargo,src \
         --disable-docs \
         --disable-codegen-tests \
-        --python='$(PYTHON)' \
+        --python='$(PYTHON3)' \
         --llvm-root='$(PREFIX)/$(BUILD)' \
         --set target.$(BUILD_RUST).cc='$(PREFIX)/$(BUILD)/bin/clang' \
         --set target.$(BUILD_RUST).cxx='$(PREFIX)/$(BUILD)/bin/clang++' \
@@ -59,11 +59,11 @@ define $(PKG)_BUILD_$(BUILD)
 
     # Build Rust
     cd '$(BUILD_DIR)' && \
-        $(PYTHON) $(SOURCE_DIR)/x.py build -j '$(JOBS)' -v
+        $(PYTHON3) $(SOURCE_DIR)/x.py build -j '$(JOBS)' -v
 
     # Install Rust
     cd '$(BUILD_DIR)' && \
-        $(PYTHON) $(SOURCE_DIR)/x.py install --keep-stage 1 -j '$(JOBS)' -v
+        $(PYTHON3) $(SOURCE_DIR)/x.py install --keep-stage 1 -j '$(JOBS)' -v
 
     # Copy the Cargo.lock for Rust to places `vendor` will see
     # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524

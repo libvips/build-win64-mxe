@@ -8,7 +8,7 @@ $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://gstreamer.freedesktop.org/src/$(PKG)/$($(PKG)_FILE)
-$(PKG)_DEPS     := cc
+$(PKG)_DEPS     := cc meson-wrapper
 
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'https://gstreamer.freedesktop.org/src/orc/?C=M;O=D' | \
@@ -17,7 +17,7 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
-    '$(TARGET)-meson' \
+    $(MXE_MESON_WRAPPER) \
         -Dbenchmarks=disabled \
         -Dexamples=disabled \
         -Dgtk_doc=disabled \
@@ -25,5 +25,5 @@ define $(PKG)_BUILD
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    ninja -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef

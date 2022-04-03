@@ -51,7 +51,7 @@ fi
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="dabfa7bfe6ec47ddcc4dd779eb316d7d090c8112"
+revision="00558f4229a62a79a65d186290b984ec04283638"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -90,7 +90,7 @@ else
 fi
 
 # The 'plugins' variable controls which plugins are in use
-plugins="plugins/meson-wrapper $work_dir"
+plugins="$work_dir"
 
 if [ "$NIGHTLY" = "true" ]; then
   plugins+=" $work_dir/plugins/nightly"
@@ -137,10 +137,9 @@ if [ "$NIGHTLY" = "true" ]; then
   rm -f $mxe_dir/usr/$target.$deps/installed/vips-$deps
 fi
 
-# Build MXE's meson-wrapper (needed by pango, GDK-PixBuf, GLib and Orc),
-# gendef (a tool for generating def files from DLLs)
-# and libvips (+ dependencies).
-make meson-wrapper gendef vips-$deps \
+# Build gendef (a tool for generating def files from DLLs) 
+# and libvips (+ dependencies)
+make gendef vips-$deps \
   MXE_PLUGIN_DIRS="$plugins" \
   MXE_TARGETS=$target.$deps \
   NIGHTLY_VERSION=$nightly_version

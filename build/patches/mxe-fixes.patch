@@ -23,7 +23,7 @@ index 1111111..2222222 100644
  MXE_LIB_TYPES      := static shared
  MXE_TARGET_LIST    := $(strip $(foreach TRIPLET,$(MXE_TRIPLETS),\
                            $(addprefix $(TRIPLET).,$(MXE_LIB_TYPES))))
-@@ -774,8 +775,10 @@ build-only-$(1)_$(3): BUILD_$(if $(findstring shared,$(3)),SHARED,STATIC) = TRUE
+@@ -822,8 +823,10 @@ build-only-$(1)_$(3): BUILD_$(if $(findstring shared,$(3)),SHARED,STATIC) = TRUE
  build-only-$(1)_$(3): BUILD_$(if $(call seq,$(TARGET),$(BUILD)),NATIVE,CROSS) = TRUE
  build-only-$(1)_$(3): $(if $(findstring win32,$(TARGET)),WIN32,POSIX)_THREADS = TRUE
  build-only-$(1)_$(3): LIB_SUFFIX = $(if $(findstring shared,$(3)),dll,a)
@@ -35,37 +35,11 @@ index 1111111..2222222 100644
  build-only-$(1)_$(3): BUILD_TYPE = $(if $(findstring debug,$(3) $($(1)_CONFIGURE_OPTS)),debug,release)
  build-only-$(1)_$(3): BUILD_TYPE_SUFFIX = $(if $(findstring debug,$(3) $($(1)_CONFIGURE_OPTS)),d)
  build-only-$(1)_$(3): INSTALL_STRIP_TOOLCHAIN = install$(if $(STRIP_TOOLCHAIN),-strip)
-diff --git a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in b/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
+diff --git a/src/meson-wrapper.mk b/src/meson-wrapper.mk
 index 1111111..2222222 100644
---- a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
-+++ b/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
-@@ -1,8 +1,8 @@
- # This file is part of MXE. See LICENSE.md for licensing information.
- 
- [binaries]
--c = '@PREFIX@/bin/@TARGET@-gcc'
--cpp = '@PREFIX@/bin/@TARGET@-g++'
-+c = '@PREFIX@/bin/@TARGET@-@CC@'
-+cpp = '@PREFIX@/bin/@TARGET@-@CXX@'
- ar = '@PREFIX@/bin/@TARGET@-ar'
- ranlib = '@PREFIX@/bin/@TARGET@-ranlib'
- ld = '@PREFIX@/bin/@TARGET@-ld'
-@@ -10,6 +10,10 @@ strip = '@PREFIX@/bin/@TARGET@-strip'
- windres = '@PREFIX@/bin/@TARGET@-windres'
- windmc = '@PREFIX@/bin/@TARGET@-windmc'
- pkgconfig = '@PREFIX@/bin/@TARGET@-pkg-config'
-+glib-mkenums = '@PREFIX@/@TARGET@/bin/glib-mkenums'
-+glib-genmarshal = '@PREFIX@/@TARGET@/bin/glib-genmarshal'
-+glib-compile-schemas = '@PREFIX@/@TARGET@/bin/glib-compile-schemas'
-+glib-compile-resources = '@PREFIX@/@TARGET@/bin/glib-compile-resources'
- # MXE forbids this
- # exe_wrapper = 'wine'
- 
-diff --git a/plugins/meson-wrapper/meson-wrapper.mk b/plugins/meson-wrapper/meson-wrapper.mk
-index 1111111..2222222 100644
---- a/plugins/meson-wrapper/meson-wrapper.mk
-+++ b/plugins/meson-wrapper/meson-wrapper.mk
-@@ -16,11 +16,12 @@ define $(PKG)_BUILD
+--- a/src/meson-wrapper.mk
++++ b/src/meson-wrapper.mk
+@@ -22,11 +22,12 @@ define $(PKG)_BUILD
          -DTARGET=$(TARGET) \
          -DBUILD=$(BUILD) \
          -DCPU_FAMILY=$(strip \
@@ -80,8 +54,34 @@ index 1111111..2222222 100644
 +        -DCPU=$(PROCESSOR) \
 +        -DCC=$(if $(IS_LLVM),clang,gcc) \
 +        -DCXX=$(if $(IS_LLVM),clang++,g++) \
-         -DINPUT='$(PWD)/plugins/meson-wrapper/conf/mxe-crossfile.meson.in' \
+         -DINPUT='$(PWD)/src/meson-wrapper/conf/mxe-crossfile.meson.in' \
          -DOUTPUT='$(PREFIX)/$(TARGET)/share/meson/mxe-crossfile.meson'
+ 
+diff --git a/src/meson-wrapper/conf/mxe-crossfile.meson.in b/src/meson-wrapper/conf/mxe-crossfile.meson.in
+index 1111111..2222222 100644
+--- a/src/meson-wrapper/conf/mxe-crossfile.meson.in
++++ b/src/meson-wrapper/conf/mxe-crossfile.meson.in
+@@ -1,8 +1,8 @@
+ # This file is part of MXE. See LICENSE.md for licensing information.
+ 
+ [binaries]
+-c = '@PREFIX@/bin/@TARGET@-gcc'
+-cpp = '@PREFIX@/bin/@TARGET@-g++'
++c = '@PREFIX@/bin/@TARGET@-@CC@'
++cpp = '@PREFIX@/bin/@TARGET@-@CXX@'
+ ar = '@PREFIX@/bin/@TARGET@-ar'
+ ranlib = '@PREFIX@/bin/@TARGET@-ranlib'
+ ld = '@PREFIX@/bin/@TARGET@-ld'
+@@ -11,6 +11,10 @@ windres = '@PREFIX@/bin/@TARGET@-windres'
+ windmc = '@PREFIX@/bin/@TARGET@-windmc'
+ pkgconfig = '@PREFIX@/bin/@TARGET@-pkg-config'
+ cmake = '@PREFIX@/bin/@TARGET@-cmake'
++glib-mkenums = '@PREFIX@/@TARGET@/bin/glib-mkenums'
++glib-genmarshal = '@PREFIX@/@TARGET@/bin/glib-genmarshal'
++glib-compile-schemas = '@PREFIX@/@TARGET@/bin/glib-compile-schemas'
++glib-compile-resources = '@PREFIX@/@TARGET@/bin/glib-compile-resources'
+ # MXE forbids this
+ # exe_wrapper = 'wine'
  
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -89,25 +89,37 @@ Date: Sat, 17 Jul 2021 15:00:00 +0200
 Subject: [PATCH 2/7] Improve meson wrapper
 
 
-diff --git a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in b/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
+diff --git a/src/meson-wrapper.mk b/src/meson-wrapper.mk
 index 1111111..2222222 100644
---- a/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
-+++ b/plugins/meson-wrapper/conf/mxe-crossfile.meson.in
-@@ -10,6 +10,7 @@ strip = '@PREFIX@/bin/@TARGET@-strip'
- windres = '@PREFIX@/bin/@TARGET@-windres'
- windmc = '@PREFIX@/bin/@TARGET@-windmc'
- pkgconfig = '@PREFIX@/bin/@TARGET@-pkg-config'
-+cmake = '@PREFIX@/@BUILD@/bin/cmake'
- glib-mkenums = '@PREFIX@/@TARGET@/bin/glib-mkenums'
- glib-genmarshal = '@PREFIX@/@TARGET@/bin/glib-genmarshal'
- glib-compile-schemas = '@PREFIX@/@TARGET@/bin/glib-compile-schemas'
-@@ -19,6 +20,18 @@ glib-compile-resources = '@PREFIX@/@TARGET@/bin/glib-compile-resources'
+--- a/src/meson-wrapper.mk
++++ b/src/meson-wrapper.mk
+@@ -20,6 +20,7 @@ define $(PKG)_BUILD
+         -DLIBTYPE=$(if $(BUILD_SHARED),shared,static) \
+         -DPREFIX=$(PREFIX) \
+         -DTARGET=$(TARGET) \
++        -DSTRIP=$(if $(STRIP_LIB),true,false) \
+         -DBUILD=$(BUILD) \
+         -DCPU_FAMILY=$(strip \
+             $(if $(findstring armv7,$(PROCESSOR)),arm, \
+@@ -41,10 +42,8 @@ define $(PKG)_BUILD
  
- [properties]
- needs_exe_wrapper = true
-+cmake_toolchain_file = '@PREFIX@/@TARGET@/share/cmake/mxe-conf.cmake'
-+cmake_defaults = false
-+
+     # create the prefixed Meson wrapper script
+     '$(PREFIX)/bin/cmake-configure-file' \
+-        -DLIBTYPE=$(if $(BUILD_SHARED),shared,static) \
+         -DPREFIX=$(PREFIX) \
+         -DTARGET=$(TARGET) \
+-        -DBUILD=$(BUILD) \
+         -DMESON_EXECUTABLE=$(PREFIX)/$(BUILD)/bin/meson \
+         -DMESON_CROSS_FILE='$(PREFIX)/$(TARGET)/share/meson/mxe-crossfile.meson' \
+         -DINPUT='$(PWD)/src/meson-wrapper/conf/target-meson.in' \
+diff --git a/src/meson-wrapper/conf/mxe-crossfile.meson.in b/src/meson-wrapper/conf/mxe-crossfile.meson.in
+index 1111111..2222222 100644
+--- a/src/meson-wrapper/conf/mxe-crossfile.meson.in
++++ b/src/meson-wrapper/conf/mxe-crossfile.meson.in
+@@ -23,6 +23,16 @@ needs_exe_wrapper = true
+ sys_root = '@PREFIX@/@TARGET@'
+ pkg_config_libdir = '@PREFIX@/@TARGET@/lib/pkgconfig'
+ 
 +[built-in options]
 +bindir = 'bin'
 +includedir = 'include'
@@ -117,47 +129,26 @@ index 1111111..2222222 100644
 +buildtype = 'release'
 +default_library = '@LIBTYPE@'
 +strip = @STRIP@
- 
++
  [host_machine]
  system = 'windows'
-diff --git a/plugins/meson-wrapper/conf/target-meson.in b/plugins/meson-wrapper/conf/target-meson.in
+ cpu_family = '@CPU_FAMILY@'
+diff --git a/src/meson-wrapper/conf/target-meson.in b/src/meson-wrapper/conf/target-meson.in
 index 1111111..2222222 100644
---- a/plugins/meson-wrapper/conf/target-meson.in
-+++ b/plugins/meson-wrapper/conf/target-meson.in
-@@ -11,9 +11,5 @@ if [[ "$NO_MESON_CROSSFILE" == "1" ]]; then
+--- a/src/meson-wrapper/conf/target-meson.in
++++ b/src/meson-wrapper/conf/target-meson.in
+@@ -11,10 +11,5 @@ if [[ "$NO_MESON_CROSSFILE" == "1" ]]; then
      exec meson "$@"
  else
      echo "== Using Meson cross file: @MESON_CROSS_FILE@"
--    exec meson \
--              --cross-file "@MESON_CROSS_FILE@" \
--              --default-library "@LIBTYPE@" \
--              --prefix "@PREFIX@/@TARGET@" \
+-    exec @MESON_EXECUTABLE@ \
+-              --cross-file="@MESON_CROSS_FILE@" \
+-              --default-library="@LIBTYPE@" \
+-              --prefix="@PREFIX@/@TARGET@" \
+-              --libdir=lib \
 -              "$@"
-+    exec meson --cross-file "@MESON_CROSS_FILE@" "$@"
++    exec @MESON_EXECUTABLE@ --cross-file="@MESON_CROSS_FILE@" "$@"
  fi
-diff --git a/plugins/meson-wrapper/meson-wrapper.mk b/plugins/meson-wrapper/meson-wrapper.mk
-index 1111111..2222222 100644
---- a/plugins/meson-wrapper/meson-wrapper.mk
-+++ b/plugins/meson-wrapper/meson-wrapper.mk
-@@ -14,6 +14,7 @@ define $(PKG)_BUILD
-         -DLIBTYPE=$(if $(BUILD_SHARED),shared,static) \
-         -DPREFIX=$(PREFIX) \
-         -DTARGET=$(TARGET) \
-+        -DSTRIP=$(if $(STRIP_LIB),true,false) \
-         -DBUILD=$(BUILD) \
-         -DCPU_FAMILY=$(strip \
-             $(if $(findstring armv7,$(PROCESSOR)),arm, \
-@@ -26,10 +27,8 @@ define $(PKG)_BUILD
- 
-     # create the prefixed Meson wrapper script
-     cmake-configure-file \
--        -DLIBTYPE=$(if $(BUILD_SHARED),shared,static) \
-         -DPREFIX=$(PREFIX) \
-         -DTARGET=$(TARGET) \
--        -DBUILD=$(BUILD) \
-         -DMESON_CROSS_FILE='$(PREFIX)/$(TARGET)/share/meson/mxe-crossfile.meson' \
-         -DINPUT='$(PWD)/plugins/meson-wrapper/conf/target-meson.in' \
-         -DOUTPUT='$(PREFIX)/bin/$(TARGET)-meson'
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -258,10 +249,9 @@ index 1111111..2222222 100644
      args[0] = &ffi_type_pointer;
      values[0] = &s;
  
--    if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
--                           &ffi_type_uint, args) == FFI_OK)
 +    /* Initialize the cif */
-+    if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
+     if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
+-                           &ffi_type_uint, args) == FFI_OK)
 +                           &ffi_type_sint, args) == FFI_OK)
      {
          s = "Hello World!";
@@ -286,7 +276,7 @@ diff --git a/Makefile b/Makefile
 index 1111111..2222222 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -705,6 +705,7 @@ $(foreach PKG,$(PKGS),$(eval $(call PKG_RULE,$(PKG),$(call TMP_DIR,$(PKG)))))
+@@ -734,6 +734,7 @@ $(foreach PKG,$(PKGS),$(eval $(call PKG_RULE,$(PKG),$(call TMP_DIR,$(PKG)))))
  ifeq ($(findstring darwin,$(BUILD)),)
      NONET_LIB := $(PREFIX)/$(BUILD)/lib/nonetwork.so
      PRELOAD   := LD_PRELOAD='$(NONET_LIB)'
@@ -294,7 +284,7 @@ index 1111111..2222222 100644
  else
      NONET_LIB := $(PREFIX)/$(BUILD)/lib/nonetwork.dylib
      PRELOAD   := DYLD_FORCE_FLAT_NAMESPACE=1 DYLD_INSERT_LIBRARIES='$(NONET_LIB)' \
-@@ -714,7 +715,7 @@ endif
+@@ -743,7 +744,7 @@ endif
  
  $(NONET_LIB): $(TOP_DIR)/tools/nonetwork.c | $(PREFIX)/$(BUILD)/lib/.gitkeep
  	@$(PRINTF_FMT) '[nonet lib]' '$@'
@@ -473,7 +463,7 @@ diff --git a/Makefile b/Makefile
 index 1111111..2222222 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -309,12 +309,15 @@ endef
+@@ -331,12 +331,15 @@ endef
  PKG_CHECKSUM = \
      $(OPENSSL) dgst -sha256 '$(or $(2),$(PKG_DIR)/$($(1)_FILE))' 2>/dev/null | $(SED) -n 's,^.*\([0-9a-f]\{64\}\)$$,\1,p'
  
@@ -492,7 +482,7 @@ index 1111111..2222222 100644
  
  ESCAPE_PKG = \
  	echo '$($(1)_FILE)' | perl -lpe 's/([^A-Za-z0-9])/sprintf("%%%02X", ord($$$$1))/seg'
-@@ -671,7 +674,7 @@ download-only-$(1): download-only-$($(1)_FILE)
+@@ -696,7 +699,7 @@ download-only-$(1): download-only-$($(1)_FILE)
  download-only-$($(1)_FILE)::
  	$(and $($(1)_URL),
  	@$$(if $$(REMOVE_DOWNLOAD),rm -f '$(PKG_DIR)/$($(1)_FILE)')

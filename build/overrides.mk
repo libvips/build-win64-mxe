@@ -11,7 +11,7 @@ libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
 libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
 libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
-# upstream version is 2.32.3
+# upstream version is 2.42.6
 gdk-pixbuf_VERSION  := 2.42.8
 gdk-pixbuf_CHECKSUM := 84acea3acb2411b29134b32015a5b1aaa62844b19c4b1ef8b8971c6b0759f4c6
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
@@ -31,20 +31,20 @@ libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_
 # upstream version is 1.5.2
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.21
-matio_CHECKSUM := 21809177e55839e7c94dada744ee55c1dea7d757ddaab89605776d50122fb065
+matio_VERSION  := 1.5.23
+matio_CHECKSUM := 9f91eae661df46ea53c311a1b2dcff72051095b023c612d7cbfc09406c9f4d6e
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-43
-imagemagick_CHECKSUM := b5474cbbb6f8d0400a3ab3521365881918137ffc20bd3c64f68b646305673890
+imagemagick_VERSION  := 6.9.12-44
+imagemagick_CHECKSUM := 89ac50d50762285a4aea57c0f5b01b4fe1584fc37e1f90314390a47d73393064
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
-# upstream version is 2.40.5
+# upstream version is 2.40.21
 librsvg_VERSION  := 2.54.0
 librsvg_CHECKSUM := baf8ebc147f146b4261bb3d0cd0fac944bf8dbb4b1f2347d23341f974dcc3085
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
@@ -52,7 +52,7 @@ librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
-# upstream version is 1.37.4
+# upstream version is 1.50.0
 pango_VERSION  := 1.50.6
 pango_CHECKSUM := a998bcf36881c3ac20495d40bceb304f4eaa9175bd2967c85656434cbdafe86a
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
@@ -60,17 +60,7 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 1.0.8
-# cannot use GH_CONF:
-# fribidi_GH_CONF  := fribidi/fribidi/releases,v
-fribidi_VERSION  := 1.0.11
-fribidi_CHECKSUM := 30f93e9c63ee627d1a2cedcf59ac34d45bf30240982f99e44c6e015466b4e73d
-fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
-fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
-fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
-fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
-
-# upstream version is 2.50.2
+# upstream version is 2.70.2
 glib_VERSION  := 2.72.0
 glib_CHECKSUM := d7bef0d4c4e7a62e08efb8e5f252a01357007b9588a87ff2b463a3857011f79d
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
@@ -78,9 +68,9 @@ glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
-# upstream version is 2.4.6
-expat_VERSION  := 2.4.7
-expat_CHECKSUM := 9875621085300591f1e64c18fd3da3a0eeca4a74f884b9abac2758ad1bd07a7d
+# upstream version is 2.4.7
+expat_VERSION  := 2.4.8
+expat_CHECKSUM := f79b8f904b749e3e0d20afeadecf8249c55b2e32d4ebb089ae378df479dcaf25
 expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
 expat_SUBDIR   := expat-$(expat_VERSION)
 expat_FILE     := expat-$(expat_VERSION).tar.xz
@@ -135,9 +125,25 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 3.4.0
-harfbuzz_VERSION  := 4.0.1
-harfbuzz_CHECKSUM := 98f68777272db6cd7a3d5152bac75083cd52a26176d87bc04c8b3929d33bce49
+# upstream version is 2.11.1
+freetype_VERSION  := 2.12.0
+freetype_CHECKSUM := ef5c336aacc1a079ff9262d6308d6c2a066dd4d2a905301c4adda9b354399033
+freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
+freetype_SUBDIR   := freetype-$(freetype_VERSION)
+freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
+freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
+
+# upstream version is 2.11.1
+freetype-bootstrap_VERSION  := $(freetype_VERSION)
+freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
+freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
+freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
+freetype-bootstrap_FILE     := $(freetype_FILE)
+freetype-bootstrap_URL      := $(freetype_URL)
+
+# upstream version is 4.1.0
+harfbuzz_VERSION  := 4.2.0
+harfbuzz_CHECKSUM := f2200f177768bdc21445aa09703326f3bbe8114ac083d081fe1a79d305c7ae73
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
@@ -152,8 +158,8 @@ lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
 lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
 
 # upstream version is 2.13.1
-fontconfig_VERSION  := 2.13.96
-fontconfig_CHECKSUM := d816a920384aa91bc0ebf20c3b51c59c2153fdf65de0b5564bf9e8473443d637
+fontconfig_VERSION  := 2.14.0
+fontconfig_CHECKSUM := dcbeb84c9c74bbfdb133d535fe1c7bedc9f2221a8daf3914b984c44c520e9bac
 fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
@@ -168,12 +174,20 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 22.02.0
-poppler_VERSION  := 22.03.0
-poppler_CHECKSUM := 728c78ba94d75a55f6b6355d4fbdaa6f49934d9616be58e5e679a9cfd0980e1e
+poppler_VERSION  := 22.04.0
+poppler_CHECKSUM := 813fb4b90e7bda63df53205c548602bae728887a60f4048aae4dbd9b1927deff
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
 poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
+
+# upstream version is 1.2.11
+zlib_VERSION  := 1.2.12
+zlib_CHECKSUM := 7db46b8d7726232a621befaab4a1c870f00a90805511c0e0090441dac57def18
+zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
+zlib_SUBDIR   := zlib-$(zlib_VERSION)
+zlib_FILE     := zlib-$(zlib_VERSION).tar.xz
+zlib_URL      := https://zlib.net/$(zlib_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -203,6 +217,7 @@ harfbuzz_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
+meson_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/meson-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
@@ -212,8 +227,10 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # libgsf:
 #  Removed: bzip2
 # freetype:
+#  Added: meson-wrapper
 #  Removed: bzip2
 # freetype-bootstrap:
+#  Added: meson-wrapper
 #  Removed: bzip2
 # GLib:
 #  Removed: dbus, libiconv, pcre
@@ -231,8 +248,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Replaced: jpeg with libjpeg-turbo
 # OpenEXR:
 #  Removed: pthreads
-# Pango:
-#  Added: fribidi
 # Poppler:
 #  Added: libjpeg-turbo, lcms
 #  Removed: curl, qtbase, libwebp
@@ -240,6 +255,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: libxml2, rust
 #  Removed: libcroco, libgsf
 # Cairo:
+#  Added: meson-wrapper
 #  Removed: lzo
 # matio:
 #  Removed: hdf5
@@ -248,31 +264,34 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # libxml2:
 #  Removed: xz
 # Fontconfig:
+#  Added: meson-wrapper
 #  Removed: gettext
 # CFITSIO:
 #  Added: zlib
 # libexif:
 #  Removed: gettext
+# Pixman:
+#  Added: meson-wrapper
 
 libgsf_DEPS             := $(filter-out bzip2 ,$(libgsf_DEPS))
-freetype_DEPS           := $(filter-out bzip2 ,$(freetype_DEPS))
-freetype-bootstrap_DEPS := $(filter-out bzip2 ,$(freetype-bootstrap_DEPS))
-glib_DEPS               := cc gettext libffi zlib
-gdk-pixbuf_DEPS         := cc glib libjpeg-turbo libpng tiff
+freetype_DEPS           := $(subst bzip2,meson-wrapper,$(freetype_DEPS))
+freetype-bootstrap_DEPS := $(subst bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
+glib_DEPS               := cc meson-wrapper gettext libffi zlib
+gdk-pixbuf_DEPS         := cc meson-wrapper glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
 tiff_DEPS               := cc libjpeg-turbo libwebp zlib
 imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
 openexr_DEPS            := cc imath zlib
-pango_DEPS              := $(pango_DEPS) fribidi
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust
-cairo_DEPS              := cc fontconfig freetype-bootstrap glib libpng pixman
+cairo_DEPS              := cc meson-wrapper fontconfig freetype-bootstrap glib libpng pixman
 matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
 libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
-fontconfig_DEPS         := $(filter-out  gettext,$(fontconfig_DEPS))
+fontconfig_DEPS         := cc meson-wrapper expat freetype-bootstrap
 cfitsio_DEPS            := cc zlib
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
+pixman_DEPS             := cc meson-wrapper libpng
 
 ## Override build scripts
 
@@ -373,7 +392,7 @@ endef
 # icu will pull in standard linux headers, which we don't want,
 # build with Meson.
 define harfbuzz_BUILD
-    '$(TARGET)-meson' \
+    $(MXE_MESON_WRAPPER) \
         -Dicu=disabled \
         -Dtests=disabled \
         -Dintrospection=disabled \
@@ -382,13 +401,13 @@ define harfbuzz_BUILD
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    ninja -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
 # build with the Meson build system
 # build without bzip2 and brotli
 define freetype_BUILD_COMMON
-    '$(TARGET)-meson' \
+    $(MXE_MESON_WRAPPER) \
         -Dharfbuzz=enabled \
         -Dpng=enabled \
         -Dzlib=enabled \
@@ -397,7 +416,7 @@ define freetype_BUILD_COMMON
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    ninja -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
 define freetype_BUILD
@@ -427,14 +446,14 @@ endef
 
 # build with the Meson build system
 define gdk-pixbuf_BUILD
-    '$(TARGET)-meson' \
+    $(MXE_MESON_WRAPPER) \
         -Dbuiltin_loaders='jpeg,png,tiff' \
         -Dintrospection=disabled \
         $(if $(IS_INTL_DUMMY), -Dc_link_args='$(LDFLAGS) -lintl') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    ninja -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
 # build pixman with the Meson build system
@@ -442,23 +461,24 @@ define pixman_BUILD
     # Disable tests and demos
     $(SED) -i "/subdir('test')/{N;d;}" '$(SOURCE_DIR)/meson.build'
 
-    '$(TARGET)-meson' \
+    $(MXE_MESON_WRAPPER) \
         -Dopenmp=disabled \
         -Dgtk=disabled \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    ninja -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
 # build fribidi with the Meson build system
 define fribidi_BUILD
-    '$(TARGET)-meson' \
+    $(MXE_MESON_WRAPPER) \
+        -Dtests=false \
         -Ddocs=false \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    ninja -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' install
 endef
 
 # exclude jpeg, tiff dependencies
@@ -527,7 +547,7 @@ endef
 # build with the Meson build system
 # build with -Dnls=disabled
 define fontconfig_BUILD
-    '$(TARGET)-meson' \
+    $(MXE_MESON_WRAPPER) \
         -Ddoc=disabled \
         -Dnls=disabled \
         -Dtests=disabled \
@@ -535,7 +555,7 @@ define fontconfig_BUILD
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    ninja -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
 # disable GObject introspection
@@ -545,13 +565,13 @@ define pango_BUILD
     # Disable utils, examples, tests and tools
     $(SED) -i "/subdir('utils')/{N;N;N;d;}" '$(SOURCE_DIR)/meson.build'
 
-    '$(TARGET)-meson' \
+    $(MXE_MESON_WRAPPER) \
         -Dintrospection=disabled \
         -Dfontconfig=enabled \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    ninja -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
 # compile with the Rust toolchain
@@ -662,7 +682,7 @@ endef
 # ensure the FontConfig backend is enabled
 # build with -Dzlib=disabled to disable the script, PostScript, PDF and XML surfaces
 define cairo_BUILD
-    '$(TARGET)-meson' \
+    $(MXE_MESON_WRAPPER) \
         -Dfontconfig=enabled \
         -Dfreetype=enabled \
         -Dgl-backend=disabled \
@@ -685,7 +705,7 @@ define cairo_BUILD
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    ninja -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
 define matio_BUILD
@@ -748,7 +768,7 @@ define glib_BUILD
     # Build as shared library, since we need `libgobject-2.0-0.dll`
     # and `libglib-2.0-0.dll` for the language bindings.
     # Enable networking to allow libpcre to be downloaded from WrapDB
-    MXE_ENABLE_NETWORK=1 '$(TARGET)-meson' \
+    MXE_ENABLE_NETWORK=1 $(MXE_MESON_WRAPPER) \
         --default-library=shared \
         --force-fallback-for=libpcre \
         -Dforce_posix_threads=false \
@@ -756,7 +776,7 @@ define glib_BUILD
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    ninja -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 
     # remove static dummy dependency from pc file
     $(if $(IS_INTL_DUMMY), \

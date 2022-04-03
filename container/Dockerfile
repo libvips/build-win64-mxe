@@ -7,15 +7,7 @@ RUN apt-get update \
     libtool-bin libxml-parser-perl lzip p7zip-full \
     ruby g++-multilib libc6-dev-i386 \
     # needed when building libvips from git
-    gobject-introspection gtk-doc-tools \
-    # needed for Meson
-    ninja-build python3-pip \
-  # install Meson
-  && pip3 install meson
-
-# TODO: This patch needs to be incorporated upstream
-RUN cd $(dirname `python3 -c "import mesonbuild as _; print(_.__path__[0])"`) \
-  && curl -L https://gist.github.com/kleisauke/a2370bf67d1d8813cf8257c039488a79/raw/fadfa1aefe38ab9d4b3ff5811b8eb7663b375aae/meson-llvm-mingw.patch | git apply -v
+    gobject-introspection gtk-doc-tools
 
 # gas-preprocessor.pl is required for the ARM/ARM64 builds of libjpeg-turbo
 # TODO(kleisauke): This is no longer necessary once mozjpeg merges libjpeg-turbo 2.1.0.
