@@ -44,6 +44,14 @@ imagemagick_CHECKSUM := 89ac50d50762285a4aea57c0f5b01b4fe1584fc37e1f90314390a47d
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
+# alternatively, one could build libvips with GraphicsMagick
+# upstream version is 1.3.36
+graphicsmagick_VERSION  := 1.3.38
+graphicsmagick_CHECKSUM := 8f8c9704ef09b24a3d233b1b8f2e98a10281f196ca6d170c466bad4f89b1a3bb
+graphicsmagick_SUBDIR   := GraphicsMagick-$(graphicsmagick_VERSION)
+graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
+graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
+
 # upstream version is 2.40.21
 librsvg_VERSION  := 2.54.0
 librsvg_CHECKSUM := baf8ebc147f146b4261bb3d0cd0fac944bf8dbb4b1f2347d23341f974dcc3085
@@ -67,14 +75,6 @@ glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
-
-# upstream version is 2.4.7
-expat_VERSION  := 2.4.8
-expat_CHECKSUM := f79b8f904b749e3e0d20afeadecf8249c55b2e32d4ebb089ae378df479dcaf25
-expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
-expat_SUBDIR   := expat-$(expat_VERSION)
-expat_FILE     := expat-$(expat_VERSION).tar.xz
-expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
 
 # upstream version is 1.14.30
 libgsf_VERSION  := 1.14.49
@@ -101,8 +101,8 @@ cairo_URL      := https://gitlab.freedesktop.org/cairo/cairo/-/archive/$(cairo_V
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.1.4
-openexr_CHECKSUM := cb019c3c69ada47fe340f7fa6c8b863ca0515804dc60bdb25c942c1da886930b
+openexr_VERSION  := 3.1.5
+openexr_CHECKSUM := 93925805c1fc4f8162b35f0ae109c4a75344e6decae5a240afdfce25f8a433ec
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -125,28 +125,6 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 2.11.1
-freetype_VERSION  := 2.12.0
-freetype_CHECKSUM := ef5c336aacc1a079ff9262d6308d6c2a066dd4d2a905301c4adda9b354399033
-freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
-freetype_SUBDIR   := freetype-$(freetype_VERSION)
-freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
-freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
-
-# upstream version is 2.11.1
-freetype-bootstrap_VERSION  := $(freetype_VERSION)
-freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
-freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
-freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
-freetype-bootstrap_FILE     := $(freetype_FILE)
-freetype-bootstrap_URL      := $(freetype_URL)
-
-# upstream version is 4.1.0
-harfbuzz_VERSION  := 4.2.0
-harfbuzz_CHECKSUM := f2200f177768bdc21445aa09703326f3bbe8114ac083d081fe1a79d305c7ae73
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
-
 # upstream version is 2.13
 # cannot use GH_CONF:
 # lcms_GH_CONF  := mm2/Little-CMS,lcms
@@ -157,14 +135,6 @@ lcms_SUBDIR   := lcms2-$(lcms_VERSION)
 lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
 lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
 
-# upstream version is 2.13.1
-fontconfig_VERSION  := 2.14.0
-fontconfig_CHECKSUM := dcbeb84c9c74bbfdb133d535fe1c7bedc9f2221a8daf3914b984c44c520e9bac
-fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
-fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
-fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
-fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
-
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
 fftw_CHECKSUM := 56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467
@@ -172,22 +142,6 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
-
-# upstream version is 22.02.0
-poppler_VERSION  := 22.04.0
-poppler_CHECKSUM := 813fb4b90e7bda63df53205c548602bae728887a60f4048aae4dbd9b1927deff
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
-
-# upstream version is 1.2.11
-zlib_VERSION  := 1.2.12
-zlib_CHECKSUM := 7db46b8d7726232a621befaab4a1c870f00a90805511c0e0090441dac57def18
-zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
-zlib_SUBDIR   := zlib-$(zlib_VERSION)
-zlib_FILE     := zlib-$(zlib_VERSION).tar.xz
-zlib_URL      := https://zlib.net/$(zlib_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -197,16 +151,6 @@ nasm_SUBDIR   := nasm-$(nasm_VERSION)
 nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
 nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
-
-# upstream version is 9.0.0
-# Update MinGW-w64 to a3f6d36
-# https://github.com/mingw-w64/mingw-w64/tarball/a3f6d363d534e9d5563a0b7c677889101e6bbd42
-mingw-w64_VERSION  := a3f6d36
-mingw-w64_CHECKSUM := 6d426665f430a13c38b3c6adf7fd3f0ca0017c1d6b8c40fc52320015a652560f
-mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
-mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
-mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
-mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
 
 ## Patches that we override with our own
 
@@ -218,6 +162,8 @@ libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 meson_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/meson-[0-9]*.patch)))
+mingw-w64_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
+fontconfig_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
@@ -242,7 +188,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # libtiff:
 #  Replaced: jpeg with libjpeg-turbo
 #  Removed: xz
-# ImageMagick:
+# ImageMagick / GraphicsMagick:
 #  Added: libxml2, openjpeg
 #  Removed: bzip2, ffmpeg, fftw, freetype, jasper, liblqr-1, libltdl, libpng, libraw, openexr, pthreads, tiff, zlib
 #  Replaced: jpeg with libjpeg-turbo
@@ -250,7 +196,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: pthreads
 # Poppler:
 #  Added: libjpeg-turbo, lcms
-#  Removed: curl, qtbase, libwebp
+#  Removed: boost, curl, qtbase, libwebp
 # librsvg:
 #  Added: libxml2, rust
 #  Removed: libcroco, libgsf
@@ -281,6 +227,7 @@ gdk-pixbuf_DEPS         := cc meson-wrapper glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
 tiff_DEPS               := cc libjpeg-turbo libwebp zlib
 imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
+graphicsmagick_DEPS     := $(imagemagick_DEPS)
 openexr_DEPS            := cc imath zlib
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust
@@ -449,7 +396,6 @@ define gdk-pixbuf_BUILD
     $(MXE_MESON_WRAPPER) \
         -Dbuiltin_loaders='jpeg,png,tiff' \
         -Dintrospection=disabled \
-        $(if $(IS_INTL_DUMMY), -Dc_link_args='$(LDFLAGS) -lintl') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -507,6 +453,7 @@ define imagemagick_BUILD
         --without-gdi32 \
         --without-gvc \
         --without-heic \
+        --without-heif \
         --without-jxl \
         --without-ltdl \
         --without-lqr \
@@ -528,6 +475,11 @@ define imagemagick_BUILD
         --disable-deprecated
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
+endef
+
+# Alias GraphicsMagick build with ImageMagick
+define graphicsmagick_BUILD
+    $(imagemagick_BUILD)
 endef
 
 # WITH_TURBOJPEG=OFF turns off a library we don't use (we just use the
@@ -777,10 +729,6 @@ define glib_BUILD
         '$(BUILD_DIR)'
 
     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
-
-    # remove static dummy dependency from pc file
-    $(if $(IS_INTL_DUMMY), \
-        $(SED) -i '/^Libs:/s/\-lintl//g' '$(PREFIX)/$(TARGET)/lib/pkgconfig/glib-2.0.pc')
 endef
 
 # build with CMake.
@@ -809,4 +757,14 @@ define cfitsio_BUILD_SHARED
         -W -Wall -Werror -ansi \
         '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-cfitsio.exe' \
         `'$(TARGET)-pkg-config' cfitsio --cflags --libs`
+endef
+
+# Disable tests
+# Strip during install if needed
+define brotli_BUILD
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DBROTLI_DISABLE_TESTS=ON \
+        '$(SOURCE_DIR)'
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef

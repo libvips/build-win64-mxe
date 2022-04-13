@@ -36,11 +36,12 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "gdkpixbuf": "$(gdk-pixbuf_VERSION)",\n'; \
      $(if $(IS_INTL_DUMMY),,printf '  "gettext": "$(gettext_VERSION)"$(comma)\n';) \
      printf '  "glib": "$(glib_VERSION)",\n'; \
+     $(if $(findstring graphicsmagick,$($(PKG)_DEPS)),printf '  "graphicsmagick": "$(graphicsmagick_VERSION)"$(comma)\n';) \
      printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
      $(if $(IS_LLVM),printf '  "highway": "$(highway_VERSION)"$(comma)\n';) \
-     printf '  "imagemagick": "$(imagemagick_VERSION)",\n'; \
+     $(if $(findstring imagemagick,$($(PKG)_DEPS)),printf '  "imagemagick": "$(imagemagick_VERSION)"$(comma)\n';) \
      printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
      $(if $(IS_LLVM),printf '  "jxl": "$(libjxl_VERSION)"$(comma)\n';) \
@@ -75,6 +76,8 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
+    # Allow libtool to statically link against libintl
+    # by specifying lt_cv_deplibs_check_method="pass_all"
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --enable-debug=no \
@@ -83,7 +86,9 @@ define $(PKG)_BUILD
         --disable-introspection \
         --disable-deprecated \
         --with-heif=$(if $(IS_HEVC),module,yes) \
-        CPPFLAGS='-DVIPS_DLLDIR_AS_LIBDIR'
+        $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), --with-magickpackage=GraphicsMagick) \
+        CPPFLAGS='-DVIPS_DLLDIR_AS_LIBDIR' \
+        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all")
 
     # remove -nostdlib from linker commandline options
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866

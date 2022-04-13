@@ -49,6 +49,7 @@ From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 11 Jan 2022 11:29:11 +0100
 Subject: [PATCH 3/3] Make rst2man and gi-docgen optional
 
+Upstream-Status: Accepted [https://gitlab.gnome.org/GNOME/librsvg/-/commit/14a7d3853e586694d814de13ad6bd39dc0bb89c4]
 
 diff --git a/Makefile.am b/Makefile.am
 index 1111111..2222222 100644

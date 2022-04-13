@@ -102,7 +102,7 @@ Same as libvips-web + these extra dependencies:
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
-| [openexr]       | 3.1.4     | BSD 3-Clause                                                 |
+| [openexr]       | 3.1.5     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
 | [poppler]       | 22.04.0   | GPLv2                                                        |

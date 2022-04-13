@@ -61,6 +61,8 @@ define $(PKG)_BUILD
 
     # Always build as shared library, we need
     # libvips-42.dll for the language bindings.
+    # Allow libtool to statically link against libintl
+    # by specifying lt_cv_deplibs_check_method="pass_all"
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --host='$(TARGET)' \
         --build='$(BUILD)' \
@@ -86,7 +88,7 @@ define $(PKG)_BUILD
         --disable-introspection \
         --disable-deprecated \
         --disable-modules \
-        $(if $(BUILD_STATIC), lt_cv_deplibs_check_method="pass_all")
+        $(if $(or $(BUILD_STATIC),$(IS_INTL_DUMMY)), lt_cv_deplibs_check_method="pass_all")
 
     # libtool should automatically generate a list
     # of exported symbols, even for "static" builds
