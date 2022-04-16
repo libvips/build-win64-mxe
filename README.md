@@ -37,17 +37,18 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.55.90   | LGPLv3                                                       |
 | [libspng]       | 0.7.3     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.5.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.14.1    | LGPLv3                                                       |
+| [libvips]       | [f047e7b] | LGPLv3                                                       |
 | [libwebp]       | 1.3.0     | New BSD License                                              |
 | [libxml2]       | 2.10.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
-| [orc]           | 0.4.33    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.50.12   | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
+
+[f047e7b]: https://github.com/kleisauke/libvips/commit/f047e7b0d08a15e0a11d6b48420e1477fe23683c
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -79,8 +80,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [libxml2]: https://gitlab.gnome.org/GNOME/libxml2
 [mozjpeg]: https://github.com/mozilla/mozjpeg
 [zlib License, IJG License, BSD-3-Clause]: https://github.com/mozilla/mozjpeg/blob/master/LICENSE.md
-[orc]: https://gitlab.freedesktop.org/gstreamer/orc
-[orc License]: https://gitlab.freedesktop.org/gstreamer/orc/blob/master/COPYING
 [pango]: https://gitlab.gnome.org/GNOME/pango
 [pixman]: https://gitlab.freedesktop.org/pixman/pixman
 [proxy-libintl]: https://github.com/frida/proxy-libintl
