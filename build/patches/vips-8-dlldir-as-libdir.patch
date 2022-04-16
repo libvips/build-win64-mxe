@@ -9,35 +9,35 @@ diff --git a/libvips/include/vips/util.h b/libvips/include/vips/util.h
 index 1111111..2222222 100644
 --- a/libvips/include/vips/util.h
 +++ b/libvips/include/vips/util.h
-@@ -392,6 +392,7 @@ guint32 vips__random( guint32 seed );
- guint32 vips__random_add( guint32 seed, int value );
+@@ -437,6 +437,7 @@ guint32 vips__random(guint32 seed);
+ guint32 vips__random_add(guint32 seed, int value);
  
- const char *vips__icc_dir( void );
-+const char *vips__dll_dir( void );
- const char *vips__windows_prefix( void );
+ const char *vips__icc_dir(void);
++const char *vips__dll_dir(void);
+ const char *vips__windows_prefix(void);
  
- char *vips__get_iso8601( void );
+ char *vips__get_iso8601(void);
 diff --git a/libvips/iofuncs/init.c b/libvips/iofuncs/init.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/init.c
 +++ b/libvips/iofuncs/init.c
-@@ -1200,6 +1200,12 @@ vips_guess_prefix( const char *argv0, const char *env_name )
+@@ -1174,6 +1174,12 @@ vips_guess_prefix(const char *argv0, const char *env_name)
  const char *
- vips_guess_libdir( const char *argv0, const char *env_name )
+ vips_guess_libdir(const char *argv0, const char *env_name)
  {
 +#if defined(G_OS_WIN32) && defined(VIPS_DLLDIR_AS_LIBDIR)
-+	/* Sometimes users want to use the DLL directory where the libvips DLL 
++	/* Sometimes users want to use the DLL directory where the libvips DLL
 +	 * resides as libdir.
 +	 */
-+	return( vips__dll_dir() );
-+#else /*!G_OS_WIN32 || !VIPS_DLLDIR_AS_LIBDIR*/
- 	const char *prefix = vips_guess_prefix( argv0, env_name );
++	return vips__dll_dir();
++#else  /*!G_OS_WIN32 || !VIPS_DLLDIR_AS_LIBDIR*/
+ 	const char *prefix = vips_guess_prefix(argv0, env_name);
  	static char *libdir = NULL;
  
-@@ -1224,6 +1230,7 @@ vips_guess_libdir( const char *argv0, const char *env_name )
- 		libdir = g_strdup_printf( "%s/lib", prefix );
+@@ -1198,6 +1204,7 @@ vips_guess_libdir(const char *argv0, const char *env_name)
+ 		libdir = g_strdup_printf("%s/lib", prefix);
  
- 	return( libdir );
+ 	return libdir;
 +#endif /*G_OS_WIN32 && VIPS_DLLDIR_AS_LIBDIR*/
  }
  
@@ -46,14 +46,14 @@ diff --git a/libvips/iofuncs/util.c b/libvips/iofuncs/util.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/util.c
 +++ b/libvips/iofuncs/util.c
-@@ -1993,6 +1993,54 @@ DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
- 	return( TRUE );
+@@ -1993,6 +1993,54 @@ DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+ 	return TRUE;
  }
  #endif
 +
 +#ifdef VIPS_DLLDIR_AS_LIBDIR
 +static void *
-+vips__dll_dir_once( void *null )
++vips__dll_dir_once(void *null)
 +{
 +	/* From glib _glib_get_dll_directory()
 +	 */
@@ -62,7 +62,7 @@ index 1111111..2222222 100644
 +	wchar_t wc_fn[MAX_PATH];
 +
 +#ifdef DLL_EXPORT
-+	if( vips__dll == NULL )
++	if (vips__dll == NULL)
 +		return NULL;
 +#endif
 +
@@ -75,27 +75,27 @@ index 1111111..2222222 100644
 +	 * In a statically built libvips, vips__dll will be NULL and we will
 +	 * thus look up the application's .exe file's location.
 +	 */
-+	if( !GetModuleFileNameW( vips__dll, wc_fn, MAX_PATH ) )
++	if (!GetModuleFileNameW(vips__dll, wc_fn, MAX_PATH))
 +		return NULL;
 +
-+	dll_dir = g_utf16_to_utf8( wc_fn, -1, NULL, NULL, NULL );
++	dll_dir = g_utf16_to_utf8(wc_fn, -1, NULL, NULL, NULL);
 +
-+	p = strrchr( dll_dir, G_DIR_SEPARATOR );
-+	if( p == NULL )
++	p = strrchr(dll_dir, G_DIR_SEPARATOR);
++	if (p == NULL)
 +		return NULL;
-+  
++
 +	*p = '\0';
 +
-+	return( (void *) dll_dir );
++	return (void *) dll_dir;
 +}
 +
 +const char *
-+vips__dll_dir( void )
++vips__dll_dir(void)
 +{
 +	static GOnce once = G_ONCE_INIT;
 +
-+	return( (const char *) g_once( &once, 
-+		vips__dll_dir_once, NULL ) );
++	return (const char *) g_once(&once,
++		vips__dll_dir_once, NULL);
 +}
 +#endif /*VIPS_DLLDIR_AS_LIBDIR*/
  #endif /*G_OS_WIN32*/

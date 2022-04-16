@@ -1,0 +1,765 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 13 Jun 2023 18:08:46 +0200
+Subject: [PATCH 1/2] reduce{h,v}: simplify coefficients handling
+
+- De-duplicate `n_points` calculations.
+- Extract the various filters in inline functions.
+- Merge the `calculate_coefficients*` functions into a single one.
+- Simplify `reduce_sum()`.
+
+Upstream-Status: Submitted [https://github.com/libvips/libvips/pull/3553]
+
+diff --git a/libvips/resample/presample.h b/libvips/resample/presample.h
+index 1111111..2222222 100644
+--- a/libvips/resample/presample.h
++++ b/libvips/resample/presample.h
+@@ -70,8 +70,6 @@ GType vips_resample_get_type(void);
+ #define MAX_POINT (2000)
+ 
+ int vips_reduce_get_points(VipsKernel kernel, double shrink);
+-void vips_reduce_make_mask(double *c,
+-	VipsKernel kernel, double shrink, double x);
+ 
+ void vips_reduceh_uchar_hwy(VipsPel *pout, VipsPel *pin,
+ 	int n, int width, int bands,
+diff --git a/libvips/resample/reduceh.cpp b/libvips/resample/reduceh.cpp
+index 1111111..2222222 100644
+--- a/libvips/resample/reduceh.cpp
++++ b/libvips/resample/reduceh.cpp
+@@ -120,8 +120,6 @@ vips_reduce_get_points(VipsKernel kernel, double shrink)
+ 		return 2 * rint(2 * shrink) + 1;
+ 
+ 	case VIPS_KERNEL_LANCZOS2:
+-		/* Needs to be in sync with calculate_coefficients_lanczos().
+-		 */
+ 		return 2 * rint(2 * shrink) + 1;
+ 
+ 	case VIPS_KERNEL_LANCZOS3:
+@@ -133,45 +131,6 @@ vips_reduce_get_points(VipsKernel kernel, double shrink)
+ 	}
+ }
+ 
+-/* Calculate a mask element.
+- */
+-void
+-vips_reduce_make_mask(double *c, VipsKernel kernel, double shrink, double x)
+-{
+-	switch (kernel) {
+-	case VIPS_KERNEL_NEAREST:
+-		c[0] = 1.0;
+-		break;
+-
+-	case VIPS_KERNEL_LINEAR:
+-		calculate_coefficients_triangle(c, shrink, x);
+-		break;
+-
+-	case VIPS_KERNEL_CUBIC:
+-		/* Catmull-Rom.
+-		 */
+-		calculate_coefficients_cubic(c, shrink, x, 0.0, 0.5);
+-		break;
+-
+-	case VIPS_KERNEL_MITCHELL:
+-		calculate_coefficients_cubic(c, shrink, x,
+-			1.0 / 3.0, 1.0 / 3.0);
+-		break;
+-
+-	case VIPS_KERNEL_LANCZOS2:
+-		calculate_coefficients_lanczos(c, 2, shrink, x);
+-		break;
+-
+-	case VIPS_KERNEL_LANCZOS3:
+-		calculate_coefficients_lanczos(c, 3, shrink, x);
+-		break;
+-
+-	default:
+-		g_assert_not_reached();
+-		break;
+-	}
+-}
+-
+ template <typename T, int max_value>
+ static void inline reduceh_unsigned_int_tab(VipsReduceh *reduceh,
+ 	VipsPel *pout, const VipsPel *pin,
+@@ -275,7 +234,8 @@ static void inline reduceh_notab(VipsReduceh *reduceh,
+ 
+ 	double cx[MAX_POINT];
+ 
+-	vips_reduce_make_mask(cx, reduceh->kernel, reduceh->hshrink, x);
++	vips_reduce_make_mask(cx, reduceh->kernel, reduceh->n_point,
++		reduceh->hshrink, x);
+ 
+ 	for (int z = 0; z < bands; z++) {
+ 		double sum;
+@@ -555,8 +515,8 @@ vips_reduceh_build(VipsObject *object)
+ 			!reduceh->matrixs[x])
+ 			return -1;
+ 
+-		vips_reduce_make_mask(reduceh->matrixf[x],
+-			reduceh->kernel, reduceh->hshrink,
++		vips_reduce_make_mask(reduceh->matrixf[x], reduceh->kernel,
++			reduceh->n_point, reduceh->hshrink,
+ 			(float) x / VIPS_TRANSFORM_SCALE);
+ 
+ 		for (int i = 0; i < reduceh->n_point; i++)
+diff --git a/libvips/resample/reducev.cpp b/libvips/resample/reducev.cpp
+index 1111111..2222222 100644
+--- a/libvips/resample/reducev.cpp
++++ b/libvips/resample/reducev.cpp
+@@ -511,7 +511,8 @@ static void inline reducev_notab(VipsReducev *reducev,
+ 
+ 	double cy[MAX_POINT];
+ 
+-	vips_reduce_make_mask(cy, reducev->kernel, reducev->vshrink, y);
++	vips_reduce_make_mask(cy, reducev->kernel, reducev->n_point,
++		reducev->vshrink, y);
+ 
+ 	for (int z = 0; z < ne; z++) {
+ 		double sum;
+@@ -956,8 +957,8 @@ vips_reducev_build(VipsObject *object)
+ 			!reducev->matrixs[y])
+ 			return -1;
+ 
+-		vips_reduce_make_mask(reducev->matrixf[y],
+-			reducev->kernel, reducev->vshrink,
++		vips_reduce_make_mask(reducev->matrixf[y], reducev->kernel,
++			reducev->n_point, reducev->vshrink,
+ 			(float) y / VIPS_TRANSFORM_SCALE);
+ 
+ 		for (int i = 0; i < reducev->n_point; i++)
+diff --git a/libvips/resample/templates.h b/libvips/resample/templates.h
+index 1111111..2222222 100644
+--- a/libvips/resample/templates.h
++++ b/libvips/resample/templates.h
+@@ -28,8 +28,6 @@
+ 
+  */
+ 
+-#include <type_traits>
+-
+ /*
+  * Various casts which assume that the data is already in range. (That
+  * is, they are to be used with monotone samplers.)
+@@ -312,124 +310,117 @@ static void inline calculate_coefficients_catmull(double c[4], const double x)
+ 	c[2] = cthr;
+ }
+ 
+-/* Given an x in [0,1] (we can have x == 1 when building tables),
+- * calculate c0 .. c(@shrink + 1), the triangle coefficients. This is called
+- * from the interpolator as well as from the table builder.
++/* Generate a cubic filter. See:
++ *
++ * Mitchell and Netravali, Reconstruction Filters in Computer Graphics
++ * Computer Graphics, Volume 22, Number 4, August 1988.
++ *
++ * B = 1,   C = 0   - cubic B-spline
++ * B = 1/3, C = 1/3 - Mitchell
++ * B = 0,   C = 1/2 - Catmull-Rom spline
+  */
+-static void inline calculate_coefficients_triangle(double *c,
+-	const double shrink, const double x)
++static double inline cubic_filter(double x, double B, double C)
+ {
+-	/* Needs to be in sync with vips_reduce_get_points().
+-	 */
+-	const int n_points = 2 * rint(shrink) + 1;
+-	const double half = x + n_points / 2.0 - 1;
++	const double axp = VIPS_FABS(x);
++	const double axp2 = axp * axp;
++	const double axp3 = axp2 * axp;
++
++	if (axp <= 1)
++		return ((12 - 9 * B - 6 * C) * axp3 +
++				   (-18 + 12 * B + 6 * C) * axp2 +
++				   (6 - 2 * B)) /
++			6;
++
++	if (axp <= 2)
++		return ((-B - 6 * C) * axp3 +
++				   (6 * B + 30 * C) * axp2 +
++				   (-12 * B - 48 * C) * axp +
++				   (8 * B + 24 * C)) /
++			6;
++
++	return 0.0;
++}
+ 
+-	int i;
+-	double sum;
++static double inline sinc_filter(double x)
++{
++	if (x == 0.0)
++		return 1.0;
+ 
+-	sum = 0;
+-	for (i = 0; i < n_points; i++) {
+-		const double xp = (i - half) / shrink;
++	x = x * VIPS_PI;
+ 
+-		double l;
++	return sin(x) / x;
++}
+ 
+-		l = 1.0 - VIPS_FABS(xp);
+-		l = VIPS_MAX(0.0, l);
++using VipsFilterFn = double (*)(double);
+ 
+-		c[i] = l;
+-		sum += l;
+-	}
++template <VipsKernel K>
++static double inline filter(double x);
+ 
+-	for (i = 0; i < n_points; i++)
+-		c[i] /= sum;
++template <>
++double inline filter<VIPS_KERNEL_LINEAR>(double x)
++{
++	if (x < 0.0)
++		x = -x;
++
++	if (x < 1.0)
++		return 1.0 - x;
++
++	return 0.0;
+ }
+ 
+-/* Generate a cubic filter. See:
+- *
+- * Mitchell and Netravali, Reconstruction Filters in Computer Graphics
+- * Computer Graphics, Volume 22, Number 4, August 1988.
+- *
+- * B = 1,   C = 0   - cubic B-spline
+- * B = 1/3, C = 1/3 - Mitchell
+- * B = 0,   C = 1/2 - Catmull-Rom spline
++/* Catmull-Rom.
+  */
+-static void inline calculate_coefficients_cubic(double *c,
+-	const double shrink, const double x, double B, double C)
++template <>
++double inline filter<VIPS_KERNEL_CUBIC>(double x)
+ {
+-	/* Needs to be in sync with vips_reduce_get_points().
+-	 */
+-	const int n_points = 2 * rint(2 * shrink) + 1;
+-	const double half = x + n_points / 2.0 - 1;
++	return cubic_filter(x, 0.0, 0.5);
++}
+ 
+-	int i;
+-	double sum;
++template <>
++double inline filter<VIPS_KERNEL_MITCHELL>(double x)
++{
++	return cubic_filter(x, 1.0 / 3.0, 1.0 / 3.0);
++}
+ 
+-	sum = 0;
+-	for (i = 0; i < n_points; i++) {
+-		const double xp = (i - half) / shrink;
+-		const double axp = VIPS_FABS(xp);
+-		const double axp2 = axp * axp;
+-		const double axp3 = axp2 * axp;
+-
+-		double l;
+-
+-		if (axp <= 1)
+-			l = ((12 - 9 * B - 6 * C) * axp3 +
+-					(-18 + 12 * B + 6 * C) * axp2 +
+-					(6 - 2 * B)) /
+-				6;
+-		else if (axp <= 2)
+-			l = ((-B - 6 * C) * axp3 +
+-					(6 * B + 30 * C) * axp2 +
+-					(-12 * B - 48 * C) * axp +
+-					(8 * B + 24 * C)) /
+-				6;
+-		else
+-			l = 0.0;
++template <>
++double inline filter<VIPS_KERNEL_LANCZOS2>(double x)
++{
++	if (x >= -2 && x <= 2)
++		return sinc_filter(x) * sinc_filter(x / 2);
+ 
+-		c[i] = l;
+-		sum += l;
+-	}
++	return 0.0;
++}
+ 
+-	for (i = 0; i < n_points; i++)
+-		c[i] /= sum;
++template <>
++double inline filter<VIPS_KERNEL_LANCZOS3>(double x)
++{
++	if (x >= -3 && x <= 3)
++		return sinc_filter(x) * sinc_filter(x / 3);
++
++	return 0.0;
+ }
+ 
+ /* Given an x in [0,1] (we can have x == 1 when building tables),
+- * calculate c0 .. c(@a * @shrink + 1), the lanczos coefficients. This is called
++ * calculate c0 .. c(@n_points), the coefficients. This is called
+  * from the interpolator as well as from the table builder.
+  *
+- * @a is the number of lobes, so usually 2 or 3. @shrink is the reduction
+- * factor, so 1 for interpolation, 2 for a x2 reduction, etc. We need more
+- * points for large decimations to avoid aliasing.
++ * @shrink is the reduction factor, so 1 for interpolation, 2 for a
++ * x2 reduction, etc.
+  */
+-static void inline calculate_coefficients_lanczos(double *c,
+-	const int a, const double shrink, const double x)
++template <typename T>
++static void
++calculate_coefficients(T *c, const int n_points,
++	VipsFilterFn filter_fn, const double shrink, const double x)
+ {
+-	/* Needs to be in sync with vips_reduce_get_points().
+-	 */
+-	const int n_points = 2 * rint(a * shrink) + 1;
+ 	const double half = x + n_points / 2.0 - 1;
+ 
+ 	int i;
+-	double sum;
++	T sum;
+ 
+-	sum = 0;
++	sum = 0.0;
+ 	for (i = 0; i < n_points; i++) {
+ 		const double xp = (i - half) / shrink;
+-
+-		double l;
+-
+-		if (xp == 0.0)
+-			l = 1.0;
+-		else if (xp < -a)
+-			l = 0.0;
+-		else if (xp > a)
+-			l = 0.0;
+-		else
+-			l = (double) a * sin(VIPS_PI * xp) *
+-				sin(VIPS_PI * xp / (double) a) /
+-				(VIPS_PI * VIPS_PI * xp * xp);
++		double l = filter_fn(xp);
+ 
+ 		c[i] = l;
+ 		sum += l;
+@@ -439,41 +430,61 @@ static void inline calculate_coefficients_lanczos(double *c,
+ 		c[i] /= sum;
+ }
+ 
+-/* Simplified version of std::enable_if<cond, bool>::type
++/* Calculate a mask element.
+  */
+-template <bool Cond>
+-using Requires = typename std::enable_if<Cond, bool>::type; /* C++11 */
+-// using Requires = std::enable_if_t<Cond, bool>; /* C++14 */
+-
+-/* Our inner loop for resampling with a convolution. Operate on elements of
+- * type T, gather results in an intermediate of type IT.
+- */
+-template <typename T, typename IT, Requires<std::is_integral<T>::value> = true>
+-static IT
+-reduce_sum(const T *restrict in, int stride, const short *restrict c, int n)
++template <typename T>
++static void
++vips_reduce_make_mask(T *c, VipsKernel kernel, const int n_points,
++	const double shrink, const double x)
+ {
+-	IT sum;
+-
+-	sum = 0;
+-	for (int i = 0; i < n; i++) {
+-		sum += (IT) c[i] * in[0];
+-		in += stride;
++	switch (kernel) {
++	case VIPS_KERNEL_NEAREST:
++		c[0] = 1.0;
++		break;
++
++	case VIPS_KERNEL_LINEAR:
++		calculate_coefficients(c, n_points,
++			filter<VIPS_KERNEL_LINEAR>, shrink, x);
++		break;
++
++	case VIPS_KERNEL_CUBIC:
++		calculate_coefficients(c, n_points,
++			filter<VIPS_KERNEL_CUBIC>, shrink, x);
++		break;
++
++	case VIPS_KERNEL_MITCHELL:
++		calculate_coefficients(c, n_points,
++			filter<VIPS_KERNEL_MITCHELL>, shrink, x);
++		break;
++
++	case VIPS_KERNEL_LANCZOS2:
++		calculate_coefficients(c, n_points,
++			filter<VIPS_KERNEL_LANCZOS2>, shrink, x);
++		break;
++
++	case VIPS_KERNEL_LANCZOS3:
++		calculate_coefficients(c, n_points,
++			filter<VIPS_KERNEL_LANCZOS3>, shrink, x);
++		break;
++
++	default:
++		g_assert_not_reached();
++		break;
+ 	}
+-
+-	return sum;
+ }
+ 
+-/* Same as above, but specialized for floating point types.
++/* Our inner loop for resampling with a convolution of type CT. Operate on
++ * elements of type T, gather results in an intermediate of type IT.
+  */
+-template <typename T, typename IT, Requires<std::is_floating_point<T>::value> = true>
+-static IT
+-reduce_sum(const T *restrict in, int stride, const double *restrict c, int n)
++template <typename T, typename IT, typename CT>
++static IT inline reduce_sum(const T *restrict in, int stride,
++	const CT *restrict c, int n)
+ {
+ 	IT sum;
+ 
+ 	sum = 0;
+ 	for (int i = 0; i < n; i++) {
+-		sum += c[i] * in[0];
++		sum += (IT) c[i] * in[0];
+ 		in += stride;
+ 	}
+ 
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 13 Jun 2023 18:08:46 +0200
+Subject: [PATCH 2/2] reduce{h,v}: remove rounding from the double paths
+
+Upstream-Status: Submitted [https://github.com/libvips/libvips/pull/3532]
+
+diff --git a/libvips/resample/reduceh.cpp b/libvips/resample/reduceh.cpp
+index 1111111..2222222 100644
+--- a/libvips/resample/reduceh.cpp
++++ b/libvips/resample/reduceh.cpp
+@@ -131,7 +131,7 @@ vips_reduce_get_points(VipsKernel kernel, double shrink)
+ 	}
+ }
+ 
+-template <typename T, int max_value>
++template <typename T, T max_value>
+ static void inline reduceh_unsigned_int_tab(VipsReduceh *reduceh,
+ 	VipsPel *pout, const VipsPel *pin,
+ 	const int bands, const short *restrict cx)
+@@ -141,9 +141,9 @@ static void inline reduceh_unsigned_int_tab(VipsReduceh *reduceh,
+ 	const int n = reduceh->n_point;
+ 
+ 	for (int z = 0; z < bands; z++) {
+-		int sum;
++		typename intermediate<T>::type sum;
+ 
+-		sum = reduce_sum<T, int>(in + z, bands, cx, n);
++		sum = reduce_sum<T>(in + z, bands, cx, n);
+ 		sum = unsigned_fixed_round(sum);
+ 		out[z] = VIPS_CLIP(0, sum, max_value);
+ 	}
+@@ -159,9 +159,9 @@ static void inline reduceh_signed_int_tab(VipsReduceh *reduceh,
+ 	const int n = reduceh->n_point;
+ 
+ 	for (int z = 0; z < bands; z++) {
+-		int sum;
++		typename intermediate<T>::type sum;
+ 
+-		sum = reduce_sum<T, int>(in + z, bands, cx, n);
++		sum = reduce_sum<T>(in + z, bands, cx, n);
+ 		sum = signed_fixed_round(sum);
+ 		out[z] = VIPS_CLIP(min_value, sum, max_value);
+ 	}
+@@ -179,46 +179,7 @@ static void inline reduceh_float_tab(VipsReduceh *reduceh,
+ 	const int n = reduceh->n_point;
+ 
+ 	for (int z = 0; z < bands; z++)
+-		out[z] = reduce_sum<T, double>(in + z, bands, cx, n);
+-}
+-
+-/* 32-bit int output needs a 64-bits intermediate.
+- */
+-
+-template <typename T, unsigned int max_value>
+-static void inline reduceh_unsigned_int32_tab(VipsReduceh *reduceh,
+-	VipsPel *pout, const VipsPel *pin,
+-	const int bands, const short *restrict cx)
+-{
+-	T *restrict out = (T *) pout;
+-	const T *restrict in = (T *) pin;
+-	const int n = reduceh->n_point;
+-
+-	for (int z = 0; z < bands; z++) {
+-		uint64_t sum;
+-
+-		sum = reduce_sum<T, uint64_t>(in + z, bands, cx, n);
+-		sum = unsigned_fixed_round(sum);
+-		out[z] = VIPS_CLIP(0, sum, max_value);
+-	}
+-}
+-
+-template <typename T, int min_value, int max_value>
+-static void inline reduceh_signed_int32_tab(VipsReduceh *reduceh,
+-	VipsPel *pout, const VipsPel *pin,
+-	const int bands, const short *restrict cx)
+-{
+-	T *restrict out = (T *) pout;
+-	const T *restrict in = (T *) pin;
+-	const int n = reduceh->n_point;
+-
+-	for (int z = 0; z < bands; z++) {
+-		int64_t sum;
+-
+-		sum = reduce_sum<T, int64_t>(in + z, bands, cx, n);
+-		sum = signed_fixed_round(sum);
+-		out[z] = VIPS_CLIP(min_value, sum, max_value);
+-	}
++		out[z] = reduce_sum<T>(in + z, bands, cx, n);
+ }
+ 
+ /* Ultra-high-quality version for double images.
+@@ -232,17 +193,13 @@ static void inline reduceh_notab(VipsReduceh *reduceh,
+ 	const T *restrict in = (T *) pin;
+ 	const int n = reduceh->n_point;
+ 
+-	double cx[MAX_POINT];
++	typename intermediate<T>::type cx[MAX_POINT];
+ 
+ 	vips_reduce_make_mask(cx, reduceh->kernel, reduceh->n_point,
+ 		reduceh->hshrink, x);
+ 
+-	for (int z = 0; z < bands; z++) {
+-		double sum;
+-		sum = reduce_sum<T, double>(in + z, bands, cx, n);
+-
+-		out[z] = VIPS_ROUND_UINT(sum);
+-	}
++	for (int z = 0; z < bands; z++)
++		out[z] = reduce_sum<T>(in + z, bands, cx, n);
+ }
+ 
+ static int
+@@ -330,12 +287,12 @@ vips_reduceh_gen(VipsRegion *out_region, void *seq,
+ 				break;
+ 
+ 			case VIPS_FORMAT_UINT:
+-				reduceh_unsigned_int32_tab<unsigned int,
++				reduceh_unsigned_int_tab<unsigned int,
+ 					UINT_MAX>(reduceh, q, p, bands, cxs);
+ 				break;
+ 
+ 			case VIPS_FORMAT_INT:
+-				reduceh_signed_int32_tab<signed int,
++				reduceh_signed_int_tab<signed int,
+ 					INT_MIN, INT_MAX>(reduceh, q, p, bands, cxs);
+ 				break;
+ 
+diff --git a/libvips/resample/reducev.cpp b/libvips/resample/reducev.cpp
+index 1111111..2222222 100644
+--- a/libvips/resample/reducev.cpp
++++ b/libvips/resample/reducev.cpp
+@@ -402,7 +402,7 @@ G_DEFINE_TYPE(VipsReducev, vips_reducev, VIPS_TYPE_RESAMPLE);
+ /* You'd think this would vectorise, but gcc hates mixed types in nested loops
+  * :-(
+  */
+-template <typename T, int max_value>
++template <typename T, T max_value>
+ static void inline reducev_unsigned_int_tab(VipsReducev *reducev,
+ 	VipsPel *pout, const VipsPel *pin,
+ 	const int ne, const int lskip, const short *restrict cy)
+@@ -413,9 +413,9 @@ static void inline reducev_unsigned_int_tab(VipsReducev *reducev,
+ 	const int l1 = lskip / sizeof(T);
+ 
+ 	for (int z = 0; z < ne; z++) {
+-		int sum;
++		typename intermediate<T>::type sum;
+ 
+-		sum = reduce_sum<T, int>(in + z, l1, cy, n);
++		sum = reduce_sum<T>(in + z, l1, cy, n);
+ 		sum = unsigned_fixed_round(sum);
+ 		out[z] = VIPS_CLIP(0, sum, max_value);
+ 	}
+@@ -432,9 +432,9 @@ static void inline reducev_signed_int_tab(VipsReducev *reducev,
+ 	const int l1 = lskip / sizeof(T);
+ 
+ 	for (int z = 0; z < ne; z++) {
+-		int sum;
++		typename intermediate<T>::type sum;
+ 
+-		sum = reduce_sum<T, int>(in + z, l1, cy, n);
++		sum = reduce_sum<T>(in + z, l1, cy, n);
+ 		sum = signed_fixed_round(sum);
+ 		out[z] = VIPS_CLIP(min_value, sum, max_value);
+ 	}
+@@ -453,48 +453,7 @@ static void inline reducev_float_tab(VipsReducev *reducev,
+ 	const int l1 = lskip / sizeof(T);
+ 
+ 	for (int z = 0; z < ne; z++)
+-		out[z] = reduce_sum<T, double>(in + z, l1, cy, n);
+-}
+-
+-/* 32-bit int output needs a 64-bits intermediate.
+- */
+-
+-template <typename T, unsigned int max_value>
+-static void inline reducev_unsigned_int32_tab(VipsReducev *reducev,
+-	VipsPel *pout, const VipsPel *pin,
+-	const int ne, const int lskip, const short *restrict cy)
+-{
+-	T *restrict out = (T *) pout;
+-	const T *restrict in = (T *) pin;
+-	const int n = reducev->n_point;
+-	const int l1 = lskip / sizeof(T);
+-
+-	for (int z = 0; z < ne; z++) {
+-		uint64_t sum;
+-
+-		sum = reduce_sum<T, uint64_t>(in + z, l1, cy, n);
+-		sum = unsigned_fixed_round(sum);
+-		out[z] = VIPS_CLIP(0, sum, max_value);
+-	}
+-}
+-
+-template <typename T, int min_value, int max_value>
+-static void inline reducev_signed_int32_tab(VipsReducev *reducev,
+-	VipsPel *pout, const VipsPel *pin,
+-	const int ne, const int lskip, const short *restrict cy)
+-{
+-	T *restrict out = (T *) pout;
+-	const T *restrict in = (T *) pin;
+-	const int n = reducev->n_point;
+-	const int l1 = lskip / sizeof(T);
+-
+-	for (int z = 0; z < ne; z++) {
+-		int64_t sum;
+-
+-		sum = reduce_sum<T, int64_t>(in + z, l1, cy, n);
+-		sum = signed_fixed_round(sum);
+-		out[z] = VIPS_CLIP(min_value, sum, max_value);
+-	}
++		out[z] = reduce_sum<T>(in + z, l1, cy, n);
+ }
+ 
+ /* Ultra-high-quality version for double images.
+@@ -509,17 +468,13 @@ static void inline reducev_notab(VipsReducev *reducev,
+ 	const int n = reducev->n_point;
+ 	const int l1 = lskip / sizeof(T);
+ 
+-	double cy[MAX_POINT];
++	typename intermediate<T>::type cy[MAX_POINT];
+ 
+ 	vips_reduce_make_mask(cy, reducev->kernel, reducev->n_point,
+ 		reducev->vshrink, y);
+ 
+-	for (int z = 0; z < ne; z++) {
+-		double sum;
+-		sum = reduce_sum<T, double>(in + z, l1, cy, n);
+-
+-		out[z] = VIPS_ROUND_UINT(sum);
+-	}
++	for (int z = 0; z < ne; z++)
++		out[z] = reduce_sum<T>(in + z, l1, cy, n);
+ }
+ 
+ static int
+@@ -591,12 +546,12 @@ vips_reducev_gen(VipsRegion *out_region, void *vseq,
+ 			break;
+ 
+ 		case VIPS_FORMAT_UINT:
+-			reducev_unsigned_int32_tab<unsigned int,
++			reducev_unsigned_int_tab<unsigned int,
+ 				UINT_MAX>(reducev, q, p, ne, lskip, cys);
+ 			break;
+ 
+ 		case VIPS_FORMAT_INT:
+-			reducev_signed_int32_tab<signed int,
++			reducev_signed_int_tab<signed int,
+ 				INT_MIN, INT_MAX>(reducev, q, p, ne, lskip, cys);
+ 			break;
+ 
+diff --git a/libvips/resample/templates.h b/libvips/resample/templates.h
+index 1111111..2222222 100644
+--- a/libvips/resample/templates.h
++++ b/libvips/resample/templates.h
+@@ -28,6 +28,9 @@
+ 
+  */
+ 
++#include <cstdint>
++#include <type_traits>
++
+ /*
+  * Various casts which assume that the data is already in range. (That
+  * is, they are to be used with monotone samplers.)
+@@ -149,7 +152,7 @@ static T inline bilinear_nosign(
+ template <typename T>
+ static T inline unsigned_fixed_round(T v)
+ {
+-	const T round_by = VIPS_INTERPOLATE_SCALE >> 1;
++	const int round_by = VIPS_INTERPOLATE_SCALE >> 1;
+ 
+ 	return (v + round_by) >> VIPS_INTERPOLATE_SHIFT;
+ }
+@@ -200,8 +203,8 @@ static int inline bicubic_unsigned_int(
+ template <typename T>
+ static T inline signed_fixed_round(T v)
+ {
+-	const T sign_of_v = 2 * (v >= 0) - 1;
+-	const T round_by = sign_of_v * (VIPS_INTERPOLATE_SCALE >> 1);
++	const int sign_of_v = 2 * (v >= 0) - 1;
++	const int round_by = sign_of_v * (VIPS_INTERPOLATE_SCALE >> 1);
+ 
+ 	return (v + round_by) >> VIPS_INTERPOLATE_SHIFT;
+ }
+@@ -473,10 +476,41 @@ vips_reduce_make_mask(T *c, VipsKernel kernel, const int n_points,
+ 	}
+ }
+ 
++/* Machinery to pick an intermediate for type T, prevents an overflow in
++ * reduce_sum(). Defaults to a 32-bit integral type.
++ */
++template <typename T,
++	bool IsIntegral = std::is_integral<T>::value,
++	size_t Size = sizeof(T)>
++struct intermediate {
++	typedef int32_t type;
++};
++
++/* 32-bit integral types needs a 64-bits intermediate.
++ */
++template <typename T>
++struct intermediate<T, true, 4> {
++	typedef int64_t type;
++};
++
++/* 32-bit floating-point types needs a 64-bits intermediate.
++ */
++template <typename T>
++struct intermediate<T, false, 4> {
++	typedef double type;
++};
++
++/* 64-bit floating-point types needs a 128-bits intermediate.
++ */
++template <typename T>
++struct intermediate<T, false, 8> {
++	typedef long double type;
++};
++
+ /* Our inner loop for resampling with a convolution of type CT. Operate on
+  * elements of type T, gather results in an intermediate of type IT.
+  */
+-template <typename T, typename IT, typename CT>
++template <typename T, typename CT, typename IT = typename intermediate<T>::type>
+ static IT inline reduce_sum(const T *restrict in, int stride,
+ 	const CT *restrict c, int n)
+ {
