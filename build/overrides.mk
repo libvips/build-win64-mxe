@@ -539,7 +539,7 @@ define librsvg_BUILD
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-arm.patch \
         # Update expected Cargo SHA256 hashes for the files we have patched
         $(SED) -i 's/3c7fe77a67a34e6641b798f3a67dd6904396011a428f6af82cbec993eb924f0c/1243dd219210ac5178311bd6bb438a845cce1963e0fcb88df8577b1584b9c2a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/799d0747bb208ad2e8896e8b313e4460a5ef2e0ba3861bf62ea51f2b14a63b3b/ebff9286a98126c70bbb1e1502b58c746c4098ea6b5c64eaa2b15c9a0527f167/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/67578522c146e1e44d44023c7b1b2b9fc65dc239d7c92ba61b2ec839e360ee80/af12eea5309f061da5623c41e711b135bacc9f8fd0507ccb63f5ff2088b62484/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/ed8e92a9655ef164c62a7c033906c41601ca458b477ae32ad37f89228683c295/bfa574dfa19737edeeef6de682207009a9020e3a980d1bb3b554f46f49792c0d/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
 
     # need to regenerate the configure script

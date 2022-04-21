@@ -60,15 +60,15 @@ diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/build.rs
 +++ b/vendor/compiler_builtins/build.rs
-@@ -318,7 +318,7 @@ mod c {
-             }
-         }
- 
--        if target_arch == "arm" && target_os != "ios" && target_env != "msvc" {
-+        if target_arch == "arm" && target_os != "ios" && target_os != "windows" {
+@@ -324,7 +324,7 @@ mod c {
+         if target_arch == "arm"
+             && target_os != "ios"
+             && target_os != "watchos"
+-            && target_env != "msvc"
++            && target_os != "windows"
+         {
              sources.extend(&[
                  ("__aeabi_div0", "arm/aeabi_div0.c"),
-                 ("__aeabi_drsub", "arm/aeabi_drsub.c"),
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>

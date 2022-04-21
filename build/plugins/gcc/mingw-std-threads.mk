@@ -2,9 +2,9 @@ PKG             := mingw-std-threads
 $(PKG)_WEBSITE  := https://github.com/meganz/mingw-std-threads
 $(PKG)_DESCR    := Standard threads implementation currently still missing on MinGW GCC on Windows
 $(PKG)_IGNORE   :=
-# https://github.com/meganz/mingw-std-threads/tarball/7e2507915900f5589febf0d8972cd5c9c03191f2
-$(PKG)_VERSION  := 7e25079
-$(PKG)_CHECKSUM := 0cee619c4458af543bb5da73779a4d493c5cbd7e1091f85f4a2f171c192030de
+# https://github.com/meganz/mingw-std-threads/tarball/6c2061b7da41d6aa1b2162ff4383ec3ece864bc6
+$(PKG)_VERSION  := 6c2061b
+$(PKG)_CHECKSUM := 97f7fd95006ca13c81ab8b9bc7b8a22b55b8cc83c24a9ac21423c7c3840a46bd
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := meganz/mingw-std-threads/branches/master
 $(PKG)_DEPS     :=
