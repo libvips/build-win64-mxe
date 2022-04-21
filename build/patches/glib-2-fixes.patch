@@ -95,7 +95,7 @@ diff --git a/gio/tests/meson.build b/gio/tests/meson.build
 index 1111111..2222222 100644
 --- a/gio/tests/meson.build
 +++ b/gio/tests/meson.build
-@@ -481,7 +481,7 @@ gdbus_example_objectmanager_sources = files(
+@@ -487,7 +487,7 @@ gdbus_example_objectmanager_sources = files(
    'gdbus-example-objectmanager-server.c',
  )
  
@@ -104,7 +104,7 @@ index 1111111..2222222 100644
    test_extra_programs += {
      # These three are manual-run tests because they need a session bus but don't bring one up themselves
      # FIXME: these build but don't seem to work!
-@@ -597,7 +597,7 @@ if installed_tests_enabled
+@@ -603,7 +603,7 @@ if installed_tests_enabled
    endforeach
  endif
  

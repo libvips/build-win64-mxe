@@ -39,8 +39,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-44
-imagemagick_CHECKSUM := 89ac50d50762285a4aea57c0f5b01b4fe1584fc37e1f90314390a47d73393064
+imagemagick_VERSION  := 6.9.12-45
+imagemagick_CHECKSUM := 3d33f20e63462e578091ee1c2c558fd750c907033cb293fbd375aa8e044519df
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -61,16 +61,26 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.50.0
-pango_VERSION  := 1.50.6
-pango_CHECKSUM := a998bcf36881c3ac20495d40bceb304f4eaa9175bd2967c85656434cbdafe86a
+pango_VERSION  := 1.50.7
+pango_CHECKSUM := 0477f369a3d4c695df7299a6989dc004756a7f4de27eecac405c6790b7e3ad33
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
+# upstream version is 1.0.11
+# cannot use GH_CONF:
+# fribidi_GH_CONF  := fribidi/fribidi/releases,v
+fribidi_VERSION  := 1.0.12
+fribidi_CHECKSUM := 0cd233f97fc8c67bb3ac27ce8440def5d3ffacf516765b91c2cc654498293495
+fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
+fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
+fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
+fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
+
 # upstream version is 2.70.2
-glib_VERSION  := 2.72.0
-glib_CHECKSUM := d7bef0d4c4e7a62e08efb8e5f252a01357007b9588a87ff2b463a3857011f79d
+glib_VERSION  := 2.72.1
+glib_CHECKSUM := c07e57147b254cef92ce80a0378dc0c02a4358e7de4702e9f403069781095fe2
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz

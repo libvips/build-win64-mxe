@@ -23,9 +23,9 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [expat]         | 2.4.8     | MIT Licence                                                  |
 | [fontconfig]    | 2.14.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.12.0    | [freetype Licence] (BSD-like)                                |
-| [fribidi]       | 1.0.11    | LGPLv3                                                       |
+| [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.8    | LGPLv3                                                       |
-| [glib]          | 2.72.0    | LGPLv3                                                       |
+| [glib]          | 2.72.1    | LGPLv3                                                       |
 | [harfbuzz]      | 4.2.0     | MIT Licence                                                  |
 | [lcms]          | 2.13.1    | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
@@ -42,7 +42,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.9.13    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.50.6    | LGPLv3                                                       |
+| [pango]         | 1.50.7    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [proxy-libintl] | 0.3       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
@@ -97,7 +97,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.0.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 0.16.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-44 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-45 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.5     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
