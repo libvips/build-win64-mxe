@@ -39,8 +39,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-45
-imagemagick_CHECKSUM := 3d33f20e63462e578091ee1c2c558fd750c907033cb293fbd375aa8e044519df
+imagemagick_VERSION  := 6.9.12-47
+imagemagick_CHECKSUM := e93756b5f09b5632cf93392fe8a4d6f432eed66bf7ae68db17f5c452fd2dd3f7
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -53,8 +53,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.54.0
-librsvg_CHECKSUM := baf8ebc147f146b4261bb3d0cd0fac944bf8dbb4b1f2347d23341f974dcc3085
+librsvg_VERSION  := 2.54.1
+librsvg_CHECKSUM := d5557efbdcc415a4180e1116b7f736cb711b253d110d95fa86ec830f70026625
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -134,6 +134,28 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
+
+# upstream version is 2.12.0
+freetype_VERSION  := 2.12.1
+freetype_CHECKSUM := 4766f20157cc4cf0cd292f80bf917f92d1c439b243ac3018debf6b9140c41a7f
+freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
+freetype_SUBDIR   := freetype-$(freetype_VERSION)
+freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
+freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
+
+# upstream version is 2.12.0
+freetype-bootstrap_VERSION  := $(freetype_VERSION)
+freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
+freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
+freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
+freetype-bootstrap_FILE     := $(freetype_FILE)
+freetype-bootstrap_URL      := $(freetype_URL)
+
+# upstream version is 4.2.0
+harfbuzz_VERSION  := 4.2.1
+harfbuzz_CHECKSUM := bd17916513829aeff961359a5ccebba6de2f4bf37a91faee3ac29c120e3d7ee1
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.13
 # cannot use GH_CONF:
@@ -388,6 +410,8 @@ endef
 define libgsf_BUILD
     $(SED) -i 's,\ssed\s, $(SED) ,g'           '$(SOURCE_DIR)'/gsf/Makefile.in
 
+    # Allow libtool to statically link against libintl
+    # by specifying lt_cv_deplibs_check_method="pass_all"
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --without-gdk-pixbuf \
@@ -396,7 +420,9 @@ define libgsf_BUILD
         --disable-nls \
         --without-libiconv-prefix \
         --without-libintl-prefix \
-        PKG_CONFIG='$(PREFIX)/bin/$(TARGET)-pkg-config'
+        PKG_CONFIG='$(PREFIX)/bin/$(TARGET)-pkg-config' \
+        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all")
+
     $(MAKE) -C '$(BUILD_DIR)'     -j '$(JOBS)' install-pkgconfigDATA $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)/gsf' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef
@@ -550,18 +576,19 @@ define librsvg_BUILD
         # Update expected Cargo SHA256 hashes for the files we have patched
         $(SED) -i 's/3c7fe77a67a34e6641b798f3a67dd6904396011a428f6af82cbec993eb924f0c/1243dd219210ac5178311bd6bb438a845cce1963e0fcb88df8577b1584b9c2a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
         $(SED) -i 's/67578522c146e1e44d44023c7b1b2b9fc65dc239d7c92ba61b2ec839e360ee80/af12eea5309f061da5623c41e711b135bacc9f8fd0507ccb63f5ff2088b62484/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/ed8e92a9655ef164c62a7c033906c41601ca458b477ae32ad37f89228683c295/bfa574dfa19737edeeef6de682207009a9020e3a980d1bb3b554f46f49792c0d/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json';)
+        $(SED) -i 's/ed8e92a9655ef164c62a7c033906c41601ca458b477ae32ad37f89228683c295/bfa574dfa19737edeeef6de682207009a9020e3a980d1bb3b554f46f49792c0d/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/16a676cf3e4dd544fa05b45e3c7a657bb62c8fae9e97d1cbf20554e9c77fd899/d7197a47ad987accf119f88dfde4b67ded01a2e0698664f76eefafd4e35f850a/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json';)
 
-    # need to regenerate the configure script
-    cd '$(SOURCE_DIR)' && autoreconf -fi
-
+    # Allow libtool to statically link against libintl
+    # by specifying lt_cv_deplibs_check_method="pass_all"
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-introspection \
         RUST_TARGET='$(PROCESSOR)-pc-windows-gnu' \
         CARGO='$(TARGET)-cargo' \
-        RUSTC='$(TARGET)-rustc'
+        RUSTC='$(TARGET)-rustc' \
+        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all")
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_SCRIPTS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=

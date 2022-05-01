@@ -19,14 +19,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 |-----------------|-----------|--------------------------------------------------------------|
 | [aom]           | 3.3.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.6    | Mozilla Public License 2.0                                   |
-| [cgif]          | 0.2.1     | MIT Licence                                                  |
+| [cgif]          | 0.3.0     | MIT Licence                                                  |
 | [expat]         | 2.4.8     | MIT Licence                                                  |
 | [fontconfig]    | 2.14.0    | [fontconfig Licence] (BSD-like)                              |
-| [freetype]      | 2.12.0    | [freetype Licence] (BSD-like)                                |
+| [freetype]      | 2.12.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.8    | LGPLv3                                                       |
 | [glib]          | 2.72.1    | LGPLv3                                                       |
-| [harfbuzz]      | 4.2.0     | MIT Licence                                                  |
+| [harfbuzz]      | 4.2.1     | MIT Licence                                                  |
 | [lcms]          | 2.13.1    | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
@@ -34,7 +34,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.12.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
-| [librsvg]       | 2.54.0    | LGPLv3                                                       |
+| [librsvg]       | 2.54.1    | LGPLv3                                                       |
 | [libspng]       | 0.7.2     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.12.2    | LGPLv3                                                       |
@@ -97,7 +97,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.0.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 0.16.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-45 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-47 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.5     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
@@ -106,7 +106,7 @@ Same as libvips-web + these extra dependencies:
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
 | [poppler]       | 22.04.0   | GPLv2                                                        |
-| [sqlite]        | 3.38.2    | Public domain                                                |
+| [sqlite]        | 3.38.3    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
