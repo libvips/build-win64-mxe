@@ -21,8 +21,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.9.12
-libxml2_VERSION  := 2.9.13
-libxml2_CHECKSUM := 276130602d12fe484ecc03447ee5e759d0465558fbc9d6bd144e3745306ebf0e
+libxml2_VERSION  := 2.9.14
+libxml2_CHECKSUM := 60d74a257d1ccec0475e749cba2f21559e48139efba6ff28224357c7c798dfee
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -39,8 +39,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-47
-imagemagick_CHECKSUM := e93756b5f09b5632cf93392fe8a4d6f432eed66bf7ae68db17f5c452fd2dd3f7
+imagemagick_VERSION  := 6.9.12-48
+imagemagick_CHECKSUM := af46e8caa8fc871f77e6cd55713fdc660d80d8803feb3bb5991bd82e18bddd15
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -119,8 +119,8 @@ openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 3410
-cfitsio_VERSION  := 4.0.0
-cfitsio_CHECKSUM := b2a8efba0b9f86d3e1bd619f662a476ec18112b4f27cc441cc680a4e3777425e
+cfitsio_VERSION  := 4.1.0
+cfitsio_CHECKSUM := b367c695d2831958e7166921c3b356d5dfa51b1ecee505b97416ba39d1b6c17a
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
@@ -134,28 +134,6 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
-
-# upstream version is 2.12.0
-freetype_VERSION  := 2.12.1
-freetype_CHECKSUM := 4766f20157cc4cf0cd292f80bf917f92d1c439b243ac3018debf6b9140c41a7f
-freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
-freetype_SUBDIR   := freetype-$(freetype_VERSION)
-freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
-freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
-
-# upstream version is 2.12.0
-freetype-bootstrap_VERSION  := $(freetype_VERSION)
-freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
-freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
-freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
-freetype-bootstrap_FILE     := $(freetype_FILE)
-freetype-bootstrap_URL      := $(freetype_URL)
-
-# upstream version is 4.2.0
-harfbuzz_VERSION  := 4.2.1
-harfbuzz_CHECKSUM := bd17916513829aeff961359a5ccebba6de2f4bf37a91faee3ac29c120e3d7ee1
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.13
 # cannot use GH_CONF:
@@ -228,7 +206,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: pthreads
 # Poppler:
 #  Added: libjpeg-turbo, lcms
-#  Removed: boost, curl, qtbase, libwebp
+#  Removed: boost, curl, qt6-qtbase, libwebp
 # librsvg:
 #  Added: libxml2, rust
 #  Removed: libcroco, libgsf

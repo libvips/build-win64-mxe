@@ -39,12 +39,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.12.2    | LGPLv3                                                       |
 | [libwebp]       | 1.2.2     | New BSD License                                              |
-| [libxml2]       | 2.9.13    | MIT Licence                                                  |
+| [libxml2]       | 2.9.14    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.50.7    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
-| [proxy-libintl] | 0.3       | LGPLv3                                                       |
+| [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
@@ -94,10 +94,10 @@ Same as libvips-web + these extra dependencies:
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
-| [cfitsio]       | 4.0.0     | BSD-like                                                     |
+| [cfitsio]       | 4.1.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 0.16.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-47 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-48 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.5     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
@@ -105,8 +105,8 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.5     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.4.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 22.04.0   | GPLv2                                                        |
-| [sqlite]        | 3.38.3    | Public domain                                                |
+| [poppler]       | 22.05.0   | GPLv2                                                        |
+| [sqlite]        | 3.38.5    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
