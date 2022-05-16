@@ -1,8 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 5 May 2021 21:00:00 +0200
-Subject: [PATCH 1/4] Add llvm-mingw ARM/ARM64 targets
+Subject: [PATCH 1/4] Add llvm-mingw targets
 
+Upstream-Status: Inappropriate [enable feature]
+Upstream only accepts Rust targets that are available in stable releases.
 
 diff --git a/vendor/cfg-expr/src/targets/builtins.rs b/vendor/cfg-expr/src/targets/builtins.rs
 index 1111111..2222222 100644
@@ -13,7 +15,7 @@ index 1111111..2222222 100644
          endian: Endian::little,
      },
 +    TargetInfo {
-+        triple: Triple::new_const("aarch64-pc-windows-gnu"),
++        triple: Triple::new_const("aarch64-pc-windows-gnullvm"),
 +        os: Some(Os::windows),
 +        arch: Arch::aarch64,
 +        env: Some(Env::gnu),
@@ -30,7 +32,7 @@ index 1111111..2222222 100644
          endian: Endian::little,
      },
 +    TargetInfo {
-+        triple: Triple::new_const("armv7-pc-windows-gnu"),
++        triple: Triple::new_const("armv7-pc-windows-gnullvm"),
 +        os: Some(Os::windows),
 +        arch: Arch::arm,
 +        env: Some(Env::gnu),
@@ -42,6 +44,40 @@ index 1111111..2222222 100644
      TargetInfo {
          triple: Triple::new_const("armv7-unknown-freebsd"),
          os: Some(Os::freebsd),
+@@ -683,6 +703,16 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+         pointer_width: 32,
+         endian: Endian::little,
+     },
++    TargetInfo {
++        triple: Triple::new_const("i686-pc-windows-gnullvm"),
++        os: Some(Os::windows),
++        arch: Arch::x86,
++        env: Some(Env::gnu),
++        vendor: Some(Vendor::pc),
++        families: Families::windows,
++        pointer_width: 32,
++        endian: Endian::little,
++    },
+     TargetInfo {
+         triple: Triple::new_const("i686-pc-windows-msvc"),
+         os: Some(Os::windows),
+@@ -1573,6 +1603,16 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+         pointer_width: 64,
+         endian: Endian::little,
+     },
++    TargetInfo {
++        triple: Triple::new_const("x86_64-pc-windows-gnullvm"),
++        os: Some(Os::windows),
++        arch: Arch::x86_64,
++        env: Some(Env::gnu),
++        vendor: Some(Vendor::pc),
++        families: Families::windows,
++        pointer_width: 64,
++        endian: Endian::little,
++    },
+     TargetInfo {
+         triple: Triple::new_const("x86_64-pc-windows-msvc"),
+         os: Some(Os::windows),
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -51,6 +87,8 @@ Subject: [PATCH 2/4] Fix linker error on llvm-mingw (targeting ARMv7)
 Details:
 lld-link: error: undefined symbol: __aeabi_idiv
 >>> referenced by libcompiler_builtins-<HASH>.rlib(<O_FILE>):(__aeabi_idivmod)
+
+Upstream-Status: Pending
 
 diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.rs
 index 1111111..2222222 100644
@@ -72,6 +110,42 @@ Date: Tue, 15 Feb 2022 11:38:18 +0100
 Subject: [PATCH 3/4] Use appropriate fix/float aliases on llvm-mingw
 
 See: https://github.com/llvm/llvm-project/commit/e6407356ba008e474322d52b7d031f65fa4913fc
+
+Details:
+ld.lld: error: duplicate symbol: __floatdisf
+>>> defined at libclang_rt.builtins-arm.a(floatdisf.c.obj)
+>>> defined at libcompiler_builtins-<HASH>.rlib(<O_FILE>)
+
+ld.lld: error: duplicate symbol: __floatdidf
+>>> defined at libclang_rt.builtins-arm.a(floatdidf.c.obj)
+>>> defined at libcompiler_builtins-<HASH>.rlib(<O_FILE>)
+
+ld.lld: error: duplicate symbol: __floatundisf
+>>> defined at libclang_rt.builtins-arm.a(floatundisf.c.obj)
+>>> defined at libcompiler_builtins-<HASH>.rlib(<O_FILE>)
+
+ld.lld: error: duplicate symbol: __floatundidf
+>>> defined at libclang_rt.builtins-arm.a(floatundidf.c.obj)
+>>> defined at libcompiler_builtins-<HASH>.rlib(<O_FILE>)
+
+ld.lld: error: duplicate symbol: __fixsfdi
+>>> defined at libclang_rt.builtins-arm.a(fixsfdi.c.obj)
+>>> defined at libcompiler_builtins-<HASH>.rlib(<O_FILE>)
+
+ld.lld: error: duplicate symbol: __fixdfdi
+>>> defined at libclang_rt.builtins-arm.a(fixdfdi.c.obj)
+>>> defined at libcompiler_builtins-<HASH>.rlib(<O_FILE>)
+
+ld.lld: error: duplicate symbol: __fixunssfdi
+>>> defined at libclang_rt.builtins-arm.a(fixunssfdi.c.obj)
+>>> defined at libcompiler_builtins-<HASH>.rlib(<O_FILE>)
+
+ld.lld: error: duplicate symbol: __fixunsdfdi
+>>> defined at libclang_rt.builtins-arm.a(fixunsdfdi.c.obj)
+>>> defined at libcompiler_builtins-<HASH>.rlib(<O_FILE>)
+
+Upstream-Status: Inappropriate [Windows specific]
+This is Windows specific and would break compatibility with other Rust ARMv7 targets.
 
 diff --git a/vendor/compiler_builtins/src/float/conv.rs b/vendor/compiler_builtins/src/float/conv.rs
 index 1111111..2222222 100644
@@ -160,11 +234,13 @@ error[E0412]: cannot find type `DELAYLOAD_INFO` in this scope
 2300 | ..._CALLBACK = ::core::option::Option<unsafe extern "system" fn(notificationreason: u32, delayloadinfo: *const DELAYLOAD_INFO) -> *mut ::...
      |             - help: you might be missing a type parameter: `<DELAYLOAD_INFO>`                                  ^^^^^^^^^^^^^^ not found in this scope
 
+Upstream-Status: Pending
+
 diff --git a/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs b/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
 index 1111111..2222222 100644
 --- a/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
 +++ b/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
-@@ -1353,7 +1353,7 @@ impl ::core::clone::Clone for DELAYLOAD_INFO {
+@@ -1352,7 +1352,7 @@ impl ::core::clone::Clone for DELAYLOAD_INFO {
  }
  #[repr(C)]
  #[doc = "*Required features: `\"Win32_System_WindowsProgramming\"`*"]
@@ -173,7 +249,7 @@ index 1111111..2222222 100644
  pub struct DELAYLOAD_INFO {
      pub Size: u32,
      pub DelayloadDescriptor: *mut IMAGE_DELAYLOAD_DESCRIPTOR,
-@@ -1364,9 +1364,9 @@ pub struct DELAYLOAD_INFO {
+@@ -1363,9 +1363,9 @@ pub struct DELAYLOAD_INFO {
      pub Unused: *mut ::core::ffi::c_void,
      pub LastError: u32,
  }

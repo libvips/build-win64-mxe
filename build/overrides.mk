@@ -53,8 +53,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.54.1
-librsvg_CHECKSUM := d5557efbdcc415a4180e1116b7f736cb711b253d110d95fa86ec830f70026625
+librsvg_VERSION  := 2.54.3
+librsvg_CHECKSUM := 66158f2ef46dde260026846c4da102e4a9dd4e5293010f30949c6cc26dd6efe8
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -228,6 +228,8 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: gettext
 # Pixman:
 #  Added: meson-wrapper
+# HarfBuzz:
+#  Removed: icu4c
 
 libgsf_DEPS             := $(filter-out bzip2 ,$(libgsf_DEPS))
 freetype_DEPS           := $(subst bzip2,meson-wrapper,$(freetype_DEPS))
@@ -249,6 +251,7 @@ fontconfig_DEPS         := cc meson-wrapper expat freetype-bootstrap
 cfitsio_DEPS            := cc zlib
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 pixman_DEPS             := cc meson-wrapper libpng
+harfbuzz_DEPS           := $(filter-out  icu4c,$(harfbuzz_DEPS))
 
 ## Override build scripts
 
@@ -549,13 +552,13 @@ define librsvg_BUILD
             MXE_ENABLE_NETWORK=1 \
             $(TARGET)-cargo vendor -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/test/Cargo.toml')
 
-    $(if $(IS_ARM), \
-        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-arm.patch \
-        # Update expected Cargo SHA256 hashes for the files we have patched
-        $(SED) -i 's/3c7fe77a67a34e6641b798f3a67dd6904396011a428f6af82cbec993eb924f0c/1243dd219210ac5178311bd6bb438a845cce1963e0fcb88df8577b1584b9c2a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+    $(if $(IS_LLVM), \
+        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
+        # Update expected Cargo SHA256 hashes for the vendored files we have patched
+        $(SED) -i 's/3c7fe77a67a34e6641b798f3a67dd6904396011a428f6af82cbec993eb924f0c/a52dbb88925434e6769aa0a10eec5b0648ea8f8092a9607e0c734b725a55e0ec/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
         $(SED) -i 's/67578522c146e1e44d44023c7b1b2b9fc65dc239d7c92ba61b2ec839e360ee80/af12eea5309f061da5623c41e711b135bacc9f8fd0507ccb63f5ff2088b62484/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/ed8e92a9655ef164c62a7c033906c41601ca458b477ae32ad37f89228683c295/bfa574dfa19737edeeef6de682207009a9020e3a980d1bb3b554f46f49792c0d/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/16a676cf3e4dd544fa05b45e3c7a657bb62c8fae9e97d1cbf20554e9c77fd899/d7197a47ad987accf119f88dfde4b67ded01a2e0698664f76eefafd4e35f850a/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json';)
+        $(SED) -i 's/966128476fdf0d3148da21508a27a159ad2d272391e4a3ffbf18008300cca80c/ead5a3b748c9a5fcb145fa2e5cfc8df32f383369b8842fba4272ca3b568109ea/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json';)
 
     # Allow libtool to statically link against libintl
     # by specifying lt_cv_deplibs_check_method="pass_all"
@@ -563,7 +566,7 @@ define librsvg_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
         --disable-introspection \
-        RUST_TARGET='$(PROCESSOR)-pc-windows-gnu' \
+        RUST_TARGET='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
         CARGO='$(TARGET)-cargo' \
         RUSTC='$(TARGET)-rustc' \
         $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all")

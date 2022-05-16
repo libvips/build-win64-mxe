@@ -5,229 +5,95 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 15 Sep 2020 11:50:00 +0200
-Subject: [PATCH 1/5] Add llvm-mingw ARM/ARM64 targets
+Subject: [PATCH 1/2] Add llvm-mingw i686/ARMv7 targets
 
+Upstream-Status: Pending
 
-diff --git a/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs
+diff --git a/compiler/rustc_target/src/spec/armv7_pc_windows_gnullvm.rs b/compiler/rustc_target/src/spec/armv7_pc_windows_gnullvm.rs
 new file mode 100644
 index 0000000..1111111
 --- /dev/null
-+++ b/compiler/rustc_target/src/spec/aarch64_pc_windows_gnu.rs
-@@ -0,0 +1,20 @@
-+use crate::spec::{LinkerFlavor, LldFlavor, Target, TargetOptions};
++++ b/compiler/rustc_target/src/spec/armv7_pc_windows_gnullvm.rs
+@@ -0,0 +1,17 @@
++use crate::spec::{FramePointer, Target};
 +
 +pub fn target() -> Target {
-+    let mut base = super::windows_gnu_base::opts();
-+    base.pre_link_args
-+        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".into(), "arm64pe".into()]);
-+
-+    Target {
-+        llvm_target: "aarch64-pc-windows-gnu".into(),
-+        pointer_width: 64,
-+        data_layout: "e-m:w-p:64:64-i32:32-i64:64-i128:128-n32:64-S128".into(),
-+        arch: "aarch64".into(),
-+        options: TargetOptions {
-+            features: "+neon,+fp-armv8".into(),
-+            max_atomic_width: Some(64),
-+            has_thread_local: true,
-+            ..base
-+        },
-+    }
-+}
-diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
-index 1111111..2222222 100644
---- a/compiler/rustc_target/src/spec/mod.rs
-+++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -934,6 +934,8 @@ supported_targets! {
- 
-     ("x86_64-unknown-illumos", x86_64_unknown_illumos),
- 
-+    ("aarch64-pc-windows-gnu", aarch64_pc_windows_gnu),
-+    ("armv7-pc-windows-gnu", armv7_pc_windows_gnu),
-     ("x86_64-pc-windows-gnu", x86_64_pc_windows_gnu),
-     ("i686-pc-windows-gnu", i686_pc_windows_gnu),
-     ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
-diff --git a/compiler/rustc_target/src/spec/armv7_pc_windows_gnu.rs b/compiler/rustc_target/src/spec/armv7_pc_windows_gnu.rs
-new file mode 100644
-index 0000000..1111111
---- /dev/null
-+++ b/compiler/rustc_target/src/spec/armv7_pc_windows_gnu.rs
-@@ -0,0 +1,21 @@
-+use crate::spec::{FramePointer, LinkerFlavor, LldFlavor, Target, TargetOptions};
-+
-+pub fn target() -> Target {
-+    let mut base = super::windows_gnu_base::opts();
-+    base.pre_link_args
-+        .insert(LinkerFlavor::Lld(LldFlavor::Ld), vec!["-m".into(), "thumb2pe".into()]);
++    let mut base = super::windows_gnullvm_base::opts();
++    base.max_atomic_width = Some(64);
++    base.frame_pointer = FramePointer::Always; // Required for backtraces
++    base.features = "+v7,+thumb-mode,+thumb2,+vfp3,+neon".into();
++    base.linker = Some("armv7-w64-mingw32-clang".into());
 +
 +    Target {
 +        llvm_target: "armv7-pc-windows-gnu".into(),
 +        pointer_width: 32,
 +        data_layout: "e-m:w-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
 +        arch: "arm".into(),
-+        options: TargetOptions {
-+            features: "+v7,+thumb-mode,+thumb2,+vfp3,+neon".into(),
-+            max_atomic_width: Some(64),
-+            // Required for backtraces
-+            frame_pointer: FramePointer::Always,
-+            ..base
-+        },
++        options: base,
 +    }
 +}
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Tue, 15 Sep 2020 15:20:00 +0200
-Subject: [PATCH 2/5] Make Windows GNU targets compatible with llvm-mingw
-
-By ensuring that we use the standard system libraries when linking
-(i.e. remove -nodefaultlibs) and by avoiding to link against GCC
-specific libraries (i.e. libgcc, libgcc_eh and libgcc_s).
-
-We don't need to link against libunwind.dll.a or libunwind.a, since
-the linker will automatically include libunwind, depending on what's
-available, and depending on the -static flag.
-
-Note: this patch will probably break compatibility with GCC.
-
-diff --git a/compiler/rustc_target/src/spec/windows_gnu_base.rs b/compiler/rustc_target/src/spec/windows_gnu_base.rs
+diff --git a/compiler/rustc_target/src/spec/i686_pc_windows_gnullvm.rs b/compiler/rustc_target/src/spec/i686_pc_windows_gnullvm.rs
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/compiler/rustc_target/src/spec/i686_pc_windows_gnullvm.rs
+@@ -0,0 +1,21 @@
++use crate::spec::{FramePointer, LinkerFlavor, Target};
++
++pub fn target() -> Target {
++    let mut base = super::windows_gnullvm_base::opts();
++    base.cpu = "pentium4".into();
++    let gcc_pre_link_args = base.pre_link_args.entry(LinkerFlavor::Gcc).or_default();
++    gcc_pre_link_args.push("-mi386pe".into());
++    base.max_atomic_width = Some(64);
++    base.frame_pointer = FramePointer::Always; // Required for backtraces
++    base.linker = Some("i686-w64-mingw32-clang".into());
++
++    Target {
++        llvm_target: "i686-pc-windows-gnu".into(),
++        pointer_width: 32,
++        data_layout: "e-m:x-p:32:32-p270:32:32-p271:32:32-p272:64:64-\
++            i64:64-f80:32-n8:16:32-a:0:32-S32"
++            .into(),
++        arch: "x86".into(),
++        options: base,
++    }
++}
+diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
 index 1111111..2222222 100644
---- a/compiler/rustc_target/src/spec/windows_gnu_base.rs
-+++ b/compiler/rustc_target/src/spec/windows_gnu_base.rs
-@@ -1,5 +1,5 @@
- use crate::spec::crt_objects::{self, CrtObjectsFallback};
--use crate::spec::{cvs, LinkArgs, LinkerFlavor, LldFlavor, TargetOptions};
-+use crate::spec::{cvs, LinkArgs, LinkerFlavor, TargetOptions};
+--- a/compiler/rustc_target/src/spec/mod.rs
++++ b/compiler/rustc_target/src/spec/mod.rs
+@@ -941,7 +941,9 @@ supported_targets! {
+     ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
- pub fn opts() -> TargetOptions {
-     let mut pre_link_args = LinkArgs::new();
-@@ -16,48 +16,9 @@ pub fn opts() -> TargetOptions {
-         ],
-     );
+     ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
++    ("armv7-pc-windows-gnullvm", armv7_pc_windows_gnullvm),
+     ("x86_64-pc-windows-gnullvm", x86_64_pc_windows_gnullvm),
++    ("i686-pc-windows-gnullvm", i686_pc_windows_gnullvm),
  
--    let mut late_link_args = LinkArgs::new();
--    let mut late_link_args_dynamic = LinkArgs::new();
--    let mut late_link_args_static = LinkArgs::new();
--    // Order of `late_link_args*` was found through trial and error to work with various
--    // mingw-w64 versions (not tested on the CI). It's expected to change from time to time.
--    let mingw_libs = vec![
--        "-lmsvcrt".into(),
--        "-lmingwex".into(),
--        "-lmingw32".into(),
--        "-lgcc".into(), // alas, mingw* libraries above depend on libgcc
--        // mingw's msvcrt is a weird hybrid import library and static library.
--        // And it seems that the linker fails to use import symbols from msvcrt
--        // that are required from functions in msvcrt in certain cases. For example
--        // `_fmode` that is used by an implementation of `__p__fmode` in x86_64.
--        // The library is purposely listed twice to fix that.
--        //
--        // See https://github.com/rust-lang/rust/pull/47483 for some more details.
--        "-lmsvcrt".into(),
--        "-luser32".into(),
--        "-lkernel32".into(),
--    ];
--    late_link_args.insert(LinkerFlavor::Gcc, mingw_libs.clone());
--    late_link_args.insert(LinkerFlavor::Lld(LldFlavor::Ld), mingw_libs);
--    let dynamic_unwind_libs = vec![
--        // If any of our crates are dynamically linked then we need to use
--        // the shared libgcc_s-dw2-1.dll. This is required to support
--        // unwinding across DLL boundaries.
--        "-lgcc_s".into(),
--    ];
--    late_link_args_dynamic.insert(LinkerFlavor::Gcc, dynamic_unwind_libs.clone());
--    late_link_args_dynamic.insert(LinkerFlavor::Lld(LldFlavor::Ld), dynamic_unwind_libs);
--    let static_unwind_libs = vec![
--        // If all of our crates are statically linked then we can get away
--        // with statically linking the libgcc unwinding code. This allows
--        // binaries to be redistributed without the libgcc_s-dw2-1.dll
--        // dependency, but unfortunately break unwinding across DLL
--        // boundaries when unwinding across FFI boundaries.
--        "-lgcc_eh".into(),
--        "-l:libpthread.a".into(),
--    ];
--    late_link_args_static.insert(LinkerFlavor::Gcc, static_unwind_libs.clone());
--    late_link_args_static.insert(LinkerFlavor::Lld(LldFlavor::Ld), static_unwind_libs);
-+    let late_link_args = LinkArgs::new();
-+    let late_link_args_dynamic = LinkArgs::new();
-+    let late_link_args_static = LinkArgs::new();
- 
-     TargetOptions {
-         os: "windows".into(),
-@@ -87,6 +48,7 @@ pub fn opts() -> TargetOptions {
-         emit_debug_gdb_scripts: false,
-         requires_uwtable: true,
-         eh_frame_header: false,
-+        no_default_libraries: false,
-         ..Default::default()
-     }
- }
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Mon, 26 Jul 2021 13:00:00 +0200
-Subject: [PATCH 3/5] Enable -ffunction-sections
-
-
-diff --git a/compiler/rustc_target/src/spec/windows_gnu_base.rs b/compiler/rustc_target/src/spec/windows_gnu_base.rs
-index 1111111..2222222 100644
---- a/compiler/rustc_target/src/spec/windows_gnu_base.rs
-+++ b/compiler/rustc_target/src/spec/windows_gnu_base.rs
-@@ -24,8 +24,6 @@ pub fn opts() -> TargetOptions {
-         os: "windows".into(),
-         env: "gnu".into(),
-         vendor: "pc".into(),
--        // FIXME(#13846) this should be enabled for windows
--        function_sections: false,
-         linker: Some("gcc".into()),
-         dynamic_linking: true,
-         executables: true,
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Fri, 18 Sep 2020 21:00:00 +0200
-Subject: [PATCH 4/5] Do not distribute Windows-specific files while
- cross-compiling
-
-These files (gcc.exe, ld.exe, dlltool.exe, etc.) are not available on
-Unix systems with MinGW and probably exists only on MSYS environments.
-
-Note: this patch has only been tested on Linux.
-
-diff --git a/src/bootstrap/dist.rs b/src/bootstrap/dist.rs
-index 1111111..2222222 100644
---- a/src/bootstrap/dist.rs
-+++ b/src/bootstrap/dist.rs
-@@ -285,7 +285,7 @@ impl Step for Mingw {
-     /// without any extra installed software (e.g., we bundle gcc, libraries, etc).
-     fn run(self, builder: &Builder<'_>) -> Option<GeneratedTarball> {
-         let host = self.host;
--        if !host.contains("pc-windows-gnu") {
-+        if !host.contains("pc-windows-gnu") || builder.config.build != host {
-             return None;
-         }
+     ("aarch64-pc-windows-msvc", aarch64_pc_windows_msvc),
+     ("aarch64-uwp-windows-msvc", aarch64_uwp_windows_msvc),
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 22 Sep 2020 10:00:00 +0200
-Subject: [PATCH 5/5] Ensure that panic_unwind/unwind can be successfully built on
+Subject: [PATCH 2/2] Ensure that panic_unwind/unwind can be successfully built on
  llvm-mingw
 
 Fixes undefined symbol errors while linking these crates on llvm-mingw
 (targeting ARMv7).
 
-lld-link: error: undefined symbol: __gnu_unwind_frame
->>> referenced by libpanic_unwind-<HASH>.rlib(<O_FILE>):(rust_eh_personality)
->>> referenced by libpanic_unwind-<HASH>.rlib(<O_FILE>):(rust_eh_personality)
+Details:
+ld.lld: error: undefined symbol: __gnu_unwind_frame
+>>> referenced by libpanic_unwind-<HASH>.rlib(<O_FILE>):(panic_unwind::real_imp::rust_eh_personality::continue_unwind::<HASH>)
 
-lld-link: error: undefined symbol: _Unwind_VRS_Get
+ld.lld: error: undefined symbol: _Unwind_VRS_Get
 >>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_GetGR::<HASH>)
->>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_GetIP::<HASH>)
->>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_SetIP::<HASH>)
->>> referenced 1 more times
 
-lld-link: error: undefined symbol: _Unwind_VRS_Set
+ld.lld: error: undefined symbol: _Unwind_VRS_Set
 >>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_SetGR::<HASH>)
->>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_SetIP::<HASH>)
+
+Upstream-Status: Pending
 
 diff --git a/library/panic_unwind/src/gcc.rs b/library/panic_unwind/src/gcc.rs
 index 1111111..2222222 100644

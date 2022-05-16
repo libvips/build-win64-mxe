@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2022-05-12/rustc-nightly-src.tar.gz.sha256
+# https://static.rust-lang.org/dist/2022-05-16/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 30b3c71bc464270b4e35233a90260c5897224c6446148b79bac2164b0c9b72f2
+$(PKG)_CHECKSUM := 7d1c0e6901e841e85537ed6ee816d7dbee085d67b88cde0815b2635a54186f75
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
-$(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.gz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2022-05-12/$($(PKG)_FILE)
+$(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
+$(PKG)_URL      := https://static.rust-lang.org/dist/2022-05-16/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -77,7 +77,7 @@ define $(PKG)_BUILD_$(BUILD)
 endef
 
 define $(PKG)_BUILD
-    $(eval TARGET_RUST := $(PROCESSOR)-pc-windows-gnu)
+    $(eval TARGET_RUST := $(PROCESSOR)-pc-windows-gnullvm)
 
     # Build and prepare startup objects like rsbegin.o and rsend.o
     $(foreach FILE, rsbegin rsend, \
