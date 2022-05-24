@@ -94,7 +94,7 @@ install_dir=$mxe_prefix/$target.$deps
 bin_dir=$install_dir/bin
 
 # Ensure module_dir is set correctly when building nightly versions
-if [ "$NIGHTLY" = "true" ]; then
+if [ -n "$GIT_COMMIT" ]; then
   module_dir=$(printf '%s\n' $install_dir/lib/vips-modules-* | sort -n | tail -1)
 else
   module_dir=$install_dir/lib/vips-modules-$vips_version

@@ -2,7 +2,7 @@ $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
-# upstream version is 3.2.1
+# upstream version is 3.3
 libffi_VERSION  := 3.4.2
 libffi_CHECKSUM := 540fb721619a6aba3bdeef7d940d8e9e0e6d2c193595bc243241b77ff9e93620
 libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
@@ -39,8 +39,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-48
-imagemagick_CHECKSUM := af46e8caa8fc871f77e6cd55713fdc660d80d8803feb3bb5991bd82e18bddd15
+imagemagick_VERSION  := 6.9.12-50
+imagemagick_CHECKSUM := 36c9be90f6158e36e5496bed6d539aa7bd1fe2509c9a911e01edb5283f6a0db2
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 

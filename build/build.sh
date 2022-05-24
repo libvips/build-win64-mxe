@@ -51,7 +51,7 @@ fi
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="c3ac37bc7e09a55219c4671fd856edb1973a9c42"
+revision="23cb13d8aec6bbd51ef3671b0e975c61d7dbd0ad"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -92,7 +92,7 @@ fi
 # The 'plugins' variable controls which plugins are in use
 plugins="$work_dir"
 
-if [ "$NIGHTLY" = "true" ]; then
+if [ -n "$GIT_COMMIT" ]; then
   plugins+=" $work_dir/plugins/nightly"
 fi
 
@@ -129,9 +129,7 @@ make pe-util \
   MXE_TARGETS=`$mxe_dir/ext/config.guess` \
   MXE_USE_CCACHE=
 
-if [ "$NIGHTLY" = "true" ]; then
-  nightly_version=$(wget -q -O- 'https://api.github.com/repos/libvips/libvips/git/refs/heads/master' | sed -n 's#.*"sha": "\([^"]\{7\}\).*#\1#p' | head -1)
-
+if [ -n "$GIT_COMMIT" ]; then
   # Invalidate build cache, if exits
   rm -f $mxe_dir/usr/$target.$deps/installed/vips-$deps
 fi
@@ -141,7 +139,7 @@ fi
 make gendef vips-$deps \
   MXE_PLUGIN_DIRS="$plugins" \
   MXE_TARGETS=$target.$deps \
-  NIGHTLY_VERSION=$nightly_version
+  GIT_COMMIT=$GIT_COMMIT
 
 # Build and bundle llvm-mingw tests when debugging
 if [ "$LLVM" = "true" ] && [ "$DEBUG" = "true" ]; then

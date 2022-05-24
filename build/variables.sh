@@ -5,8 +5,8 @@ vips_version=8.12
 vips_patch_version=2
 #vips_pre_version=rc1
 
-if [ "$NIGHTLY" = "true" ]; then
-  vips_version=nightly
+if [ -n "$GIT_COMMIT" ]; then
+  vips_version=$GIT_COMMIT
   vips_patch_version=
   vips_pre_version=
 fi

@@ -7,13 +7,15 @@ Usage: $(basename "$0") [OPTIONS] [DEPS] [ARCH] [TYPE]
 Build Windows binaries for libvips in a container
 
 OPTIONS:
-	--help			Show the help and exit
-	--nightly		Build libvips from tip-of-tree
-	--with-hevc		Build libheif with the HEVC-related dependencies
-	--with-debug		Build binaires with debug symbols
-	--without-llvm		Build binaires with GCC
-	--without-mozjpeg	Build binaires with libjpeg-turbo
-	--without-zlib-ng	Build binaires with vanilla zlib
+	--help					Show the help and exit
+	-c, --commit <COMMIT>	The commit to build libvips from
+	-r, --ref <REF>			The branch or tag to build libvips from
+	--nightly				Build libvips from tip-of-tree (alias of -r master)
+	--with-hevc				Build libheif with the HEVC-related dependencies
+	--with-debug			Build binaires with debug symbols
+	--without-llvm			Build binaires with GCC
+	--without-mozjpeg		Build binaires with libjpeg-turbo
+	--without-zlib-ng		Build binaires with vanilla zlib
 
 DEPS:
 	The group of dependencies to build libvips with,
@@ -47,7 +49,8 @@ EOF
 . $PWD/build/variables.sh
 
 # Default arguments
-nightly=false
+git_commit=""
+git_ref=""
 with_hevc=false
 with_debug=false
 with_llvm=true
@@ -60,7 +63,9 @@ POSITIONAL=()
 while [ $# -gt 0 ]; do
   case $1 in
     -h|--help) usage 0 ;;
-    --nightly) nightly=true ;;
+    -c|--commit) git_commit="$2"; shift ;;
+    -r|--ref) git_ref="$2"; shift ;;
+    --nightly) git_ref="master" ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --without-llvm) with_llvm=false ;;
@@ -122,6 +127,22 @@ if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
   exit 1
 fi
 
+if [ -n "$git_commit" ] && [ -n "$git_ref" ]; then
+  echo "ERROR: The --commit and --ref options are mutually exclusive." >&2
+  exit 1
+fi
+
+if [ -n "$git_ref" ]; then
+  git_commit=$(git ls-remote --heads --tags --refs https://github.com/libvips/libvips.git $git_ref | awk '{print $1}')
+  if [ -z "$git_commit" ]; then
+    echo "ERROR: Couldn't find remote ref $git_ref in the libvips repository." >&2
+    exit 1
+  fi
+fi
+
+# GitHub's tarball API requires the short SHA commit as the directory name
+git_commit="${git_commit:0:7}"
+
 target="$arch-w64-mingw32.$type.$threads${unwind:+.$unwind}"
 
 if [ "$with_debug" = "true" ]; then
@@ -150,7 +171,7 @@ $oci_runtime build -t libvips-build-win-mxe container
 $oci_runtime run --rm -t \
   -u $(id -u):$(id -g) \
   -v $PWD/build:/data \
-  -e "NIGHTLY=$nightly" \
+  -e "GIT_COMMIT=$git_commit" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "LLVM=$with_llvm" \

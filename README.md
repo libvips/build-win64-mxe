@@ -26,7 +26,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.8    | LGPLv3                                                       |
 | [glib]          | 2.72.1    | LGPLv3                                                       |
-| [harfbuzz]      | 4.2.1     | MIT Licence                                                  |
+| [harfbuzz]      | 4.3.0     | MIT Licence                                                  |
 | [lcms]          | 2.13.1    | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
@@ -97,7 +97,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.1.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 0.16.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-48 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-50 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.5     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |

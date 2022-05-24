@@ -5,7 +5,7 @@ RUN apt-get update \
     # http://mxe.cc/#requirements-debian
     autopoint bison flex gettext gperf g++-multilib \
     intltool libc6-dev-i386 libtool-bin libxml-parser-perl \
-    lzip p7zip-full python-is-python3 python3-mako ruby texinfo \
+    lzip p7zip-full python-is-python3 python3-mako ruby \
     # needed when building libvips from git
     gobject-introspection gtk-doc-tools
 
