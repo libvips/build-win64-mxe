@@ -116,85 +116,299 @@ index 1111111..2222222 100644
    return static_cast<uint8_t>(x);
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Lovell Fuller <github@lovell.info>
-Date: Mon, 3 Jan 2022 20:24:51 +0000
-Subject: [PATCH 5/5] aom: verify NCLX values against known bounds
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 21 Feb 2022 17:51:32 +0100
+Subject: [PATCH 5/5] Add API to sanitise enums relating to colour profiles
 
-Helps prevent casting to unknown enum values
+This commit cherry-picks the following commits:
+ffdac1ed91e74ecd67e53622070e775d164e7d3a
+73e8ee7143b1265db2ec354294f9ee86dd7d97cf
+713c8f1bd499e205ec915cdbb90269c5b0ce7e25
+53db640678d34ef4b093c88c06dab483c1c020a3
+0c543d5bf671de3c229a7da5f514ae9dd6ce7fb3
+b26d547c6375f377ed53191163ccee37f4a59a3f
+7041ef60a05428e11e667c096b7fd206a7e2858e (partially, minus the strict decoding modes)
+e8288cd3f414efdb0f9d5a409aceca4c2624a9f5 (partially, only the `+ 200` removal)
+03fe49fbfc613ebead9596d00715f663a20209b3
+4ad90c5c165062cbc87156a2c8f5037d9f782c99
 
-Upstream-Status: Submitted [https://github.com/strukturag/libheif/pull/583]
+Upstream-Status: Accepted
 
-diff --git a/go/heif/heif.go b/go/heif/heif.go
+diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
---- a/go/heif/heif.go
-+++ b/go/heif/heif.go
-@@ -283,6 +283,8 @@ const (
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -29,6 +29,10 @@ if(NOT MSVC)
+   add_definitions(-Wno-error=conversion)
+   add_definitions(-Wno-error=unused-parameter)
+   add_definitions(-Wno-error=deprecated-declarations)
++  if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
++      add_definitions(-Wno-error=tautological-compare)
++      add_definitions(-Wno-error=tautological-constant-out-of-range-compare)
++  endif ()
+ endif()
  
- 	SuberrorUnsupportedItemConstructionMethod = C.heif_suberror_Unsupported_item_construction_method
+ set(CMAKE_CXX_STANDARD 11)
+diff --git a/configure.ac b/configure.ac
+index 1111111..2222222 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -303,6 +303,8 @@ CXXFLAGS="$CXXFLAGS $WARNING_FLAGS"
+ CFLAGS="$CFLAGS $WARNING_FLAGS"
  
-+	SuberrorUnsupportedNclxProfile = C.heif_suberror_Unsupported_nclx_profile
+ AC_C_CXX_COMPILE_FLAGS([-Wno-error=potentially-evaluated-expression])
++AC_C_CXX_COMPILE_FLAGS([-Wno-error=tautological-compare])
++AC_C_CXX_COMPILE_FLAGS([-Wno-error=tautological-constant-out-of-range-compare])
+ 
+ AC_MSG_NOTICE([---------------------------------------])
+ AC_MSG_NOTICE([Multithreading: $enable_multithreading])
+diff --git a/libheif/box.cc b/libheif/box.cc
+index 1111111..2222222 100644
+--- a/libheif/box.cc
++++ b/libheif/box.cc
+@@ -1685,10 +1685,25 @@ Error color_profile_nclx::get_nclx_color_profile(struct heif_color_profile_nclx*
+ 
+   struct heif_color_profile_nclx* nclx = *out_data;
+ 
++  struct heif_error err;
 +
- 	// --- Encoder_plugin_error ---
+   nclx->version = 1;
+-  nclx->color_primaries = (enum heif_color_primaries) get_colour_primaries();
+-  nclx->transfer_characteristics = (enum heif_transfer_characteristics) get_transfer_characteristics();
+-  nclx->matrix_coefficients = (enum heif_matrix_coefficients) get_matrix_coefficients();
++
++  err = heif_nclx_color_profile_set_color_primaries(nclx, get_colour_primaries());
++  if (err.code) {
++    return {err.code, err.subcode};
++  }
++
++  err = heif_nclx_color_profile_set_transfer_characteristics(nclx, get_transfer_characteristics());
++  if (err.code) {
++    return {err.code, err.subcode};
++  }
++
++  err = heif_nclx_color_profile_set_matrix_coefficients(nclx, get_matrix_coefficients());
++  if (err.code) {
++    return {err.code, err.subcode};
++  }
++
+   nclx->full_range_flag = get_full_range_flag();
  
- 	SuberrorUnsupportedBitDepth = C.heif_suberror_Unsupported_bit_depth
+   // fill color primaries
+diff --git a/libheif/box.h b/libheif/box.h
+index 1111111..2222222 100644
+--- a/libheif/box.h
++++ b/libheif/box.h
+@@ -1169,9 +1169,9 @@ namespace heif {
+     void set_from_heif_color_profile_nclx(const struct heif_color_profile_nclx* nclx);
+ 
+   private:
+-    uint16_t m_colour_primaries = 0;
+-    uint16_t m_transfer_characteristics = 0;
+-    uint16_t m_matrix_coefficients = 0;
++    uint16_t m_colour_primaries = heif_color_primaries_unspecified;
++    uint16_t m_transfer_characteristics = heif_transfer_characteristic_unspecified;
++    uint16_t m_matrix_coefficients = heif_matrix_coefficients_unspecified;
+     bool m_full_range_flag = true;
+   };
+ 
 diff --git a/libheif/error.cc b/libheif/error.cc
 index 1111111..2222222 100644
 --- a/libheif/error.cc
 +++ b/libheif/error.cc
-@@ -185,6 +185,8 @@ const char* heif::Error::get_error_string(heif_suberror_code err)
-       return "Unsupported color conversion";
-     case heif_suberror_Unsupported_item_construction_method:
-       return "Unsupported item construction method";
-+    case heif_suberror_Unsupported_nclx_profile:
-+      return "Unsupported NCLX profile";
+@@ -149,6 +149,12 @@ const char* heif::Error::get_error_string(heif_suberror_code err)
+       return "Invalid pixi box";
+     case heif_suberror_Wrong_tile_image_pixel_depth:
+       return "Wrong tile image pixel depth";
++    case heif_suberror_Unknown_NCLX_color_primaries:
++      return "Unknown NCLX color primaries";
++    case heif_suberror_Unknown_NCLX_transfer_characteristics:
++      return "Unknown NCLX transfer characteristics";
++    case heif_suberror_Unknown_NCLX_matrix_coefficients:
++      return "Unknown NCLX matrix coefficients";
  
-       // --- Encoder_plugin_error --
  
+       // --- Memory_allocation_error ---
+diff --git a/libheif/heif.cc b/libheif/heif.cc
+index 1111111..2222222 100644
+--- a/libheif/heif.cc
++++ b/libheif/heif.cc
+@@ -30,6 +30,8 @@
+ #include "heif_plugin_registry.h"
+ #include "error.h"
+ #include "bitstream.h"
++#include <set>
++#include <limits>
+ 
+ #if defined(__EMSCRIPTEN__)
+ #include "heif_emscripten.h"
+@@ -1313,6 +1315,119 @@ size_t heif_image_handle_get_raw_color_profile_size(const struct heif_image_hand
+ }
+ 
+ 
++static const std::set<enum heif_color_primaries> known_color_primaries{
++    heif_color_primaries_ITU_R_BT_709_5,
++    heif_color_primaries_unspecified,
++    heif_color_primaries_ITU_R_BT_470_6_System_M,
++    heif_color_primaries_ITU_R_BT_470_6_System_B_G,
++    heif_color_primaries_ITU_R_BT_601_6,
++    heif_color_primaries_SMPTE_240M,
++    heif_color_primaries_generic_film,
++    heif_color_primaries_ITU_R_BT_2020_2_and_2100_0,
++    heif_color_primaries_SMPTE_ST_428_1,
++    heif_color_primaries_SMPTE_RP_431_2,
++    heif_color_primaries_SMPTE_EG_432_1,
++    heif_color_primaries_EBU_Tech_3213_E,
++};
++
++struct heif_error heif_nclx_color_profile_set_color_primaries(heif_color_profile_nclx* nclx, uint16_t cp)
++{
++  if (cp < std::numeric_limits<std::underlying_type<heif_color_primaries>::type>::min() ||
++      cp > std::numeric_limits<std::underlying_type<heif_color_primaries>::type>::max()) {
++    return Error(heif_error_Invalid_input, heif_suberror_Unknown_NCLX_color_primaries).error_struct(nullptr);
++  }
++
++  auto n = static_cast<heif_color_primaries>(cp);
++  if (known_color_primaries.find(n) != known_color_primaries.end()) {
++    nclx->color_primaries = n;
++  }
++  else {
++    nclx->color_primaries = heif_color_primaries_unspecified;
++    return Error(heif_error_Invalid_input, heif_suberror_Unknown_NCLX_color_primaries).error_struct(nullptr);
++  }
++
++  return Error::Ok.error_struct(nullptr);
++}
++
++
++static const std::set<enum heif_transfer_characteristics> known_transfer_characteristics{
++  heif_transfer_characteristic_ITU_R_BT_709_5,
++  heif_transfer_characteristic_unspecified,
++  heif_transfer_characteristic_ITU_R_BT_470_6_System_M,
++  heif_transfer_characteristic_ITU_R_BT_470_6_System_B_G,
++  heif_transfer_characteristic_ITU_R_BT_601_6,
++  heif_transfer_characteristic_SMPTE_240M,
++  heif_transfer_characteristic_linear,
++  heif_transfer_characteristic_logarithmic_100,
++  heif_transfer_characteristic_logarithmic_100_sqrt10,
++  heif_transfer_characteristic_IEC_61966_2_4,
++  heif_transfer_characteristic_ITU_R_BT_1361,
++  heif_transfer_characteristic_IEC_61966_2_1,
++  heif_transfer_characteristic_ITU_R_BT_2020_2_10bit,
++  heif_transfer_characteristic_ITU_R_BT_2020_2_12bit,
++  heif_transfer_characteristic_ITU_R_BT_2100_0_PQ,
++  heif_transfer_characteristic_SMPTE_ST_428_1,
++  heif_transfer_characteristic_ITU_R_BT_2100_0_HLG
++};
++
++
++struct heif_error heif_nclx_color_profile_set_transfer_characteristics(struct heif_color_profile_nclx* nclx, uint16_t tc)
++{
++  if (tc < std::numeric_limits<std::underlying_type<heif_transfer_characteristics>::type>::min() ||
++      tc > std::numeric_limits<std::underlying_type<heif_transfer_characteristics>::type>::max()) {
++    return Error(heif_error_Invalid_input, heif_suberror_Unknown_NCLX_transfer_characteristics).error_struct(nullptr);
++  }
++
++  auto n = static_cast<heif_transfer_characteristics>(tc);
++  if (known_transfer_characteristics.find(n) != known_transfer_characteristics.end()) {
++    nclx->transfer_characteristics = n;
++  }
++  else {
++    nclx->transfer_characteristics = heif_transfer_characteristic_unspecified;
++    return Error(heif_error_Invalid_input, heif_suberror_Unknown_NCLX_transfer_characteristics).error_struct(nullptr);
++  }
++
++  return Error::Ok.error_struct(nullptr);
++}
++
++
++static const std::set<enum heif_matrix_coefficients> known_matrix_coefficients{
++    heif_matrix_coefficients_RGB_GBR,
++    heif_matrix_coefficients_ITU_R_BT_709_5,
++    heif_matrix_coefficients_unspecified,
++    heif_matrix_coefficients_US_FCC_T47,
++    heif_matrix_coefficients_ITU_R_BT_470_6_System_B_G,
++    heif_matrix_coefficients_ITU_R_BT_601_6,
++    heif_matrix_coefficients_SMPTE_240M,
++    heif_matrix_coefficients_YCgCo,
++    heif_matrix_coefficients_ITU_R_BT_2020_2_non_constant_luminance,
++    heif_matrix_coefficients_ITU_R_BT_2020_2_constant_luminance,
++    heif_matrix_coefficients_SMPTE_ST_2085,
++    heif_matrix_coefficients_chromaticity_derived_non_constant_luminance,
++    heif_matrix_coefficients_chromaticity_derived_constant_luminance,
++    heif_matrix_coefficients_ICtCp
++};
++
++struct heif_error heif_nclx_color_profile_set_matrix_coefficients(struct heif_color_profile_nclx* nclx, uint16_t mc)
++{
++  if (mc < std::numeric_limits<std::underlying_type<heif_matrix_coefficients>::type>::min() ||
++      mc > std::numeric_limits<std::underlying_type<heif_matrix_coefficients>::type>::max()) {
++    return Error(heif_error_Invalid_input, heif_suberror_Unknown_NCLX_matrix_coefficients).error_struct(nullptr);
++  }
++
++  auto n = static_cast<heif_matrix_coefficients>(mc);
++  if (known_matrix_coefficients.find(n) != known_matrix_coefficients.end()) {
++    nclx->matrix_coefficients = n;
++  }
++  else {
++    nclx->matrix_coefficients = heif_matrix_coefficients_unspecified;
++    return Error(heif_error_Invalid_input, heif_suberror_Unknown_NCLX_matrix_coefficients).error_struct(nullptr);
++  }
++
++  return Error::Ok.error_struct(nullptr);
++}
++
++
+ struct heif_error heif_image_handle_get_nclx_color_profile(const struct heif_image_handle* handle,
+                                                            struct heif_color_profile_nclx** out_data)
+ {
 diff --git a/libheif/heif.h b/libheif/heif.h
 index 1111111..2222222 100644
 --- a/libheif/heif.h
 +++ b/libheif/heif.h
-@@ -255,6 +255,8 @@ enum heif_suberror_code
+@@ -207,6 +207,12 @@ enum heif_suberror_code
  
-   heif_suberror_Unsupported_item_construction_method = 3004,
+   heif_suberror_Wrong_tile_image_pixel_depth = 132,
  
-+  heif_suberror_Unsupported_nclx_profile = 3005,
++  heif_suberror_Unknown_NCLX_color_primaries = 133,
++
++  heif_suberror_Unknown_NCLX_transfer_characteristics = 134,
++
++  heif_suberror_Unknown_NCLX_matrix_coefficients = 135,
 +
  
-   // --- Encoder_plugin_error ---
+   // --- Memory_allocation_error ---
  
+@@ -800,6 +806,15 @@ struct heif_color_profile_nclx
+   float color_primary_white_x, color_primary_white_y;
+ };
+ 
++LIBHEIF_API
++struct heif_error heif_nclx_color_profile_set_color_primaries(struct heif_color_profile_nclx* nclx, uint16_t cp);
++
++LIBHEIF_API
++struct heif_error heif_nclx_color_profile_set_transfer_characteristics(struct heif_color_profile_nclx* nclx, uint16_t transfer_characteristics);
++
++LIBHEIF_API
++struct heif_error heif_nclx_color_profile_set_matrix_coefficients(struct heif_color_profile_nclx* nclx, uint16_t matrix_coefficients);
++
+ // Returns 'heif_error_Color_profile_does_not_exist' when there is no NCLX profile.
+ // TODO: This function does currently not return an NCLX profile if it is stored in the image bitstream.
+ //       Only NCLX profiles stored as colr boxes are returned. This may change in the future.
 diff --git a/libheif/heif_decoder_aom.cc b/libheif/heif_decoder_aom.cc
 index 1111111..2222222 100644
 --- a/libheif/heif_decoder_aom.cc
 +++ b/libheif/heif_decoder_aom.cc
-@@ -199,6 +199,18 @@ struct heif_error aom_decode_image(void* decoder_raw, struct heif_image** out_im
- 
+@@ -200,9 +200,9 @@ struct heif_error aom_decode_image(void* decoder_raw, struct heif_image** out_im
    // --- read nclx parameters from decoded AV1 bitstream
  
-+  if (img->cp < AOM_CICP_CP_BT_709 ||
-+      img->cp > AOM_CICP_CP_EBU_3213 ||
-+      img->tc < AOM_CICP_TC_BT_709 ||
-+      img->tc > AOM_CICP_TC_HLG ||
-+      img->mc < AOM_CICP_MC_IDENTITY ||
-+      img->mc > AOM_CICP_MC_ICTCP) {
-+    struct heif_error err = {heif_error_Decoder_plugin_error,
-+                             heif_suberror_Unsupported_nclx_profile,
-+                             kEmptyString};
-+    return err;
-+  }
-+
    heif_color_profile_nclx nclx;
-   nclx.color_primaries = (heif_color_primaries) img->cp;
-   nclx.transfer_characteristics = (heif_transfer_characteristics) img->tc;
-diff --git a/libheif/heif_emscripten.h b/libheif/heif_emscripten.h
-index 1111111..2222222 100644
---- a/libheif/heif_emscripten.h
-+++ b/libheif/heif_emscripten.h
-@@ -247,6 +247,7 @@ EMSCRIPTEN_BINDINGS(libheif) {
-     .value("heif_suberror_Unsupported_data_version", heif_suberror_Unsupported_data_version)
-     .value("heif_suberror_Unsupported_color_conversion", heif_suberror_Unsupported_color_conversion)
-     .value("heif_suberror_Unsupported_item_construction_method", heif_suberror_Unsupported_item_construction_method)
-+    .value("heif_suberror_Unsupported_nclx_profile", heif_suberror_Unsupported_nclx_profile)
-     .value("heif_suberror_Unsupported_bit_depth", heif_suberror_Unsupported_bit_depth)
-     .value("heif_suberror_Wrong_tile_image_pixel_depth", heif_suberror_Wrong_tile_image_pixel_depth);
-     emscripten::enum_<heif_compression_format>("heif_compression_format")
+-  nclx.color_primaries = (heif_color_primaries) img->cp;
+-  nclx.transfer_characteristics = (heif_transfer_characteristics) img->tc;
+-  nclx.matrix_coefficients = (heif_matrix_coefficients) img->mc;
++  heif_nclx_color_profile_set_color_primaries(&nclx, img->cp);
++  heif_nclx_color_profile_set_transfer_characteristics(&nclx, img->tc);
++  heif_nclx_color_profile_set_matrix_coefficients(&nclx, img->mc);
+   nclx.full_range_flag = (img->range == AOM_CR_FULL_RANGE);
+   heif_image_set_nclx_color_profile(heif_img, &nclx);
+ 

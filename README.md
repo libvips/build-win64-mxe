@@ -25,7 +25,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.12.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.8    | LGPLv3                                                       |
-| [glib]          | 2.72.1    | LGPLv3                                                       |
+| [glib]          | 2.73.0    | LGPLv3                                                       |
 | [harfbuzz]      | 4.3.0     | MIT Licence                                                  |
 | [lcms]          | 2.13.1    | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
@@ -36,7 +36,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
 | [librsvg]       | 2.54.3    | LGPLv3                                                       |
 | [libspng]       | 0.7.2     | BSD 2-Clause                                                 |
-| [libtiff]       | 4.3.0     | [libtiff License] (BSD-like)                                 |
+| [libtiff]       | 4.4.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.12.2    | LGPLv3                                                       |
 | [libwebp]       | 1.2.2     | New BSD License                                              |
 | [libxml2]       | 2.9.14    | MIT Licence                                                  |

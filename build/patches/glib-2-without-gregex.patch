@@ -2,7 +2,7 @@ diff --git a/gio/gsettingsschema.c b/gio/gsettingsschema.c
 index 1111111..2222222 100644
 --- a/gio/gsettingsschema.c
 +++ b/gio/gsettingsschema.c
-@@ -551,58 +551,7 @@ start_element (GMarkupParseContext  *context,
+@@ -553,58 +553,7 @@ start_element (GMarkupParseContext  *context,
  static gchar *
  normalise_whitespace (const gchar *orig)
  {
@@ -66,7 +66,7 @@ diff --git a/glib/glib-autocleanups.h b/glib/glib-autocleanups.h
 index 1111111..2222222 100644
 --- a/glib/glib-autocleanups.h
 +++ b/glib/glib-autocleanups.h
-@@ -71,8 +71,6 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(GPatternSpec, g_pattern_spec_free)
+@@ -73,8 +73,6 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(GPatternSpec, g_pattern_spec_free)
  G_DEFINE_AUTOPTR_CLEANUP_FUNC(GQueue, g_queue_free)
  G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC(GQueue, g_queue_clear)
  G_DEFINE_AUTOPTR_CLEANUP_FUNC(GRand, g_rand_free)
@@ -79,7 +79,7 @@ diff --git a/glib/glib.h b/glib/glib.h
 index e72c09da5..d639e645e 100644
 --- a/glib/glib.h
 +++ b/glib/glib.h
-@@ -72,7 +72,6 @@
+@@ -74,7 +74,6 @@
  #include <glib/grcbox.h>
  #include <glib/grefcount.h>
  #include <glib/grefstring.h>

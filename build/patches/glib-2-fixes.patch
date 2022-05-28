@@ -42,7 +42,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2087,40 +2087,17 @@ endif
+@@ -2030,40 +2030,17 @@ endif
  # proxy-libintl subproject.
  # FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
  # implementations. This could be extended if issues are found in some platforms.
@@ -84,32 +84,4 @@ index 1111111..2222222 100644
 +                                                   dependencies : libintl)
    endif
  endif
- 
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Mon, 13 May 2019 18:00:00 +0200
-Subject: [PATCH 2/2] Disable some tests
-
-
-diff --git a/gio/tests/meson.build b/gio/tests/meson.build
-index 1111111..2222222 100644
---- a/gio/tests/meson.build
-+++ b/gio/tests/meson.build
-@@ -487,7 +487,7 @@ gdbus_example_objectmanager_sources = files(
-   'gdbus-example-objectmanager-server.c',
- )
- 
--if cc.get_id() != 'msvc' and cc.get_id() != 'clang-cl'
-+if host_machine.system() != 'windows' and cc.get_id() != 'clang-cl'
-   test_extra_programs += {
-     # These three are manual-run tests because they need a session bus but don't bring one up themselves
-     # FIXME: these build but don't seem to work!
-@@ -603,7 +603,7 @@ if installed_tests_enabled
-   endforeach
- endif
- 
--if not meson.is_cross_build() or meson.has_exe_wrapper()
-+if not (meson.is_cross_build() or meson.has_exe_wrapper()) and host_machine.system() != 'windows'
- 
-   compiler_type = '--compiler=@0@'.format(cc.get_id())
  

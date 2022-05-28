@@ -9,6 +9,9 @@ $(PKG)_GH_CONF  := strukturag/libheif/releases,v
 $(PKG)_DEPS     := cc aom
 
 define $(PKG)_BUILD
+    # need to regenerate the configure script
+    cd '$(SOURCE_DIR)' && autoreconf -fi
+
     # Disable multithreading when building with Win32 threads to
     # avoid a dependency on mingw-std-threads (which we only use
     # in the "all" variant). Disabling multithreading only affects

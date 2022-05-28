@@ -7,15 +7,15 @@ Usage: $(basename "$0") [OPTIONS] [DEPS] [ARCH] [TYPE]
 Build Windows binaries for libvips in a container
 
 OPTIONS:
-	--help					Show the help and exit
+	--help			Show the help and exit
 	-c, --commit <COMMIT>	The commit to build libvips from
-	-r, --ref <REF>			The branch or tag to build libvips from
-	--nightly				Build libvips from tip-of-tree (alias of -r master)
-	--with-hevc				Build libheif with the HEVC-related dependencies
-	--with-debug			Build binaires with debug symbols
-	--without-llvm			Build binaires with GCC
-	--without-mozjpeg		Build binaires with libjpeg-turbo
-	--without-zlib-ng		Build binaires with vanilla zlib
+	-r, --ref <REF>		The branch or tag to build libvips from
+	--nightly		Build libvips from tip-of-tree (alias of -r master)
+	--with-hevc		Build libheif with the HEVC-related dependencies
+	--with-debug		Build binaires with debug symbols
+	--without-llvm		Build binaires with GCC
+	--without-mozjpeg	Build binaires with libjpeg-turbo
+	--without-zlib-ng	Build binaires with vanilla zlib
 
 DEPS:
 	The group of dependencies to build libvips with,
@@ -160,7 +160,7 @@ else
 fi
 
 # Ensure latest Debian stable base image
-$oci_runtime pull buildpack-deps:buster
+$oci_runtime pull buildpack-deps:bullseye
 
 # Create a machine image with all the required build tools pre-installed
 $oci_runtime build -t libvips-build-win-mxe container
