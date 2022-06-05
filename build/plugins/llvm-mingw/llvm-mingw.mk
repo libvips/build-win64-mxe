@@ -59,7 +59,7 @@ define $(PKG)_PRE_BUILD
     # Can't symlink here, it will break the basename detection of LLVM. See:
     # sys::path::stem("x86_64-w64-mingw32.shared-ranlib"); -> x86_64-w64-mingw32
     # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.3/llvm/tools/llvm-ar/llvm-ar.cpp#L1285-L1304
+    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.4/llvm/tools/llvm-ar/llvm-ar.cpp#L1285-L1304
     $(foreach EXEC, addr2line ar cvtres nm objcopy ranlib rc strings strip, \
         (echo '#!/bin/sh'; \
          echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-$(EXEC)" "$$@"') \
@@ -68,7 +68,7 @@ define $(PKG)_PRE_BUILD
 
     # We need to pass some additional arguments for windres
     # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.3/llvm/tools/llvm-rc/llvm-rc.cpp#L266-L277
+    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.4/llvm/tools/llvm-rc/llvm-rc.cpp#L266-L277
     (echo '#!/bin/sh'; \
      echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-windres" \
          --preprocessor-arg="--sysroot=$(PREFIX)/$(TARGET)" \
@@ -82,7 +82,7 @@ define $(PKG)_PRE_BUILD
     # armv7 -> arm
     # aarch64 -> arm64
     # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.3/llvm/lib/ToolDrivers/llvm-dlltool/DlltoolDriver.cpp#L97-L108
+    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.4/llvm/lib/ToolDrivers/llvm-dlltool/DlltoolDriver.cpp#L97-L108
     $(eval DLLTOOL_ARCH := $(strip \
         $(if $(findstring i686,$(PROCESSOR)),i386, \
         $(if $(findstring x86_64,$(PROCESSOR)),i386:x86-64, \

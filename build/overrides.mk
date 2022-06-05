@@ -555,8 +555,8 @@ define librsvg_BUILD
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
         $(SED) -i 's/3c7fe77a67a34e6641b798f3a67dd6904396011a428f6af82cbec993eb924f0c/a52dbb88925434e6769aa0a10eec5b0648ea8f8092a9607e0c734b725a55e0ec/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/67578522c146e1e44d44023c7b1b2b9fc65dc239d7c92ba61b2ec839e360ee80/af12eea5309f061da5623c41e711b135bacc9f8fd0507ccb63f5ff2088b62484/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/ed8e92a9655ef164c62a7c033906c41601ca458b477ae32ad37f89228683c295/bfa574dfa19737edeeef6de682207009a9020e3a980d1bb3b554f46f49792c0d/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/991919d9ab1eca85e87a85acafcb86d4880f1afe9fe35d6bd87039dcb1fa9aa7/38fb6d61251112ff4ff22ebcdad41f4193cd2e0b2788065e5634e9a9027260e2/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/55138604371e00ef14167894159156b68f939039b0e5b2b1f3db61456e3d3870/ff7df885cb6b31736b49f8d0a4755e8a2d947145316c3e5b212c78ab08142108/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/966128476fdf0d3148da21508a27a159ad2d272391e4a3ffbf18008300cca80c/ead5a3b748c9a5fcb145fa2e5cfc8df32f383369b8842fba4272ca3b568109ea/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json';)
 
     # Allow libtool to statically link against libintl
