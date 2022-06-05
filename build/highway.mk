@@ -2,9 +2,9 @@ PKG             := highway
 $(PKG)_WEBSITE  := https://github.com/google/highway
 $(PKG)_DESCR    := Performance-portable, length-agnostic SIMD with runtime dispatch
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 0.16.0
-$(PKG)_CHECKSUM := 746c9578446be6c5286e8846c5f0d4118c0c1f04219c401abadcb8a5f2051893
-$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/highway-[0-9]*.patch)))
+$(PKG)_VERSION  := 0.17.0
+$(PKG)_CHECKSUM := 25158fd5c090b70ecea47fc246c860d150f07f801d2434e1e51ec14a6c15822c
+$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := google/highway/tags
 $(PKG)_DEPS     := cc
 

@@ -96,8 +96,8 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 4.1.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [highway]       | 0.16.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-50 | [ImageMagick License] (Apache-2.0-like)                      |
+| [highway]       | 0.17.0    | Apache-2.0 License                                           |
+| [imagemagick]   | 6.9.12-51 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.5     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
@@ -105,7 +105,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.5     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 22.05.0   | GPLv2                                                        |
+| [poppler]       | 22.06.0   | GPLv2                                                        |
 | [sqlite]        | 3.38.5    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 2 Jun 2021 14:07:04 +0200
-Subject: [PATCH 1/9] Remove LCMS mutex
+Subject: [PATCH 1/11] Remove LCMS mutex
 
 Upstream-Status: Accepted [https://github.com/libjxl/libjxl/commit/057cd06c19875bcf8b5d34d41d92a8abdb856b7c]
 
@@ -70,7 +70,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 8 Jun 2021 12:40:01 +0200
-Subject: [PATCH 2/9] Allow to build with system-wide installed lcms
+Subject: [PATCH 2/11] Allow to build with system-wide installed lcms
 
 See: https://gitlab.com/wg1/jpeg-xl/-/issues/124
 
@@ -158,7 +158,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 8 Jun 2021 13:14:53 +0200
-Subject: [PATCH 3/9] Allow to build without LodePNG
+Subject: [PATCH 3/11] Allow to build without LodePNG
 
 Since there's no official release available.
 
@@ -300,7 +300,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 8 Jun 2021 13:30:49 +0200
-Subject: [PATCH 4/9] Ensure DLLs are installed in the bin directory
+Subject: [PATCH 4/11] Ensure DLLs are installed in the bin directory
 
 
 diff --git a/lib/jxl.cmake b/lib/jxl.cmake
@@ -339,7 +339,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 9 Jun 2021 19:38:33 +0200
-Subject: [PATCH 5/9] tsc_timer.h: sync with nanobenchmark.cc from Highway (#797)
+Subject: [PATCH 5/11] tsc_timer.h: sync with nanobenchmark.cc from Highway (#797)
 
 This file was originally originated from nanobenchmark.cc on the
 Highway project. Re-syncing this file ensures that the fixes from
@@ -493,7 +493,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 10 Oct 2021 18:50:00 +0200
-Subject: [PATCH 6/9] --exclude-libs=ALL is only supported on ELF platforms
+Subject: [PATCH 6/11] --exclude-libs=ALL is only supported on ELF platforms
 
 This linker option is not available for COFF and Mach-O platforms.
 
@@ -519,7 +519,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jan Wassenberg <janwas@google.com>
 Date: Fri, 12 Nov 2021 09:12:35 +0100
-Subject: [PATCH 7/9] Avoid deprecated Highway functions
+Subject: [PATCH 7/11] Avoid deprecated Highway functions
 
 Instead use the newer overloads with the extra d arg required to
 support SVE/RISC-V.
@@ -867,7 +867,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jan Wassenberg <janwas@google.com>
 Date: Thu, 6 Jan 2022 09:36:20 +0100
-Subject: [PATCH 8/9] Avoid deprecated Hwy functions - add d arg
+Subject: [PATCH 8/11] Avoid deprecated Hwy functions - add d arg
 
 Upstream-Status: Accepted [https://github.com/libjxl/libjxl/commit/0902f85ca6e9e305338baf7974192acab8c53ac5]
 
@@ -973,7 +973,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Jan Wassenberg <janwas@google.com>
 Date: Fri, 4 Feb 2022 11:37:43 +0100
-Subject: [PATCH 9/9] Rename deprecated StoreFence to FlushStream
+Subject: [PATCH 9/11] Rename deprecated StoreFence to FlushStream
 
 Upstream-Status: Accepted [https://github.com/libjxl/libjxl/commit/600b591538827247f1b2ad6ee6ae627a2173b7ec]
 
@@ -1017,3 +1017,54 @@ index 1111111..2222222 100644
  #endif
  
  #if defined(__MACH__)
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jan Wassenberg <janwas@google.com>
+Date: Wed, 13 Apr 2022 11:04:32 +0200
+Subject: [PATCH 10/11] Prepare for EMU128 target: avoid x86-specific code
+
+Upstream-Status: Accepted [https://github.com/libjxl/libjxl/commit/98d25826edc1d93284ba36928b96c0f13968e940]
+
+diff --git a/lib/jxl/convolve-inl.h b/lib/jxl/convolve-inl.h
+index 1111111..2222222 100644
+--- a/lib/jxl/convolve-inl.h
++++ b/lib/jxl/convolve-inl.h
+@@ -44,7 +44,7 @@ class Neighbors {
+     return c;  // Same (the first mirrored value is the last valid one)
+ #else  // 128 bit
+     // c = LKJI
+-#if HWY_ARCH_X86
++#if HWY_TARGET <= (1 << HWY_HIGHEST_TARGET_BIT_X86)
+     return V{_mm_shuffle_ps(c.raw, c.raw, _MM_SHUFFLE(2, 1, 0, 0))};  // KJII
+ #else
+     const D d;
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jan Wassenberg <janwas@google.com>
+Date: Fri, 22 Apr 2022 10:16:44 +0200
+Subject: [PATCH 11/11] Further fix of convolve-inl, missed some spots
+
+Upstream-Status: Accepted [https://github.com/libjxl/libjxl/commit/1f849bd281453bfe6502a9aad58dffb3ac088e17]
+
+diff --git a/lib/jxl/convolve-inl.h b/lib/jxl/convolve-inl.h
+index 1111111..2222222 100644
+--- a/lib/jxl/convolve-inl.h
++++ b/lib/jxl/convolve-inl.h
+@@ -72,7 +72,7 @@ class Neighbors {
+     return Zero(d);
+ #else  // 128 bit
+     // c = LKJI
+-#if HWY_ARCH_X86
++#if HWY_TARGET <= (1 << HWY_HIGHEST_TARGET_BIT_X86)
+     return V{_mm_shuffle_ps(c.raw, c.raw, _MM_SHUFFLE(1, 0, 0, 1))};  // JIIJ
+ #else
+     const D d;
+@@ -98,7 +98,7 @@ class Neighbors {
+     return Zero(d);
+ #else  // 128 bit
+     // c = LKJI
+-#if HWY_ARCH_X86
++#if HWY_TARGET <= (1 << HWY_HIGHEST_TARGET_BIT_X86)
+     return V{_mm_shuffle_ps(c.raw, c.raw, _MM_SHUFFLE(0, 0, 1, 2))};  // IIJK
+ #else
+     const D d;

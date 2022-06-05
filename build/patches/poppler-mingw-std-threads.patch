@@ -57,18 +57,18 @@ diff --git a/poppler/CairoFontEngine.h b/poppler/CairoFontEngine.h
 index 1111111..2222222 100644
 --- a/poppler/CairoFontEngine.h
 +++ b/poppler/CairoFontEngine.h
-@@ -31,7 +31,11 @@
- #ifndef CAIROFONTENGINE_H
+@@ -32,7 +32,11 @@
  #define CAIROFONTENGINE_H
  
+ #include <memory>
 +#ifdef _WIN32
 +#include "mingw.mutex.h"
 +#else
  #include <mutex>
 +#endif
+ #include <unordered_map>
+ #include <vector>
  
- #include "poppler-config.h"
- #include <cairo-ft.h>
 diff --git a/poppler/Dict.h b/poppler/Dict.h
 index 1111111..2222222 100644
 --- a/poppler/Dict.h

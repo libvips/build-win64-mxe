@@ -39,8 +39,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-50
-imagemagick_CHECKSUM := 36c9be90f6158e36e5496bed6d539aa7bd1fe2509c9a911e01edb5283f6a0db2
+imagemagick_VERSION  := 6.9.12-51
+imagemagick_CHECKSUM := 699cd979e845f96bae309adf2c6acb1a1eccf01907c12a3ef743f5a4b9a1897b
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
