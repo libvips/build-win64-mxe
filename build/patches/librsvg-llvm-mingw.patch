@@ -10,9 +10,9 @@ diff --git a/vendor/cfg-expr/src/targets/builtins.rs b/vendor/cfg-expr/src/targe
 index 1111111..2222222 100644
 --- a/vendor/cfg-expr/src/targets/builtins.rs
 +++ b/vendor/cfg-expr/src/targets/builtins.rs
-@@ -93,6 +93,16 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
-         pointer_width: 64,
-         endian: Endian::little,
+@@ -109,6 +109,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+         has_atomics: HasAtomics::atomic_8_16_32_64_128_ptr,
+         panic: Panic::unwind,
      },
 +    TargetInfo {
 +        triple: Triple::new_const("aarch64-pc-windows-gnullvm"),
@@ -23,13 +23,15 @@ index 1111111..2222222 100644
 +        families: Families::windows,
 +        pointer_width: 64,
 +        endian: Endian::little,
++        has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
++        panic: Panic::unwind,
 +    },
      TargetInfo {
          triple: Triple::new_const("aarch64-pc-windows-msvc"),
          os: Some(Os::windows),
-@@ -413,6 +423,16 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
-         pointer_width: 32,
-         endian: Endian::little,
+@@ -505,6 +517,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+         has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
+         panic: Panic::unwind,
      },
 +    TargetInfo {
 +        triple: Triple::new_const("armv7-pc-windows-gnullvm"),
@@ -40,13 +42,15 @@ index 1111111..2222222 100644
 +        families: Families::windows,
 +        pointer_width: 32,
 +        endian: Endian::little,
++        has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
++        panic: Panic::unwind,
 +    },
      TargetInfo {
          triple: Triple::new_const("armv7-unknown-freebsd"),
          os: Some(Os::freebsd),
-@@ -683,6 +703,16 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
-         pointer_width: 32,
-         endian: Endian::little,
+@@ -841,6 +865,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+         has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
+         panic: Panic::unwind,
      },
 +    TargetInfo {
 +        triple: Triple::new_const("i686-pc-windows-gnullvm"),
@@ -57,13 +61,15 @@ index 1111111..2222222 100644
 +        families: Families::windows,
 +        pointer_width: 32,
 +        endian: Endian::little,
++        has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
++        panic: Panic::unwind,
 +    },
      TargetInfo {
          triple: Triple::new_const("i686-pc-windows-msvc"),
          os: Some(Os::windows),
-@@ -1573,6 +1603,16 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
-         pointer_width: 64,
-         endian: Endian::little,
+@@ -1921,6 +1957,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+         has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
+         panic: Panic::unwind,
      },
 +    TargetInfo {
 +        triple: Triple::new_const("x86_64-pc-windows-gnullvm"),
@@ -74,6 +80,8 @@ index 1111111..2222222 100644
 +        families: Families::windows,
 +        pointer_width: 64,
 +        endian: Endian::little,
++        has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
++        panic: Panic::unwind,
 +    },
      TargetInfo {
          triple: Triple::new_const("x86_64-pc-windows-msvc"),
