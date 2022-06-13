@@ -2,17 +2,19 @@
 
 PKG             := compiler-rt-sanitizers
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
-$(PKG)_VERSION  := 14.0.4
+$(PKG)_VERSION  := 14.0.5
 $(PKG)_DEPS     := cc
 $(PKG)_TYPE     := meta
 
 # Note: Ubsan includes <typeinfo> from the C++ headers, so
 # this has to be built after libcxx.
 define $(PKG)_BUILD
+    $(eval CLANG_RESOURCE_DIR := $(shell $(PREFIX)/$(BUILD)/bin/clang --print-resource-dir))
+
     $(call PREPARE_PKG_SOURCE,llvm,$(SOURCE_DIR))
 
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)/$(llvm_SUBDIR)/compiler-rt' \
-        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)' \
+        -DCMAKE_INSTALL_PREFIX='$(CLANG_RESOURCE_DIR)' \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
         -DCMAKE_C_COMPILER_TARGET='$(PROCESSOR)-windows-gnu' \
@@ -27,7 +29,7 @@ define $(PKG)_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
 
-    mv -v '$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)/lib/windows/'*.dll '$(PREFIX)/$(TARGET)/bin/'
+    mv -v '$(CLANG_RESOURCE_DIR)/lib/windows/'*.dll '$(PREFIX)/$(TARGET)/bin/'
 endef
 
 # Sanitizers on windows only support x86.

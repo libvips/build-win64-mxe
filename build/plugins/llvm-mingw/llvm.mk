@@ -5,8 +5,8 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the compiler-rt-sanitizers package
-$(PKG)_VERSION  := 14.0.4
-$(PKG)_CHECKSUM := f40c77ceff02ae3873d273a51b0f93cd8e6409576f771d860d75835335522052
+$(PKG)_VERSION  := 14.0.5
+$(PKG)_CHECKSUM := c9d27903ba3883c476a83cd515e36e1e07b0585db55692835de11385d9e3c8fa
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-project-$(subst -,,$($(PKG)_VERSION)).src
@@ -54,9 +54,11 @@ define $(PKG)_BUILD_$(BUILD)
 endef
 
 define $(PKG)_BUILD_COMPILER_RT
+    $(eval CLANG_RESOURCE_DIR := $(shell $(PREFIX)/$(BUILD)/bin/clang --print-resource-dir))
+
     mkdir '$(BUILD_DIR).compiler-rt'
     cd '$(BUILD_DIR).compiler-rt' && $(TARGET)-cmake '$(SOURCE_DIR)/compiler-rt/lib/builtins' \
-        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(BUILD)/lib/clang/$(clang_VERSION)' \
+        -DCMAKE_INSTALL_PREFIX='$(CLANG_RESOURCE_DIR)' \
         -DCMAKE_AR='$(PREFIX)/$(BUILD)/bin/llvm-ar' \
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
         -DCMAKE_C_COMPILER_TARGET='$(PROCESSOR)-windows-gnu' \
