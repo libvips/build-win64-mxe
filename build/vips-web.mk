@@ -2,13 +2,12 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.12.2
-$(PKG)_CHECKSUM := 565252992aff2c7cd10c866c7a58cd57bc536e03924bde29ae0f0cb9e074010b
+$(PKG)_VERSION  := 8.13.0
+$(PKG)_CHECKSUM := 3bce6ada3c18a38f59a8f51297ed59b19ab8ca1076770c715f0d33de19842d2a
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
-$(PKG)_DEPS     := cc libwebp librsvg glib pango libgsf \
+$(PKG)_SUBDIR   := libvips-$($(PKG)_VERSION)-rc1
+$(PKG)_GH_CONF  := libvips/libvips/tags,v,-rc1
+$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc cgif
 
@@ -61,46 +60,28 @@ define $(PKG)_BUILD
 
     # Always build as shared library, we need
     # libvips-42.dll for the language bindings.
-    # Allow libtool to statically link against libintl
-    # by specifying lt_cv_deplibs_check_method="pass_all"
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        --host='$(TARGET)' \
-        --build='$(BUILD)' \
-        --prefix='$(PREFIX)/$(TARGET)' \
-        --disable-static \
-        --enable-shared \
-        $(MXE_DISABLE_DOC_OPTS) \
-        --enable-debug=no \
-        --without-fftw \
-        --without-magick \
-        --without-openslide \
-        --without-libjxl \
-        --without-libopenjp2 \
-        --without-pdfium \
-        --without-poppler \
-        --without-cfitsio \
-        --without-OpenEXR \
-        --without-nifti \
-        --without-matio \
-        --without-ppm \
-        --without-analyze \
-        --without-radiance \
-        --disable-introspection \
-        --disable-deprecated \
-        --disable-modules \
-        $(if $(or $(BUILD_STATIC),$(IS_INTL_DUMMY)), lt_cv_deplibs_check_method="pass_all")
+    $(MXE_MESON_WRAPPER) \
+        --default-library=shared \
+        -Ddeprecated=false \
+        -Dintrospection=false \
+        -Dmodules=disabled \
+        -Dcfitsio=disabled \
+        -Dfftw=disabled \
+        -Djpeg-xl=disabled \
+        -Dmagick=disabled \
+        -Dmatio=disabled \
+        -Dnifti=disabled \
+        -Dopenexr=disabled \
+        -Dopenjpeg=disabled \
+        -Dopenslide=disabled \
+        -Dpdfium=disabled \
+        -Dpoppler=disabled \
+        -Dquantizr=disabled \
+        -Dppm=false \
+        -Danalyze=false \
+        -Dradiance=false \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
 
-    # libtool should automatically generate a list
-    # of exported symbols, even for "static" builds
-    $(if $(BUILD_STATIC), \
-        $(SED) -i '/^always_export_symbols=/s/=no/=yes/' '$(BUILD_DIR)/libtool')
-
-    # remove -nostdlib from linker commandline options
-    # (i.e. archive_cmds and archive_expsym_cmds)
-    # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
-    $(if $(IS_LLVM), \
-        $(SED) -i '/\-shared /s/ \-nostdlib//' '$(BUILD_DIR)/libtool')
-
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef

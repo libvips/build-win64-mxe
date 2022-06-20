@@ -5,9 +5,7 @@ RUN apt-get update \
     # http://mxe.cc/#requirements-debian
     autopoint bison flex gettext gperf g++-multilib \
     intltool libc6-dev-i386 libtool-bin libxml-parser-perl \
-    lzip p7zip-full python-is-python3 python3-mako ruby \
-    # needed when building libvips from git
-    gobject-introspection gtk-doc-tools
+    lzip p7zip-full python-is-python3 python3-mako ruby
 
 # gas-preprocessor.pl is required for the ARM/ARM64 builds of libjpeg-turbo
 # TODO(kleisauke): This is no longer necessary once mozjpeg merges libjpeg-turbo 2.1.0.
