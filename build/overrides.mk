@@ -79,8 +79,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.73.0
-glib_CHECKSUM := 3673f10515f4bcfb9ee2ce0a921a18fa359c36fab388b19819467e7b09506870
+glib_VERSION  := 2.73.1
+glib_CHECKSUM := 77b21da5bd195a8e5f751206a2acab477636e3d02fe4f3796ede5788255382ae
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -736,11 +736,11 @@ define glib_BUILD
 
     # Build as shared library, since we need `libgobject-2.0-0.dll`
     # and `libglib-2.0-0.dll` for the language bindings.
-    # Enable networking to allow libpcre to be downloaded from WrapDB
+    # Enable networking to allow gvdb and libpcre to be downloaded
+    # from WrapDB
     MXE_ENABLE_NETWORK=1 $(MXE_MESON_WRAPPER) \
         --default-library=shared \
-        --force-fallback-for=libpcre \
-        -Dforce_posix_threads=false \
+        --force-fallback-for=gvdb,libpcre \
         -Dnls=disabled \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'

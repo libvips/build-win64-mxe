@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2022-06-20/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2022-06-26/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 8ae98efd12756c35ce3d808e1de97dc0561e1a8f5db5f89ff9bca1dbc36adc2b
+$(PKG)_CHECKSUM := a600c43ab32bd4bc3c8069926fe2b8344e304a9e90e0bd8e1cd68f9ce22037cd
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2022-06-20/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2022-06-26/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -32,12 +32,13 @@ define $(PKG)_BUILD_$(BUILD)
     $(eval unexport CXXFLAGS)
     $(eval unexport LDFLAGS)
 
+    # TODO(kleisauke): Build with --enable-vendor if we are no longer
+    # patching panic_unwind/unwind.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --prefix='$(PREFIX)/$(BUILD)' \
         --sysconfdir='etc' \
         --release-channel=nightly \
         --enable-extended \
-        --enable-vendor \
         --tools=cargo,src \
         --disable-docs \
         --disable-codegen-tests \
@@ -57,13 +58,10 @@ define $(PKG)_BUILD_$(BUILD)
     # stored in the build directory.
     $(eval export CARGO_HOME := $(BUILD_DIR)/.cargo)
 
-    # Build Rust
+    # Build and install Rust
+    # Note: we are only interested in the stage1 compiler
     cd '$(BUILD_DIR)' && \
-        $(PYTHON3) $(SOURCE_DIR)/x.py build -j '$(JOBS)' -v
-
-    # Install Rust
-    cd '$(BUILD_DIR)' && \
-        $(PYTHON3) $(SOURCE_DIR)/x.py install --keep-stage 1 -j '$(JOBS)' -v
+        $(PYTHON3) $(SOURCE_DIR)/x.py install --stage 1 -j '$(JOBS)' -v
 
     # Copy the Cargo.lock for Rust to places `vendor` will see
     # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524
