@@ -19,19 +19,4 @@ define $(PKG)_BUILD
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j $(JOBS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
-
-    # create pkg-config file
-    $(INSTALL) -d '$(PREFIX)/$(TARGET)/lib/pkgconfig'
-    (echo 'prefix=$(PREFIX)/$(TARGET)'; \
-     echo 'exec_prefix=$${prefix}'; \
-     echo 'libdir=$${exec_prefix}/lib'; \
-     echo 'includedir=$${prefix}/include/nifti'; \
-     echo ''; \
-     echo 'Name: niftiio'; \
-     echo 'Version: $($(PKG)_VERSION)'; \
-     echo 'Description: Core i/o routines for reading and writing nifti-1 format files'; \
-     echo 'Requires.private: zlib'; \
-     echo 'Libs: -L$${libdir} -lniftiio -lznz'; \
-     echo 'Cflags: -I$${includedir}';) \
-     > '$(PREFIX)/$(TARGET)/lib/pkgconfig/niftiio.pc'
 endef

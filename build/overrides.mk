@@ -39,8 +39,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-54
-imagemagick_CHECKSUM := af0d88cdbfd814cea231e950367c4d1251e11371b84aeabda5ddf63dc5be760a
+imagemagick_VERSION  := 6.9.12-58
+imagemagick_CHECKSUM := 6f7774b5a1bd06a6d67da00252ad88da2197d0d88959c599fff6c4fc81628973
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -61,8 +61,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.50.0
-pango_VERSION  := 1.50.7
-pango_CHECKSUM := 0477f369a3d4c695df7299a6989dc004756a7f4de27eecac405c6790b7e3ad33
+pango_VERSION  := 1.50.8
+pango_CHECKSUM := cf626f59dd146c023174c4034920e9667f1d25ac2c1569516d63136c311255fa
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz

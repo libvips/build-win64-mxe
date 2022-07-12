@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2022-06-26/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2022-07-12/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := a600c43ab32bd4bc3c8069926fe2b8344e304a9e90e0bd8e1cd68f9ce22037cd
+$(PKG)_CHECKSUM := ebe29c7ce66ad25ce7a94f6ab388248e599b8beea374b3b22ab9fe9d14a160c2
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2022-06-26/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2022-07-12/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -92,7 +92,6 @@ define $(PKG)_BUILD
             '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib/self-contained';)
 
     # Install Cargo config
-    # FIXME(kleisauke): Remove -Zshare-generics=no, see: https://github.com/rust-lang/rust/issues/96486
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
     (echo '[unstable]'; \
      echo 'build-std = ["std", "panic_abort"]'; \
@@ -104,7 +103,6 @@ define $(PKG)_BUILD
      echo 'RUST_COMPILER_RT_ROOT = "$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/src/llvm-project/compiler-rt"'; \
      echo '[target.$(TARGET_RUST)]'; \
      echo 'rustflags = ['; \
-     echo '    "-Zshare-generics=no",'; \
      echo '    "-Clink-self-contained=yes"'; \
      echo ']'; \
      echo 'linker = "$(TARGET)-clang"'; \

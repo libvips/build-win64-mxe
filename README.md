@@ -26,7 +26,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.8    | LGPLv3                                                       |
 | [glib]          | 2.73.1    | LGPLv3                                                       |
-| [harfbuzz]      | 4.3.0     | MIT Licence                                                  |
+| [harfbuzz]      | 4.4.1     | MIT Licence                                                  |
 | [lcms]          | 2.13.1    | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
@@ -42,14 +42,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.9.14    | MIT Licence                                                  |
 | [mozjpeg]       | 4.0.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.50.7    | LGPLv3                                                       |
+| [pango]         | 1.50.8    | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
-² libvips is built from the [`v8.13.0-rc1`](https://github.com/libvips/libvips/tree/v8.13.0-rc1) tag, see:
-https://github.com/libvips/libvips/releases/tag/v8.13.0-rc1
+² libvips is built from the [`v8.13.0-rc2`](https://github.com/libvips/libvips/tree/v8.13.0-rc2) tag, see:
+https://github.com/libvips/libvips/releases/tag/v8.13.0-rc2
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -99,7 +99,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.1.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 0.17.0    | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-54 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-58 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.5     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.6.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
@@ -107,7 +107,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.5     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 22.06.0   | GPLv2                                                        |
+| [poppler]       | 22.07.0   | GPLv2                                                        |
 | [sqlite]        | 3.39.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
