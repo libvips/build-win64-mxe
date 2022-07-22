@@ -78,17 +78,25 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
+# upstream version is 1.2.2
+libwebp_VERSION  := 1.2.3
+libwebp_CHECKSUM := f5d7ab2390b06b8a934a4fc35784291b3885b557780d099bd32f09241f9d83f9
+libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
+libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
+libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
+libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
+
 # upstream version is 2.70.2
-glib_VERSION  := 2.73.1
-glib_CHECKSUM := 77b21da5bd195a8e5f751206a2acab477636e3d02fe4f3796ede5788255382ae
+glib_VERSION  := 2.73.2
+glib_CHECKSUM := 5f3ee36e34f4aaab393c3e3dc46fb01b32f7ead6c88d41d7f20d88a49cdef1d9
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 1.14.30
-libgsf_VERSION  := 1.14.49
-libgsf_CHECKSUM := e9ebe36688f010c9e6e40c8903f3732948deb8aca032578d07d0751bd82cf857
+libgsf_VERSION  := 1.14.50
+libgsf_CHECKSUM := 6e6c20d0778339069d583c0d63759d297e817ea10d0d897ebbe965f16e2e8e52
 libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libgsf-[0-9]*.patch)))
 libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
 libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
@@ -736,11 +744,10 @@ define glib_BUILD
 
     # Build as shared library, since we need `libgobject-2.0-0.dll`
     # and `libglib-2.0-0.dll` for the language bindings.
-    # Enable networking to allow gvdb and libpcre to be downloaded
-    # from WrapDB
+    # Enable networking to allow gvdb to be downloaded from WrapDB
     MXE_ENABLE_NETWORK=1 $(MXE_MESON_WRAPPER) \
         --default-library=shared \
-        --force-fallback-for=gvdb,libpcre \
+        --force-fallback-for=gvdb \
         -Dnls=disabled \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'

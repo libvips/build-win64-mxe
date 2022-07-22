@@ -3,11 +3,11 @@ $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 8.13.0
-$(PKG)_CHECKSUM := e52625465f07c68119bd1dcb123558720594439d45cddeb2a24d8464197879b0
+$(PKG)_CHECKSUM := b7e1d50dcf571165beecd36adece6eca6701c2a9e131c675143d8b9418dbdd81
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
+$(PKG)_GH_CONF  := libvips/libvips/releases,v
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION)-rc2.tar.gz
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,-rc2,,,-rc2.tar.gz
+$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc imagemagick matio openexr \
