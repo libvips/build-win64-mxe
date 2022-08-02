@@ -3,7 +3,7 @@
 vips_package=vips
 vips_version=8.15
 vips_patch_version=0
-vips_pre_version=simd
+vips_pre_version=simd-seq
 
 if [ -n "$GIT_COMMIT" ]; then
   vips_version=$GIT_COMMIT

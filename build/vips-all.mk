@@ -2,11 +2,11 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-# https://github.com/kleisauke/libvips/tarball/f047e7b0d08a15e0a11d6b48420e1477fe23683c
-$(PKG)_VERSION  := f047e7b
-$(PKG)_CHECKSUM := d99aefed89853200c012a586c59045eb0294519b27a0c38006b581f430f3bf2f
+# https://github.com/kleisauke/libvips/tarball/0eeabf8ac539afeb34890018bcf34753566459ad
+$(PKG)_VERSION  := 0eeabf8
+$(PKG)_CHECKSUM := 631f3b927e9a17b92826f29e2e6c79f80d6fa3b3ae129c8cb2d9404f4fbc5fa3
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := kleisauke/libvips/branches/simd
+$(PKG)_GH_CONF  := kleisauke/libvips/branches/simd-seq
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant imagemagick matio openexr \
