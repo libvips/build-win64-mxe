@@ -35,7 +35,7 @@ index 1111111..2222222 100644
  /* These typedefs are used for various table entries and so forth.
   * They must be at least as wide as specified; but making them too big
   * won't cost a huge amount of memory, so we don't provide special
-@@ -138,14 +145,11 @@ typedef short INT16;
+@@ -134,14 +141,11 @@ typedef short INT16;
   */
  
  #ifndef XMD_H                   /* X11/xmd.h correctly defines INT32 */

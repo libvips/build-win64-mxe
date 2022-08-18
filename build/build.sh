@@ -51,7 +51,7 @@ fi
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="523678e36c2678f3d170c91c095a84b3bcc2bbfe"
+revision="46cf2d3f6e55d3ea30f515041bf01352c4f1a7ce"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then
@@ -130,7 +130,7 @@ make pe-util \
   MXE_USE_CCACHE=
 
 if [ -n "$GIT_COMMIT" ]; then
-  # Invalidate build cache, if exits
+  # Invalidate build cache, if exists
   rm -f $mxe_dir/usr/$target.$deps/installed/vips-$deps
 fi
 

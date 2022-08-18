@@ -4,76 +4,23 @@ Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Tue, 13 Oct 2020 16:30:00 +0200
-Subject: [PATCH 1/3] Avoid multiple definitions of DllMain in static builds
-
-
-diff --git a/gdk-pixbuf/gdk-pixbuf-io.c b/gdk-pixbuf/gdk-pixbuf-io.c
-index 1111111..2222222 100644
---- a/gdk-pixbuf/gdk-pixbuf-io.c
-+++ b/gdk-pixbuf/gdk-pixbuf-io.c
-@@ -188,6 +188,7 @@ get_file_formats (void)
- 
- static HMODULE gdk_pixbuf_dll;
- 
-+#ifdef DLL_EXPORT
- BOOL WINAPI
- DllMain (HINSTANCE hinstDLL,
-          DWORD     fdwReason,
-@@ -202,6 +203,7 @@ DllMain (HINSTANCE hinstDLL,
-   return TRUE;
- }
- #endif
-+#endif
- 
- 
- #ifdef GDK_PIXBUF_RELOCATABLE
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 13 Oct 2020 16:40:45 +0200
-Subject: [PATCH 2/3] Don't force relocation support on Windows
+Subject: [PATCH 1/2] Don't force relocation support on Windows
 
 We don't use loadable modules for gdk-pixbuf.
 
-diff --git a/gdk-pixbuf/gdk-pixbuf-io.c b/gdk-pixbuf/gdk-pixbuf-io.c
-index 1111111..2222222 100644
---- a/gdk-pixbuf/gdk-pixbuf-io.c
-+++ b/gdk-pixbuf/gdk-pixbuf-io.c
-@@ -182,7 +182,7 @@ get_file_formats (void)
-         return file_formats;
- }
- 
--#ifdef G_OS_WIN32
-+#if defined(G_OS_WIN32) && defined(GDK_PIXBUF_RELOCATABLE)
- 
- /* DllMain function needed to tuck away the gdk-pixbuf DLL handle */
- 
-diff --git a/gdk-pixbuf/queryloaders.c b/gdk-pixbuf/queryloaders.c
-index 1111111..2222222 100644
---- a/gdk-pixbuf/queryloaders.c
-+++ b/gdk-pixbuf/queryloaders.c
-@@ -280,7 +280,7 @@ query_module (GString *contents, const char *dir, const char *file)
-         g_free (path);
- }
- 
--#ifdef G_OS_WIN32
-+#if defined(G_OS_WIN32) && defined(GDK_PIXBUF_RELOCATABLE)
- 
- static char *
- get_libdir (void)
 diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -379,15 +379,8 @@ if get_option('tiff') and not native_windows_loaders
+@@ -335,15 +335,8 @@ if not tiff_opt.disabled() and not native_windows_loaders
    endif
  endif
  
 -# Determine whether we enable application bundle relocation support, and we use
 -# this always on Windows
 -if host_system == 'windows'
--  relocatable = true
+-  relocatable = (get_option('default_library') != 'static')
 -else
 -  relocatable = get_option('relocatable')
 -endif
@@ -84,10 +31,19 @@ index 1111111..2222222 100644
    add_project_arguments([ '-DGDK_PIXBUF_RELOCATABLE' ], language: 'c')
  endif
  
+@@ -403,7 +396,7 @@ summary('MediaLib', use_medialib, section: 'Build')
+ summary('Introspection', build_gir, section: 'Build')
+ summary('Documentation', build_docs, section: 'Build')
+ summary('Manual pages', get_option('man'), section: 'Build')
+-summary('Relocatable', relocatable, section: 'Build')
++summary('Relocatable', get_option('relocatable'), section: 'Build')
+ summary('Build tests', get_option('tests'), section: 'Build')
+ summary('Installed tests', get_option('installed_tests'), section: 'Build')
+ 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 7 Oct 2019 11:30:00 +0200
-Subject: [PATCH 3/3] Fix pkg-config file when using built-in loader(s)
+Subject: [PATCH 2/2] Fix pkg-config file when using built-in loader(s)
 
 See: https://gitlab.gnome.org/GNOME/gdk-pixbuf/merge_requests/50
 
@@ -95,7 +51,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -293,6 +293,9 @@ if not png_opt.disabled()
+@@ -272,6 +272,9 @@ if not png_opt.disabled()
    if png_dep.found()
      enabled_loaders += 'png'
      loaders_deps += png_dep
@@ -105,7 +61,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -307,9 +310,13 @@ else
+@@ -286,9 +289,13 @@ else
  endif
  
  if native_windows_loaders
@@ -121,7 +77,7 @@ index 1111111..2222222 100644
  endif
  
  # Don't check and build the jpeg loader if native_windows_loaders is true
-@@ -349,6 +356,9 @@ if not jpeg_opt.disabled() and not native_windows_loaders
+@@ -319,6 +326,9 @@ if not jpeg_opt.disabled() and not native_windows_loaders
      if has_destroy_decompress and has_simple_progression
        gdk_pixbuf_conf.set('HAVE_PROGRESSIVE_JPEG', has_simple_progression)
      endif
@@ -131,7 +87,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -376,6 +386,9 @@ if not tiff_opt.disabled() and not native_windows_loaders
+@@ -332,6 +342,9 @@ if not tiff_opt.disabled() and not native_windows_loaders
    if tiff_dep.found()
      enabled_loaders += 'tiff'
      loaders_deps += tiff_dep

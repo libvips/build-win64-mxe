@@ -15,7 +15,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2077,11 +2077,11 @@ if libintl.found()
+@@ -2102,11 +2102,11 @@ if libintl.found()
    #
    # Meson's builtin dependency lookup as of 0.60.0 doesn't check for
    # pthread, so we do this manually here.
@@ -29,7 +29,7 @@ index 1111111..2222222 100644
        libintl_deps += [libintl, libintl_pthread]
      else
        libintl = disabler()
-@@ -2090,7 +2090,7 @@ if libintl.found()
+@@ -2115,7 +2115,7 @@ if libintl.found()
  endif
  
  if libintl.found()

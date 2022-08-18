@@ -102,7 +102,7 @@ diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/build.rs
 +++ b/vendor/compiler_builtins/build.rs
-@@ -313,7 +313,7 @@ mod c {
+@@ -316,7 +316,7 @@ mod c {
          if target_arch == "arm"
              && target_os != "ios"
              && target_os != "watchos"

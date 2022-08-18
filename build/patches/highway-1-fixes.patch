@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Evgenii Kliuchnikov <eustas@google.com>
+Date: Fri, 29 Jul 2022 01:45:53 -0700
+Subject: [PATCH 1/1] Fix compilation on Chromebook
+
+PiperOrigin-RevId: 464026554
+
+See: https://github.com/google/highway/issues/882
+
+Upstream-Status: Accepted [https://github.com/google/highway/commit/9b6b473890bb6a43f5cd4786f9c214f0aa4e6420]
+
+diff --git a/hwy/targets.cc b/hwy/targets.cc
+index 1111111..2222222 100644
+--- a/hwy/targets.cc
++++ b/hwy/targets.cc
+@@ -265,8 +265,8 @@ int64_t DetectTargets() {
+   // are not preserved across context switches.
+   if (has_osxsave) {
+     const uint32_t xcr0 = ReadXCR0();
+-    const uint32_t min_avx3 = HWY_AVX3 | HWY_AVX3_DL;
+-    const uint32_t min_avx2 = HWY_AVX2 | min_avx3;
++    const int64_t min_avx3 = HWY_AVX3 | HWY_AVX3_DL;
++    const int64_t min_avx2 = HWY_AVX2 | min_avx3;
+     // XMM
+     if (!IsBitSet(xcr0, 1)) {
+       bits &= ~(HWY_SSSE3 | HWY_SSE4 | min_avx2);

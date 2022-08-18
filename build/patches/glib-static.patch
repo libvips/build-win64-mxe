@@ -12,7 +12,7 @@ diff --git a/gio/giomodule.c b/gio/giomodule.c
 index 1111111..2222222 100644
 --- a/gio/giomodule.c
 +++ b/gio/giomodule.c
-@@ -1111,27 +1111,8 @@ extern GType _g_win32_network_monitor_get_type (void);
+@@ -1108,27 +1108,8 @@ extern GType _g_win32_network_monitor_get_type (void);
  
  static HMODULE gio_dll = NULL;
  
@@ -42,7 +42,7 @@ index 1111111..2222222 100644
  extern void glib_win32_init (void);
  extern void gobject_win32_init (void);
  
-@@ -1163,6 +1144,7 @@ giomodule_init_ctor (void)
+@@ -1160,6 +1141,7 @@ giomodule_init_ctor (void)
  
  #else /* G_PLATFORM_WIN32 && GLIB_STATIC_COMPILATION && !G_HAS_CONSTRUCTORS */
  #error Your platform/compiler is missing constructor support
@@ -54,7 +54,7 @@ diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -802,12 +802,9 @@ else
+@@ -816,12 +816,9 @@ else
    gio_dtrace_hdr = []
  endif
  
