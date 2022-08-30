@@ -39,7 +39,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libtiff]       | 4.4.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.13.0    | LGPLv3                                                       |
 | [libwebp]       | 1.2.4     | New BSD License                                              |
-| [libxml2]       | 2.10.0    | MIT Licence                                                  |
+| [libxml2]       | 2.10.2    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.50.9    | LGPLv3                                                       |
@@ -96,8 +96,8 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 4.1.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [highway]       | 1.0.0     | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-59 | [ImageMagick License] (Apache-2.0-like)                      |
+| [highway]       | 1.0.1     | Apache-2.0 License                                           |
+| [imagemagick]   | 6.9.12-62 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.5     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.7²      | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |

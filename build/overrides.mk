@@ -21,8 +21,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.9.12
-libxml2_VERSION  := 2.10.0
-libxml2_CHECKSUM := 2dd33110ea778676de14bea4999ee1173c4ca55d5ff1452bca224e06f0152595
+libxml2_VERSION  := 2.10.2
+libxml2_CHECKSUM := d240abe6da9c65cb1900dd9bf3a3501ccf88b3c2a1cb98317d03f272dda5b265
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -39,8 +39,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-59
-imagemagick_CHECKSUM := 116cb21653ec613fcf356e9fc1dcd855ddcef0d2b5482e6d721cb714aaafb380
+imagemagick_VERSION  := 6.9.12-62
+imagemagick_CHECKSUM := 21eb4c5a4f0f9e76f1e67fb6a20f7b1e4374346ed9351bec9898f370d7b2f035
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 

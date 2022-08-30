@@ -15,8 +15,8 @@ $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
     mkdir -p $(PREFIX)/$(TARGET)/vips-packaging
-    $(foreach f, COPYING ChangeLog README.md AUTHORS, \
-        cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
+    $(foreach f, AUTHORS ChangeLog COPYING LICENSE README.md, \
+        [ -e '$(SOURCE_DIR)/$(f)' ] && cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
 
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \

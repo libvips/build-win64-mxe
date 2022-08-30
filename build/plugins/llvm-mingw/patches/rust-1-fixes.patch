@@ -62,7 +62,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -955,7 +955,9 @@ supported_targets! {
+@@ -1006,7 +1006,9 @@ supported_targets! {
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
      ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
@@ -94,11 +94,11 @@ ld.lld: error: undefined symbol: _Unwind_VRS_Set
 
 Upstream-Status: Pending
 
-diff --git a/library/panic_unwind/src/gcc.rs b/library/panic_unwind/src/gcc.rs
+diff --git a/library/std/src/personality/gcc.rs b/library/std/src/personality/gcc.rs
 index 1111111..2222222 100644
---- a/library/panic_unwind/src/gcc.rs
-+++ b/library/panic_unwind/src/gcc.rs
-@@ -131,7 +131,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
+--- a/library/std/src/personality/gcc.rs
++++ b/library/std/src/personality/gcc.rs
+@@ -81,7 +81,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
  // https://github.com/gcc-mirror/gcc/blob/trunk/libgcc/unwind-c.c
  
  cfg_if::cfg_if! {
