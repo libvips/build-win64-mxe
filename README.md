@@ -37,7 +37,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.55.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.2     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.4.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.13.0    | LGPLv3                                                       |
+| [libvips]       | 8.13.1    | LGPLv3                                                       |
 | [libwebp]       | 1.2.4     | New BSD License                                              |
 | [libxml2]       | 2.10.2    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
@@ -105,7 +105,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.5     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 22.08.0   | GPLv2                                                        |
+| [poppler]       | 22.09.0   | GPLv2                                                        |
 | [sqlite]        | 3.39.2    | Public domain                                                |
 
 ² libjxl is built from the [`v0.7rc`](https://github.com/libjxl/libjxl/tree/v0.7rc) tag, see:

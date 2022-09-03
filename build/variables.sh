@@ -2,7 +2,7 @@
 
 vips_package=vips
 vips_version=8.13
-vips_patch_version=0
+vips_patch_version=1
 #vips_pre_version=rc2
 
 if [ -n "$GIT_COMMIT" ]; then

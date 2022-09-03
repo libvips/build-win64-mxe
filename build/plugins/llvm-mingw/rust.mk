@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2022-08-30/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2022-09-03/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 2f682fc0dbb88b56f3a556cabd5ac7c9a521fde8eaaf58cebfd4e0262838c3ce
+$(PKG)_CHECKSUM := b792d5b4dbebc76296cd39cbb1c817b8c06e3fdacab33f7476bec6bf0530a468
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2022-08-30/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2022-09-03/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -83,13 +83,8 @@ define $(PKG)_BUILD
             '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/rtstartup/$(FILE).rs';)
 
     # Install the startup objects
-    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib/self-contained'
+    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
     mv -vf '$(BUILD_DIR)/'rs{begin,end}.o '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
-
-    # Copy CRT objects needed for self-contained linkage (-Clink-self-contained=yes)
-    $(foreach FILE, crt2.o dllcrt2.o, \
-        cp '$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/lib/$(FILE)' \
-            '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib/self-contained';)
 
     # Install Cargo config
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
@@ -102,9 +97,6 @@ define $(PKG)_BUILD
      echo 'CC_$(TARGET_RUST) = "$(TARGET)-clang"'; \
      echo 'RUST_COMPILER_RT_ROOT = "$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/src/llvm-project/compiler-rt"'; \
      echo '[target.$(TARGET_RUST)]'; \
-     echo 'rustflags = ['; \
-     echo '    "-Clink-self-contained=yes"'; \
-     echo ']'; \
      echo 'linker = "$(TARGET)-clang"'; \
      echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"';) \
              > '$(PREFIX)/$(TARGET)/.cargo/config'

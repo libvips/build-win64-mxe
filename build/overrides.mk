@@ -161,6 +161,14 @@ fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
+# upstream version is 22.08.0
+poppler_VERSION  := 22.09.0
+poppler_CHECKSUM := d7a8f748211359cadb774ba3e18ecda6464b34027045c0648eb30d5852a41e2e
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
+
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
 nasm_CHECKSUM := 3caf6729c1073bf96629b57cee31eeb54f4f8129b01902c73428836550b30a3f
