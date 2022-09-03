@@ -31,7 +31,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
 | [libgsf]        | 1.14.50   | LGPLv3                                                       |
-| [libheif]       | 1.12.0    | LGPLv3                                                       |
+| [libheif]       | 1.13.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.37    | [libpng License version 2]                                   |
 | [librsvg]       | 2.55.0    | LGPLv3                                                       |

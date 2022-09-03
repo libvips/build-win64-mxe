@@ -2,16 +2,13 @@ PKG             := libheif
 $(PKG)_WEBSITE  := http://www.libheif.org/
 $(PKG)_DESCR    := libheif is a ISO/IEC 23008-12:2017 HEIF file format decoder and encoder.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.12.0
-$(PKG)_CHECKSUM := e1ac2abb354fdc8ccdca71363ebad7503ad731c84022cf460837f0839e171718
+$(PKG)_VERSION  := 1.13.0
+$(PKG)_CHECKSUM := c20ae01bace39e89298f6352f1ff4a54b415b33b9743902da798e8a1e51d7ca1
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := strukturag/libheif/releases,v
 $(PKG)_DEPS     := cc aom
 
 define $(PKG)_BUILD
-    # need to regenerate the configure script
-    cd '$(SOURCE_DIR)' && autoreconf -fi
-
     # Disable multithreading when building with Win32 threads to
     # avoid a dependency on mingw-std-threads (which we only use
     # in the "all" variant). Disabling multithreading only affects
