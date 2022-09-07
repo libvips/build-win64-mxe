@@ -233,7 +233,7 @@ index 1111111..2222222 100644
  #include <ffi.h>
  
 -int main(int argc, char *argv[])
-+int main()
++int main(void)
  {
      ffi_cif cif;
      ffi_type *args[1];

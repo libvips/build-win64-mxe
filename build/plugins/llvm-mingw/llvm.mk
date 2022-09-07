@@ -5,8 +5,8 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the compiler-rt-sanitizers package
-$(PKG)_VERSION  := 14.0.5
-$(PKG)_CHECKSUM := c9d27903ba3883c476a83cd515e36e1e07b0585db55692835de11385d9e3c8fa
+$(PKG)_VERSION  := 15.0.0
+$(PKG)_CHECKSUM := caaf8100365b6ebafc39fea803e902ca3ff38b4d5327b9927097808d32964db7
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-project-$(subst -,,$($(PKG)_VERSION)).src
@@ -73,7 +73,6 @@ define $(PKG)_BUILD_RUNTIMES
     mkdir '$(BUILD_DIR).runtimes'
     cd '$(BUILD_DIR).runtimes' && $(TARGET)-cmake '$(SOURCE_DIR)/runtimes' \
         -DCMAKE_CXX_COMPILER_TARGET='$(PROCESSOR)-w64-windows-gnu' \
-        -DCMAKE_CROSSCOMPILING=TRUE \
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
         -DLLVM_PATH='$(SOURCE_DIR)/llvm' \
@@ -86,17 +85,15 @@ define $(PKG)_BUILD_RUNTIMES
         -DLIBCXX_USE_COMPILER_RT=ON \
         -DLIBCXX_ENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
         -DLIBCXX_ENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
-        -DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF \
         -DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=TRUE \
         -DLIBCXX_CXX_ABI=libcxxabi \
         -DLIBCXX_LIBDIR_SUFFIX='' \
         -DLIBCXX_INCLUDE_TESTS=FALSE \
         -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=FALSE \
         -DLIBCXXABI_USE_COMPILER_RT=ON \
+        -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
         -DLIBCXXABI_ENABLE_SHARED=OFF \
-        -DLIBCXXABI_LIBDIR_SUFFIX='' \
-        $(if $(BUILD_SHARED), -DLIBCXXABI_USE_LLVM_UNWINDER=ON)
-
+        -DLIBCXXABI_LIBDIR_SUFFIX=''
     $(MAKE) -C '$(BUILD_DIR).runtimes' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).runtimes' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
 endef

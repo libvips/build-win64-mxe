@@ -2,7 +2,7 @@
 
 PKG             := compiler-rt-sanitizers
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
-$(PKG)_VERSION  := 14.0.5
+$(PKG)_VERSION  := 15.0.0
 $(PKG)_DEPS     := cc
 $(PKG)_TYPE     := meta
 
@@ -21,9 +21,12 @@ define $(PKG)_BUILD
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE \
         -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE \
         -DCOMPILER_RT_BUILD_BUILTINS=FALSE \
+        -DCOMPILER_RT_BUILD_CRT=FALSE \
+        -DCOMPILER_RT_BUILD_XRAY=FALSE \
         -DCOMPILER_RT_BUILD_LIBFUZZER=FALSE \
         -DCOMPILER_RT_BUILD_PROFILE=FALSE \
         -DCOMPILER_RT_BUILD_MEMPROF=FALSE \
+        -DCOMPILER_RT_BUILD_ORC=FALSE \
         -DSANITIZER_CXX_ABI=libc++ \
         $(if $(BUILD_STATIC), -DCMAKE_REQUIRED_LIBRARIES='unwind')
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'

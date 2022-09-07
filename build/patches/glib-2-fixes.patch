@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 24 Jun 2022 11:15:23 +0200
-Subject: [PATCH 1/1] Ensure standalone intl support library can be found
+Subject: [PATCH 1/2] Ensure standalone intl support library can be found
 
 See: https://gitlab.gnome.org/GNOME/glib/-/merge_requests/2109#note_1485662
 
@@ -38,3 +38,29 @@ index 1111111..2222222 100644
  else
    libintl = subproject('proxy-libintl').get_variable('intl_dep')
    libintl_deps = [libintl]
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 2 Aug 2022 18:46:43 +0200
+Subject: [PATCH 2/2] Fix build with LLVM 15
+
+glib/gthread-win32.c:359:16: error: incompatible integer to pointer conversion passing 'DWORD' (aka 'unsigned long') to parameter of type 'gpointer' (aka 'void *') [-Wint-conversion]
+          if (!g_atomic_pointer_compare_and_exchange (&key->p, NULL, impl))
+               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+glib/gatomic.h:257:73: note: expanded from macro 'g_atomic_pointer_compare_and_exchange'
+    __atomic_compare_exchange_n ((atomic), (void *) (&(gapcae_oldval)), (newval), FALSE, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST) ? TRUE : FALSE; \
+                                                                        ^~~~~~~~
+
+diff --git a/glib/gthread-win32.c b/glib/gthread-win32.c
+index 1111111..2222222 100644
+--- a/glib/gthread-win32.c
++++ b/glib/gthread-win32.c
+@@ -356,7 +356,7 @@ g_private_get_impl (GPrivate *key)
+             }
+ 
+           /* Ditto, due to the unlocked access on the fast path */
+-          if (!g_atomic_pointer_compare_and_exchange (&key->p, NULL, impl))
++          if (!g_atomic_pointer_compare_and_exchange (&key->p, NULL, GUINT_TO_POINTER (impl)))
+             g_thread_abort (0, "g_private_get_impl(2)");
+         }
+       LeaveCriticalSection (&g_private_lock);

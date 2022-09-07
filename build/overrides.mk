@@ -178,6 +178,16 @@ nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
 nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
+# upstream version is 10.0.0
+# Update MinGW-w64 to d4a0c84
+# https://github.com/mingw-w64/mingw-w64/tarball/d4a0c84d908243a45255a06dc293d3d7c06db98c
+mingw-w64_VERSION  := d4a0c84
+mingw-w64_CHECKSUM := 1bf133d9827756223f4610601a87e129b11f2caa91ebf993a6017c4a4bab06dc
+mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
+mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
+mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
+mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
+
 ## Patches that we override with our own
 
 freetype_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))

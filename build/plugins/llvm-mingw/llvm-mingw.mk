@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/eac1db1c0ddbd0ec61601284048e9ade92a26542
-$(PKG)_VERSION  := eac1db1
-$(PKG)_CHECKSUM := bdcf863f270dddc28c5ca3cccbb05a3b668ca81c645bc8ce1665ed8be86417c1
+# https://github.com/mstorsjo/llvm-mingw/tarball/0a980a4f1c3710cb1a6d1db10be527d3a0ec7cbe
+$(PKG)_VERSION  := 0a980a4
+$(PKG)_CHECKSUM := 60ee79a77cb72d05f965bada99e4d3c4826d51e8e9b273632cdb5e974602c92e
 # TODO(kleisauke): Remove this if we omit any dots from our target
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
@@ -59,7 +59,7 @@ define $(PKG)_PRE_BUILD
     # Can't symlink here, it will break the basename detection of LLVM. See:
     # sys::path::stem("x86_64-w64-mingw32.shared-ranlib"); -> x86_64-w64-mingw32
     # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.5/llvm/tools/llvm-ar/llvm-ar.cpp#L1285-L1304
+    # https://github.com/llvm/llvm-project/blob/llvmorg-15.0.0/llvm/tools/llvm-ar/llvm-ar.cpp#L1455-L1474
     $(foreach EXEC, addr2line ar cvtres nm objcopy ranlib rc strings strip, \
         (echo '#!/bin/sh'; \
          echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-$(EXEC)" "$$@"') \
@@ -68,7 +68,7 @@ define $(PKG)_PRE_BUILD
 
     # We need to pass some additional arguments for windres
     # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.5/llvm/tools/llvm-rc/llvm-rc.cpp#L266-L277
+    # https://github.com/llvm/llvm-project/blob/llvmorg-15.0.0/llvm/tools/llvm-rc/llvm-rc.cpp#L266-L277
     (echo '#!/bin/sh'; \
      echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-windres" \
          --preprocessor-arg="--sysroot=$(PREFIX)/$(TARGET)" \
@@ -82,7 +82,7 @@ define $(PKG)_PRE_BUILD
     # armv7 -> arm
     # aarch64 -> arm64
     # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-14.0.5/llvm/lib/ToolDrivers/llvm-dlltool/DlltoolDriver.cpp#L97-L108
+    # https://github.com/llvm/llvm-project/blob/llvmorg-15.0.0/llvm/lib/ToolDrivers/llvm-dlltool/DlltoolDriver.cpp#L97-L108
     $(eval DLLTOOL_ARCH := $(strip \
         $(if $(findstring i686,$(PROCESSOR)),i386, \
         $(if $(findstring x86_64,$(PROCESSOR)),i386:x86-64, \

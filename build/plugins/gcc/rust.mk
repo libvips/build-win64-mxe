@@ -2,11 +2,11 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/rust-1.60.0-x86_64-unknown-linux-gnu.tar.gz.sha256
-$(PKG)_VERSION  := 1.60.0
-$(PKG)_CHECKSUM := b8a4c3959367d053825e31f90a5eb86418eb0d80cacda52bfa80b078e18150d5
+# https://static.rust-lang.org/dist/rust-1.63.0-x86_64-unknown-linux-gnu.tar.xz.sha256
+$(PKG)_VERSION  := 1.63.0
+$(PKG)_CHECKSUM := be9b25bcf1e564876762e653688e0b5df11fab53048ac18bf77761cf0a0cc465
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)-x86_64-unknown-linux-gnu
-$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION)-x86_64-unknown-linux-gnu.tar.gz
+$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION)-x86_64-unknown-linux-gnu.tar.xz
 $(PKG)_URL      := https://static.rust-lang.org/dist/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(foreach TARGET,$(MXE_TARGETS),rust-std-$(firstword $(call split,-,$(TARGET))))
 
