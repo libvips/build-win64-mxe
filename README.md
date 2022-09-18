@@ -25,15 +25,15 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.12.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.9    | LGPLv3                                                       |
-| [glib]          | 2.73.3    | LGPLv3                                                       |
-| [harfbuzz]      | 5.1.0     | MIT Licence                                                  |
+| [glib]          | 2.74.0    | LGPLv3                                                       |
+| [harfbuzz]      | 5.2.0     | MIT Licence                                                  |
 | [lcms]          | 2.13.1    | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.2     | MIT Licence                                                  |
 | [libgsf]        | 1.14.50   | LGPLv3                                                       |
 | [libheif]       | 1.13.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.37    | [libpng License version 2]                                   |
+| [libpng]        | 1.6.38    | [libpng License version 2]                                   |
 | [librsvg]       | 2.55.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.2     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.4.0     | [libtiff License] (BSD-like)                                 |
@@ -42,7 +42,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.10.2    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.50.9    | LGPLv3                                                       |
+| [pango]         | 1.50.10   | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
@@ -97,7 +97,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.1.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.1     | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-62 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-63 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.5     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.7²      | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
@@ -106,7 +106,7 @@ Same as libvips-web + these extra dependencies:
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
 | [poppler]       | 22.09.0   | GPLv2                                                        |
-| [sqlite]        | 3.39.2    | Public domain                                                |
+| [sqlite]        | 3.39.3    | Public domain                                                |
 
 ² libjxl is built from the [`v0.7rc`](https://github.com/libjxl/libjxl/tree/v0.7rc) tag, see:
 https://github.com/libjxl/libjxl/releases/tag/v0.7rc

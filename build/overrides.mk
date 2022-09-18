@@ -39,8 +39,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-62
-imagemagick_CHECKSUM := 21eb4c5a4f0f9e76f1e67fb6a20f7b1e4374346ed9351bec9898f370d7b2f035
+imagemagick_VERSION  := 6.9.12-63
+imagemagick_CHECKSUM := 208e8dda121f51ac8a1230ac5dec57b7366120ae2b0b0a243c40757c7776d1ea
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -61,8 +61,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.50.0
-pango_VERSION  := 1.50.9
-pango_CHECKSUM := 1b636aabf905130d806372136f5e137b6a27f26d47defd9240bf444f6a4fe610
+pango_VERSION  := 1.50.10
+pango_CHECKSUM := 7e5d2f1e40854d24a9a2c4d093bafe75dcdbeccdf1de43e4437332eabed64966
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -87,8 +87,8 @@ libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
 libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.73.3
-glib_CHECKSUM := df1a2b841667d6b48b2ef6969ebda4328243829f6e45866726f806f90f64eead
+glib_VERSION  := 2.74.0
+glib_CHECKSUM := 3652c7f072d7b031a6b5edd623f77ebc5dcd2ae698598abcc89ff39ca75add30
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -143,6 +143,12 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
+# upstream version is 5.1.0
+harfbuzz_VERSION  := 5.2.0
+harfbuzz_CHECKSUM := 735a94917b47936575acb4d4fa7e7986522f8a89527e4635721474dee2bc942c
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
 # upstream version is 2.13
 # cannot use GH_CONF:
 # lcms_GH_CONF  := mm2/Little-CMS,lcms
@@ -160,14 +166,6 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
-
-# upstream version is 22.08.0
-poppler_VERSION  := 22.09.0
-poppler_CHECKSUM := d7a8f748211359cadb774ba3e18ecda6464b34027045c0648eb30d5852a41e2e
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
