@@ -3,8 +3,8 @@ $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 ## Update dependencies
 
 # upstream version is 3.3
-libffi_VERSION  := 3.4.2
-libffi_CHECKSUM := 540fb721619a6aba3bdeef7d940d8e9e0e6d2c193595bc243241b77ff9e93620
+libffi_VERSION  := 3.4.3
+libffi_CHECKSUM := 4416dd92b6ae8fcb5b10421e711c4d3cb31203d77521a77d85d0102311e6c3b8
 libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
 libffi_SUBDIR   := libffi-$(libffi_VERSION)
 libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
@@ -39,8 +39,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-63
-imagemagick_CHECKSUM := 208e8dda121f51ac8a1230ac5dec57b7366120ae2b0b0a243c40757c7776d1ea
+imagemagick_VERSION  := 6.9.12-64
+imagemagick_CHECKSUM := 3fd28f52dd8af0e896c29bbd4749326613ec6881ce33f8fb6bd5605a1984e027
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -53,8 +53,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.55.0
-librsvg_CHECKSUM := 6e626c564e354bcd8c384b90f8e4f30b303afa6c1e0cb5cc56ba14900c5db730
+librsvg_VERSION  := 2.55.1
+librsvg_CHECKSUM := 6baf48a9d3a56fd13bbfbb9f1f76759b240b70a1fa220fd238474d66a926f98c
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -142,12 +142,6 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
-
-# upstream version is 5.1.0
-harfbuzz_VERSION  := 5.2.0
-harfbuzz_CHECKSUM := 735a94917b47936575acb4d4fa7e7986522f8a89527e4635721474dee2bc942c
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.13
 # cannot use GH_CONF:

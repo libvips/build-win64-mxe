@@ -51,7 +51,7 @@ fi
 # Always checkout a particular revision which will successfully build.
 # This ensures that it will not suddenly break a build.
 # Note: Must be regularly updated.
-revision="f1cb8e7b92c4ae014de8a1816c995e13d4fbffbd"
+revision="dc3375b068df5b92bd2df33744394d1901079e6e"
 initialize=false
 
 if [ -f "$mxe_dir/Makefile" ]; then

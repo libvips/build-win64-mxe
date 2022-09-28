@@ -83,7 +83,7 @@ diff --git a/av1/decoder/decodeframe.c b/av1/decoder/decodeframe.c
 index 1111111..2222222 100644
 --- a/av1/decoder/decodeframe.c
 +++ b/av1/decoder/decodeframe.c
-@@ -5225,6 +5225,7 @@ static AOM_INLINE void setup_frame_info(AV1Decoder *pbi) {
+@@ -5228,6 +5228,7 @@ static AOM_INLINE void setup_frame_info(AV1Decoder *pbi) {
    }
  }
  
@@ -95,7 +95,7 @@ diff --git a/av1/encoder/encoder.c b/av1/encoder/encoder.c
 index 1111111..2222222 100644
 --- a/av1/encoder/encoder.c
 +++ b/av1/encoder/encoder.c
-@@ -3675,6 +3675,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
+@@ -3732,6 +3732,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
    return AOM_CODEC_OK;
  }
  
