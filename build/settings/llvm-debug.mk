@@ -1,6 +1,11 @@
-# MXE will run as many parallel jobs as there are
-# available CPU cores. This variable can limit this.
+# MXE will run as many parallel jobs as there are available CPU
+# cores. This variable can limit this.
 #JOBS := 4
+
+# MXE stores intermediate files in the current directory by
+# default. Store them in /var/tmp instead to ensure git commands
+# are no-op.
+MXE_TMP := /var/tmp
 
 # Turn on debugging
 export CFLAGS   := -g -Og -fdata-sections -ffunction-sections

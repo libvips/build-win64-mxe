@@ -10,6 +10,7 @@ OPTIONS:
 	--help			Show the help and exit
 	-c, --commit <COMMIT>	The commit to build libvips from
 	-r, --ref <REF>		The branch or tag to build libvips from
+	--tmpdir <DIR>		Where intermediate files should be stored (default in /var/tmp/mxe)
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaires with debug symbols
@@ -51,6 +52,7 @@ EOF
 # Default arguments
 git_commit=""
 git_ref=""
+tmpdir="/var/tmp/mxe"
 with_hevc=false
 with_debug=false
 with_llvm=true
@@ -65,6 +67,7 @@ while [ $# -gt 0 ]; do
     -h|--help) usage 0 ;;
     -c|--commit) git_commit="$2"; shift ;;
     -r|--ref) git_ref="$2"; shift ;;
+    --tmpdir) tmpdir="$2"; shift ;;
     --nightly) git_ref="master" ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
@@ -159,6 +162,9 @@ else
   exit 1
 fi
 
+# Ensure temporary dir exists
+mkdir -p $tmpdir
+
 # Ensure latest Debian stable base image
 $oci_runtime pull buildpack-deps:bullseye
 
@@ -168,9 +174,11 @@ $oci_runtime build -t libvips-build-win-mxe container
 # Run build scripts inside a container with the:
 # - current UID and GID inherited
 # - build dir mounted at /data
+# - temporary dir mounted at /var/tmp
 $oci_runtime run --rm -t \
   -u $(id -u):$(id -g) \
   -v $PWD/build:/data \
+  -v $tmpdir:/var/tmp:z \
   -e "GIT_COMMIT=$git_commit" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \

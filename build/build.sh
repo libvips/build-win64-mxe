@@ -126,6 +126,7 @@ plugins+=" $work_dir/plugins/proxy-libintl"
 # Build pe-util, handy for copying DLL dependencies.
 make pe-util \
   IGNORE_SETTINGS=yes \
+  MXE_TMP="/var/tmp" \
   MXE_TARGETS=`$mxe_dir/ext/config.guess` \
   MXE_USE_CCACHE=
 
