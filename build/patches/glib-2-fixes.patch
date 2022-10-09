@@ -50,6 +50,7 @@ glib/gthread-win32.c:359:16: error: incompatible integer to pointer conversion p
 glib/gatomic.h:257:73: note: expanded from macro 'g_atomic_pointer_compare_and_exchange'
     __atomic_compare_exchange_n ((atomic), (void *) (&(gapcae_oldval)), (newval), FALSE, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST) ? TRUE : FALSE; \
                                                                         ^~~~~~~~
+Upstream-Status: Accepted [https://gitlab.gnome.org/GNOME/glib/-/commit/4f72d3bce7a00aace1126758d499bb7e7517f694]
 
 diff --git a/glib/gthread-win32.c b/glib/gthread-win32.c
 index 1111111..2222222 100644

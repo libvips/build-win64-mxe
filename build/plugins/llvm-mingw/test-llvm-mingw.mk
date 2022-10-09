@@ -86,7 +86,7 @@ define $(PKG)_BUILD
         $(foreach TEST, $($(PKG)_TESTS_UBSAN), \
             '$(TARGET)-clang' \
                 '$(BUILD_DIR)/$(llvm-mingw_SUBDIR)/test/$(TEST).c' -o '$(TEST_DIR)/$(TEST).exe' \
-                -fsanitize=undefined;)
+                -fsanitize=undefined -fno-sanitize-recover=all;)
     )
 
     $(if $(BUILD_SHARED),
