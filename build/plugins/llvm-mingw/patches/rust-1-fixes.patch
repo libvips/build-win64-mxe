@@ -38,12 +38,12 @@ index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/i686_pc_windows_gnullvm.rs
 @@ -0,0 +1,20 @@
-+use crate::spec::{FramePointer, LinkerFlavor, Target};
++use crate::spec::{Cc, FramePointer, LinkerFlavor, Lld, Target};
 +
 +pub fn target() -> Target {
 +    let mut base = super::windows_gnullvm_base::opts();
 +    base.cpu = "pentium4".into();
-+    base.add_pre_link_args(LinkerFlavor::Gcc, &["-mi386pe"]);
++    base.add_pre_link_args(LinkerFlavor::Gnu(Cc::Yes, Lld::No), &["-mi386pe"]);
 +    base.max_atomic_width = Some(64);
 +    base.frame_pointer = FramePointer::Always; // Required for backtraces
 +    base.linker = Some("i686-w64-mingw32-clang".into());
@@ -62,7 +62,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1046,7 +1046,9 @@ supported_targets! {
+@@ -1151,7 +1151,9 @@ supported_targets! {
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
      ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
@@ -144,15 +144,15 @@ diff --git a/compiler/rustc_target/src/spec/windows_gnullvm_base.rs b/compiler/r
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/windows_gnullvm_base.rs
 +++ b/compiler/rustc_target/src/spec/windows_gnullvm_base.rs
-@@ -6,7 +6,7 @@ pub fn opts() -> TargetOptions {
-     // There were attempts to make it behave like libgcc (so one can just use -l<name>)
+@@ -7,7 +7,7 @@ pub fn opts() -> TargetOptions {
      // but LLVM maintainers rejected it: https://reviews.llvm.org/D51440
-     let pre_link_args =
--        TargetOptions::link_args(LinkerFlavor::Gcc, &["-nolibc", "--unwindlib=none"]);
-+        TargetOptions::link_args(LinkerFlavor::Gcc, &["-nolibc"]);
+     let pre_link_args = TargetOptions::link_args(
+         LinkerFlavor::Gnu(Cc::Yes, Lld::No),
+-        &["-nolibc", "--unwindlib=none"],
++        &["-nolibc"],
+     );
      // Order of `late_link_args*` does not matter with LLD.
      let late_link_args = TargetOptions::link_args(
-         LinkerFlavor::Gcc,
 diff --git a/library/unwind/src/lib.rs b/library/unwind/src/lib.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/lib.rs

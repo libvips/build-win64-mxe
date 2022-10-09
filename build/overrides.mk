@@ -61,8 +61,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.50.0
-pango_VERSION  := 1.50.10
-pango_CHECKSUM := 7e5d2f1e40854d24a9a2c4d093bafe75dcdbeccdf1de43e4437332eabed64966
+pango_VERSION  := 1.50.11
+pango_CHECKSUM := 8800f812d89ee61388188703203f3a7878963c22f8695aaf1fa0a1a1428d17ae
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -77,14 +77,6 @@ fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
-
-# upstream version is 1.2.2
-libwebp_VERSION  := 1.2.4
-libwebp_CHECKSUM := 7bf5a8a28cc69bcfa8cb214f2c3095703c6b73ac5fba4d5480c205331d9494df
-libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
-libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
-libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
-libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 2.70.2
 glib_VERSION  := 2.74.0
@@ -142,6 +134,12 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
+
+# upstream version is 5.2.0
+harfbuzz_VERSION  := 5.3.0
+harfbuzz_CHECKSUM := a05e19e3f52da24ed071522f0fddf872157d7d25e869cfd156cd6f1e81c42152
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.13
 # cannot use GH_CONF:

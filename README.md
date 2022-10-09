@@ -26,7 +26,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.9    | LGPLv3                                                       |
 | [glib]          | 2.74.0    | LGPLv3                                                       |
-| [harfbuzz]      | 5.2.0     | MIT Licence                                                  |
+| [harfbuzz]      | 5.3.0     | MIT Licence                                                  |
 | [lcms]          | 2.13.1    | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.3     | MIT Licence                                                  |
@@ -42,7 +42,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.10.2    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.50.10   | LGPLv3                                                       |
+| [pango]         | 1.50.11   | LGPLv3                                                       |
 | [pixman]        | 0.40.0    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
@@ -105,8 +105,8 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.5     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 22.09.0   | GPLv2                                                        |
-| [sqlite]        | 3.39.3    | Public domain                                                |
+| [poppler]       | 22.10.0   | GPLv2                                                        |
+| [sqlite]        | 3.39.4    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
