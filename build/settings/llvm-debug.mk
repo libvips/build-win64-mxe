@@ -16,7 +16,7 @@ export LDFLAGS  := -Wl,--gc-sections -Wl,-lucrtbased
 # To debug with WinDbg (PDB format) use:
 #export CFLAGS   := -g -gcodeview
 #export CXXFLAGS := -g -gcodeview
-#export LDFLAGS  := -Wl,-pdb=
+#export LDFLAGS  := -Wl,--pdb=
 # (see: https://github.com/mstorsjo/llvm-mingw/blob/master/README.md#pdb-support)
 
 # Special flags for Rust.
