@@ -21,8 +21,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.9.12
-libxml2_VERSION  := 2.10.2
-libxml2_CHECKSUM := d240abe6da9c65cb1900dd9bf3a3501ccf88b3c2a1cb98317d03f272dda5b265
+libxml2_VERSION  := 2.10.3
+libxml2_CHECKSUM := 5d2cc3d78bec3dbe212a9d7fa629ada25a7da928af432c93060ff5c17ee28a9c
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -39,18 +39,11 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-64
-imagemagick_CHECKSUM := 3fd28f52dd8af0e896c29bbd4749326613ec6881ce33f8fb6bd5605a1984e027
+# alternatively, one could build libvips with GraphicsMagick
+imagemagick_VERSION  := 6.9.12-66
+imagemagick_CHECKSUM := 6683a42c4edebfa7888e2e30204681d65394ad41192dbd6432c0593c92ac5749
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
-
-# alternatively, one could build libvips with GraphicsMagick
-# upstream version is 1.3.36
-graphicsmagick_VERSION  := 1.3.38
-graphicsmagick_CHECKSUM := 8f8c9704ef09b24a3d233b1b8f2e98a10281f196ca6d170c466bad4f89b1a3bb
-graphicsmagick_SUBDIR   := GraphicsMagick-$(graphicsmagick_VERSION)
-graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
-graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
 librsvg_VERSION  := 2.55.1
@@ -128,18 +121,12 @@ cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsi
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
 # upstream version is 0.33.6
-pixman_VERSION  := 0.40.0
-pixman_CHECKSUM := 6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc
+pixman_VERSION  := 0.42.0
+pixman_CHECKSUM := 07f74c8d95e4a43eb2b08578b37f40b7937e6c5b48597b3a0bb2c13a53f46c13
 pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pixman-[0-9]*.patch)))
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
-
-# upstream version is 5.2.0
-harfbuzz_VERSION  := 5.3.0
-harfbuzz_CHECKSUM := a05e19e3f52da24ed071522f0fddf872157d7d25e869cfd156cd6f1e81c42152
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.13
 # cannot use GH_CONF:
@@ -436,6 +423,8 @@ define gdk-pixbuf_BUILD
 endef
 
 # build pixman with the Meson build system
+# build with -Da64-neon=disabled, see:
+# https://gitlab.freedesktop.org/pixman/pixman/-/issues/66
 define pixman_BUILD
     # Disable tests and demos
     $(SED) -i "/subdir('test')/{N;d;}" '$(SOURCE_DIR)/meson.build'
@@ -443,6 +432,7 @@ define pixman_BUILD
     $(MXE_MESON_WRAPPER) \
         -Dopenmp=disabled \
         -Dgtk=disabled \
+        -Da64-neon=disabled \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -573,7 +563,7 @@ define librsvg_BUILD
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
         $(SED) -i 's/f078966ea9ec6f5b003664ad36a7598dadb11179188643ae1adceabbaf7893ab/2b61f22c9caba100e52e84357f857ad12c7b9386c0c18e933e2789e1bd79c14d/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
         $(SED) -i 's/0c006642fbbe9fa5372a88cbbbb0bb4b391f635b2bde0c497de10740c1458c5e/54ad858051e051e95df10b867411991ca5f6f36ce66b5fa010655ea0a710d14f/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/cb9a830e0d440ed825aa897f268e4ae067204da4ffc162ba963977a4b309007f/2ad9662639d60baf1441bec3eb5db7bd726dbe9ad6b4fe20c25448ccd666131a/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/e2b5e6fe398f35c7db4af62ba1fd79b39591fe1bfaf304ae825ed3c8cf902d9c/9620026c949cd3c1ee583410444bab4118099c12f8f5a0e8a4930654bc82fd56/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/966128476fdf0d3148da21508a27a159ad2d272391e4a3ffbf18008300cca80c/ead5a3b748c9a5fcb145fa2e5cfc8df32f383369b8842fba4272ca3b568109ea/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(SOURCE_DIR)/.cargo'

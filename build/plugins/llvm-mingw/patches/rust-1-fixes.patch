@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 15 Sep 2020 11:50:00 +0200
-Subject: [PATCH 1/3] Add llvm-mingw i686/ARMv7 targets
+Subject: [PATCH 1/4] Add llvm-mingw i686/ARMv7 targets
 
 Upstream-Status: Pending
 
@@ -76,7 +76,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 22 Sep 2020 10:00:00 +0200
-Subject: [PATCH 2/3] Ensure that panic_unwind/unwind can be successfully built on
+Subject: [PATCH 2/4] Ensure that panic_unwind/unwind can be successfully built on
  llvm-mingw
 
 Fixes undefined symbol errors while linking these crates on llvm-mingw
@@ -133,7 +133,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 30 Aug 2022 23:20:27 +0200
-Subject: [PATCH 3/3] windows-gnullvm: avoid linking to libunwind statically
+Subject: [PATCH 3/4] windows-gnullvm: avoid linking to libunwind statically
 
 Avoid linking against the static variant of libunwind, which is not
 always available. Instead, prefer to use the unwind library from the
@@ -173,3 +173,64 @@ index 1111111..2222222 100644
 -#[cfg(all(target_os = "windows", target_env = "gnu", target_abi = "llvm"))]
 -#[link(name = "unwind", kind = "static", modifiers = "-bundle")]
 -extern "C" {}
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 17 Oct 2022 11:50:00 +0200
+Subject: [PATCH 4/4] Use GCC-style unwinding on MinGW targets other than i686
+
+See: https://github.com/msys2/MINGW-packages/pull/13278
+
+diff --git a/library/std/src/personality/gcc.rs b/library/std/src/personality/gcc.rs
+index 1111111..2222222 100644
+--- a/library/std/src/personality/gcc.rs
++++ b/library/std/src/personality/gcc.rs
+@@ -179,7 +179,7 @@ cfg_if::cfg_if! {
+         }
+     } else {
+         // Default personality routine, which is used directly on most targets
+-        // and indirectly on Windows x86_64 via SEH.
++        // and indirectly on Windows x86_64/armv7/aarch64 via SEH.
+         unsafe extern "C" fn rust_eh_personality_impl(
+             version: c_int,
+             actions: uw::_Unwind_Action,
+@@ -219,9 +219,9 @@ cfg_if::cfg_if! {
+         }
+ 
+         cfg_if::cfg_if! {
+-            if #[cfg(all(windows, target_arch = "x86_64", target_env = "gnu"))] {
+-                // On x86_64 MinGW targets, the unwinding mechanism is SEH however the unwind
+-                // handler data (aka LSDA) uses GCC-compatible encoding.
++            if #[cfg(all(windows, target_env = "gnu", not(target_arch = "x86")))] {
++                // On MinGW targets other than i686, the unwinding mechanism is SEH however
++                // the unwind handler data (aka LSDA) uses GCC-compatible encoding.
+                 #[lang = "eh_personality"]
+                 #[allow(nonstandard_style)]
+                 unsafe extern "C" fn rust_eh_personality(
+diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
+index 1111111..2222222 100644
+--- a/library/unwind/src/libunwind.rs
++++ b/library/unwind/src/libunwind.rs
+@@ -36,9 +36,12 @@ pub const unwinder_private_data_size: usize = 20;
+ #[cfg(all(target_arch = "arm", any(target_os = "ios", target_os = "watchos")))]
+ pub const unwinder_private_data_size: usize = 5;
+ 
+-#[cfg(all(target_arch = "aarch64", target_pointer_width = "64"))]
++#[cfg(all(target_arch = "aarch64", target_pointer_width = "64", not(all(target_os = "windows", target_env = "gnu"))))]
+ pub const unwinder_private_data_size: usize = 2;
+ 
++#[cfg(all(target_arch = "aarch64", target_pointer_width = "64", target_os = "windows", target_env = "gnu"))]
++pub const unwinder_private_data_size: usize = 6;
++
+ #[cfg(all(target_arch = "aarch64", target_pointer_width = "32"))]
+ pub const unwinder_private_data_size: usize = 5;
+ 
+@@ -269,7 +272,7 @@ if #[cfg(not(all(target_os = "ios", target_arch = "arm")))] {
+ } // cfg_if!
+ 
+ cfg_if::cfg_if! {
+-if #[cfg(all(windows, target_arch = "x86_64", target_env = "gnu"))] {
++if #[cfg(all(windows, target_env = "gnu", not(target_arch = "x86")))] {
+     // We declare these as opaque types. This is fine since you just need to
+     // pass them to _GCC_specific_handler and forget about them.
+     pub enum EXCEPTION_RECORD {}

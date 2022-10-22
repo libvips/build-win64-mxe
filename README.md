@@ -21,12 +21,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [cairo]         | 1.17.6    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.3.0     | MIT Licence                                                  |
 | [expat]         | 2.4.9     | MIT Licence                                                  |
-| [fontconfig]    | 2.14.0    | [fontconfig Licence] (BSD-like)                              |
+| [fontconfig]    | 2.14.1    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.12.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.9    | LGPLv3                                                       |
 | [glib]          | 2.74.0    | LGPLv3                                                       |
-| [harfbuzz]      | 5.3.0     | MIT Licence                                                  |
+| [harfbuzz]      | 5.3.1     | MIT Licence                                                  |
 | [lcms]          | 2.13.1    | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.3     | MIT Licence                                                  |
@@ -39,11 +39,11 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libtiff]       | 4.4.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.13.2    | LGPLv3                                                       |
 | [libwebp]       | 1.2.4     | New BSD License                                              |
-| [libxml2]       | 2.10.2    | MIT Licence                                                  |
+| [libxml2]       | 2.10.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.32    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.50.11   | LGPLv3                                                       |
-| [pixman]        | 0.40.0    | MIT Licence                                                  |
+| [pixman]        | 0.42.0    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
 
@@ -97,7 +97,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.1.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.1     | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-64 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-66 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.5     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.7.0     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
@@ -157,7 +157,7 @@ In that case, the following version of zlib is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [zlib]          | 1.2.12    | [zlib Licence]                                               |
+| [zlib]          | 1.2.13    | [zlib Licence]                                               |
 
 [zlib]: https://zlib.net/
 [zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h
@@ -176,7 +176,7 @@ prebuilt binaries while it is patent-encumbered.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libde265]      | 1.0.8     | LGPLv3                                                       |
+| [libde265]      | 1.0.9     | LGPLv3                                                       |
 | [x265]          | 3.5       | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265

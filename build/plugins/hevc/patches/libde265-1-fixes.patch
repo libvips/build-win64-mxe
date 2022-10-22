@@ -12,7 +12,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -66,3 +66,12 @@ endif()
+@@ -71,3 +71,12 @@ endif()
  add_subdirectory (libde265)
  add_subdirectory (dec265)
  add_subdirectory (enc265)
@@ -87,7 +87,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -51,6 +51,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
+@@ -56,6 +56,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
  endif()
  
  option(DISABLE_SSE "Disable SSE optimizations" OFF)
@@ -135,14 +135,14 @@ index 1111111..2222222
 +enable_language(ASM)
 +
 +option(DISABLE_THUMB "Disable ARM THUMB instructions" OFF)
-+  
-+set (arm_sources 
++
++set (arm_sources
 +  arm.cc arm.h
 +)
 +
 +add_library(arm OBJECT ${arm_sources})
 +
-+set (arm_neon_sources 
++set (arm_neon_sources
 +  asm.S cpudetect.S hevcdsp_qpel_neon.S neon.S
 +)
 +
