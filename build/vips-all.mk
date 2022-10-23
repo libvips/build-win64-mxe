@@ -2,12 +2,11 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.13.2
-$(PKG)_CHECKSUM := 41db5ed40a22ad50f8f37782e1ae5bac76f9f2e0b5731728f97c55f245f1da2a
+# https://github.com/libvips/libvips/tarball/f1f85185924621923d7fd3efc0365b91716d3732
+$(PKG)_VERSION  := f1f8518
+$(PKG)_CHECKSUM := 826f04a3b89f36520173ee82747bfdf9f550afbd18c91fe27a043dbfe71f6636
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
+$(PKG)_GH_CONF  := libvips/libvips/branches/reimplement-threadpool
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc imagemagick matio openexr \
@@ -16,8 +15,8 @@ $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
     mkdir -p $(PREFIX)/$(TARGET)/vips-packaging
-    $(foreach f, AUTHORS ChangeLog COPYING LICENSE README.md, \
-        [ -e '$(SOURCE_DIR)/$(f)' ] && cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
+    $(foreach f, ChangeLog LICENSE README.md, \
+        cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
 
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \

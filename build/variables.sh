@@ -1,9 +1,9 @@
 # included by all scripts
 
 vips_package=vips
-vips_version=8.13
-vips_patch_version=2
-#vips_pre_version=rc2
+vips_version=8.14
+vips_patch_version=0
+vips_pre_version=reimplement-threadpool
 
 if [ -n "$GIT_COMMIT" ]; then
   vips_version=$GIT_COMMIT
