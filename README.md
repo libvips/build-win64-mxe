@@ -37,7 +37,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.55.1    | LGPLv3                                                       |
 | [libspng]       | 0.7.2     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.4.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | [f1f8518] | LGPLv3                                                       |
+| [libvips]       | [672e26e] | LGPLv3                                                       |
 | [libwebp]       | 1.2.4     | New BSD License                                              |
 | [libxml2]       | 2.10.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
@@ -49,7 +49,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 
-[f1f8518]: https://github.com/libvips/libvips/commit/f1f85185924621923d7fd3efc0365b91716d3732
+[672e26e]: https://github.com/libvips/libvips/commit/672e26ef77ecf9e4f831625a5949523803c83f20
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/

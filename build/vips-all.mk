@@ -2,9 +2,9 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-# https://github.com/libvips/libvips/tarball/f1f85185924621923d7fd3efc0365b91716d3732
-$(PKG)_VERSION  := f1f8518
-$(PKG)_CHECKSUM := 826f04a3b89f36520173ee82747bfdf9f550afbd18c91fe27a043dbfe71f6636
+# https://github.com/libvips/libvips/tarball/672e26ef77ecf9e4f831625a5949523803c83f20
+$(PKG)_VERSION  := 672e26e
+$(PKG)_CHECKSUM := f98e4d6a0aedd5a97193ba5d12a0d0fd79925be5fef70ba969b4c1c2dbc06945
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libvips/libvips/branches/reimplement-threadpool
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
@@ -77,6 +77,7 @@ define $(PKG)_BUILD
 
     $(MXE_MESON_WRAPPER) \
         -Ddeprecated=false \
+        -Dexamples=false \
         -Dintrospection=false \
         -Dmodules=enabled \
         -Dheif-module=$(if $(IS_HEVC),enabled,disabled) \
