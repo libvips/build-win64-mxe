@@ -3,8 +3,8 @@ $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 ## Update dependencies
 
 # upstream version is 3.3
-libffi_VERSION  := 3.4.3
-libffi_CHECKSUM := 4416dd92b6ae8fcb5b10421e711c4d3cb31203d77521a77d85d0102311e6c3b8
+libffi_VERSION  := 3.4.4
+libffi_CHECKSUM := d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676
 libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
 libffi_SUBDIR   := libffi-$(libffi_VERSION)
 libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
@@ -12,8 +12,8 @@ libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_
 libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
 # upstream version is 2.42.6
-gdk-pixbuf_VERSION  := 2.42.9
-gdk-pixbuf_CHECKSUM := 28f7958e7bf29a32d4e963556d241d0a41a6786582ff6a5ad11665e0347fc962
+gdk-pixbuf_VERSION  := 2.42.10
+gdk-pixbuf_CHECKSUM := ee9b6c75d13ba096907a2e3c6b27b61bcd17f5c7ebeab5a5b439d2f2e39fe44b
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -61,23 +61,21 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 1.0.11
-# cannot use GH_CONF:
-# fribidi_GH_CONF  := fribidi/fribidi/releases,v
-fribidi_VERSION  := 1.0.12
-fribidi_CHECKSUM := 0cd233f97fc8c67bb3ac27ce8440def5d3ffacf516765b91c2cc654498293495
-fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
-fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
-fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
-fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
-
 # upstream version is 2.70.2
-glib_VERSION  := 2.74.0
-glib_CHECKSUM := 3652c7f072d7b031a6b5edd623f77ebc5dcd2ae698598abcc89ff39ca75add30
+glib_VERSION  := 2.74.1
+glib_CHECKSUM := 0ab981618d1db47845e56417b0d7c123f81a3427b2b9c93f5a46ff5bbb964964
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
+# upstream version is 2.4.9
+expat_VERSION  := 2.5.0
+expat_CHECKSUM := ef2420f0232c087801abf705e89ae65f6257df6b7931d37846a193ef2e8cdcbe
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
 
 # upstream version is 1.14.30
 libgsf_VERSION  := 1.14.50
@@ -426,12 +424,10 @@ endef
 # build with -Da64-neon=disabled, see:
 # https://gitlab.freedesktop.org/pixman/pixman/-/issues/66
 define pixman_BUILD
-    # Disable tests and demos
-    $(SED) -i "/subdir('test')/{N;d;}" '$(SOURCE_DIR)/meson.build'
-
     $(MXE_MESON_WRAPPER) \
         -Dopenmp=disabled \
         -Dgtk=disabled \
+        -Dtests=disabled \
         -Da64-neon=disabled \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
