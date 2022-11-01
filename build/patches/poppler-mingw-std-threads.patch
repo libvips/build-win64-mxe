@@ -57,7 +57,7 @@ diff --git a/poppler/CairoFontEngine.h b/poppler/CairoFontEngine.h
 index 1111111..2222222 100644
 --- a/poppler/CairoFontEngine.h
 +++ b/poppler/CairoFontEngine.h
-@@ -32,7 +32,11 @@
+@@ -33,7 +33,11 @@
  #define CAIROFONTENGINE_H
  
  #include <memory>
