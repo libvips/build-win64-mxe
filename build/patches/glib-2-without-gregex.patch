@@ -105,7 +105,7 @@ diff --git a/glib/meson.build b/glib/meson.build
 index 1111111..2222222 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -185,7 +185,6 @@ glib_sub_headers = files(
+@@ -215,7 +215,6 @@ glib_sub_headers = files(
    'grcbox.h',
    'grefcount.h',
    'grefstring.h',
@@ -113,7 +113,7 @@ index 1111111..2222222 100644
    'gscanner.h',
    'gsequence.h',
    'gshell.h',
-@@ -273,7 +272,6 @@ glib_sources = files(
+@@ -303,7 +302,6 @@ glib_sources += files(
    'grcbox.c',
    'grefcount.c',
    'grefstring.c',
@@ -121,7 +121,7 @@ index 1111111..2222222 100644
    'gscanner.c',
    'gsequence.c',
    'gshell.c',
-@@ -362,13 +360,7 @@ else
+@@ -392,13 +390,7 @@ else
    glib_dtrace_hdr = []
  endif
  
@@ -131,20 +131,19 @@ index 1111111..2222222 100644
 -  pcre2_static_args = ['-DPCRE2_STATIC']
 -endif
 -
--glib_c_args = ['-DG_LOG_DOMAIN="GLib"', '-DGLIB_COMPILATION'] + pcre2_static_args + glib_hidden_visibility_args
-+glib_c_args = ['-DG_LOG_DOMAIN="GLib"', '-DGLIB_COMPILATION'] + glib_hidden_visibility_args
+-glib_c_args = ['-DG_LOG_DOMAIN="GLib"'] + glib_c_args_internal + pcre2_static_args
++glib_c_args = ['-DG_LOG_DOMAIN="GLib"'] + glib_c_args_internal
  libglib = library('glib-2.0',
    glib_dtrace_obj, glib_dtrace_hdr,
    sources : [deprecated_sources, glib_sources],
-@@ -380,7 +372,7 @@ libglib = library('glib-2.0',
-   link_args : [noseh_link_args, glib_link_flags, win32_ldflags],
-   include_directories : configinc,
-   link_with: [charset_lib, gnulib_lib],
--  dependencies : [pcre2, thread_dep, librt] + libintl_deps + libiconv + platform_deps + [gnulib_libm_dependency, libm] + [libsysprof_capture_dep],
-+  dependencies : [thread_dep, librt] + libintl_deps + libiconv + platform_deps + [gnulib_libm_dependency, libm] + [libsysprof_capture_dep],
-   c_args : glib_c_args,
-   objc_args : glib_c_args,
- )
+@@ -417,7 +409,6 @@ libglib = library('glib-2.0',
+     libm,
+     librt,
+     libsysprof_capture_dep,
+-    pcre2,
+     platform_deps,
+     thread_dep,
+   ],
 diff --git a/gobject/gboxed.c b/gobject/gboxed.c
 index 1111111..2222222 100644
 --- a/gobject/gboxed.c
@@ -183,7 +182,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2051,40 +2051,6 @@ else
+@@ -2011,40 +2011,6 @@ else
    libiconv = dependency('iconv')
  endif
  

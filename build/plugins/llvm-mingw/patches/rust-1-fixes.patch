@@ -62,7 +62,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1151,7 +1151,9 @@ supported_targets! {
+@@ -1147,7 +1147,9 @@ supported_targets! {
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
      ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
@@ -144,7 +144,7 @@ diff --git a/compiler/rustc_target/src/spec/windows_gnullvm_base.rs b/compiler/r
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/windows_gnullvm_base.rs
 +++ b/compiler/rustc_target/src/spec/windows_gnullvm_base.rs
-@@ -7,7 +7,7 @@ pub fn opts() -> TargetOptions {
+@@ -8,7 +8,7 @@ pub fn opts() -> TargetOptions {
      // but LLVM maintainers rejected it: https://reviews.llvm.org/D51440
      let pre_link_args = TargetOptions::link_args(
          LinkerFlavor::Gnu(Cc::Yes, Lld::No),
@@ -165,7 +165,7 @@ index 1111111..2222222 100644
  #![cfg_attr(not(target_env = "msvc"), feature(libc))]
  
  cfg_if::cfg_if! {
-@@ -104,7 +103,3 @@ extern "C" {}
+@@ -103,7 +102,3 @@ extern "C" {}
  #[cfg(all(target_vendor = "fortanix", target_env = "sgx"))]
  #[link(name = "unwind", kind = "static", modifiers = "-bundle")]
  extern "C" {}

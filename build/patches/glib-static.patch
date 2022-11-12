@@ -5,56 +5,14 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 13 May 2019 17:00:00 +0200
-Subject: [PATCH 1/1] Build gio, gmodule and gthread static
+Subject: [PATCH 1/1] Build gio and gmodule static
 
 
-diff --git a/gio/giomodule.c b/gio/giomodule.c
-index 1111111..2222222 100644
---- a/gio/giomodule.c
-+++ b/gio/giomodule.c
-@@ -1108,27 +1108,8 @@ extern GType _g_win32_network_monitor_get_type (void);
- 
- static HMODULE gio_dll = NULL;
- 
--#ifndef GLIB_STATIC_COMPILATION
--
--BOOL WINAPI DllMain (HINSTANCE hinstDLL,
--                     DWORD     fdwReason,
--                     LPVOID    lpvReserved);
--
--BOOL WINAPI
--DllMain (HINSTANCE hinstDLL,
--	 DWORD     fdwReason,
--	 LPVOID    lpvReserved)
--{
--  if (fdwReason == DLL_PROCESS_ATTACH)
--    {
--      gio_dll = hinstDLL;
--      gio_win32_appinfo_init (FALSE);
--    }
--
--  return TRUE;
--}
--
--#elif defined(G_HAS_CONSTRUCTORS) /* && G_PLATFORM_WIN32 && GLIB_STATIC_COMPILATION */
-+#ifdef GLIB_STATIC_COMPILATION
-+#ifdef G_HAS_CONSTRUCTORS /* && G_PLATFORM_WIN32 && GLIB_STATIC_COMPILATION */
- extern void glib_win32_init (void);
- extern void gobject_win32_init (void);
- 
-@@ -1160,6 +1141,7 @@ giomodule_init_ctor (void)
- 
- #else /* G_PLATFORM_WIN32 && GLIB_STATIC_COMPILATION && !G_HAS_CONSTRUCTORS */
- #error Your platform/compiler is missing constructor support
-+#endif /* G_HAS_CONSTRUCTORS */
- #endif /* GLIB_STATIC_COMPILATION */
- 
- void *
 diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -819,12 +819,9 @@ else
+@@ -837,12 +837,9 @@ else
    gio_dtrace_hdr = []
  endif
  
@@ -72,7 +30,7 @@ diff --git a/gmodule/meson.build b/gmodule/meson.build
 index 1111111..2222222 100644
 --- a/gmodule/meson.build
 +++ b/gmodule/meson.build
-@@ -77,11 +77,8 @@ if host_system == 'windows'
+@@ -89,11 +89,8 @@ if host_system == 'windows'
    gmodule_sources += [gmodule_win_res]
  endif
  
@@ -85,20 +43,23 @@ index 1111111..2222222 100644
    install : true,
    include_directories : [configinc, gmoduleinc],
    dependencies : [libdl_dep, libglib_dep],
-diff --git a/gthread/meson.build b/gthread/meson.build
+diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
---- a/gthread/meson.build
-+++ b/gthread/meson.build
-@@ -12,11 +12,8 @@ if host_system == 'windows'
-   gthread_sources += [gthread_win_res]
+--- a/meson.build
++++ b/meson.build
+@@ -258,12 +258,13 @@ endif
+ if glib_build_static_only
+   glibconfig_conf.set('GLIB_STATIC_COMPILATION', '1')
+   glibconfig_conf.set('GOBJECT_STATIC_COMPILATION', '1')
+-  glibconfig_conf.set('GIO_STATIC_COMPILATION', '1')
+-  glibconfig_conf.set('GMODULE_STATIC_COMPILATION', '1')
+   glibconfig_conf.set('G_INTL_STATIC_COMPILATION', '1')
+   glibconfig_conf.set('FFI_STATIC_BUILD', '1')
  endif
  
--libgthread = library('gthread-2.0',
-+libgthread = static_library('gthread-2.0',
-   sources : gthread_sources,
--  version : library_version,
--  soversion : soversion,
--  darwin_versions : darwin_versions,
-   install : true,
-   dependencies : [libglib_dep],
-   c_args : ['-DG_LOG_DOMAIN="GThread"' ] + glib_hidden_visibility_args,
++glibconfig_conf.set('GIO_STATIC_COMPILATION', '1')
++glibconfig_conf.set('GMODULE_STATIC_COMPILATION', '1')
++
+ # Cygwin glib port maintainers made it clear
+ # (via the patches they apply) that they want no
+ # part of glib W32 code, therefore we do not define

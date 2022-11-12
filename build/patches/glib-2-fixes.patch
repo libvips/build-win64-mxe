@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 24 Jun 2022 11:15:23 +0200
-Subject: [PATCH 1/1] Ensure standalone intl support library can be found
+Subject: [PATCH 1/2] Ensure standalone intl support library can be found
 
 See: https://gitlab.gnome.org/GNOME/glib/-/merge_requests/2109#note_1485662
 
@@ -15,7 +15,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2110,11 +2110,11 @@ if libintl.found()
+@@ -2070,11 +2070,11 @@ if libintl.found()
    #
    # Meson's builtin dependency lookup as of 0.60.0 doesn't check for
    # pthread, so we do this manually here.
@@ -29,7 +29,7 @@ index 1111111..2222222 100644
        libintl_deps += [libintl, libintl_pthread]
      else
        libintl = disabler()
-@@ -2123,7 +2123,7 @@ if libintl.found()
+@@ -2083,7 +2083,7 @@ if libintl.found()
  endif
  
  if libintl.found()
@@ -38,3 +38,63 @@ index 1111111..2222222 100644
  else
    libintl = subproject('proxy-libintl').get_variable('intl_dep')
    libintl_deps = [libintl]
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 12 Nov 2022 14:49:04 +0100
+Subject: [PATCH 2/2] giomodule: allow to be statically linked against GLib
+
+i.e. when GLib and/or GObject is build as a shared library.
+
+Upstream-Status: Pending
+
+diff --git a/gio/giomodule.c b/gio/giomodule.c
+index 1111111..2222222 100644
+--- a/gio/giomodule.c
++++ b/gio/giomodule.c
+@@ -1117,7 +1117,7 @@ extern GType _g_win32_network_monitor_get_type (void);
+ 
+ static HMODULE gio_dll = NULL;
+ 
+-#ifndef GLIB_STATIC_COMPILATION
++#ifndef GIO_STATIC_COMPILATION
+ 
+ BOOL WINAPI DllMain (HINSTANCE hinstDLL,
+                      DWORD     fdwReason,
+@@ -1137,9 +1137,13 @@ DllMain (HINSTANCE hinstDLL,
+   return TRUE;
+ }
+ 
+-#elif defined(G_HAS_CONSTRUCTORS) /* && G_PLATFORM_WIN32 && GLIB_STATIC_COMPILATION */
++#elif defined(G_HAS_CONSTRUCTORS) /* && G_PLATFORM_WIN32 && GIO_STATIC_COMPILATION */
++#ifdef GLIB_STATIC_COMPILATION
+ extern void glib_win32_init (void);
++#endif /* GLIB_STATIC_COMPILATION */
++#ifdef GOBJECT_STATIC_COMPILATION
+ extern void gobject_win32_init (void);
++#endif /* GOBJECT_STATIC_COMPILATION */
+ 
+ #ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
+ #pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(giomodule_init_ctor)
+@@ -1162,14 +1166,18 @@ giomodule_init_ctor (void)
+    * In this case, we must ensure explicitly that glib and gobject are always
+    * well initialized BEFORE gio.
+    */
++#ifdef GLIB_STATIC_COMPILATION
+   glib_win32_init ();
++#endif /* GLIB_STATIC_COMPILATION */
++#ifdef GOBJECT_STATIC_COMPILATION
+   gobject_win32_init ();
++#endif /* GOBJECT_STATIC_COMPILATION */
+   gio_win32_appinfo_init (FALSE);
+ }
+ 
+-#else /* G_PLATFORM_WIN32 && GLIB_STATIC_COMPILATION && !G_HAS_CONSTRUCTORS */
++#else /* G_PLATFORM_WIN32 && GIO_STATIC_COMPILATION && !G_HAS_CONSTRUCTORS */
+ #error Your platform/compiler is missing constructor support
+-#endif /* GLIB_STATIC_COMPILATION */
++#endif /* GIO_STATIC_COMPILATION */
+ 
+ void *
+ _g_io_win32_get_module (void)
+ 

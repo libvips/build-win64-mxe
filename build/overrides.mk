@@ -40,8 +40,8 @@ matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSI
 
 # upstream version is 7, we want ImageMagick 6
 # alternatively, one could build libvips with GraphicsMagick
-imagemagick_VERSION  := 6.9.12-66
-imagemagick_CHECKSUM := 6683a42c4edebfa7888e2e30204681d65394ad41192dbd6432c0593c92ac5749
+imagemagick_VERSION  := 6.9.12-67
+imagemagick_CHECKSUM := 3e01990e1557491efee3675d395811ac9d79ea717df931fd28a3c538f38addd5
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -62,8 +62,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.74.1
-glib_CHECKSUM := 0ab981618d1db47845e56417b0d7c123f81a3427b2b9c93f5a46ff5bbb964964
+glib_VERSION  := 2.75.0
+glib_CHECKSUM := 6dde8e55cc4a2c83d96797120b08bcffb5f645b2e212164ae22d63c40e0e6360
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -111,22 +111,12 @@ cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsi
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
 # upstream version is 0.33.6
-pixman_VERSION  := 0.42.0
-pixman_CHECKSUM := 07f74c8d95e4a43eb2b08578b37f40b7937e6c5b48597b3a0bb2c13a53f46c13
+pixman_VERSION  := 0.42.2
+pixman_CHECKSUM := ea1480efada2fd948bc75366f7c349e1c96d3297d09a3fe62626e38e234a625e
 pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pixman-[0-9]*.patch)))
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
-
-# upstream version is 2.13
-# cannot use GH_CONF:
-# lcms_GH_CONF  := mm2/Little-CMS,lcms
-lcms_VERSION  := 2.13.1
-lcms_CHECKSUM := d473e796e7b27c5af01bd6d1552d42b45b43457e7182ce9903f38bb748203b88
-lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
-lcms_SUBDIR   := lcms2-$(lcms_VERSION)
-lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
-lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
 
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
@@ -135,14 +125,6 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
-
-# upstream version is 22.10.0
-poppler_VERSION  := 22.11.0
-poppler_CHECKSUM := 093ba9844ed774285517361c15e21a31ba4df278a499263d4403cca74f2da828
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
