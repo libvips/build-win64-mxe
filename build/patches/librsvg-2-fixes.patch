@@ -34,7 +34,7 @@ diff --git a/Cargo.toml b/Cargo.toml
 index 1111111..2222222 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -42,7 +42,7 @@ libxml2 = { name = "libxml-2.0", version = "2.9" }
+@@ -46,7 +46,7 @@ libxml2 = { name = "libxml-2.0", version = "2.9" }
  
  [lib]
  name = "librsvg"

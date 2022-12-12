@@ -31,18 +31,18 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
 | [libgsf]        | 1.14.50   | LGPLv3                                                       |
-| [libheif]       | 1.13.0    | LGPLv3                                                       |
+| [libheif]       | 1.14.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.38    | [libpng License version 2]                                   |
-| [librsvg]       | 2.55.1    | LGPLv3                                                       |
-| [libspng]       | 0.7.2     | BSD 2-Clause                                                 |
+| [libpng]        | 1.6.39    | [libpng License version 2]                                   |
+| [librsvg]       | 2.55.90   | LGPLv3                                                       |
+| [libspng]       | 0.7.3     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.4.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.13.3    | LGPLv3                                                       |
 | [libwebp]       | 1.2.4     | New BSD License                                              |
 | [libxml2]       | 2.10.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.33    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.50.11   | LGPLv3                                                       |
+| [pango]         | 1.50.12   | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
@@ -55,7 +55,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [cgif]: https://github.com/dloebl/cgif
 [expat]: https://github.com/libexpat/libexpat
 [fontconfig]: https://gitlab.freedesktop.org/fontconfig/fontconfig
-[fontconfig Licence]: https://gitlab.freedesktop.org/fontconfig/fontconfig/blob/master/COPYING
+[fontconfig Licence]: https://gitlab.freedesktop.org/fontconfig/fontconfig/blob/main/COPYING
 [freetype]: https://gitlab.freedesktop.org/freetype/freetype
 [freetype Licence]: https://gitlab.freedesktop.org/freetype/freetype/blob/master/docs/FTL.TXT
 [fribidi]: https://github.com/fribidi/fribidi
@@ -73,7 +73,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [librsvg]: https://gitlab.gnome.org/GNOME/librsvg
 [libspng]: https://github.com/randy408/libspng
 [libtiff]: https://gitlab.com/libtiff/libtiff
-[libtiff License]: https://libtiff.gitlab.io/libtiff/misc.html
+[libtiff License]: https://libtiff.gitlab.io/libtiff/project/license.html
 [libvips]: https://github.com/libvips/libvips
 [libwebp]: https://github.com/webmproject/libwebp
 [libxml2]: https://gitlab.gnome.org/GNOME/libxml2
@@ -94,10 +94,10 @@ Same as libvips-web + these extra dependencies:
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
-| [cfitsio]       | 4.1.0     | BSD-like                                                     |
+| [cfitsio]       | 4.2.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.2     | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-67 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-68 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.6     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.7.0     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
@@ -105,8 +105,8 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.5     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 22.11.0   | GPLv2                                                        |
-| [sqlite]        | 3.39.4    | Public domain                                                |
+| [poppler]       | 22.12.0   | GPLv2                                                        |
+| [sqlite]        | 3.40.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -141,7 +141,7 @@ In that case, the following version of libjpeg-turbo is built:
 | [libjpeg-turbo] | 2.1.4     | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
-[zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/LICENSE.md
+[zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/LICENSE.md
 
 ## zlib
 

@@ -40,22 +40,22 @@ matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSI
 
 # upstream version is 7, we want ImageMagick 6
 # alternatively, one could build libvips with GraphicsMagick
-imagemagick_VERSION  := 6.9.12-67
-imagemagick_CHECKSUM := 3e01990e1557491efee3675d395811ac9d79ea717df931fd28a3c538f38addd5
+imagemagick_VERSION  := 6.9.12-68
+imagemagick_CHECKSUM := de9eaa0abc70d90e5e08fb7b1ed86d14b7ae12040ba71f822077c765fdc5a61c
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.55.1
-librsvg_CHECKSUM := 6baf48a9d3a56fd13bbfbb9f1f76759b240b70a1fa220fd238474d66a926f98c
+librsvg_VERSION  := 2.55.90
+librsvg_CHECKSUM := 54f8dcd483d2bd801a69fc971b92e23fc118d8cbd6373a9ef1237f9f3522c69a
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.50.0
-pango_VERSION  := 1.50.11
-pango_CHECKSUM := 8800f812d89ee61388188703203f3a7878963c22f8695aaf1fa0a1a1428d17ae
+pango_VERSION  := 1.50.12
+pango_CHECKSUM := caef96d27bbe792a6be92727c73468d832b13da57c8071ef79b9df69ee058fe3
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -102,8 +102,8 @@ openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 3410
-cfitsio_VERSION  := 4.1.0
-cfitsio_CHECKSUM := b367c695d2831958e7166921c3b356d5dfa51b1ecee505b97416ba39d1b6c17a
+cfitsio_VERSION  := 4.2.0
+cfitsio_CHECKSUM := eba53d1b3f6e345632bb09a7b752ec7ced3d63ec5153a848380f3880c5d61889
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
@@ -539,10 +539,11 @@ define librsvg_BUILD
     $(if $(IS_LLVM), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
-        $(SED) -i 's/f078966ea9ec6f5b003664ad36a7598dadb11179188643ae1adceabbaf7893ab/2b61f22c9caba100e52e84357f857ad12c7b9386c0c18e933e2789e1bd79c14d/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/0c006642fbbe9fa5372a88cbbbb0bb4b391f635b2bde0c497de10740c1458c5e/54ad858051e051e95df10b867411991ca5f6f36ce66b5fa010655ea0a710d14f/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/ab67633c5ee992f8af48379b429388444bcd1343c6f15317dff63024458a57be/ccd1f5e9c8f96981063fa2482d4b668908bccc493d4f286cc9acfceeef051d6d/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/eea8b74d2b7ad2d3b51df7900d9af31b37ee00faacd9deff1a486d7b557e228a/ef2ea740cca952c11667c20396e349bddee27e81f2e1e1364fe4233407d45a9f/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/e2b5e6fe398f35c7db4af62ba1fd79b39591fe1bfaf304ae825ed3c8cf902d9c/9620026c949cd3c1ee583410444bab4118099c12f8f5a0e8a4930654bc82fd56/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/966128476fdf0d3148da21508a27a159ad2d272391e4a3ffbf18008300cca80c/ead5a3b748c9a5fcb145fa2e5cfc8df32f383369b8842fba4272ca3b568109ea/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
+        $(SED) -i 's/caa6ea5f726567d67e355778ebc52a299ed6311c5d0f86555392ed08753faa27/07a5fa36a5e78b264ddf759e1b75712512f075896bd8559073f9b39c0b7faf02/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
+        $(SED) -i 's/06b135884c3122aa862acad8fd5147ad89aa0ece0513d3d0021170ab4b39553e/d2cad5fe0eb2e213809d26ccef4f9b1fe20c9d3216566e66247757f7389d7025/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(SOURCE_DIR)/.cargo'
         (echo '[source.crates-io]'; \

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 5 May 2021 21:00:00 +0200
-Subject: [PATCH 1/4] Add llvm-mingw targets
+Subject: [PATCH 1/4] Add llvm-mingw i686/ARMv7 targets
 
 Upstream-Status: Inappropriate [enable feature]
 Upstream only accepts Rust targets that are available in stable releases.
@@ -10,26 +10,7 @@ diff --git a/vendor/cfg-expr/src/targets/builtins.rs b/vendor/cfg-expr/src/targe
 index 1111111..2222222 100644
 --- a/vendor/cfg-expr/src/targets/builtins.rs
 +++ b/vendor/cfg-expr/src/targets/builtins.rs
-@@ -109,6 +109,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
-         has_atomics: HasAtomics::atomic_8_16_32_64_128_ptr,
-         panic: Panic::unwind,
-     },
-+    TargetInfo {
-+        triple: Triple::new_const("aarch64-pc-windows-gnullvm"),
-+        os: Some(Os::windows),
-+        arch: Arch::aarch64,
-+        env: Some(Env::gnu),
-+        vendor: Some(Vendor::pc),
-+        families: Families::windows,
-+        pointer_width: 64,
-+        endian: Endian::little,
-+        has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
-+        panic: Panic::unwind,
-+    },
-     TargetInfo {
-         triple: Triple::new_const("aarch64-pc-windows-msvc"),
-         os: Some(Os::windows),
-@@ -505,6 +517,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+@@ -541,6 +553,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
          has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
          panic: Panic::unwind,
      },
@@ -48,7 +29,7 @@ index 1111111..2222222 100644
      TargetInfo {
          triple: Triple::new_const("armv7-unknown-freebsd"),
          os: Some(Os::freebsd),
-@@ -841,6 +865,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+@@ -889,6 +913,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
          has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
          panic: Panic::unwind,
      },
@@ -67,25 +48,6 @@ index 1111111..2222222 100644
      TargetInfo {
          triple: Triple::new_const("i686-pc-windows-msvc"),
          os: Some(Os::windows),
-@@ -1921,6 +1957,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
-         has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
-         panic: Panic::unwind,
-     },
-+    TargetInfo {
-+        triple: Triple::new_const("x86_64-pc-windows-gnullvm"),
-+        os: Some(Os::windows),
-+        arch: Arch::x86_64,
-+        env: Some(Env::gnu),
-+        vendor: Some(Vendor::pc),
-+        families: Families::windows,
-+        pointer_width: 64,
-+        endian: Endian::little,
-+        has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
-+        panic: Panic::unwind,
-+    },
-     TargetInfo {
-         triple: Triple::new_const("x86_64-pc-windows-msvc"),
-         os: Some(Os::windows),
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -102,7 +64,7 @@ diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/build.rs
 +++ b/vendor/compiler_builtins/build.rs
-@@ -316,7 +316,7 @@ mod c {
+@@ -331,7 +331,7 @@ mod c {
          if target_arch == "arm"
              && target_os != "ios"
              && target_os != "watchos"
@@ -230,22 +192,89 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 30 Apr 2022 16:05:00 +0200
-Subject: [PATCH 4/4] Fix build error on llvm-mingw (targeting ARMv7)
+Subject: [PATCH 4/4] Fix build errors on llvm-mingw (targeting ARMv7)
 
 Details:
-error[E0412]: cannot find type `DELAYLOAD_INFO` in this scope
-    --> vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs:2300:140
+error[E0412]: cannot find type `WSADATA` in this scope
+    --> vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs:347:63
      |
-2300 | ..._CALLBACK = ::core::option::Option<unsafe extern "system" fn(notificationreason: u32, delayloadinfo: *const DELAYLOAD_INFO) -> *mut ::...
+347  |     pub fn WSAStartup(wversionrequested: u16, lpwsadata: *mut WSADATA) -> i32;
+     |                                                               ^^^^^^^ help: a struct with a similar name exists: `WSPDATA`
+...
+8679 | pub struct WSPDATA {
+     | ------------------ similarly named struct `WSPDATA` defined here
+
+error[E0412]: cannot find type `SERVENT` in this scope
+   --> vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs:481:103
+    |
+481 |     pub fn getservbyname(name: ::windows_sys::core::PCSTR, proto: ::windows_sys::core::PCSTR) -> *mut SERVENT;
+    |                                                                                                       ^^^^^^^ not found in this scope
+
+error[E0412]: cannot find type `SERVENT` in this scope
+   --> vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs:483:80
+    |
+483 |     pub fn getservbyport(port: i32, proto: ::windows_sys::core::PCSTR) -> *mut SERVENT;
+    |                                                                                ^^^^^^^ not found in this scope
+
+error[E0412]: cannot find type `DELAYLOAD_INFO` in this scope
+    --> vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs:3241:140
+     |
+3241 | ..._CALLBACK = ::core::option::Option<unsafe extern "system" fn(notificationreason: u32, delayloadinfo: *const DELAYLOAD_INFO) -> *mut ::...
      |             - help: you might be missing a type parameter: `<DELAYLOAD_INFO>`                                  ^^^^^^^^^^^^^^ not found in this scope
 
 Upstream-Status: Pending
 
+diff --git a/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs b/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs
+index 1111111..2222222 100644
+--- a/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs
++++ b/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs
+@@ -6887,16 +6887,16 @@ impl ::core::clone::Clone for SERVENT {
+ }
+ #[repr(C)]
+ #[doc = "*Required features: `\"Win32_Networking_WinSock\"`*"]
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ pub struct SERVENT {
+     pub s_name: ::windows_sys::core::PSTR,
+     pub s_aliases: *mut *mut i8,
+     pub s_port: i16,
+     pub s_proto: ::windows_sys::core::PSTR,
+ }
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::marker::Copy for SERVENT {}
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::clone::Clone for SERVENT {
+     fn clone(&self) -> Self {
+         *self
+@@ -8209,7 +8209,7 @@ impl ::core::clone::Clone for WSADATA {
+ }
+ #[repr(C)]
+ #[doc = "*Required features: `\"Win32_Networking_WinSock\"`, `\"Win32_Foundation\"`*"]
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ #[cfg(feature = "Win32_Foundation")]
+ pub struct WSADATA {
+     pub wVersion: u16,
+@@ -8220,10 +8220,10 @@ pub struct WSADATA {
+     pub iMaxUdpDg: u16,
+     pub lpVendorInfo: ::windows_sys::core::PSTR,
+ }
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ #[cfg(feature = "Win32_Foundation")]
+ impl ::core::marker::Copy for WSADATA {}
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ #[cfg(feature = "Win32_Foundation")]
+ impl ::core::clone::Clone for WSADATA {
+     fn clone(&self) -> Self {
 diff --git a/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs b/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
 index 1111111..2222222 100644
 --- a/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
 +++ b/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
-@@ -1352,7 +1352,7 @@ impl ::core::clone::Clone for DELAYLOAD_INFO {
+@@ -2310,7 +2310,7 @@ impl ::core::clone::Clone for DELAYLOAD_INFO {
  }
  #[repr(C)]
  #[doc = "*Required features: `\"Win32_System_WindowsProgramming\"`*"]
@@ -254,7 +283,7 @@ index 1111111..2222222 100644
  pub struct DELAYLOAD_INFO {
      pub Size: u32,
      pub DelayloadDescriptor: *mut IMAGE_DELAYLOAD_DESCRIPTOR,
-@@ -1363,9 +1363,9 @@ pub struct DELAYLOAD_INFO {
+@@ -2321,9 +2321,9 @@ pub struct DELAYLOAD_INFO {
      pub Unused: *mut ::core::ffi::c_void,
      pub LastError: u32,
  }

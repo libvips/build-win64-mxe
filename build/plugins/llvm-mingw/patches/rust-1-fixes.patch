@@ -62,7 +62,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1147,7 +1147,9 @@ supported_targets! {
+@@ -1152,7 +1152,9 @@ supported_targets! {
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
      ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
@@ -111,7 +111,7 @@ diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -105,7 +105,7 @@ extern "C" {
+@@ -114,7 +114,7 @@ extern "C" {
  }
  
  cfg_if::cfg_if! {
@@ -120,7 +120,7 @@ index 1111111..2222222 100644
      // Not ARM EHABI
      #[repr(C)]
      #[derive(Copy, Clone, PartialEq)]
-@@ -119,7 +119,7 @@ if #[cfg(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm")))
+@@ -128,7 +128,7 @@ if #[cfg(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm")))
      pub use _Unwind_Action::*;
  
      #[cfg_attr(
@@ -139,6 +139,10 @@ Avoid linking against the static variant of libunwind, which is not
 always available. Instead, prefer to use the unwind library from the
 toolchain, which the linker will automatically include, depending
 on what's available, and depending on the -static flag.
+
+See: https://github.com/rust-lang/rust/pull/103894
+
+Upstream-Status: Pending
 
 diff --git a/compiler/rustc_target/src/spec/windows_gnullvm_base.rs b/compiler/rustc_target/src/spec/windows_gnullvm_base.rs
 index 1111111..2222222 100644
@@ -165,14 +169,22 @@ index 1111111..2222222 100644
  #![cfg_attr(not(target_env = "msvc"), feature(libc))]
  
  cfg_if::cfg_if! {
-@@ -103,7 +102,3 @@ extern "C" {}
- #[cfg(all(target_vendor = "fortanix", target_env = "sgx"))]
- #[link(name = "unwind", kind = "static", modifiers = "-bundle")]
- extern "C" {}
--
--#[cfg(all(target_os = "windows", target_env = "gnu", target_abi = "llvm"))]
--#[link(name = "unwind", kind = "static", modifiers = "-bundle")]
--extern "C" {}
+diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
+index 1111111..2222222 100644
+--- a/library/unwind/src/libunwind.rs
++++ b/library/unwind/src/libunwind.rs
+@@ -96,10 +96,7 @@ pub type _Unwind_Exception_Cleanup_Fn =
+ // rustc_codegen_ssa::src::back::symbol_export, rustc_middle::middle::exported_symbols
+ // and RFC 2841
+ #[cfg_attr(
+-    any(
+-        all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux")),
+-        all(target_os = "windows", target_env = "gnu", target_abi = "llvm")
+-    ),
++    all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux")),
+     link(name = "unwind", kind = "static", modifiers = "-bundle")
+ )]
+ extern "C-unwind" {
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -180,6 +192,8 @@ Date: Mon, 17 Oct 2022 11:50:00 +0200
 Subject: [PATCH 4/4] Use GCC-style unwinding on MinGW targets other than i686
 
 See: https://github.com/msys2/MINGW-packages/pull/13278
+
+Upstream-Status: Pending
 
 diff --git a/library/std/src/personality/gcc.rs b/library/std/src/personality/gcc.rs
 index 1111111..2222222 100644
@@ -198,7 +212,7 @@ index 1111111..2222222 100644
          }
  
          cfg_if::cfg_if! {
--            if #[cfg(all(windows, target_arch = "x86_64", target_env = "gnu"))] {
+-            if #[cfg(all(windows, any(target_arch = "aarch64", target_arch = "x86_64"), target_env = "gnu"))] {
 -                // On x86_64 MinGW targets, the unwinding mechanism is SEH however the unwind
 -                // handler data (aka LSDA) uses GCC-compatible encoding.
 +            if #[cfg(all(windows, target_env = "gnu", not(target_arch = "x86")))] {
@@ -211,25 +225,11 @@ diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -36,9 +36,12 @@ pub const unwinder_private_data_size: usize = 20;
- #[cfg(all(target_arch = "arm", any(target_os = "ios", target_os = "watchos")))]
- pub const unwinder_private_data_size: usize = 5;
- 
--#[cfg(all(target_arch = "aarch64", target_pointer_width = "64"))]
-+#[cfg(all(target_arch = "aarch64", target_pointer_width = "64", not(all(target_os = "windows", target_env = "gnu"))))]
- pub const unwinder_private_data_size: usize = 2;
- 
-+#[cfg(all(target_arch = "aarch64", target_pointer_width = "64", target_os = "windows", target_env = "gnu"))]
-+pub const unwinder_private_data_size: usize = 6;
-+
- #[cfg(all(target_arch = "aarch64", target_pointer_width = "32"))]
- pub const unwinder_private_data_size: usize = 5;
- 
-@@ -269,7 +272,7 @@ if #[cfg(not(all(target_os = "ios", target_arch = "arm")))] {
+@@ -275,7 +275,7 @@ if #[cfg(not(all(target_os = "ios", target_arch = "arm")))] {
  } // cfg_if!
  
  cfg_if::cfg_if! {
--if #[cfg(all(windows, target_arch = "x86_64", target_env = "gnu"))] {
+-if #[cfg(all(windows, any(target_arch = "aarch64", target_arch = "x86_64"), target_env = "gnu"))] {
 +if #[cfg(all(windows, target_env = "gnu", not(target_arch = "x86")))] {
      // We declare these as opaque types. This is fine since you just need to
      // pass them to _GCC_specific_handler and forget about them.
