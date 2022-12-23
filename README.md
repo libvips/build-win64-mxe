@@ -25,8 +25,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.12.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
-| [glib]          | 2.75.0    | LGPLv3                                                       |
-| [harfbuzz]      | 5.3.1     | MIT Licence                                                  |
+| [glib]          | 2.75.1    | LGPLv3                                                       |
+| [harfbuzz]      | 6.0.0     | MIT Licence                                                  |
 | [lcms]          | 2.14      | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
@@ -36,8 +36,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libpng]        | 1.6.39    | [libpng License version 2]                                   |
 | [librsvg]       | 2.55.90   | LGPLv3                                                       |
 | [libspng]       | 0.7.3     | BSD 2-Clause                                                 |
-| [libtiff]       | 4.4.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.13.3    | LGPLv3                                                       |
+| [libtiff]       | 4.5.0     | [libtiff License] (BSD-like)                                 |
+| [libvips]       | 8.14.0²   | LGPLv3                                                       |
 | [libwebp]       | 1.2.4     | New BSD License                                              |
 | [libxml2]       | 2.10.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
@@ -48,6 +48,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
+² libvips is built from the [`v8.14.0-rc1`](https://github.com/libvips/libvips/tree/v8.14.0-rc1) tag, see:
+https://github.com/libvips/libvips/releases/tag/v8.14.0-rc1
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -97,7 +99,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.2.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.2     | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-68 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-70 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.6     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.7.0     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |

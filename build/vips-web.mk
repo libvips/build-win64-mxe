@@ -2,12 +2,12 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.13.3
-$(PKG)_CHECKSUM := 4eff5cdc8dbe1a05a926290a99014e20ba386f5dcca38d9774bef61413435d4c
+$(PKG)_VERSION  := 8.14.0
+$(PKG)_CHECKSUM := 5c980a15fa5c9ddd28e4bb803d87026e0ac9faee615d75484a02cea5daed49c9
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,-rc1,,,.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.gz
+$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc cgif
@@ -15,8 +15,8 @@ $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
     mkdir -p $(PREFIX)/$(TARGET)/vips-packaging
-    $(foreach f, AUTHORS ChangeLog COPYING LICENSE README.md, \
-        [ -e '$(SOURCE_DIR)/$(f)' ] && cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
+    $(foreach f, ChangeLog LICENSE README.md, \
+        cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
 
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \

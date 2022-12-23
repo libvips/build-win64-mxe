@@ -37,13 +37,12 @@ new file mode 100644
 index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/i686_pc_windows_gnullvm.rs
-@@ -0,0 +1,20 @@
-+use crate::spec::{Cc, FramePointer, LinkerFlavor, Lld, Target};
+@@ -0,0 +1,19 @@
++use crate::spec::{FramePointer, Target};
 +
 +pub fn target() -> Target {
 +    let mut base = super::windows_gnullvm_base::opts();
 +    base.cpu = "pentium4".into();
-+    base.add_pre_link_args(LinkerFlavor::Gnu(Cc::Yes, Lld::No), &["-mi386pe"]);
 +    base.max_atomic_width = Some(64);
 +    base.frame_pointer = FramePointer::Always; // Required for backtraces
 +    base.linker = Some("i686-w64-mingw32-clang".into());
@@ -76,7 +75,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 22 Sep 2020 10:00:00 +0200
-Subject: [PATCH 2/4] Ensure that panic_unwind/unwind can be successfully built on
+Subject: [PATCH 2/4] Ensure that std/unwind can be successfully built on
  llvm-mingw
 
 Fixes undefined symbol errors while linking these crates on llvm-mingw
@@ -84,7 +83,7 @@ Fixes undefined symbol errors while linking these crates on llvm-mingw
 
 Details:
 ld.lld: error: undefined symbol: __gnu_unwind_frame
->>> referenced by libpanic_unwind-<HASH>.rlib(<O_FILE>):(panic_unwind::real_imp::rust_eh_personality::continue_unwind::<HASH>)
+>>> referenced by libstd-<HASH>.rlib(<O_FILE>):(std::personality::gcc::rust_eh_personality::continue_unwind::<HASH>)
 
 ld.lld: error: undefined symbol: _Unwind_VRS_Get
 >>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_GetGR::<HASH>)

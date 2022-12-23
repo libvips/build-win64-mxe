@@ -28,20 +28,10 @@ libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
-# upstream version is 1.5.2
-# cannot use GH_CONF:
-# matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.23
-matio_CHECKSUM := 9f91eae661df46ea53c311a1b2dcff72051095b023c612d7cbfc09406c9f4d6e
-matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
-matio_SUBDIR   := matio-$(matio_VERSION)
-matio_FILE     := matio-$(matio_VERSION).tar.gz
-matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
-
 # upstream version is 7, we want ImageMagick 6
 # alternatively, one could build libvips with GraphicsMagick
-imagemagick_VERSION  := 6.9.12-68
-imagemagick_CHECKSUM := de9eaa0abc70d90e5e08fb7b1ed86d14b7ae12040ba71f822077c765fdc5a61c
+imagemagick_VERSION  := 6.9.12-70
+imagemagick_CHECKSUM := a036c9e4cf612cf65b52245801db6cca12dffcf921ec595ee9e476882f023389
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -62,8 +52,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.75.0
-glib_CHECKSUM := 6dde8e55cc4a2c83d96797120b08bcffb5f645b2e212164ae22d63c40e0e6360
+glib_VERSION  := 2.75.1
+glib_CHECKSUM := 96fd22355a542cca96c31082f2d09b72cb5a3454b6ea60c1be17c987a18a6b93
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -613,14 +603,24 @@ define zlib_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef
 
+# avoid building unnecessary things
 # disable the C++ API for now, we don't use it anyway
-# build without lzma
+# build without lzma and zstd
+# disable old-style JPEG in TIFF images, see:
+# https://github.com/libvips/libvips/issues/1328#issuecomment-572020749
 define tiff_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
-        --without-x \
+        --disable-tools \
+        --disable-tests \
+        --disable-contrib \
+        --disable-docs \
+        --disable-mdi \
+        --disable-pixarlog \
+        --disable-old-jpeg \
         --disable-cxx \
-        --disable-lzma
+        --disable-lzma \
+        --disable-zstd
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
 endef
@@ -672,6 +672,7 @@ define cairo_BUILD
 endef
 
 define matio_BUILD
+    # https://github.com/tbeu/matio/issues/78 for ac_cv_va_copy
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         ac_cv_va_copy=C99
