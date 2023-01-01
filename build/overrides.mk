@@ -30,8 +30,8 @@ libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_
 
 # upstream version is 7, we want ImageMagick 6
 # alternatively, one could build libvips with GraphicsMagick
-imagemagick_VERSION  := 6.9.12-70
-imagemagick_CHECKSUM := a036c9e4cf612cf65b52245801db6cca12dffcf921ec595ee9e476882f023389
+imagemagick_VERSION  := 6.9.12-72
+imagemagick_CHECKSUM := bea80fa79961301fac9f06bc926314d74bd711a06edff5eb4190fd181b6aef83
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
