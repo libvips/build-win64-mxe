@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 25 Nov 2019 15:30:00 +0100
-Subject: [PATCH 1/3] Remove -D_FORTIFY_SOURCE=2 flag
+Subject: [PATCH 1/7] Remove -D_FORTIFY_SOURCE=2 flag
 
 See:
 https://github.com/msys2/MINGW-packages/issues/5803
@@ -29,7 +29,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 20 Mar 2020 13:00:00 +0100
-Subject: [PATCH 2/3] Avoid mapping platform-specific functions on MinGW
+Subject: [PATCH 2/7] Avoid mapping platform-specific functions on MinGW
 
 
 diff --git a/src/cairo-compiler-private.h b/src/cairo-compiler-private.h
@@ -49,7 +49,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 20 Mar 2022 12:32:56 +0100
-Subject: [PATCH 3/3] Disable the Win32 surface and font backend
+Subject: [PATCH 3/7] Disable the Win32 surface and font backend
 
 To avoid having to link against -lgdi32 and -lmsimg32, see:
 https://github.com/kleisauke/net-vips/issues/61
@@ -119,3 +119,323 @@ index 1111111..2222222 100644
  # GL / GLESV2 / GLESV3 are mutually exclusive
  gl_backend = get_option('gl-backend')
  need_egl_functions = false
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Adrian Johnson <ajohnson@redneon.com>
+Date: Sat, 28 May 2022 07:14:52 +0930
+Subject: [PATCH 4/7] Fix deadlock in cairo-scaled-font.c
+
+A user font glyph containing a font can cause deadlock in
+_cairo_scaled_glyph_fini due to the destroy recording surface while
+holding _cairo_scaled_glyph_page_cache_mutex. When the font in the
+recording surface is removed from the page cache it will attempt to
+also acquire the _cairo_scaled_glyph_page_cache_mutex resulting in
+deadlock.
+
+Instead of destroying the recording surface in
+_cairo_scaled_glyph_page_cache_mutex, move it to an array in the
+scaled font and destroy it after the
+_cairo_scaled_glyph_page_cache_mutex is released.
+
+Fixes the font in user font case in #440
+
+Upstream-Status: Accepted [https://gitlab.freedesktop.org/cairo/cairo/-/commit/76e0df566595a77e271de523b3d06f86f3e85813]
+
+diff --git a/src/cairo-scaled-font-private.h b/src/cairo-scaled-font-private.h
+index 1111111..2222222 100644
+--- a/src/cairo-scaled-font-private.h
++++ b/src/cairo-scaled-font-private.h
+@@ -113,6 +113,7 @@ struct _cairo_scaled_font {
+     cairo_list_t glyph_pages;
+     cairo_bool_t cache_frozen;
+     cairo_bool_t global_cache_frozen;
++    cairo_array_t recording_surfaces_to_free; /* array of cairo_surface_t* */
+ 
+     cairo_list_t dev_privates;
+ 
+diff --git a/src/cairo-scaled-font.c b/src/cairo-scaled-font.c
+index 1111111..2222222 100644
+--- a/src/cairo-scaled-font.c
++++ b/src/cairo-scaled-font.c
+@@ -39,6 +39,7 @@
+  */
+ 
+ #include "cairoint.h"
++#include "cairo-array-private.h"
+ #include "cairo-error-private.h"
+ #include "cairo-image-surface-private.h"
+ #include "cairo-list-inline.h"
+@@ -215,8 +216,17 @@ _cairo_scaled_glyph_fini (cairo_scaled_font_t *scaled_font,
+ 	_cairo_path_fixed_destroy (scaled_glyph->path);
+ 
+     if (scaled_glyph->recording_surface != NULL) {
+-	cairo_surface_finish (scaled_glyph->recording_surface);
+-	cairo_surface_destroy (scaled_glyph->recording_surface);
++	cairo_status_t status;
++
++	/* If the recording surface contains other fonts, destroying
++	 * it while holding _cairo_scaled_glyph_page_cache_mutex will
++	 * result in deadlock when the recording surface font is
++	 * destroyed. Instead, move the recording surface to a list of
++	 * surfaces to free and free it in
++	 * _cairo_scaled_font_thaw_cache() after
++	 * _cairo_scaled_glyph_page_cache_mutex is unlocked. */
++	status = _cairo_array_append (&scaled_font->recording_surfaces_to_free, &scaled_glyph->recording_surface);
++	assert (status == CAIRO_STATUS_SUCCESS);
+     }
+ 
+     if (scaled_glyph->color_surface != NULL)
+@@ -250,6 +260,7 @@ static const cairo_scaled_font_t _cairo_scaled_font_nil = {
+     { NULL, NULL },		/* pages */
+     FALSE,			/* cache_frozen */
+     FALSE,			/* global_cache_frozen */
++    { 0, 0, sizeof(cairo_surface_t*), NULL }, /* recording_surfaces_to_free */
+     { NULL, NULL },		/* privates */
+     NULL			/* backend */
+ };
+@@ -765,6 +776,7 @@ _cairo_scaled_font_init (cairo_scaled_font_t               *scaled_font,
+     cairo_list_init (&scaled_font->glyph_pages);
+     scaled_font->cache_frozen = FALSE;
+     scaled_font->global_cache_frozen = FALSE;
++    _cairo_array_init (&scaled_font->recording_surfaces_to_free, sizeof (cairo_surface_t *));
+ 
+     scaled_font->holdover = FALSE;
+     scaled_font->finished = FALSE;
+@@ -786,6 +798,22 @@ _cairo_scaled_font_init (cairo_scaled_font_t               *scaled_font,
+     return CAIRO_STATUS_SUCCESS;
+ }
+ 
++static void _cairo_scaled_font_free_recording_surfaces (cairo_scaled_font_t *scaled_font)
++{
++    int num_recording_surfaces;
++    cairo_surface_t *surface;
++
++    num_recording_surfaces = _cairo_array_num_elements (&scaled_font->recording_surfaces_to_free);
++    if (num_recording_surfaces > 0) {
++	for (int i = 0; i < num_recording_surfaces; i++) {
++	    _cairo_array_copy_element (&scaled_font->recording_surfaces_to_free, i, &surface);
++	    cairo_surface_finish (surface);
++	    cairo_surface_destroy (surface);
++	}
++	_cairo_array_truncate (&scaled_font->recording_surfaces_to_free, 0);
++    }
++}
++
+ void
+ _cairo_scaled_font_freeze_cache (cairo_scaled_font_t *scaled_font)
+ {
+@@ -808,6 +836,8 @@ _cairo_scaled_font_thaw_cache (cairo_scaled_font_t *scaled_font)
+ 	scaled_font->global_cache_frozen = FALSE;
+     }
+ 
++    _cairo_scaled_font_free_recording_surfaces (scaled_font);
++
+     scaled_font->cache_frozen = FALSE;
+     CAIRO_MUTEX_UNLOCK (scaled_font->mutex);
+ }
+@@ -889,6 +919,9 @@ _cairo_scaled_font_fini_internal (cairo_scaled_font_t *scaled_font)
+     cairo_font_face_destroy (scaled_font->font_face);
+     cairo_font_face_destroy (scaled_font->original_font_face);
+ 
++    _cairo_scaled_font_free_recording_surfaces (scaled_font);
++    _cairo_array_fini (&scaled_font->recording_surfaces_to_free);
++
+     CAIRO_MUTEX_FINI (scaled_font->mutex);
+ 
+     while (! cairo_list_is_empty (&scaled_font->dev_privates)) {
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Adrian Johnson <ajohnson@redneon.com>
+Date: Fri, 27 May 2022 21:36:31 +0930
+Subject: [PATCH 5/7] Fix deadlock in cairo-scaled-font.c
+
+When cairo_scaled_glyph_page_cache needs to remove entries,
+cairo-cache calls _cairo_hash_table_random_entry() with the predicate
+_cairo_scaled_glyph_page_can_remove(). This function checks that the
+glyph_page scaled_font is not locked by testing
+scaled_font->cache_frozen. The scaled font is locked in the
+cache-cache destroy entry callback: _cairo_scaled_glyph_page_pluck().
+
+There is a race condition here between testing
+scaled_font->cache_frozen and locking the font. Fix this by adding a
+new CAIRO_MUTEX_TRY_LOCK mutex operation, and using it to test and
+lock the scaled font in _cairo_scaled_glyph_page_can_remove().
+
+Fixes the multithreaded case in #440
+
+Upstream-Status: Accepted [https://gitlab.freedesktop.org/cairo/cairo/-/commit/a8c1858cf2bb6efb35c0678d135fd522ece9e2a4]
+
+diff --git a/src/cairo-mutex-impl-private.h b/src/cairo-mutex-impl-private.h
+index 1111111..2222222 100644
+--- a/src/cairo-mutex-impl-private.h
++++ b/src/cairo-mutex-impl-private.h
+@@ -87,6 +87,9 @@
+  *   No trailing semicolons are needed (in any macro you define here).
+  *   You should be able to compile the following snippet:
+  *
++ * - #define CAIRO_MUTEX_IMPL_TRY_LOCK(mutex) to try locking the mutex object,
++ *   returning TRUE if the lock is acquired, FALSE if the mutex could not be locked.
++ *
+  *   <programlisting>
+  *	cairo_mutex_impl_t _cairo_some_mutex;
+  *
+@@ -163,6 +166,7 @@
+ # define CAIRO_MUTEX_IMPL_NO 1
+ # define CAIRO_MUTEX_IMPL_INITIALIZE() CAIRO_MUTEX_IMPL_NOOP
+ # define CAIRO_MUTEX_IMPL_LOCK(mutex) CAIRO_MUTEX_IMPL_NOOP1(mutex)
++# define CAIRO_MUTEX_IMPL_TRY_LOCK(mutex) (CAIRO_MUTEX_IMPL_NOOP1(mutex), TRUE)
+ # define CAIRO_MUTEX_IMPL_UNLOCK(mutex) CAIRO_MUTEX_IMPL_NOOP1(mutex)
+ # define CAIRO_MUTEX_IMPL_NIL_INITIALIZER 0
+ 
+@@ -190,6 +194,7 @@
+ 
+ # define CAIRO_MUTEX_IMPL_WIN32 1
+ # define CAIRO_MUTEX_IMPL_LOCK(mutex) EnterCriticalSection (&(mutex))
++# define CAIRO_MUTEX_IMPL_TRY_LOCK(mutex) TryEnterCriticalSection (&(mutex))
+ # define CAIRO_MUTEX_IMPL_UNLOCK(mutex) LeaveCriticalSection (&(mutex))
+ # define CAIRO_MUTEX_IMPL_INIT(mutex) InitializeCriticalSection (&(mutex))
+ # define CAIRO_MUTEX_IMPL_FINI(mutex) DeleteCriticalSection (&(mutex))
+@@ -208,6 +213,7 @@
+ # define CAIRO_MUTEX_IMPL_INIT(mutex) pthread_mutex_init (&(mutex), NULL)
+ #endif
+ # define CAIRO_MUTEX_IMPL_LOCK(mutex) pthread_mutex_lock (&(mutex))
++# define CAIRO_MUTEX_IMPL_TRY_LOCK(mutex) (pthread_mutex_trylock (&(mutex)) == 0)
+ # define CAIRO_MUTEX_IMPL_UNLOCK(mutex) pthread_mutex_unlock (&(mutex))
+ #if HAVE_LOCKDEP
+ # define CAIRO_MUTEX_IS_LOCKED(mutex) LOCKDEP_IS_LOCKED (&(mutex))
+diff --git a/src/cairo-mutex-type-private.h b/src/cairo-mutex-type-private.h
+index 1111111..2222222 100644
+--- a/src/cairo-mutex-type-private.h
++++ b/src/cairo-mutex-type-private.h
+@@ -48,6 +48,9 @@
+ #ifndef CAIRO_MUTEX_IMPL_LOCK
+ # error "CAIRO_MUTEX_IMPL_LOCK not defined.  Check cairo-mutex-impl-private.h."
+ #endif
++#ifndef CAIRO_MUTEX_IMPL_TRY_LOCK
++# error "CAIRO_MUTEX_IMPL_TRY_LOCK not defined.  Check cairo-mutex-impl-private.h."
++#endif
+ #ifndef CAIRO_MUTEX_IMPL_UNLOCK
+ # error "CAIRO_MUTEX_IMPL_UNLOCK not defined.  Check cairo-mutex-impl-private.h."
+ #endif
+@@ -138,6 +141,9 @@
+ #ifndef CAIRO_MUTEX_IMPL_LOCK
+ # error "CAIRO_MUTEX_IMPL_LOCK not defined"
+ #endif
++#ifndef CAIRO_MUTEX_IMPL_TRY_LOCK
++# error "CAIRO_MUTEX_IMPL_TRY_LOCK not defined"
++#endif
+ #ifndef CAIRO_MUTEX_IMPL_UNLOCK
+ # error "CAIRO_MUTEX_IMPL_UNLOCK not defined"
+ #endif
+@@ -167,6 +173,7 @@ typedef cairo_recursive_mutex_impl_t cairo_recursive_mutex_t;
+ #define CAIRO_MUTEX_INITIALIZE		CAIRO_MUTEX_IMPL_INITIALIZE
+ #define CAIRO_MUTEX_FINALIZE		CAIRO_MUTEX_IMPL_FINALIZE
+ #define CAIRO_MUTEX_LOCK		CAIRO_MUTEX_IMPL_LOCK
++#define CAIRO_MUTEX_TRY_LOCK		CAIRO_MUTEX_IMPL_TRY_LOCK
+ #define CAIRO_MUTEX_UNLOCK		CAIRO_MUTEX_IMPL_UNLOCK
+ #define CAIRO_MUTEX_INIT		CAIRO_MUTEX_IMPL_INIT
+ #define CAIRO_MUTEX_FINI		CAIRO_MUTEX_IMPL_FINI
+diff --git a/src/cairo-scaled-font.c b/src/cairo-scaled-font.c
+index 1111111..2222222 100644
+--- a/src/cairo-scaled-font.c
++++ b/src/cairo-scaled-font.c
+@@ -487,7 +487,7 @@ _cairo_scaled_glyph_page_pluck (void *closure)
+ 
+     scaled_font = page->scaled_font;
+ 
+-    CAIRO_MUTEX_LOCK (scaled_font->mutex);
++    /* The font is locked in _cairo_scaled_glyph_page_can_remove () */
+     _cairo_scaled_glyph_page_destroy (scaled_font, page);
+     CAIRO_MUTEX_UNLOCK (scaled_font->mutex);
+ }
+@@ -2888,14 +2888,17 @@ _cairo_scaled_glyph_set_color_surface (cairo_scaled_glyph_t *scaled_glyph,
+ 	scaled_glyph->has_info &= ~CAIRO_SCALED_GLYPH_INFO_COLOR_SURFACE;
+ }
+ 
++/* _cairo_hash_table_random_entry () predicate. To avoid race conditions,
++ * the font is locked when tested. The font is unlocked in
++ * _cairo_scaled_glyph_page_pluck. */
+ static cairo_bool_t
+ _cairo_scaled_glyph_page_can_remove (const void *closure)
+ {
+     const cairo_scaled_glyph_page_t *page = closure;
+-    const cairo_scaled_font_t *scaled_font;
++    cairo_scaled_font_t *scaled_font;
+ 
+     scaled_font = page->scaled_font;
+-    return scaled_font->cache_frozen == 0;
++    return CAIRO_MUTEX_TRY_LOCK (scaled_font->mutex);
+ }
+ 
+ static cairo_status_t
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Luca Bacci <luca.bacci982@gmail.com>
+Date: Mon, 5 Sep 2022 19:41:19 +0200
+Subject: [PATCH 6/7] Make cairo_scaled_font_t mutex recursive
+
+Since it can now happen to acquire it recursively,
+see https://gitlab.freedesktop.org/cairo/cairo/-/issues/587
+
+Upstream-Status: Accepted [https://gitlab.freedesktop.org/cairo/cairo/-/commit/531ec8d02db7d3482c3fb65d33dbb50c71b86999]
+
+diff --git a/src/cairo-scaled-font-private.h b/src/cairo-scaled-font-private.h
+index 1111111..2222222 100644
+--- a/src/cairo-scaled-font-private.h
++++ b/src/cairo-scaled-font-private.h
+@@ -107,7 +107,7 @@ struct _cairo_scaled_font {
+     cairo_font_extents_t fs_extents; /* font space */
+ 
+     /* The mutex protects modification to all subsequent fields. */
+-    cairo_mutex_t mutex;
++    cairo_recursive_mutex_t mutex;
+ 
+     cairo_hash_table_t *glyphs;
+     cairo_list_t glyph_pages;
+diff --git a/src/cairo-scaled-font.c b/src/cairo-scaled-font.c
+index 1111111..2222222 100644
+--- a/src/cairo-scaled-font.c
++++ b/src/cairo-scaled-font.c
+@@ -788,7 +788,7 @@ _cairo_scaled_font_init (cairo_scaled_font_t               *scaled_font,
+     cairo_font_face_reference (font_face);
+     scaled_font->original_font_face = NULL;
+ 
+-    CAIRO_MUTEX_INIT (scaled_font->mutex);
++    CAIRO_RECURSIVE_MUTEX_INIT (scaled_font->mutex);
+ 
+     cairo_list_init (&scaled_font->dev_privates);
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Luca Bacci <luca.bacci982@gmail.com>
+Date: Sun, 4 Sep 2022 15:16:21 +0200
+Subject: [PATCH 7/7] Check for scaled_font::cache_frozen in
+ glyph_page_can_remove()
+
+With modifications kindly suggested by Uli Schlachter
+
+Fixes https://gitlab.freedesktop.org/cairo/cairo/-/issues/587
+
+Upstream-Status: Accepted [https://gitlab.freedesktop.org/cairo/cairo/-/commit/166d718099fc8898895d4ad2839d5fb9865a87a5]
+
+diff --git a/src/cairo-scaled-font.c b/src/cairo-scaled-font.c
+index 1111111..2222222 100644
+--- a/src/cairo-scaled-font.c
++++ b/src/cairo-scaled-font.c
+@@ -2898,7 +2898,16 @@ _cairo_scaled_glyph_page_can_remove (const void *closure)
+     cairo_scaled_font_t *scaled_font;
+ 
+     scaled_font = page->scaled_font;
+-    return CAIRO_MUTEX_TRY_LOCK (scaled_font->mutex);
++
++    if (!CAIRO_MUTEX_TRY_LOCK (scaled_font->mutex))
++       return FALSE;
++
++    if (scaled_font->cache_frozen != 0) {
++       CAIRO_MUTEX_UNLOCK (scaled_font->mutex);
++       return FALSE;
++    }
++
++    return TRUE;
+ }
+ 
+ static cairo_status_t
