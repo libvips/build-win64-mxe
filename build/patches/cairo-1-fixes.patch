@@ -58,11 +58,10 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -474,60 +474,6 @@ if host_machine.system() == 'darwin' and not get_option('quartz').disabled()
-   endif
- endif
+@@ -490,29 +490,6 @@ endif
+ if host_machine.system() == 'windows'
+   add_project_arguments('-DWIN32_LEAN_AND_MEAN', '-DNOMINMAX', language: ['c', 'cpp'])
  
--if host_machine.system() == 'windows'
 -  win32_extra_deps = [
 -    cc.find_library('gdi32'),
 -    cc.find_library('msimg32'),
@@ -86,36 +85,6 @@ index 1111111..2222222 100644
 -    }
 -  ]
 -
--  cpp_compiler = meson.get_compiler('cpp')
--  d2d_dep = cpp_compiler.find_library('d2d1', required: false)
--  dwrite_dep = cpp_compiler.find_library('dwrite', required: false)
--  d2d_header = cpp_compiler.has_header('d2d1.h')
--  d2d_3_header = cpp_compiler.has_header('d2d1_3.h')
--  dwrite_header = cpp_compiler.has_header('dwrite.h')
--  dwrite_3_header = cpp_compiler.has_header('dwrite_3.h')
--  wincodec_dep = cpp_compiler.find_library('windowscodecs', required: false)
--  wincodec_header = cpp_compiler.has_header('wincodec.h')
--
--  if d2d_dep.found() and dwrite_dep.found() and d2d_header and dwrite_header and wincodec_dep.found() and wincodec_header
--    feature_conf.set('CAIRO_HAS_DWRITE_FONT', 1)
--    built_features += [{
--      'name': 'cairo-win32-dwrite-font',
--      'description': 'Microsoft Windows DWrite font backend',
--      'deps': [dwrite_dep, d2d_dep, wincodec_dep],
--    }]
--    deps += [dwrite_dep, d2d_dep, wincodec_dep]
--
--    if cpp_compiler.has_header('d2d1_3.h')
--      conf.set('HAVE_D2D1_3_H', 1)
--    endif
--
--    # Exclude MinGW dwrite_3.h because it has a broken definition of DWRITE_COLOR_GLYPH_RUN1.
--    if cpp_compiler.has_header('dwrite_3.h') and cpp_compiler.get_define('__MINGW32__') == ''
--      conf.set('HAVE_DWRITE_3_H', 1)
--    endif
--  endif
--endif
--
- # GL / GLESV2 / GLESV3 are mutually exclusive
- gl_backend = get_option('gl-backend')
- need_egl_functions = false
+   cpp_compiler = meson.get_compiler('cpp')
+   d2d_dep = cpp_compiler.find_library('d2d1', required: get_option('dwrite'))
+   dwrite_dep = cpp_compiler.find_library('dwrite', required: get_option('dwrite'))

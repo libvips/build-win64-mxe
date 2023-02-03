@@ -61,7 +61,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1152,7 +1152,9 @@ supported_targets! {
+@@ -1156,7 +1156,9 @@ supported_targets! {
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
      ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
@@ -97,7 +97,7 @@ diff --git a/library/std/src/personality/gcc.rs b/library/std/src/personality/gc
 index 1111111..2222222 100644
 --- a/library/std/src/personality/gcc.rs
 +++ b/library/std/src/personality/gcc.rs
-@@ -81,7 +81,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
+@@ -82,7 +82,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
  // https://github.com/gcc-mirror/gcc/blob/trunk/libgcc/unwind-c.c
  
  cfg_if::cfg_if! {
@@ -198,7 +198,7 @@ diff --git a/library/std/src/personality/gcc.rs b/library/std/src/personality/gc
 index 1111111..2222222 100644
 --- a/library/std/src/personality/gcc.rs
 +++ b/library/std/src/personality/gcc.rs
-@@ -179,7 +179,7 @@ cfg_if::cfg_if! {
+@@ -180,7 +180,7 @@ cfg_if::cfg_if! {
          }
      } else {
          // Default personality routine, which is used directly on most targets
@@ -207,7 +207,7 @@ index 1111111..2222222 100644
          unsafe extern "C" fn rust_eh_personality_impl(
              version: c_int,
              actions: uw::_Unwind_Action,
-@@ -219,9 +219,9 @@ cfg_if::cfg_if! {
+@@ -220,9 +220,9 @@ cfg_if::cfg_if! {
          }
  
          cfg_if::cfg_if! {

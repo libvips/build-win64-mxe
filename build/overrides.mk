@@ -30,8 +30,8 @@ libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_
 
 # upstream version is 7, we want ImageMagick 6
 # alternatively, one could build libvips with GraphicsMagick
-imagemagick_VERSION  := 6.9.12-72
-imagemagick_CHECKSUM := bea80fa79961301fac9f06bc926314d74bd711a06edff5eb4190fd181b6aef83
+imagemagick_VERSION  := 6.9.12-75
+imagemagick_CHECKSUM := 384f3233347abc5073ff128b3bb36ed5ded8fc59502a87d791936c39553e798e
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -74,12 +74,12 @@ libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.bz2
 
 # upstream version is 1.16.0
-cairo_VERSION  := 1.17.6
-cairo_CHECKSUM := 90496d135c9ef7612c98f8ee358390cdec0825534573778a896ea021155599d2
+cairo_VERSION  := 1.17.8
+cairo_CHECKSUM := 5b10c8892d1b58d70d3f0ba5b47863a061262fa56b9dc7944161f8c8b783bc64
 cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
 cairo_SUBDIR   := cairo-$(cairo_VERSION)
-cairo_FILE     := cairo-$(cairo_VERSION).tar.bz2
-cairo_URL      := https://gitlab.freedesktop.org/cairo/cairo/-/archive/$(cairo_VERSION)/$(cairo_FILE)
+cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
+cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -115,6 +115,14 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
+
+# upstream version is 23.01.0
+poppler_VERSION  := 23.02.0
+poppler_CHECKSUM := 3315dda270fe2b35cf1f41d275948c39652fa863b90de0766f6b293d9a558fc9
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -646,11 +654,9 @@ endef
 # build with -Dzlib=disabled to disable the script, PostScript, PDF and XML surfaces
 define cairo_BUILD
     $(MXE_MESON_WRAPPER) \
+        -Ddwrite=disabled \
         -Dfontconfig=enabled \
         -Dfreetype=enabled \
-        -Dgl-backend=disabled \
-        -Dglesv2=disabled \
-        -Dglesv3=disabled \
         -Dpng=enabled \
         -Dquartz=disabled \
         -Dtee=disabled \
