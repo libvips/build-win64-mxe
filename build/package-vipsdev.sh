@@ -141,13 +141,20 @@ echo "Generating import files"
 
 echo "Cleaning unnecessary files / directories"
 
-# Ensure that the header files of libc++ are not distributed
-[ "$LLVM" = "true" ] && rm -rf $repackage_dir/include/c++
+if [ "$LLVM" = "true" ]; then
+  # Ensure that the header files of libc++/libunwind are not distributed
+  rm -rf $repackage_dir/include/c++
+  rm -rf $repackage_dir/include/{*unwind*,mach-o}
+else
+  # Remove native build files of Rust
+  rm -rf $repackage_dir/lib/{*.so*,ldscripts,rustlib}
+fi
 
 rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
-rm -rf $repackage_dir/include/cairo
-rm -rf $repackage_dir/lib/{*.so*,*cairo*,*gdk*,*_too.a,vips-modules-*,ldscripts,rustlib,xml2Conf.sh}
 rm -rf $repackage_dir/etc/bash_completion.d
+
+# Remove dynamic modules
+rm -rf $repackage_dir/lib/{gdk-pixbuf-2.0,vips-modules-*}
 
 find $repackage_dir/lib -name "*.la" -exec rm -f {} \;
 

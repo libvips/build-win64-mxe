@@ -4,10 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/5c375afc11c40be74c1b23f80cc1f9b321972ae7
-$(PKG)_VERSION  := 5c375af
-$(PKG)_CHECKSUM := 63f662d99136b1b996cecfdb735ce597f636d25c30e4e52cd1f2b4d61228125a
-# TODO(kleisauke): Remove this if we omit any dots from our target
+# https://github.com/mstorsjo/llvm-mingw/tarball/1022231482395a32d24dd3a2084c5474b0bbb0e7
+$(PKG)_VERSION  := 1022231
+$(PKG)_CHECKSUM := a07a8aedb5e2b8f9b936b4031dbd8fd00718418af31cee6d0b38a3e26ebdf354
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := mingw-w64
@@ -48,6 +47,11 @@ define $(PKG)_BUILD_mingw-w64
         @mingw-crt-config-opts@
     $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).crt' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
+
+    # Create empty dummy archives, to avoid failing when the compiler
+    # driver adds "-lssp -lssp_nonshared" when linking.
+    $(PREFIX)/$(BUILD)/bin/llvm-ar rcs $(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/lib/libssp.a
+    $(PREFIX)/$(BUILD)/bin/llvm-ar rcs $(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/lib/libssp_nonshared.a
 endef
 
 define $(PKG)_PRE_BUILD
@@ -56,48 +60,17 @@ define $(PKG)_PRE_BUILD
         ln -sf '$(PREFIX)/$(BUILD)/bin/$(EXEC)' '$(PREFIX)/$(TARGET)/bin/$(EXEC)';)
 
     # setup target wrappers
-    # Can't symlink here, it will break the basename detection of LLVM. See:
-    # sys::path::stem("x86_64-w64-mingw32.shared-ranlib"); -> x86_64-w64-mingw32
-    # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-15.0.0/llvm/tools/llvm-ar/llvm-ar.cpp#L1455-L1474
-    $(foreach EXEC, addr2line ar cvtres nm objcopy ranlib rc strings strip, \
+    $(foreach EXEC, addr2line ar ranlib nm objcopy strings strip windres dlltool, \
+        ln -sf '$(PREFIX)/$(BUILD)/bin/llvm-$(EXEC)' '$(PREFIX)/$(TARGET)/bin/$(PROCESSOR)-w64-mingw32-$(EXEC)'; \
         (echo '#!/bin/sh'; \
-         echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-$(EXEC)" "$$@"') \
+         echo 'exec "$(PREFIX)/$(TARGET)/bin/$(PROCESSOR)-w64-mingw32-$(EXEC)" "$$@"') \
                  > '$(PREFIX)/bin/$(TARGET)-$(EXEC)'; \
         chmod 0755 '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
 
-    # We need to pass some additional arguments for windres
-    # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-15.0.0/llvm/tools/llvm-rc/llvm-rc.cpp#L266-L277
-    (echo '#!/bin/sh'; \
-     echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-windres" \
-         --preprocessor-arg="--sysroot=$(PREFIX)/$(TARGET)" \
-         --target="$(firstword $(subst ., ,$(TARGET)))" "$$@"') \
-             > '$(PREFIX)/bin/$(TARGET)-windres'
-    chmod 0755 '$(PREFIX)/bin/$(TARGET)-windres'
-
-    # And we need to hint the target machine for dlltool, ouch.
-    # i686 -> i386
-    # x86_64 -> i386:x86-64
-    # armv7 -> arm
-    # aarch64 -> arm64
-    # TODO(kleisauke): Remove this if we omit any dots from our target, see:
-    # https://github.com/llvm/llvm-project/blob/llvmorg-15.0.0/llvm/lib/ToolDrivers/llvm-dlltool/DlltoolDriver.cpp#L97-L108
-    $(eval DLLTOOL_ARCH := $(strip \
-        $(if $(findstring i686,$(PROCESSOR)),i386, \
-        $(if $(findstring x86_64,$(PROCESSOR)),i386:x86-64, \
-        $(if $(findstring armv7,$(PROCESSOR)),arm, \
-        $(if $(findstring aarch64,$(PROCESSOR)),arm64, \
-        $(PROCESSOR)))))))
-    (echo '#!/bin/sh'; \
-     echo 'exec "$(PREFIX)/$(BUILD)/bin/llvm-dlltool" \
-         -m $(DLLTOOL_ARCH) "$$@"') \
-             > '$(PREFIX)/bin/$(TARGET)-dlltool'
-    chmod 0755 '$(PREFIX)/bin/$(TARGET)-dlltool'
-
     $(foreach EXEC, clang-target ld objdump, \
-        $(SED) -i -e 's|^DEFAULT_TARGET=.*|DEFAULT_TARGET=$(TARGET)|' \
-                  -e 's|^DIR=.*|DIR="$(PREFIX)/$(TARGET)/bin"|' '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh'; \
+        $(SED) -i -e 's|^DEFAULT_TARGET=.*|DEFAULT_TARGET=$(PROCESSOR)-w64-mingw32|' \
+                  -e 's|^DIR=.*|DIR="$(PREFIX)/$(TARGET)/bin"|' \
+                  -e 's|$$FLAGS "$$@"|$$FLAGS --sysroot="$(PREFIX)/$(TARGET)" "$$@"|' '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh'; \
         $(INSTALL) -m755 '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh' '$(PREFIX)/$(TARGET)/bin';)
 
     $(foreach EXEC, clang clang++ gcc g++ c++, \

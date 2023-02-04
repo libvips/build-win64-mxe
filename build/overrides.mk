@@ -149,10 +149,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 10.0.0
-# Update MinGW-w64 to d4a0c84
-# https://github.com/mingw-w64/mingw-w64/tarball/d4a0c84d908243a45255a06dc293d3d7c06db98c
-mingw-w64_VERSION  := d4a0c84
-mingw-w64_CHECKSUM := 1bf133d9827756223f4610601a87e129b11f2caa91ebf993a6017c4a4bab06dc
+# Update MinGW-w64 to ce5a9f6
+# https://github.com/mingw-w64/mingw-w64/tarball/ce5a9f624dfc691082dad2ea2af7b1985e3476b5
+mingw-w64_VERSION  := ce5a9f6
+mingw-w64_CHECKSUM := c40d47de8a72b04f9cbe6e43c120b27c74aef3f5ee0ca858921032f0ea6f9193
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
@@ -285,6 +285,38 @@ define nasm_BUILD_$(BUILD)
         $(MXE_CONFIGURE_OPTS)
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+endef
+
+define ninja_BUILD_$(BUILD)
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
+    '$(TARGET)-cmake' -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
+        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(TARGET)' \
+        -DBUILD_TESTING=OFF
+    '$(TARGET)-cmake' --build '$(BUILD_DIR)' -j '$(JOBS)'
+    '$(TARGET)-cmake' --install '$(BUILD_DIR)'
+endef
+
+define widl_BUILD
+    $(eval unexport CFLAGS)
+    $(eval unexport CXXFLAGS)
+    $(eval unexport LDFLAGS)
+
+    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/mingw-w64-tools/widl/configure' \
+        --host='$(BUILD)' \
+        --build='$(BUILD)' \
+        --prefix='$(PREFIX)' \
+        --target='$(TARGET)' \
+        $(if $(IS_LLVM), --with-widl-includedir='$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/include')
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
+
+    # create cmake file
+    mkdir -p '$(CMAKE_TOOLCHAIN_DIR)'
+    echo 'set(CMAKE_WIDL $(PREFIX)/bin/$(TARGET)-$(PKG) CACHE PATH "widl executable")' \
+    > '$(CMAKE_TOOLCHAIN_DIR)/$(PKG).cmake'
 endef
 
 # libasprintf isn't needed, so build with --disable-libasprintf
