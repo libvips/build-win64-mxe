@@ -29,15 +29,22 @@ libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-# alternatively, one could build libvips with GraphicsMagick
-imagemagick_VERSION  := 6.9.12-75
-imagemagick_CHECKSUM := 384f3233347abc5073ff128b3bb36ed5ded8fc59502a87d791936c39553e798e
+imagemagick_VERSION  := 6.9.12-77
+imagemagick_CHECKSUM := 4ad246b98b8a39ae10345791c972de264e60376ed752055ce9744ef2a528d5aa
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
+# alternatively, one could build libvips with GraphicsMagick
+# upstream version is 1.3.38
+graphicsmagick_VERSION  := 1.3.40
+graphicsmagick_CHECKSUM := 45e4da103e8106f1b751d73526ce41173db418bd56508a1c48fbb0ca139c9441
+graphicsmagick_SUBDIR   := GraphicsMagick-$(graphicsmagick_VERSION)
+graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
+graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
+
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.55.90
-librsvg_CHECKSUM := 54f8dcd483d2bd801a69fc971b92e23fc118d8cbd6373a9ef1237f9f3522c69a
+librsvg_VERSION  := 2.55.91
+librsvg_CHECKSUM := 796a43965c0e33547f5c42268f7ee3f50573236061b6e7710cae028586dca0c2
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -52,8 +59,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.75.2
-glib_CHECKSUM := 360d6fb75202c0eb0d07f0ab812b19b526f1c05ccc0a8ed7e5d2c988616d343a
+glib_VERSION  := 2.75.3
+glib_CHECKSUM := 7c517d0aff456c35a039bce8a8df7a08ce95a8285b09d1849f8865f633f7f871
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -108,6 +115,12 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
+# upstream version is 6.0.0
+harfbuzz_VERSION  := 7.0.0
+harfbuzz_CHECKSUM := 7b4685b7066c5c6b8dc6cd7b02f63c554fb8cc1c4ddcfc44bc284efa3c20cf28
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
 fftw_CHECKSUM := 56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467
@@ -115,14 +128,6 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
-
-# upstream version is 23.01.0
-poppler_VERSION  := 23.02.0
-poppler_CHECKSUM := 3315dda270fe2b35cf1f41d275948c39652fa863b90de0766f6b293d9a558fc9
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -539,9 +544,9 @@ define librsvg_BUILD
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
         $(SED) -i 's/ab67633c5ee992f8af48379b429388444bcd1343c6f15317dff63024458a57be/ccd1f5e9c8f96981063fa2482d4b668908bccc493d4f286cc9acfceeef051d6d/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
         $(SED) -i 's/eea8b74d2b7ad2d3b51df7900d9af31b37ee00faacd9deff1a486d7b557e228a/ef2ea740cca952c11667c20396e349bddee27e81f2e1e1364fe4233407d45a9f/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/e2b5e6fe398f35c7db4af62ba1fd79b39591fe1bfaf304ae825ed3c8cf902d9c/9620026c949cd3c1ee583410444bab4118099c12f8f5a0e8a4930654bc82fd56/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/caa6ea5f726567d67e355778ebc52a299ed6311c5d0f86555392ed08753faa27/07a5fa36a5e78b264ddf759e1b75712512f075896bd8559073f9b39c0b7faf02/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
-        $(SED) -i 's/06b135884c3122aa862acad8fd5147ad89aa0ece0513d3d0021170ab4b39553e/d2cad5fe0eb2e213809d26ccef4f9b1fe20c9d3216566e66247757f7389d7025/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
+        $(SED) -i 's/d95b386e483d2bc77b2d5c41b62d01a8cc791fb3fb18ce97317947ecd5a3c02b/8fa2a3cef0acaaabcb2211d8195bc65c1debbb6a55a59dc59848ea67502f69e1/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/14f6fabcd2f0ae1a6ddd27ade6d3327f6df7346eb9cd2e99151ac8e84dcd2a78/e4a3af2f635bac2d51ea0f7ac9d2db7d27c9bb9e53fa8a189b1a93ca43a96bf5/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
+        $(SED) -i 's/d57b1956970299e10b9c0c811580d5805c8b28138bf83f41f877c5ae50fcfdbe/0826e8d25a22c15935f05e1d066d5a7737d14f0f77baf7a8f1deda568e70317e/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(SOURCE_DIR)/.cargo'
         (echo '[source.crates-io]'; \

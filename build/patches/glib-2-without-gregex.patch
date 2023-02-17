@@ -93,7 +93,7 @@ diff --git a/glib/glib.h b/glib/glib.h
 index 1111111..2222222 100644
 --- a/glib/glib.h
 +++ b/glib/glib.h
-@@ -74,7 +74,6 @@
+@@ -75,7 +75,6 @@
  #include <glib/grcbox.h>
  #include <glib/grefcount.h>
  #include <glib/grefstring.h>
@@ -105,7 +105,7 @@ diff --git a/glib/meson.build b/glib/meson.build
 index 1111111..2222222 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -215,7 +215,6 @@ glib_sub_headers = files(
+@@ -216,7 +216,6 @@ glib_sub_headers = files(
    'grcbox.h',
    'grefcount.h',
    'grefstring.h',
@@ -113,7 +113,7 @@ index 1111111..2222222 100644
    'gscanner.h',
    'gsequence.h',
    'gshell.h',
-@@ -303,7 +302,6 @@ glib_sources += files(
+@@ -305,7 +304,6 @@ glib_sources += files(
    'grcbox.c',
    'grefcount.c',
    'grefstring.c',
@@ -121,7 +121,7 @@ index 1111111..2222222 100644
    'gscanner.c',
    'gsequence.c',
    'gshell.c',
-@@ -392,13 +390,7 @@ else
+@@ -394,13 +392,7 @@ else
    glib_dtrace_hdr = []
  endif
  
@@ -136,7 +136,7 @@ index 1111111..2222222 100644
  libglib = library('glib-2.0',
    glib_dtrace_obj, glib_dtrace_hdr,
    sources : [deprecated_sources, glib_sources],
-@@ -417,7 +409,6 @@ libglib = library('glib-2.0',
+@@ -419,7 +411,6 @@ libglib = library('glib-2.0',
      libm,
      librt,
      libsysprof_capture_dep,
@@ -162,7 +162,7 @@ diff --git a/gobject/glib-types.h b/gobject/glib-types.h
 index 1111111..2222222 100644
 --- a/gobject/glib-types.h
 +++ b/gobject/glib-types.h
-@@ -87,15 +87,6 @@ typedef gsize GType;
+@@ -88,15 +88,6 @@ typedef gsize GType;
   */
  #define G_TYPE_HASH_TABLE (g_hash_table_get_type ())
  
@@ -182,7 +182,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2038,44 +2038,6 @@ else
+@@ -2036,44 +2036,6 @@ else
    libiconv = dependency('iconv')
  endif
  

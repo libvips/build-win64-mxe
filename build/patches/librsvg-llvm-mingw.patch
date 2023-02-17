@@ -161,7 +161,7 @@ index 1111111..2222222 100644
      pub extern "C" fn __fixunssfdi(f: f32) -> u64 {
          let fbits = f.to_bits();
          if fbits < 127 << 23 { // >= 0, < 1
-@@ -209,7 +209,7 @@ intrinsics! {
+@@ -208,7 +208,7 @@ intrinsics! {
          }
      }
  
@@ -170,7 +170,7 @@ index 1111111..2222222 100644
      pub extern "C" fn __fixunsdfdi(f: f64) -> u64 {
          let fbits = f.to_bits();
          if fbits < 1023 << 52 { // >= 0, < 1
-@@ -262,7 +262,7 @@ intrinsics! {
+@@ -260,7 +260,7 @@ intrinsics! {
          }
      }
  
@@ -179,7 +179,7 @@ index 1111111..2222222 100644
      pub extern "C" fn __fixsfdi(f: f32) -> i64 {
          let fbits = f.to_bits() & !0 >> 1; // Remove sign bit.
          if fbits < 127 << 23 { // >= 0, < 1
-@@ -314,7 +314,7 @@ intrinsics! {
+@@ -311,7 +311,7 @@ intrinsics! {
          }
      }
  
@@ -228,7 +228,7 @@ diff --git a/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs b/ve
 index 1111111..2222222 100644
 --- a/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs
 +++ b/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs
-@@ -6887,16 +6887,16 @@ impl ::core::clone::Clone for SERVENT {
+@@ -6687,16 +6687,16 @@ impl ::core::clone::Clone for SERVENT {
  }
  #[repr(C)]
  #[doc = "*Required features: `\"Win32_Networking_WinSock\"`*"]
@@ -248,7 +248,7 @@ index 1111111..2222222 100644
  impl ::core::clone::Clone for SERVENT {
      fn clone(&self) -> Self {
          *self
-@@ -8209,7 +8209,7 @@ impl ::core::clone::Clone for WSADATA {
+@@ -8009,7 +8009,7 @@ impl ::core::clone::Clone for WSADATA {
  }
  #[repr(C)]
  #[doc = "*Required features: `\"Win32_Networking_WinSock\"`, `\"Win32_Foundation\"`*"]
@@ -257,7 +257,7 @@ index 1111111..2222222 100644
  #[cfg(feature = "Win32_Foundation")]
  pub struct WSADATA {
      pub wVersion: u16,
-@@ -8220,10 +8220,10 @@ pub struct WSADATA {
+@@ -8020,10 +8020,10 @@ pub struct WSADATA {
      pub iMaxUdpDg: u16,
      pub lpVendorInfo: ::windows_sys::core::PSTR,
  }
@@ -274,7 +274,7 @@ diff --git a/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.
 index 1111111..2222222 100644
 --- a/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
 +++ b/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
-@@ -2310,7 +2310,7 @@ impl ::core::clone::Clone for DELAYLOAD_INFO {
+@@ -2179,7 +2179,7 @@ impl ::core::clone::Clone for DELAYLOAD_INFO {
  }
  #[repr(C)]
  #[doc = "*Required features: `\"Win32_System_WindowsProgramming\"`*"]
@@ -283,7 +283,7 @@ index 1111111..2222222 100644
  pub struct DELAYLOAD_INFO {
      pub Size: u32,
      pub DelayloadDescriptor: *mut IMAGE_DELAYLOAD_DESCRIPTOR,
-@@ -2321,9 +2321,9 @@ pub struct DELAYLOAD_INFO {
+@@ -2190,9 +2190,9 @@ pub struct DELAYLOAD_INFO {
      pub Unused: *mut ::core::ffi::c_void,
      pub LastError: u32,
  }
