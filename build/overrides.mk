@@ -66,14 +66,6 @@ glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
-# upstream version is 1.14.30
-libgsf_VERSION  := 1.14.50
-libgsf_CHECKSUM := 6e6c20d0778339069d583c0d63759d297e817ea10d0d897ebbe965f16e2e8e52
-libgsf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libgsf-[0-9]*.patch)))
-libgsf_SUBDIR   := libgsf-$(libgsf_VERSION)
-libgsf_FILE     := libgsf-$(libgsf_VERSION).tar.xz
-libgsf_URL      := https://download.gnome.org/sources/libgsf/$(call SHORT_PKG_VERSION,libgsf)/$(libgsf_FILE)
-
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.24
 libexif_CHECKSUM := d47564c433b733d83b6704c70477e0a4067811d184ec565258ac563d8223f6ae
@@ -165,8 +157,6 @@ fontconfig_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_L
 zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
 ## Override sub-dependencies
-# libgsf:
-#  Removed: bzip2
 # freetype:
 #  Added: meson-wrapper
 #  Removed: bzip2
@@ -216,7 +206,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # HarfBuzz:
 #  Removed: icu4c
 
-libgsf_DEPS             := $(filter-out bzip2 ,$(libgsf_DEPS))
 freetype_DEPS           := $(subst bzip2,meson-wrapper,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(subst bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
 glib_DEPS               := cc meson-wrapper gettext libffi zlib
@@ -370,27 +359,6 @@ endef
 
 define freetype-bootstrap_BUILD
     $(subst harfbuzz=enabled,harfbuzz=disabled,$(freetype_BUILD_COMMON))
-endef
-
-# exclude bz2 and gdk-pixbuf
-define libgsf_BUILD
-    $(SED) -i 's,\ssed\s, $(SED) ,g'           '$(SOURCE_DIR)'/gsf/Makefile.in
-
-    # Allow libtool to statically link against libintl
-    # by specifying lt_cv_deplibs_check_method="pass_all"
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --without-gdk-pixbuf \
-        --without-bz2 \
-        --with-zlib \
-        --disable-nls \
-        --without-libiconv-prefix \
-        --without-libintl-prefix \
-        PKG_CONFIG='$(PREFIX)/bin/$(TARGET)-pkg-config' \
-        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all")
-
-    $(MAKE) -C '$(BUILD_DIR)'     -j '$(JOBS)' install-pkgconfigDATA $(MXE_DISABLE_PROGRAMS)
-    $(MAKE) -C '$(BUILD_DIR)/gsf' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef
 
 # build with the Meson build system

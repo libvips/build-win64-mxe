@@ -8,7 +8,7 @@ $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 $(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
-$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
+$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc cgif
 
@@ -31,7 +31,6 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "gdkpixbuf": "$(gdk-pixbuf_VERSION)",\n'; \
      $(if $(IS_INTL_DUMMY),,printf '  "gettext": "$(gettext_VERSION)"$(comma)\n';) \
      printf '  "glib": "$(glib_VERSION)",\n'; \
-     printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
      printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
@@ -78,6 +77,7 @@ define $(PKG)_BUILD
         -Dpdfium=disabled \
         -Dpoppler=disabled \
         -Dquantizr=disabled \
+        -Dgsf=disabled \
         -Dppm=false \
         -Danalyze=false \
         -Dradiance=false \
