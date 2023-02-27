@@ -30,7 +30,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [lcms]          | 2.14      | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
-| [libgsf]        | 1.14.50   | LGPLv3                                                       |
 | [libheif]       | 1.15.1    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.39    | [libpng License version 2]                                   |
@@ -65,7 +64,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [lcms]: https://github.com/mm2/Little-CMS
 [libexif]: https://github.com/libexif/libexif
 [libffi]: https://github.com/libffi/libffi
-[libgsf]: https://gitlab.gnome.org/GNOME/libgsf
 [libheif]: https://github.com/strukturag/libheif
 [libimagequant]: https://github.com/lovell/libimagequant
 [libpng]: https://github.com/glennrp/libpng

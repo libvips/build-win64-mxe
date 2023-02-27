@@ -8,7 +8,7 @@ $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 $(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
-$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libgsf \
+$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc imagemagick matio openexr \
                    cfitsio nifticlib poppler fftw openslide libjxl cgif
@@ -37,7 +37,6 @@ define $(PKG)_PRE_CONFIGURE
      $(if $(IS_INTL_DUMMY),,printf '  "gettext": "$(gettext_VERSION)"$(comma)\n';) \
      printf '  "glib": "$(glib_VERSION)",\n'; \
      $(if $(findstring graphicsmagick,$($(PKG)_DEPS)),printf '  "graphicsmagick": "$(graphicsmagick_VERSION)"$(comma)\n';) \
-     printf '  "gsf": "$(libgsf_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
      $(if $(IS_LLVM),printf '  "highway": "$(highway_VERSION)"$(comma)\n';) \
@@ -85,6 +84,7 @@ define $(PKG)_BUILD
         $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), -Dmagick-package=GraphicsMagick) \
         -Dpdfium=disabled \
         -Dquantizr=disabled \
+        -Dgsf=disabled \
         -Dc_args='$(CFLAGS) -DVIPS_DLLDIR_AS_LIBDIR' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
