@@ -1,0 +1,55 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 3 Mar 2023 15:03:32 +0100
+Subject: [PATCH 1/1] Fix building on case sensitive mingw platforms
+
+Mingw headers are all lowercase, and can be used for cross compilation
+from case sensitive file systems.
+
+The official Windows SDK headers aren't self-consistent wrt upper/lower
+case, so those headers can't be used on case sensitive systems without
+a layer providing case insensitivity anyway.
+
+This matches other includes of windows.h throughout the codebase.
+
+Upstream-Status: Submitted [https://github.com/mm2/Little-CMS/pull/363]
+
+diff --git a/plugins/fast_float/src/lcms2_fast_float.rc.in b/plugins/fast_float/src/lcms2_fast_float.rc.in
+index 1111111..2222222 100644
+--- a/plugins/fast_float/src/lcms2_fast_float.rc.in
++++ b/plugins/fast_float/src/lcms2_fast_float.rc.in
+@@ -19,7 +19,7 @@
+ //
+ //---------------------------------------------------------------------------------
+ 
+-#include <Windows.h>
++#include <windows.h>
+ 
+ 1 VERSIONINFO
+ FILEVERSION @LCMS2_VERSION_MAJOR@, @LCMS2_VERSION_MINOR@, @LCMS2_VERSION_MICRO@, 0
+diff --git a/plugins/threaded/src/lcms2_threaded.rc.in b/plugins/threaded/src/lcms2_threaded.rc.in
+index 1111111..2222222 100644
+--- a/plugins/threaded/src/lcms2_threaded.rc.in
++++ b/plugins/threaded/src/lcms2_threaded.rc.in
+@@ -19,7 +19,7 @@
+ //
+ //---------------------------------------------------------------------------------
+ 
+-#include <Windows.h>
++#include <windows.h>
+ 
+ 1 VERSIONINFO
+ FILEVERSION @LCMS2_VERSION_MAJOR@, @LCMS2_VERSION_MINOR@, @LCMS2_VERSION_MICRO@, 0
+diff --git a/src/lcms2.rc.in b/src/lcms2.rc.in
+index 1111111..2222222 100644
+--- a/src/lcms2.rc.in
++++ b/src/lcms2.rc.in
+@@ -19,7 +19,7 @@
+ //
+ //---------------------------------------------------------------------------------
+ 
+-#include <Windows.h>
++#include <windows.h>
+ 
+ 1 VERSIONINFO
+ FILEVERSION @LCMS2_VERSION_MAJOR@, @LCMS2_VERSION_MINOR@, @LCMS2_VERSION_MICRO@, 0

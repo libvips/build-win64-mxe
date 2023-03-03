@@ -51,16 +51,16 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.50.0
-pango_VERSION  := 1.50.12
-pango_CHECKSUM := caef96d27bbe792a6be92727c73468d832b13da57c8071ef79b9df69ee058fe3
+pango_VERSION  := 1.50.14
+pango_CHECKSUM := 1d67f205bfc318c27a29cfdfb6828568df566795df0cb51d2189cde7f2d581e8
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.75.3
-glib_CHECKSUM := 7c517d0aff456c35a039bce8a8df7a08ce95a8285b09d1849f8865f633f7f871
+glib_VERSION  := 2.75.4
+glib_CHECKSUM := 16ce24bb8f3c0ea3bdbda937c090b93bb8b5ad2d417e5e5e42c14aa4cf6b6ad1
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -107,9 +107,19 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 6.0.0
-harfbuzz_VERSION  := 7.0.0
-harfbuzz_CHECKSUM := 7b4685b7066c5c6b8dc6cd7b02f63c554fb8cc1c4ddcfc44bc284efa3c20cf28
+# upstream version is 2.14
+# cannot use GH_CONF:
+# lcms_GH_CONF  := mm2/Little-CMS,lcms
+lcms_VERSION  := 2.15
+lcms_CHECKSUM := b20cbcbd0f503433be2a4e81462106fa61050a35074dc24a4e356792d971ab39
+lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
+lcms_SUBDIR   := lcms2-$(lcms_VERSION)
+lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
+lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
+
+# upstream version is 7.0.1
+harfbuzz_VERSION  := 7.1.0
+harfbuzz_CHECKSUM := f135a61cd464c9ed6bc9823764c188f276c3850a8dc904628de2a87966b7077b
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
@@ -120,6 +130,14 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
+
+# upstream version is 23.02.0
+poppler_VERSION  := 23.03.0
+poppler_CHECKSUM := b04148bf849c1965ada7eff6be4685130e3a18a84e0cce73bf9bc472ec32f2b4
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -396,19 +414,22 @@ define fribidi_BUILD
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    $(MXE_NINJA) -C '$(BUILD_DIR)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
+# build with the Meson build system
 # exclude jpeg, tiff dependencies
 # build with -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT to avoid a
 # horrible hack (we don't target pre-Windows XP, so it should be safe)
 define lcms_BUILD
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --with-zlib \
-        CPPFLAGS='-DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
+    $(MXE_MESON_WRAPPER) \
+        -Djpeg=disabled \
+        -Dtiff=disabled \
+        -Dc_args='$(CFLAGS) -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT' \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
 # disable largefile support, we rely on vips for that and ImageMagick's

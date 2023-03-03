@@ -25,9 +25,9 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.0    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
-| [glib]          | 2.75.3    | LGPLv3                                                       |
-| [harfbuzz]      | 7.0.0     | MIT Licence                                                  |
-| [lcms]          | 2.14      | MIT Licence                                                  |
+| [glib]          | 2.75.4    | LGPLv3                                                       |
+| [harfbuzz]      | 7.1.0     | MIT Licence                                                  |
+| [lcms]          | 2.15      | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
 | [libheif]       | 1.15.1    | LGPLv3                                                       |
@@ -41,7 +41,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.10.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.33    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.50.12   | LGPLv3                                                       |
+| [pango]         | 1.50.14   | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
@@ -96,15 +96,15 @@ Same as libvips-web + these extra dependencies:
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.3     | Apache-2.0 License                                           |
 | [imagemagick]   | 6.9.12-77 | [ImageMagick License] (Apache-2.0-like)                      |
-| [imath]         | 3.1.6     | BSD 3-Clause                                                 |
+| [imath]         | 3.1.7     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.8.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.5     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 23.02.0   | GPLv2                                                        |
-| [sqlite]        | 3.40.1    | Public domain                                                |
+| [poppler]       | 23.03.0   | GPLv2                                                        |
+| [sqlite]        | 3.41.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
