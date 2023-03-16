@@ -29,8 +29,8 @@ libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-77
-imagemagick_CHECKSUM := 4ad246b98b8a39ae10345791c972de264e60376ed752055ce9744ef2a528d5aa
+imagemagick_VERSION  := 6.9.12-80
+imagemagick_CHECKSUM := 8dd537e833c36e1aa732d817eb6cbef82bf37fbee344b95bc1817e6fc3ced5f0
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -43,8 +43,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.55.91
-librsvg_CHECKSUM := 796a43965c0e33547f5c42268f7ee3f50573236061b6e7710cae028586dca0c2
+librsvg_VERSION  := 2.55.92
+librsvg_CHECKSUM := aaf806a388ac82c82e450d1565e9fbf76e0113cc5c82e13e3ce832f9f23e3cd2
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -59,8 +59,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.75.4
-glib_CHECKSUM := 16ce24bb8f3c0ea3bdbda937c090b93bb8b5ad2d417e5e5e42c14aa4cf6b6ad1
+glib_VERSION  := 2.76.0
+glib_CHECKSUM := 525bb703b807142e1aee5ccf222c344e8064b21c0c45677ef594e587874c6797
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -83,8 +83,8 @@ cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.1.5
-openexr_CHECKSUM := 93925805c1fc4f8162b35f0ae109c4a75344e6decae5a240afdfce25f8a433ec
+openexr_VERSION  := 3.1.6
+openexr_CHECKSUM := daa33d93a7b706e27368a162060df0246a7750c39a01a122d33b13f5c45d2029
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -107,22 +107,6 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 2.14
-# cannot use GH_CONF:
-# lcms_GH_CONF  := mm2/Little-CMS,lcms
-lcms_VERSION  := 2.15
-lcms_CHECKSUM := b20cbcbd0f503433be2a4e81462106fa61050a35074dc24a4e356792d971ab39
-lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
-lcms_SUBDIR   := lcms2-$(lcms_VERSION)
-lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
-lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
-
-# upstream version is 7.0.1
-harfbuzz_VERSION  := 7.1.0
-harfbuzz_CHECKSUM := f135a61cd464c9ed6bc9823764c188f276c3850a8dc904628de2a87966b7077b
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
-
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
 fftw_CHECKSUM := 56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467
@@ -130,14 +114,6 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
-
-# upstream version is 23.02.0
-poppler_VERSION  := 23.03.0
-poppler_CHECKSUM := b04148bf849c1965ada7eff6be4685130e3a18a84e0cce73bf9bc472ec32f2b4
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -169,6 +145,7 @@ poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 meson_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/meson-[0-9]*.patch)))
 mingw-w64_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 fontconfig_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
+lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt

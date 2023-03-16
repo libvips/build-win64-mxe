@@ -12,7 +12,7 @@ a layer providing case insensitivity anyway.
 
 This matches other includes of windows.h throughout the codebase.
 
-Upstream-Status: Submitted [https://github.com/mm2/Little-CMS/pull/363]
+Upstream-Status: Accepted [https://github.com/mm2/Little-CMS/commit/b35e2718688508dfe2591808cfc74a77490849f6]
 
 diff --git a/plugins/fast_float/src/lcms2_fast_float.rc.in b/plugins/fast_float/src/lcms2_fast_float.rc.in
 index 1111111..2222222 100644
