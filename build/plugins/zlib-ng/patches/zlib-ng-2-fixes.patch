@@ -12,7 +12,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -1008,7 +1008,12 @@ endforeach()
+@@ -1022,7 +1022,12 @@ endforeach()
  if(WIN32)
      # Shared library
      if(NOT DEFINED BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)

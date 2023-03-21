@@ -33,10 +33,10 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.15.1    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.39    | [libpng License version 2]                                   |
-| [librsvg]       | 2.55.92   | LGPLv3                                                       |
+| [librsvg]       | 2.56.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.3     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.5.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.14.1    | LGPLv3                                                       |
+| [libvips]       | 8.14.2    | LGPLv3                                                       |
 | [libwebp]       | 1.3.0     | New BSD License                                              |
 | [libxml2]       | 2.10.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
@@ -44,7 +44,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [pango]         | 1.50.14   | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
-| [zlib-ng]       | 2.0.6     | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.0.7     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 
@@ -94,8 +94,8 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 4.2.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [highway]       | 1.0.3     | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-80 | [ImageMagick License] (Apache-2.0-like)                      |
+| [highway]       | 1.0.4     | Apache-2.0 License                                           |
+| [imagemagick]   | 6.9.12-82 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.7     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.8.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
