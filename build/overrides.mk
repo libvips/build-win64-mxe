@@ -541,7 +541,7 @@ define librsvg_BUILD
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
         $(SED) -i 's/ab67633c5ee992f8af48379b429388444bcd1343c6f15317dff63024458a57be/ccd1f5e9c8f96981063fa2482d4b668908bccc493d4f286cc9acfceeef051d6d/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/eea8b74d2b7ad2d3b51df7900d9af31b37ee00faacd9deff1a486d7b557e228a/ef2ea740cca952c11667c20396e349bddee27e81f2e1e1364fe4233407d45a9f/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/45ab03c8f5369df7579abb8adc2554a892f415187a384c85832e75abe898d357/cf2110871315c70c673461bcff64c692247b7736c26b1e0aae688cdb84f9b27c/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/d95b386e483d2bc77b2d5c41b62d01a8cc791fb3fb18ce97317947ecd5a3c02b/8fa2a3cef0acaaabcb2211d8195bc65c1debbb6a55a59dc59848ea67502f69e1/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/14f6fabcd2f0ae1a6ddd27ade6d3327f6df7346eb9cd2e99151ac8e84dcd2a78/e4a3af2f635bac2d51ea0f7ac9d2db7d27c9bb9e53fa8a189b1a93ca43a96bf5/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         $(SED) -i 's/d57b1956970299e10b9c0c811580d5805c8b28138bf83f41f877c5ae50fcfdbe/0826e8d25a22c15935f05e1d066d5a7737d14f0f77baf7a8f1deda568e70317e/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
@@ -556,6 +556,8 @@ define librsvg_BUILD
 
     # Allow libtool to statically link against libintl
     # by specifying lt_cv_deplibs_check_method="pass_all"
+    # Need to explicitly link against ntdll after PR:
+    # https://github.com/rust-lang/rust/pull/108262
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
@@ -563,7 +565,8 @@ define librsvg_BUILD
         RUST_TARGET='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
         CARGO='$(TARGET)-cargo' \
         RUSTC='$(TARGET)-rustc' \
-        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all")
+        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all") \
+        LIBS='-lntdll'
 
     $(if $(IS_GCC), MXE_ENABLE_NETWORK=1) $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_SCRIPTS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=
