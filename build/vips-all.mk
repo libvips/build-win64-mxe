@@ -57,9 +57,9 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "png": "$(libpng_VERSION)",\n'; \
      printf '  "poppler": "$(poppler_VERSION)",\n'; \
      $(if $(IS_INTL_DUMMY),printf '  "proxy-libintl": "$(proxy-libintl_VERSION)"$(comma)\n';) \
-     printf '  "sqlite": "$(sqlite_VERSION)",\n'; \
-     printf '  "svg": "$(librsvg_VERSION)",\n'; \
+     printf '  "rsvg": "$(librsvg_VERSION)",\n'; \
      printf '  "spng": "$(libspng_VERSION)",\n'; \
+     printf '  "sqlite": "$(sqlite_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
      printf '  "vips": "$(vips-all_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \

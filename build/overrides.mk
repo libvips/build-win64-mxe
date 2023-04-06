@@ -29,8 +29,8 @@ libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-82
-imagemagick_CHECKSUM := 54721e7933f415a3d7e61a5ebe7d2cc81b26951c54187722c7f5fc88da525a75
+imagemagick_VERSION  := 6.9.12-84
+imagemagick_CHECKSUM := 3b5a068dd0207513ee3df388a18748b84ea336cb332bd35947fc8fc23cad169d
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -59,8 +59,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.76.0
-glib_CHECKSUM := 525bb703b807142e1aee5ccf222c344e8064b21c0c45677ef594e587874c6797
+glib_VERSION  := 2.76.1
+glib_CHECKSUM := 43dc0f6a126958f5b454136c4398eab420249c16171a769784486e25f2fda19f
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -83,8 +83,8 @@ cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.1.6
-openexr_CHECKSUM := daa33d93a7b706e27368a162060df0246a7750c39a01a122d33b13f5c45d2029
+openexr_VERSION  := 3.1.7
+openexr_CHECKSUM := 78dbca39115a1c526e6728588753955ee75fa7f5bb1a6e238bed5b6d66f91fd7
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -745,6 +745,8 @@ define glib_BUILD
         --default-library=shared \
         --force-fallback-for=gvdb \
         -Dnls=disabled \
+        -Dglib_assert=false \
+        -Dglib_checks=false \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

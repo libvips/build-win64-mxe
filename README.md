@@ -19,18 +19,18 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 |-----------------|-----------|--------------------------------------------------------------|
 | [aom]           | 3.6.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.8    | Mozilla Public License 2.0                                   |
-| [cgif]          | 0.3.0     | MIT Licence                                                  |
+| [cgif]          | 0.3.1     | MIT Licence                                                  |
 | [expat]         | 2.5.0     | MIT Licence                                                  |
 | [fontconfig]    | 2.14.2    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.0    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
-| [glib]          | 2.76.0    | LGPLv3                                                       |
+| [glib]          | 2.76.1    | LGPLv3                                                       |
 | [harfbuzz]      | 7.1.0     | MIT Licence                                                  |
 | [lcms]          | 2.15      | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
-| [libheif]       | 1.15.1    | LGPLv3                                                       |
+| [libheif]       | 1.15.2    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.39    | [libpng License version 2]                                   |
 | [librsvg]       | 2.56.0    | LGPLv3                                                       |
@@ -95,16 +95,16 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.2.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.4     | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-82 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-84 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.7     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.8.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
-| [openexr]       | 3.1.6     | BSD 3-Clause                                                 |
+| [openexr]       | 3.1.7     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 23.03.0   | GPLv2                                                        |
-| [sqlite]        | 3.41.1    | Public domain                                                |
+| [poppler]       | 23.04.0   | GPLv2                                                        |
+| [sqlite]        | 3.41.2    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/

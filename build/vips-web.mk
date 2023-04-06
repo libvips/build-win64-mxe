@@ -42,7 +42,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "pixman": "$(pixman_VERSION)",\n'; \
      printf '  "png": "$(libpng_VERSION)",\n'; \
      $(if $(IS_INTL_DUMMY),printf '  "proxy-libintl": "$(proxy-libintl_VERSION)"$(comma)\n';) \
-     printf '  "svg": "$(librsvg_VERSION)",\n'; \
+     printf '  "rsvg": "$(librsvg_VERSION)",\n'; \
      printf '  "spng": "$(libspng_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
      printf '  "vips": "$(vips-web_VERSION)",\n'; \
