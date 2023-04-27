@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2023-04-05/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2023-04-27/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 8b0046bf22ec056a41f6cc2603aac6c7f134b5122452c2d915b4e2c6ecf0f511
+$(PKG)_CHECKSUM := 73329b81e56dd699aa0dfa2b99b732309ca26ec5adcb3adf3ea41f420a23f3cd
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2023-04-05/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2023-04-27/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -31,6 +31,9 @@ define $(PKG)_BUILD_$(BUILD)
     $(eval unexport CFLAGS)
     $(eval unexport CXXFLAGS)
     $(eval unexport LDFLAGS)
+
+    # Workaround for a regression introduced in https://github.com/rust-lang/rust/pull/109848
+    $(TOUCH) '$(SOURCE_DIR)/.gitmodules'
 
     # TODO(kleisauke): Build with --enable-vendor if we are no longer
     # patching panic_unwind/unwind.
@@ -78,9 +81,8 @@ define $(PKG)_BUILD
     $(eval TARGET_RUST := $(PROCESSOR)-pc-windows-gnullvm)
 
     # Build and prepare startup objects like rsbegin.o and rsend.o
-    # FIXME(kleisauke): Remove -Zmir-enable-passes=-CheckAlignment, see: https://github.com/rust-lang/rust/issues/109996
     $(foreach FILE, rsbegin rsend, \
-        $(PREFIX)/$(BUILD)/bin/rustc -Zmir-enable-passes=-CheckAlignment --target='$(TARGET_RUST)' --emit=obj -o '$(BUILD_DIR)/$(FILE).o' \
+        $(PREFIX)/$(BUILD)/bin/rustc --target='$(TARGET_RUST)' --emit=obj -o '$(BUILD_DIR)/$(FILE).o' \
             '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/rtstartup/$(FILE).rs';)
 
     # Install the startup objects
@@ -88,7 +90,6 @@ define $(PKG)_BUILD
     mv -vf '$(BUILD_DIR)/'rs{begin,end}.o '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
 
     # Install Cargo config
-    # FIXME(kleisauke): Remove -Zshare-generics=no, see: https://github.com/rust-lang/rust/issues/108853
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
     (echo '[unstable]'; \
      echo 'build-std = ["std", "panic_abort"]'; \
@@ -99,7 +100,6 @@ define $(PKG)_BUILD
      echo 'CC_$(TARGET_RUST) = "$(TARGET)-clang"'; \
      echo 'RUST_COMPILER_RT_ROOT = "$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/src/llvm-project/compiler-rt"'; \
      echo '[target.$(TARGET_RUST)]'; \
-     echo 'rustflags = ["-Zshare-generics=no"]'; \
      echo 'linker = "$(TARGET)-clang"'; \
      echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"';) \
              > '$(PREFIX)/$(TARGET)/.cargo/config'
