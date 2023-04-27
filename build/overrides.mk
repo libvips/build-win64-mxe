@@ -21,16 +21,16 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.9.12
-libxml2_VERSION  := 2.10.3
-libxml2_CHECKSUM := 5d2cc3d78bec3dbe212a9d7fa629ada25a7da928af432c93060ff5c17ee28a9c
+libxml2_VERSION  := 2.10.4
+libxml2_CHECKSUM := ed0c91c5845008f1936739e4eee2035531c1c94742c6541f44ee66d885948d45
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-84
-imagemagick_CHECKSUM := 3b5a068dd0207513ee3df388a18748b84ea336cb332bd35947fc8fc23cad169d
+imagemagick_VERSION  := 6.9.12-86
+imagemagick_CHECKSUM := beedb7161a1a78554000c8720c19ed594a5a014a4a336fa1eed0c36e9227a9eb
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -59,8 +59,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.76.1
-glib_CHECKSUM := 43dc0f6a126958f5b454136c4398eab420249c16171a769784486e25f2fda19f
+glib_VERSION  := 2.76.2
+glib_CHECKSUM := 24f3847857b1d8674cdb0389a36edec0f13c666cd3ce727ecd340eb9da8aca9e
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -106,6 +106,12 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
+
+# upstream version is 7.1.0
+harfbuzz_VERSION  := 7.2.0
+harfbuzz_CHECKSUM := fc5560c807eae0efd5f95b5aa4c65800c7a8eed6642008a6b1e7e3ffff7873cc
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
@@ -708,7 +714,7 @@ define libxml2_BUILD
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
-        --with-zlib='$(PREFIX)/$(TARGET)/lib' \
+        --with-zlib='$(PREFIX)/$(TARGET)' \
         --with-minimum \
         --with-reader \
         --with-writer \

@@ -25,8 +25,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.0    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
-| [glib]          | 2.76.1    | LGPLv3                                                       |
-| [harfbuzz]      | 7.1.0     | MIT Licence                                                  |
+| [glib]          | 2.76.2    | LGPLv3                                                       |
+| [harfbuzz]      | 7.2.0     | MIT Licence                                                  |
 | [lcms]          | 2.15      | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
@@ -38,7 +38,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libtiff]       | 4.5.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.14.2    | LGPLv3                                                       |
 | [libwebp]       | 1.3.0     | New BSD License                                              |
-| [libxml2]       | 2.10.3    | MIT Licence                                                  |
+| [libxml2]       | 2.10.4    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.33    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.50.14   | LGPLv3                                                       |
@@ -95,7 +95,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.2.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.4     | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-84 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-86 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.7     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.8.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
