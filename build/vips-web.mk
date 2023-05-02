@@ -2,13 +2,12 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.14.2
-$(PKG)_CHECKSUM := 27dad021f0835a5ab14e541d02abd41e4c3bd012d2196438df5a9e754984f7ce
+# https://github.com/kleisauke/libvips/tarball/f8eaf631335f30151de91dbddd9e525667ba2934
+$(PKG)_VERSION  := f8eaf63
+$(PKG)_CHECKSUM := 61d6fa0a25983db01199279bd2e655617d75a5305e4c9d90638b7d45ab02bdd6
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
-$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango \
+$(PKG)_GH_CONF  := kleisauke/libvips/branches/dzsave-remove-gsf
+$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc cgif
 
@@ -20,6 +19,7 @@ define $(PKG)_PRE_CONFIGURE
 
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \
+     printf '  "archive": "$(libarchive_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
      printf '  "cgif": "$(cgif_VERSION)",\n'; \
      printf '  "exif": "$(libexif_VERSION)",\n'; \
@@ -63,7 +63,8 @@ define $(PKG)_BUILD
     $(MXE_MESON_WRAPPER) \
         --default-library=shared \
         -Ddeprecated=false \
-        -Dintrospection=false \
+        -Dexamples=false \
+        -Dintrospection=disabled \
         -Dmodules=disabled \
         -Dcfitsio=disabled \
         -Dfftw=disabled \
@@ -77,7 +78,6 @@ define $(PKG)_BUILD
         -Dpdfium=disabled \
         -Dpoppler=disabled \
         -Dquantizr=disabled \
-        -Dgsf=disabled \
         -Dppm=false \
         -Danalyze=false \
         -Dradiance=false \

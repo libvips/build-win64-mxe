@@ -28,6 +28,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [glib]          | 2.76.3    | LGPLv3                                                       |
 | [harfbuzz]      | 7.3.0     | MIT Licence                                                  |
 | [lcms]          | 2.15      | MIT Licence                                                  |
+| [libarchive]    | 3.6.2     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
 | [libheif]       | 1.16.2    | LGPLv3                                                       |
@@ -36,7 +37,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.56.1    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.5.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.14.2    | LGPLv3                                                       |
+| [libvips]       | [f8eaf63] | LGPLv3                                                       |
 | [libwebp]       | 1.3.0     | New BSD License                                              |
 | [libxml2]       | 2.11.4    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.3     | [zlib License, IJG License, BSD-3-Clause]                    |
@@ -47,6 +48,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [zlib-ng]       | 2.0.7     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
+
+[f8eaf63]: https://github.com/kleisauke/libvips/commit/f8eaf631335f30151de91dbddd9e525667ba2934
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -62,6 +65,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
 [lcms]: https://github.com/mm2/Little-CMS
+[libarchive]: https://github.com/libarchive/libarchive
 [libexif]: https://github.com/libexif/libexif
 [libffi]: https://github.com/libffi/libffi
 [libheif]: https://github.com/strukturag/libheif

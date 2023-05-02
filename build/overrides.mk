@@ -28,6 +28,14 @@ libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
+# upstream version is 3.4.0
+libarchive_VERSION  := 3.6.2
+libarchive_CHECKSUM := 9e2c1b80d5fbe59b61308fdfab6c79b5021d7ff4ff2489fb12daf0a96a83551d
+libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
+libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
+libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
+libarchive_URL      := https://www.libarchive.org/downloads/$(libarchive_FILE)
+
 # upstream version is 7, we want ImageMagick 6
 imagemagick_VERSION  := 6.9.12-89
 imagemagick_CHECKSUM := 929960d533322f96f46efa1e44acdb9c5b9881e63a49376dd4c3fa81ae422f9b
@@ -216,6 +224,8 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: meson-wrapper
 # HarfBuzz:
 #  Removed: icu4c
+# libarchive:
+#  Removed: bzip2 libiconv libxml2 nettle openssl xz
 
 freetype_DEPS           := $(subst bzip2,meson-wrapper,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(subst bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
@@ -237,6 +247,7 @@ cfitsio_DEPS            := cc zlib
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 pixman_DEPS             := cc meson-wrapper libpng
 harfbuzz_DEPS           := $(filter-out  icu4c,$(harfbuzz_DEPS))
+libarchive_DEPS         := cc zlib
 
 ## Override build scripts
 
@@ -744,6 +755,30 @@ define libxml2_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
     ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
+endef
+
+# Only build libarchive with zlib support
+define libarchive_BUILD
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS) \
+        --without-bz2lib \
+        --without-libb2 \
+        --without-iconv \
+        --without-lz4 \
+        --without-zstd \
+        --without-lzma \
+        --without-cng \
+        --without-openssl \
+        --without-xml2 \
+        --without-expat \
+        --disable-acl \
+        --disable-xattr \
+        --disable-bsdtar \
+        --disable-bsdcat \
+        --disable-bsdcpio \
+        --disable-posix-regex-lib
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
 endef
 
 # build with the Meson build system
