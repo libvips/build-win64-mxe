@@ -18,6 +18,7 @@ openjpeg_DEPS           := $(subst zlib,zlib-ng,$(openjpeg_DEPS))
 openslide_DEPS          := $(subst zlib,zlib-ng,$(openslide_DEPS))
 poppler_DEPS            := $(subst zlib,zlib-ng,$(poppler_DEPS))
 tiff_DEPS               := $(subst zlib,zlib-ng,$(tiff_DEPS))
+libzip_DEPS             := $(subst zlib,zlib-ng,$(libzip_DEPS))
 
 # Disable the zlib build, just to be sure
 zlib_BUILD_x86_64-w64-mingw32  =

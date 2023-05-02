@@ -28,6 +28,12 @@ libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
+# upstream version is 1.5.2
+libzip_VERSION  := 1.9.2
+libzip_CHECKSUM := c93e9852b7b2dc931197831438fee5295976ee0ba24f8524a8907be5c2ba5937
+libzip_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libzip-[0-9]*.patch)))
+libzip_GH_CONF  := nih-at/libzip/releases,v,,,,.tar.xz
+
 # upstream version is 7, we want ImageMagick 6
 imagemagick_VERSION  := 6.9.12-86
 imagemagick_CHECKSUM := beedb7161a1a78554000c8720c19ed594a5a014a4a336fa1eed0c36e9227a9eb
@@ -208,6 +214,8 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: meson-wrapper
 # HarfBuzz:
 #  Removed: icu4c
+# libzip:
+#  Removed: bzip2
 
 freetype_DEPS           := $(subst bzip2,meson-wrapper,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(subst bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
@@ -229,6 +237,7 @@ cfitsio_DEPS            := cc zlib
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 pixman_DEPS             := cc meson-wrapper libpng
 harfbuzz_DEPS           := $(filter-out  icu4c,$(harfbuzz_DEPS))
+libzip_DEPS             := $(filter-out bzip2 ,$(libzip_DEPS))
 
 ## Override build scripts
 
@@ -730,6 +739,25 @@ define libxml2_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
     ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
+endef
+
+define libzip_BUILD
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
+        -DENABLE_GNUTLS=OFF \
+        -DENABLE_OPENSSL=OFF \
+        -DENABLE_MBEDTLS=OFF \
+        -DENABLE_COMMONCRYPTO=OFF \
+        -DENABLE_WINDOWS_CRYPTO=OFF \
+        -DENABLE_LZMA=OFF \
+        -DENABLE_ZSTD=OFF \
+        -DENABLE_BZIP2=OFF \
+        -DBUILD_DOC=OFF \
+        -DBUILD_TOOLS=OFF \
+        -DBUILD_REGRESS=OFF \
+        -DBUILD_EXAMPLES=OFF
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef
 
 # build with the Meson build system

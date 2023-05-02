@@ -1,0 +1,109 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: TellowKrinkle <tellowkrinkle@gmail.com>
+Date: Sat, 13 Aug 2022 17:01:05 -0500
+Subject: [PATCH 1/2] zip.h: Add nullability annotations for windows zip methods
+
+Stops warning spam from clang-cl
+
+Upstream-Status: Accepted [https://github.com/nih-at/libzip/commit/85ee040c7d30397d0ccc08d459c6f1a4f98c8ec8]
+
+diff --git a/lib/zip.h b/lib/zip.h
+index 1111111..2222222 100644
+--- a/lib/zip.h
++++ b/lib/zip.h
+@@ -459,12 +459,12 @@ ZIP_EXTERN int zip_source_stat(zip_source_t *_Nonnull, zip_stat_t *_Nonnull);
+ ZIP_EXTERN zip_int64_t zip_source_tell(zip_source_t *_Nonnull);
+ ZIP_EXTERN zip_int64_t zip_source_tell_write(zip_source_t *_Nonnull);
+ #ifdef _WIN32
+-ZIP_EXTERN zip_source_t *zip_source_win32a(zip_t *, const char *, zip_uint64_t, zip_int64_t);
+-ZIP_EXTERN zip_source_t *zip_source_win32a_create(const char *, zip_uint64_t, zip_int64_t, zip_error_t *);
+-ZIP_EXTERN zip_source_t *zip_source_win32handle(zip_t *, void *, zip_uint64_t, zip_int64_t);
+-ZIP_EXTERN zip_source_t *zip_source_win32handle_create(void *, zip_uint64_t, zip_int64_t, zip_error_t *);
+-ZIP_EXTERN zip_source_t *zip_source_win32w(zip_t *, const wchar_t *, zip_uint64_t, zip_int64_t);
+-ZIP_EXTERN zip_source_t *zip_source_win32w_create(const wchar_t *, zip_uint64_t, zip_int64_t, zip_error_t *);
++ZIP_EXTERN zip_source_t *_Nullable zip_source_win32a(zip_t *_Nullable, const char *_Nullable, zip_uint64_t, zip_int64_t);
++ZIP_EXTERN zip_source_t *_Nullable zip_source_win32a_create(const char *_Nullable, zip_uint64_t, zip_int64_t, zip_error_t *_Nullable);
++ZIP_EXTERN zip_source_t *_Nullable zip_source_win32handle(zip_t *_Nullable, void *_Nullable, zip_uint64_t, zip_int64_t);
++ZIP_EXTERN zip_source_t *_Nullable zip_source_win32handle_create(void *_Nullable, zip_uint64_t, zip_int64_t, zip_error_t *_Nullable);
++ZIP_EXTERN zip_source_t *_Nullable zip_source_win32w(zip_t *_Nullable, const wchar_t *_Nullable, zip_uint64_t, zip_int64_t);
++ZIP_EXTERN zip_source_t *_Nullable zip_source_win32w_create(const wchar_t *_Nullable, zip_uint64_t, zip_int64_t, zip_error_t *_Nullable);
+ #endif
+ ZIP_EXTERN zip_source_t *_Nullable zip_source_window_create(zip_source_t *_Nonnull, zip_uint64_t, zip_int64_t, zip_error_t *_Nullable);
+ ZIP_EXTERN zip_int64_t zip_source_write(zip_source_t *_Nonnull, const void *_Nullable, zip_uint64_t);
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: TellowKrinkle <tellowkrinkle@gmail.com>
+Date: Sat, 13 Aug 2022 17:14:47 -0500
+Subject: [PATCH 2/2] win32: Clear up some warnings in clang-cl
+
+Upstream-Status: Accepted [https://github.com/nih-at/libzip/commit/6488a809d44df59468e2fbcfc103345d01f65b56]
+
+diff --git a/lib/zip_source_file_win32.h b/lib/zip_source_file_win32.h
+index 1111111..2222222 100644
+--- a/lib/zip_source_file_win32.h
++++ b/lib/zip_source_file_win32.h
+@@ -73,4 +73,12 @@ zip_int64_t _zip_win32_op_tell(zip_source_file_context_t *ctx, void *f);
+ bool _zip_filetime_to_time_t(FILETIME ft, time_t *t);
+ int _zip_win32_error_to_errno(DWORD win32err);
+ 
++#ifdef __clang__
++#define DONT_WARN_INCOMPATIBLE_FN_PTR_BEGIN _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wincompatible-function-pointer-types\"")
++#define DONT_WARN_INCOMPATIBLE_FN_PTR_END _Pragma("GCC diagnostic pop")
++#else
++#define DONT_WARN_INCOMPATIBLE_FN_PTR_BEGIN
++#define DONT_WARN_INCOMPATIBLE_FN_PTR_END
++#endif
++
+ #endif /* _HAD_ZIP_SOURCE_FILE_WIN32_H */
+diff --git a/lib/zip_source_file_win32_ansi.c b/lib/zip_source_file_win32_ansi.c
+index 1111111..2222222 100644
+--- a/lib/zip_source_file_win32_ansi.c
++++ b/lib/zip_source_file_win32_ansi.c
+@@ -37,6 +37,7 @@ static char *ansi_allocate_tempname(const char *name, size_t extra_chars, size_t
+ static void ansi_make_tempname(char *buf, size_t len, const char *name, zip_uint32_t i);
+ 
+ /* clang-format off */
++DONT_WARN_INCOMPATIBLE_FN_PTR_BEGIN
+ 
+ zip_win32_file_operations_t ops_ansi = {
+     ansi_allocate_tempname,
+@@ -50,6 +51,7 @@ zip_win32_file_operations_t ops_ansi = {
+     strdup
+ };
+ 
++DONT_WARN_INCOMPATIBLE_FN_PTR_END
+ /* clang-format on */
+ 
+ ZIP_EXTERN zip_source_t *
+diff --git a/lib/zip_source_file_win32_named.c b/lib/zip_source_file_win32_named.c
+index 1111111..2222222 100644
+--- a/lib/zip_source_file_win32_named.c
++++ b/lib/zip_source_file_win32_named.c
+@@ -99,7 +99,6 @@ _zip_win32_named_op_create_temp_output(zip_source_file_context_t *ctx) {
+ 
+     zip_uint32_t value, i;
+     HANDLE th = INVALID_HANDLE_VALUE;
+-    void *temp = NULL;
+     PSECURITY_DESCRIPTOR psd = NULL;
+     PSECURITY_ATTRIBUTES psa = NULL;
+     SECURITY_ATTRIBUTES sa;
+diff --git a/lib/zip_source_file_win32_utf16.c b/lib/zip_source_file_win32_utf16.c
+index 1111111..2222222 100644
+--- a/lib/zip_source_file_win32_utf16.c
++++ b/lib/zip_source_file_win32_utf16.c
+@@ -39,6 +39,7 @@ static void utf16_make_tempname(char *buf, size_t len, const char *name, zip_uin
+ static char *utf16_strdup(const char *string);
+ 
+ /* clang-format off */
++DONT_WARN_INCOMPATIBLE_FN_PTR_BEGIN
+ 
+ zip_win32_file_operations_t ops_utf16 = {
+     utf16_allocate_tempname,
+@@ -52,6 +53,7 @@ zip_win32_file_operations_t ops_utf16 = {
+     utf16_strdup
+ };
+ 
++DONT_WARN_INCOMPATIBLE_FN_PTR_END
+ /* clang-format on */
+ 
+ ZIP_EXTERN zip_source_t *
