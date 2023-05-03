@@ -111,7 +111,7 @@ fi
 if [ "$LLVM" = "true" ]; then
   plugins+=" $work_dir/plugins/llvm-mingw"
 else
-  plugins+=" plugins/gcc12 $work_dir/plugins/gcc"
+  plugins+=" plugins/gcc13 $work_dir/plugins/gcc"
 fi
 
 # Avoid shipping the gettext DLL (libintl-8.dll),
