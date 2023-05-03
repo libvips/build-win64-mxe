@@ -21,8 +21,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.9.12
-libxml2_VERSION  := 2.10.4
-libxml2_CHECKSUM := ed0c91c5845008f1936739e4eee2035531c1c94742c6541f44ee66d885948d45
+libxml2_VERSION  := 2.11.1
+libxml2_CHECKSUM := 3d39b294b856bfe3bafd5fb126e1f8487004261e78eabb8df9513e927915a995
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -107,12 +107,6 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 7.1.0
-harfbuzz_VERSION  := 7.2.0
-harfbuzz_CHECKSUM := fc5560c807eae0efd5f95b5aa4c65800c7a8eed6642008a6b1e7e3ffff7873cc
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
-
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
 fftw_CHECKSUM := 56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467
@@ -120,6 +114,14 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
+
+# upstream version is 23.04.0
+poppler_VERSION  := 23.05.0
+poppler_CHECKSUM := 38294de7149ebe458191a6e6d0e2837da7dba8683900a635252f6d0ee235f990
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -703,14 +705,10 @@ define matio_BUILD_SHARED
 endef
 
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
-# disable the linker version script on llvm-mingw
 # OpenSlide needs --with-xpath
 # ImageMagick's internal MSVG parser needs --with-sax1
 define libxml2_BUILD
     $(SED) -i 's,`uname`,MinGW,g' '$(1)/xml2-config.in'
-
-    # need to regenerate the configure script
-    cd '$(SOURCE_DIR)' && autoreconf -fi
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
@@ -728,8 +726,7 @@ define libxml2_BUILD
         --without-debug \
         --without-iconv \
         --without-python \
-        --without-threads \
-        $(if $(IS_LLVM), --disable-ld-version-script)
+        --without-threads
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
     ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
