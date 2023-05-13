@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 15 Sep 2020 11:50:00 +0200
-Subject: [PATCH 1/4] Add llvm-mingw i686/ARMv7 targets
+Subject: [PATCH 1/5] Add llvm-mingw i686/ARMv7 targets
 
 Upstream-Status: Pending
 
@@ -61,7 +61,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1163,7 +1163,9 @@ supported_targets! {
+@@ -1164,7 +1164,9 @@ supported_targets! {
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
      ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
@@ -75,7 +75,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 22 Sep 2020 10:00:00 +0200
-Subject: [PATCH 2/4] Ensure that std/unwind can be successfully built on
+Subject: [PATCH 2/5] Ensure that std/unwind can be successfully built on
  llvm-mingw
 
 Fixes undefined symbol errors while linking these crates on llvm-mingw
@@ -132,7 +132,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 30 Aug 2022 23:20:27 +0200
-Subject: [PATCH 3/4] windows-gnullvm: avoid linking to libunwind statically
+Subject: [PATCH 3/5] windows-gnullvm: avoid linking to libunwind statically
 
 Avoid linking against the static variant of libunwind, which is not
 always available. Instead, prefer to use the unwind library from the
@@ -188,7 +188,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 17 Oct 2022 11:50:00 +0200
-Subject: [PATCH 4/4] Use GCC-style unwinding on MinGW targets other than i686
+Subject: [PATCH 4/5] Use GCC-style unwinding on MinGW targets other than i686
 
 See: https://github.com/msys2/MINGW-packages/pull/13278
 
@@ -198,7 +198,7 @@ diff --git a/library/std/src/personality/gcc.rs b/library/std/src/personality/gc
 index 1111111..2222222 100644
 --- a/library/std/src/personality/gcc.rs
 +++ b/library/std/src/personality/gcc.rs
-@@ -183,7 +183,7 @@ cfg_if::cfg_if! {
+@@ -184,7 +184,7 @@ cfg_if::cfg_if! {
          }
      } else {
          // Default personality routine, which is used directly on most targets
@@ -207,7 +207,7 @@ index 1111111..2222222 100644
          unsafe extern "C" fn rust_eh_personality_impl(
              version: c_int,
              actions: uw::_Unwind_Action,
-@@ -223,9 +223,9 @@ cfg_if::cfg_if! {
+@@ -226,9 +226,9 @@ cfg_if::cfg_if! {
          }
  
          cfg_if::cfg_if! {
@@ -233,3 +233,104 @@ index 1111111..2222222 100644
      // We declare these as opaque types. This is fine since you just need to
      // pass them to _GCC_specific_handler and forget about them.
      pub enum EXCEPTION_RECORD {}
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 13 May 2023 11:46:16 +0200
+Subject: [PATCH 5/5] Fix build errors on llvm-mingw (targeting ARMv7)
+
+Details:
+error[E0412]: cannot find type `WSADATA` in this scope
+   --> library/std/src/sys/windows/c/windows_sys.rs:715:63
+    |
+715 |     pub fn WSAStartup(wversionrequested: u16, lpwsadata: *mut WSADATA) -> i32;
+    |                                                               ^^^^^^^ not found in this scope
+
+error[E0412]: cannot find type `CONTEXT` in this scope
+    --> library/std/src/sys/windows/c/windows_sys.rs:3034:29
+     |
+3034 |     pub ContextRecord: *mut CONTEXT,
+     |                             ^^^^^^^ not found in this scope
+     |
+
+error[E0412]: cannot find type `WSADATA` in module `c`
+  --> library/std/src/sys/windows/net.rs:38:26
+   |
+38 |         let mut data: c::WSADATA = mem::zeroed();
+   |                          ^^^^^^^ not found in `c`
+
+error[E0412]: cannot find type `FLOATING_SAVE_AREA` in this scope
+    --> library/std/src/sys/windows/c/windows_sys.rs:1096:20
+     |
+1096 |     pub FloatSave: FLOATING_SAVE_AREA,
+     |                    ^^^^^^^^^^^^^^^^^^ not found in this scope
+
+Upstream-Status: Pending
+
+diff --git a/library/std/src/sys/windows/c/windows_sys.rs b/library/std/src/sys/windows/c/windows_sys.rs
+index 1111111..2222222 100644
+--- a/library/std/src/sys/windows/c/windows_sys.rs
++++ b/library/std/src/sys/windows/c/windows_sys.rs
+@@ -1084,7 +1084,7 @@ fn clone(&self) -> Self {
+     }
+ }
+ #[repr(C)]
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ pub struct CONTEXT {
+     pub ContextFlags: u32,
+     pub Dr0: u32,
+@@ -1112,9 +1112,9 @@ pub struct CONTEXT {
+     pub SegSs: u32,
+     pub ExtendedRegisters: [u8; 512],
+ }
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::marker::Copy for CONTEXT {}
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::clone::Clone for CONTEXT {
+     fn clone(&self) -> Self {
+         *self
+@@ -3311,7 +3311,7 @@ fn clone(&self) -> Self {
+     }
+ }
+ #[repr(C)]
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ pub struct FLOATING_SAVE_AREA {
+     pub ControlWord: u32,
+     pub StatusWord: u32,
+@@ -3323,9 +3323,9 @@ pub struct FLOATING_SAVE_AREA {
+     pub RegisterArea: [u8; 80],
+     pub Spare0: u32,
+ }
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::marker::Copy for FLOATING_SAVE_AREA {}
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::clone::Clone for FLOATING_SAVE_AREA {
+     fn clone(&self) -> Self {
+         *self
+@@ -4058,7 +4058,7 @@ fn clone(&self) -> Self {
+     }
+ }
+ #[repr(C)]
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ pub struct WSADATA {
+     pub wVersion: u16,
+     pub wHighVersion: u16,
+@@ -4068,9 +4068,9 @@ pub struct WSADATA {
+     pub iMaxUdpDg: u16,
+     pub lpVendorInfo: PSTR,
+ }
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::marker::Copy for WSADATA {}
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::clone::Clone for WSADATA {
+     fn clone(&self) -> Self {
+         *self

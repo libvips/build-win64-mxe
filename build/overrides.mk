@@ -20,9 +20,9 @@ gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
 # no longer needed by libvips, but some of the deps need it
-# upstream version is 2.9.12
-libxml2_VERSION  := 2.11.1
-libxml2_CHECKSUM := 3d39b294b856bfe3bafd5fb126e1f8487004261e78eabb8df9513e927915a995
+# upstream version is 2.11.1
+libxml2_VERSION  := 2.11.3
+libxml2_CHECKSUM := f1acae1664bda006cd81bfc238238217043d586d06659d5c0e3d1bcebe040870
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -107,6 +107,12 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
+# upstream version is 7.2.0
+harfbuzz_VERSION  := 7.3.0
+harfbuzz_CHECKSUM := 20770789749ac9ba846df33983dbda22db836c70d9f5d050cb9aa5347094a8fb
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
 fftw_CHECKSUM := 56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467
@@ -114,14 +120,6 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
-
-# upstream version is 23.04.0
-poppler_VERSION  := 23.05.0
-poppler_CHECKSUM := 38294de7149ebe458191a6e6d0e2837da7dba8683900a635252f6d0ee235f990
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -132,7 +130,7 @@ nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
 nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
-# upstream version is 10.0.0
+# upstream version is 11.0.0
 # Update MinGW-w64 to be656bc
 # https://github.com/mingw-w64/mingw-w64/tarball/be656bcef995c8ad1936aeb926796379d92c0ec0
 mingw-w64_VERSION  := be656bc

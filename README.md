@@ -17,7 +17,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.6.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.6.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.8    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.3.1     | MIT Licence                                                  |
 | [expat]         | 2.5.0     | MIT Licence                                                  |
@@ -26,7 +26,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fribidi]       | 1.0.12    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
 | [glib]          | 2.76.2    | LGPLv3                                                       |
-| [harfbuzz]      | 7.2.0     | MIT Licence                                                  |
+| [harfbuzz]      | 7.3.0     | MIT Licence                                                  |
 | [lcms]          | 2.15      | MIT Licence                                                  |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
@@ -34,11 +34,11 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.39    | [libpng License version 2]                                   |
 | [librsvg]       | 2.56.0    | LGPLv3                                                       |
-| [libspng]       | 0.7.3     | BSD 2-Clause                                                 |
+| [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.5.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.14.2    | LGPLv3                                                       |
 | [libwebp]       | 1.3.0     | New BSD License                                              |
-| [libxml2]       | 2.11.1    | MIT Licence                                                  |
+| [libxml2]       | 2.11.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.1     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.33    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.50.14   | LGPLv3                                                       |

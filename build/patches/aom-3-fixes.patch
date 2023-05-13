@@ -12,7 +12,7 @@ diff --git a/build/cmake/aom_configure.cmake b/build/cmake/aom_configure.cmake
 index 1111111..2222222 100644
 --- a/build/cmake/aom_configure.cmake
 +++ b/build/cmake/aom_configure.cmake
-@@ -246,6 +246,12 @@ aom_get_inline("INLINE")
+@@ -243,6 +243,12 @@ aom_get_inline("INLINE")
  # Don't just check for pthread.h, but use the result of the full pthreads
  # including a linking check in FindThreads above.
  set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
@@ -24,7 +24,7 @@ index 1111111..2222222 100644
 +
  aom_check_source_compiles("unistd_check" "#include <unistd.h>" HAVE_UNISTD_H)
  
- if(NOT MSVC)
+ if(NOT WIN32)
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -70,7 +70,7 @@ index 1111111..2222222 100644
  #ifdef __cplusplus
  extern "C" {
  #endif
-@@ -52,7 +54,7 @@ typedef CONDITION_VARIABLE pthread_cond_t;
+@@ -57,7 +59,7 @@ typedef CONDITION_VARIABLE pthread_cond_t;
  // simplistic pthread emulation layer
  
  // _beginthreadex requires __stdcall
@@ -95,7 +95,7 @@ diff --git a/av1/encoder/encoder.c b/av1/encoder/encoder.c
 index 1111111..2222222 100644
 --- a/av1/encoder/encoder.c
 +++ b/av1/encoder/encoder.c
-@@ -3885,6 +3885,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
+@@ -3896,6 +3896,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
    return AOM_CODEC_OK;
  }
  
@@ -116,7 +116,7 @@ diff --git a/aom_util/aom_thread.h b/aom_util/aom_thread.h
 index 1111111..2222222 100644
 --- a/aom_util/aom_thread.h
 +++ b/aom_util/aom_thread.h
-@@ -34,7 +34,9 @@ extern "C" {
+@@ -39,7 +39,9 @@ extern "C" {
  #include <process.h>  // NOLINT
  #include <windows.h>  // NOLINT
  typedef HANDLE pthread_t;
@@ -127,7 +127,7 @@ index 1111111..2222222 100644
  
  #if _WIN32_WINNT < 0x0600
  #error _WIN32_WINNT must target Windows Vista / Server 2008 or newer.
-@@ -88,26 +90,27 @@ static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
+@@ -93,26 +95,27 @@ static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
  static INLINE int pthread_mutex_init(pthread_mutex_t *const mutex,
                                       void *mutexattr) {
    (void)mutexattr;
@@ -160,7 +160,7 @@ index 1111111..2222222 100644
    return 0;
  }
  
-@@ -137,7 +140,7 @@ static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
+@@ -142,7 +145,7 @@ static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
  static INLINE int pthread_cond_wait(pthread_cond_t *const condition,
                                      pthread_mutex_t *const mutex) {
    int ok;
