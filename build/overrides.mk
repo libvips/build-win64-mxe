@@ -29,8 +29,8 @@ libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-86
-imagemagick_CHECKSUM := beedb7161a1a78554000c8720c19ed594a5a014a4a336fa1eed0c36e9227a9eb
+imagemagick_VERSION  := 6.9.12-87
+imagemagick_CHECKSUM := 13b23019c8fa25b77b2959f1acabf5f787ac1beb08604143a3c7df90a5e0a327
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -57,6 +57,16 @@ pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
+
+# upstream version is 1.0.12
+# cannot use GH_CONF:
+# fribidi_GH_CONF  := fribidi/fribidi/releases,v
+fribidi_VERSION  := 1.0.13
+fribidi_CHECKSUM := 7fa16c80c81bd622f7b198d31356da139cc318a63fc7761217af4130903f54a2
+fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
+fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
+fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
+fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
 glib_VERSION  := 2.76.2

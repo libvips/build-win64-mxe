@@ -23,7 +23,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [expat]         | 2.5.0     | MIT Licence                                                  |
 | [fontconfig]    | 2.14.2    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.0    | [freetype Licence] (BSD-like)                                |
-| [fribidi]       | 1.0.12    | LGPLv3                                                       |
+| [fribidi]       | 1.0.13    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
 | [glib]          | 2.76.2    | LGPLv3                                                       |
 | [harfbuzz]      | 7.3.0     | MIT Licence                                                  |
@@ -95,7 +95,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.2.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.4     | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-86 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-87 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.7     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.8.1     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
@@ -104,7 +104,7 @@ Same as libvips-web + these extra dependencies:
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
 | [poppler]       | 23.05.0   | GPLv2                                                        |
-| [sqlite]        | 3.41.2    | Public domain                                                |
+| [sqlite]        | 3.42.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
