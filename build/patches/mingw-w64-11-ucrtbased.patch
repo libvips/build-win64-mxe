@@ -190,7 +190,7 @@ index 1111111..2222222 100644
  @LIBARM64_TRUE@@W32API_FALSE@	libarm64/libucrt.a \
  @LIBARM64_TRUE@@W32API_FALSE@	libarm64/libucrtapp.a \
  @LIBARM64_TRUE@@W32API_FALSE@	libarm64/libvcruntime140_app.a
-@@ -10729,7 +10733,7 @@ d3dcsxd = d3dcsxd_43
+@@ -10721,7 +10725,7 @@ d3dcsxd = d3dcsxd_43
  d3dcompiler = d3dcompiler_47
  
  # can move this into libsrc/dummy_libm.c or similar
@@ -199,7 +199,7 @@ index 1111111..2222222 100644
  src_libm = _libm_dummy.c
  @ENABLE_DFP_FALSE@src_dfp_math = 
  @ENABLE_DFP_TRUE@src_dfp_math = \
-@@ -80135,6 +80139,12 @@ uninstall-am: uninstall-crt32DATA uninstall-crt64DATA \
+@@ -80051,6 +80055,12 @@ uninstall-am: uninstall-crt32DATA uninstall-crt64DATA \
  
  _libm_dummy.c:
  	echo "static int __attribute__((unused)) __mingw_libm_dummy;" > _libm_dummy.c
@@ -212,7 +212,7 @@ index 1111111..2222222 100644
  @LIB32_TRUE@lib32/crt1.o: crt/crtexe.c
  @LIB32_TRUE@	$(COMPILE32) -c $< -o $@
  @LIB32_TRUE@lib32/crt2.o: lib32/crt1.o
-@@ -80191,6 +80201,8 @@ _libm_dummy.c:
+@@ -80107,6 +80117,8 @@ _libm_dummy.c:
  @LIB32_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
  @LIB32_TRUE@@W32API_FALSE@lib32/libucrtbase.a: lib-common/ucrtbase.mri lib32/libucrtbase_def.a lib32/libucrt_extra.a
  @LIB32_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
@@ -221,7 +221,7 @@ index 1111111..2222222 100644
  
  @LIB32_TRUE@lib32/lib%.a: lib32/%.def
  @LIB32_TRUE@	$(DTDEF32) $<
-@@ -80264,6 +80276,8 @@ _libm_dummy.c:
+@@ -80180,6 +80192,8 @@ _libm_dummy.c:
  @LIB64_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
  @LIB64_TRUE@@W32API_FALSE@lib64/libucrtbase.a: lib-common/ucrtbase.mri lib64/libucrtbase_def.a lib64/libucrt_extra.a
  @LIB64_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
@@ -230,7 +230,7 @@ index 1111111..2222222 100644
  
  @LIB64_TRUE@lib64/lib%.a: lib64/%.def
  @LIB64_TRUE@	$(DTDEF64) $<
-@@ -80325,6 +80339,8 @@ _libm_dummy.c:
+@@ -80241,6 +80255,8 @@ _libm_dummy.c:
  @LIBARM32_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
  @LIBARM32_TRUE@@W32API_FALSE@libarm32/libucrtbase.a: lib-common/ucrtbase.mri libarm32/libucrtbase_def.a libarm32/libucrt_extra.a
  @LIBARM32_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
@@ -239,7 +239,7 @@ index 1111111..2222222 100644
  
  @LIBARM32_TRUE@libarm32/lib%.a: libarm32/%.def
  @LIBARM32_TRUE@	$(DTDEFARM32) $<
-@@ -80370,6 +80386,8 @@ _libm_dummy.c:
+@@ -80286,6 +80302,8 @@ _libm_dummy.c:
  @LIBARM64_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)
  @LIBARM64_TRUE@@W32API_FALSE@libarm64/libucrtbase.a: lib-common/ucrtbase.mri libarm64/libucrtbase_def.a libarm64/libucrt_extra.a
  @LIBARM64_TRUE@@W32API_FALSE@	cd $(dir $@) && $(AR) -M < $(abspath $<)

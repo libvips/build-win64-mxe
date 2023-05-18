@@ -141,10 +141,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 11.0.0
-# Update MinGW-w64 to be656bc
-# https://github.com/mingw-w64/mingw-w64/tarball/be656bcef995c8ad1936aeb926796379d92c0ec0
-mingw-w64_VERSION  := be656bc
-mingw-w64_CHECKSUM := 0eb57e558882d02e74aebcaaebb2dc27e15936886fbfeb37993e4389483cd7a1
+# Update MinGW-w64 to 569ad0d
+# https://github.com/mingw-w64/mingw-w64/tarball/569ad0d04563af9584663108d039a273c0cafb2a
+mingw-w64_VERSION  := 569ad0d
+mingw-w64_CHECKSUM := 3a4eb55c7dc5242a30755c1ad1e6ef74c238230ac7e30fe882a74554e76e09e7
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
@@ -551,7 +551,7 @@ define librsvg_BUILD
     $(if $(IS_LLVM), \
         cd '$(SOURCE_DIR)' && \
             MXE_ENABLE_NETWORK=1 \
-            $(TARGET)-cargo vendor -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/test/Cargo.toml')
+            $(TARGET)-cargo vendor -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/sysroot/Cargo.toml')
 
     $(if $(IS_LLVM), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \

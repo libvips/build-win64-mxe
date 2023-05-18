@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/0b185b62d1c56e7b42a6262cf0ab9b032b169b78
-$(PKG)_VERSION  := 0b185b6
-$(PKG)_CHECKSUM := 543f8df06f1a1d4bd3fbb63630037a63c57ccab9b0aa40afcc615aaa2644e967
+# https://github.com/mstorsjo/llvm-mingw/tarball/274a30cff5bf96efeb6b6c7a5a4783fa6fda1e69
+$(PKG)_VERSION  := 274a30c
+$(PKG)_CHECKSUM := 8029614e6077afe0d77df693c2e532e8d26dc503b8411d4ae88879dc0732dafc
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := mingw-w64
@@ -14,7 +14,7 @@ $(PKG)_DEPS     := mingw-w64
 # The minimum Windows version we support is Windows 7, as libc++ uses
 # TryAcquireSRWLockExclusive which didn't exist until Windows 7. See:
 # https://github.com/mstorsjo/llvm-mingw/commit/dcf34a9a35ee3d490a85bdec02999cf96615d406
-# https://github.com/mstorsjo/llvm-mingw/blob/master/build-mingw-w64.sh#L5-L6
+# https://github.com/mstorsjo/llvm-mingw/blob/274a30cff5bf96efeb6b6c7a5a4783fa6fda1e69/build-mingw-w64.sh#L19-L20
 # Install the headers in $(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32 since
 # we need to distribute the /include and /lib directories
 define $(PKG)_BUILD_mingw-w64

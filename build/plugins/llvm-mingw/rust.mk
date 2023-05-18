@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2023-05-13/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2023-05-18/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := f391a932f720f1cc1566f6d9079c357e2064848c525289c9bcfc0c0b4018c98c
+$(PKG)_CHECKSUM := dbe34d67ff0a0604bf9b0ba894f35b5c5f52f10848b22e7c7a27c4332dd1078c
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2023-05-13/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2023-05-18/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -68,7 +68,8 @@ define $(PKG)_BUILD_$(BUILD)
 
     # Copy the Cargo.lock for Rust to places `vendor` will see
     # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524
-    cp '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/Cargo.lock' '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/test'
+    # https://github.com/rust-lang/cargo/pull/12088
+    cp '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/Cargo.lock' '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/sysroot'
 
     # `c` feature of the `compiler-builtins` crate needs the
     # compiler-rt sources from LLVM
