@@ -18,6 +18,7 @@ endef
 
 define $(PKG)_BUILD
     $(MXE_MESON_WRAPPER) \
+        -Dorc-test=disabled \
         -Dbenchmarks=disabled \
         -Dexamples=disabled \
         -Dgtk_doc=disabled \

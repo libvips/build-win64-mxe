@@ -19,3 +19,4 @@ mxe_dir=$work_dir/mxe
 mxe_prefix=$mxe_dir/usr
 
 repackage_dir=$vips_package-dev-$vips_version
+pdb_dir=$vips_package-pdb-$vips_version

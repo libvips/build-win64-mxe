@@ -54,8 +54,9 @@ case "$arch" in
 esac
 
 # Make sure that the repackaging dir is empty
-rm -rf $repackage_dir
+rm -rf $repackage_dir $pdb_dir
 mkdir -p $repackage_dir/bin
+mkdir $pdb_dir
 
 # Copy libvips-cpp-42.dll
 target_dll="libvips-cpp-42.dll"
@@ -92,43 +93,46 @@ strip=$target.$deps-strip
 # Directories
 install_dir=$mxe_prefix/$target.$deps
 bin_dir=$install_dir/bin
+lib_dir=$install_dir/lib
 
 # Ensure module_dir is set correctly when building nightly versions
 if [ -n "$GIT_COMMIT" ]; then
-  module_dir=$(printf '%s\n' $install_dir/lib/vips-modules-* | sort -n | tail -1)
+  module_dir=$(printf '%s\n' $lib_dir/vips-modules-* | sort -n | tail -1)
 else
-  module_dir=$install_dir/lib/vips-modules-$vips_version
+  module_dir=$lib_dir/vips-modules-$vips_version
 fi
 module_dir_base=${module_dir##*/}
 
 echo "Copying libvips and dependencies"
 
-if [ "$DEBUG" = "true" ]; then
-  # Whitelist ucrtbased.dll for debug builds
-  whitelist=(ucrtbased.dll)
-else
-  # Whitelist the API set DLLs
-  # Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
-  whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
-fi
+# Whitelist the API set DLLs
+# Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
+whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
 
 # Copy libvips and dependencies with pe-util
 binaries=$(peldd $bin_dir/$target_dll --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
 for dll in $binaries; do
+  base=$(basename $dll .dll)
   cp $dll $repackage_dir/bin
+  [ -f $lib_dir/$base.pdb ] && cp $lib_dir/$base.pdb $pdb_dir
 done
 
 # Copy the transitive dependencies of the modules
 # which are not yet present in the bin directory.
 if [ -d "$module_dir" ]; then
+  mkdir -p $repackage_dir/bin/$module_dir_base
   for module in $module_dir/*.dll; do
+    base=$(basename $module .dll)
+    cp $module $repackage_dir/bin/$module_dir_base
+    [ -f $lib_dir/$base.pdb ] && cp $lib_dir/$base.pdb $pdb_dir
+
     binaries=$(peldd $module --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --transitive)
     for dll in $binaries; do
+      base=$(basename $dll .dll)
       cp -n $dll $repackage_dir/bin
+      [ -f $lib_dir/$base.pdb ] && cp -n $lib_dir/$base.pdb $pdb_dir
     done
   done
-  mkdir -p $repackage_dir/bin/$module_dir_base
-  cp $module_dir/*.dll $repackage_dir/bin/$module_dir_base
 fi
 
 echo "Copying install area $install_dir/"
@@ -156,7 +160,8 @@ rm -rf $repackage_dir/etc/bash_completion.d
 # Remove dynamic modules
 rm -rf $repackage_dir/lib/{gdk-pixbuf-2.0,vips-modules-*}
 
-find $repackage_dir/lib -name "*.la" -exec rm -f {} \;
+find $repackage_dir/lib -name "*.a" -and ! -name "*.dll.a" -exec rm -f {} \;
+find $repackage_dir/lib \( -name "*.la" -o -name "*.pdb" \) -exec rm -f {} \;
 
 # We intentionally disabled the i18n features of (GNU) gettext,
 # so the locales are not needed.
@@ -188,3 +193,11 @@ echo "Creating $zipfile"
 
 rm -f $zipfile
 zip -r -qq $zipfile $repackage_dir
+
+zipfile=$vips_package-pdb-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
+
+echo "Creating $zipfile"
+
+rm -f $zipfile
+zip -r -qq $zipfile $pdb_dir
+

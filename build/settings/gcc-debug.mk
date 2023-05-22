@@ -10,6 +10,7 @@ MXE_TMP := /var/tmp
 # Turn on debugging
 export CFLAGS   := -g -Og -fPIC
 export CXXFLAGS := -g -Og -fPIC
+
 # GCC doesn't support generating debug info in the PDB format,
 # use https://github.com/rainers/cv2pdb as workaround, e.g.:
 #   for /r %i in (*.exe *.dll) do cv2pdb %i

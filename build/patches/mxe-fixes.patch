@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 14 Feb 2020 15:20:00 +0100
-Subject: [PATCH 1/7] Add support for targeting ARM/ARM64
+Subject: [PATCH 1/8] Add support for targeting ARM/ARM64
 
 See: mxe/mxe#2330
 
@@ -86,7 +86,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 17 Jul 2021 15:00:00 +0200
-Subject: [PATCH 2/7] Improve meson wrapper
+Subject: [PATCH 2/8] Improve meson wrapper
 
 
 diff --git a/src/meson-wrapper.mk b/src/meson-wrapper.mk
@@ -153,7 +153,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 18 Jul 2021 11:30:00 +0200
-Subject: [PATCH 3/7] Ensure grep is non-recursive and done only on *.mk files
+Subject: [PATCH 3/8] Ensure grep is non-recursive and done only on *.mk files
 
 For example, this prevents all files under log/, usr/, pkg/, etc.
 from being grep'd when MXE_PLUGIN_DIRS is set to $PWD.
@@ -178,7 +178,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 18 Jul 2021 12:00:00 +0200
-Subject: [PATCH 4/7] Use recursively expanded variables where possible
+Subject: [PATCH 4/8] Use recursively expanded variables where possible
 
 This should be safe in terms of performance, since these variables
 are evaluated only once.
@@ -219,7 +219,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 3 Mar 2020 15:00:00 +0100
-Subject: [PATCH 5/7] Update libffi test
+Subject: [PATCH 5/8] Update libffi test
 
 See:
 http://www.chiark.greenend.org.uk/doc/libffi-dev/html/Simple-Example.html#Simple-Example
@@ -269,7 +269,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 2 Mar 2021 13:00:00 +0100
-Subject: [PATCH 6/7] Allow networking when MXE_ENABLE_NETWORK is set
+Subject: [PATCH 6/8] Allow networking when MXE_ENABLE_NETWORK is set
 
 
 diff --git a/Makefile b/Makefile
@@ -456,7 +456,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 19 Jan 2022 13:00:00 +0100
-Subject: [PATCH 7/7] Ensure downloads are not skipped when SKIP_CHECKSUM is set
+Subject: [PATCH 7/8] Ensure downloads are not skipped when SKIP_CHECKSUM is set
 
 
 diff --git a/Makefile b/Makefile
@@ -491,3 +491,32 @@ index 1111111..2222222 100644
  	    $(PRINTF_FMT) '[download]' '$($(1)_FILE)' | $(RTRIM); \
  	    [ -d '$(LOG_DIR)/$(TIMESTAMP)' ] || mkdir -p '$(LOG_DIR)/$(TIMESTAMP)'; \
  	    ($(call DOWNLOAD_PKG_ARCHIVE,$(1))) &> '$(LOG_DIR)/$(TIMESTAMP)/$(1)-download'; \
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 22 May 2023 20:47:58 +0200
+Subject: [PATCH 8/8] Add INSTALL_PDB setting
+
+
+diff --git a/Makefile b/Makefile
+index 1111111..2222222 100644
+--- a/Makefile
++++ b/Makefile
+@@ -97,6 +97,9 @@ STRIP_TOOLCHAIN := $(true)
+ STRIP_LIB       := $(false)
+ STRIP_EXE       := $(true)
+ 
++# set to empty or $(false) to disable the installation of PDBs
++INSTALL_PDB     := $(true)
++
+ # disable by setting MXE_USE_CCACHE
+ MXE_USE_CCACHE      := mxe
+ MXE_CCACHE_DIR      := $(PWD)/.ccache
+@@ -880,6 +883,7 @@ build-only-$(1)_$(3):
+ 	    @echo 'settings.mk'
+ 	    @cat '$(TOP_DIR)/settings.mk'
+ 	    $(if $(STRIP_EXE),-$(TARGET)-strip '$(PREFIX)/$(TARGET)/bin/test-$(PKG).exe')
++	    $(if $(INSTALL_PDB),@find '$(2)' -name '*.pdb' -exec cp -prv {} '$(PREFIX)/$(TARGET)/lib' \;)
+ 	    (du -k -d 0 '$(2)' 2>/dev/null || du -k --max-depth 0 '$(2)') | $(SED) -n 's/^\(\S*\).*/du: \1 KiB/p'
+ 	    rm -rfv  '$(2)'
+ 	    )
