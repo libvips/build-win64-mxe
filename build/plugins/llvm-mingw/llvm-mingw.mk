@@ -43,7 +43,7 @@ define $(PKG)_BUILD_mingw-w64
     cd '$(BUILD_DIR).crt' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-crt/configure' \
         --host='$(TARGET)' \
         --prefix='$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32' \
-        --with-default-msvcrt=$(if $(findstring .debug,$(TARGET)),ucrtbased,ucrt) \
+        --with-default-msvcrt=ucrt \
         @mingw-crt-config-opts@
     $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).crt' -j 1 $(INSTALL_STRIP_TOOLCHAIN)

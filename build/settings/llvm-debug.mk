@@ -7,17 +7,10 @@
 # are no-op.
 MXE_TMP := /var/tmp
 
-# Turn on debugging
-export CFLAGS   := -g -Og -fdata-sections -ffunction-sections
-export CXXFLAGS := -g -Og -fdata-sections -ffunction-sections
-export LDFLAGS  := -Wl,--gc-sections -Wl,-lucrtbased
-
-# Clang produces debug info in DWARF format by default.
-# To debug with WinDbg (PDB format) use:
-#export CFLAGS   := -g -gcodeview
-#export CXXFLAGS := -g -gcodeview
-#export LDFLAGS  := -Wl,--pdb=
-# (see: https://github.com/mstorsjo/llvm-mingw/blob/master/README.md#pdb-support)
+# Disable optimizations to improve debuggability.
+export CFLAGS   := -g -gcodeview -Og -fdata-sections -ffunction-sections
+export CXXFLAGS := -g -gcodeview -Og -fdata-sections -ffunction-sections
+export LDFLAGS  := -Wl,--pdb= -Wl,--gc-sections
 
 # Special flags for Rust.
 export CARGO_PROFILE_RELEASE_DEBUG         := true
@@ -27,7 +20,7 @@ export CARGO_PROFILE_RELEASE_LTO           := true
 export CARGO_PROFILE_RELEASE_OPT_LEVEL     := 1
 export CARGO_PROFILE_RELEASE_PANIC         := abort
 
-# We need debugging symbols.
+# Avoid stripping.
 STRIP_TOOLCHAIN := $(false)
 STRIP_LIB       := $(false)
 STRIP_EXE       := $(false)

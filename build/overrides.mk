@@ -657,6 +657,12 @@ endef
 
 # disable unneeded loaders
 define libwebp_BUILD
+    # Avoids an ICE on Armv7:
+    # `fatal error: error in backend: unknown codeview register D1_D2`
+    # FIXME(kleisauke): Report this upstream.
+    $(if $(call seq,armv7,$(PROCESSOR)), \
+	    $(eval unexport CFLAGS))
+
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gl \

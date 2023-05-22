@@ -11,6 +11,12 @@ $(PKG)_URL      := https://storage.googleapis.com/aom-releases/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc $(BUILD)~nasm
 
 define $(PKG)_BUILD
+    # Avoids an ICE on Armv7:
+    # `fatal error: error in backend: unknown codeview register D11_D12`
+    # FIXME(kleisauke): Report this upstream.
+    $(if $(call seq,armv7,$(PROCESSOR)), \
+	    $(eval unexport CFLAGS))
+
     cd '$(BUILD_DIR)' && NASM_PATH='$(PREFIX)/$(BUILD)/bin' $(TARGET)-cmake \
         -DENABLE_NASM=ON \
         -DENABLE_DOCS=OFF \
