@@ -7,6 +7,10 @@
 # are no-op.
 MXE_TMP := /var/tmp
 
+# https://reproducible-builds.org/docs/source-date-epoch/
+# https://github.com/libvips/build-win64-mxe/commit/96c2b87ee4b3c221773ba86c7217bd17ce69f740
+export SOURCE_DATE_EPOCH := $(shell date +%s --date="Mar 21 2023 13:51:47 +0100")
+
 # Special flags for compiler.
 export CFLAGS   := -O3 -g -gcodeview -fdata-sections -ffunction-sections
 export CXXFLAGS := -O3 -g -gcodeview -fdata-sections -ffunction-sections
