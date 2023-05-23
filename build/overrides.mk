@@ -638,12 +638,9 @@ endef
 
 # disable unneeded loaders
 define libwebp_BUILD
-    # Avoids an ICE on Armv7:
+    # When targeting Armv7 we need to build without `-gcodeview`:
     # `fatal error: error in backend: unknown codeview register D1_D2`
-    # FIXME(kleisauke): Report this upstream.
-    $(if $(call seq,armv7,$(PROCESSOR)), \
-	    $(eval unexport CFLAGS))
-
+    # FIXME(kleisauke): Report this ICE upstream.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gl \
@@ -653,7 +650,8 @@ define libwebp_BUILD
         --disable-tiff \
         --disable-gif \
         --enable-libwebpmux \
-        --enable-libwebpdemux
+        --enable-libwebpdemux \
+        $(if $(call seq,armv7,$(PROCESSOR)), CFLAGS='')
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef
