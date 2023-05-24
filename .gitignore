@@ -2,4 +2,5 @@
 mxe
 .*.swp
 vips-dev-*
+vips-pdb-*
 .update-timestamp

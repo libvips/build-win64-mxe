@@ -2,10 +2,11 @@ PKG             := mozjpeg
 $(PKG)_WEBSITE  := https://github.com/mozilla/mozjpeg
 $(PKG)_DESCR    := A JPEG codec that provides increased compression for JPEG images (libjpeg-turbo fork).
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4.1.1
-$(PKG)_CHECKSUM := 66b1b8d6b55d263f35f27f55acaaa3234df2a401232de99b6d099e2bb0a9d196
+$(PKG)_VERSION  := 4.1.3
+$(PKG)_CHECKSUM := f6ce89f616b30c498d1fb3b0f0940914557d8393a79c9e7aafff72032446bca0
 # Avoid duplicated patches
-$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/../../patches/libjpeg-turbo-[0-9]*.patch)))
+$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/../../patches/libjpeg-turbo-[0-9]*.patch))) \
+                   $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mozilla/mozjpeg/tags,v
 $(PKG)_DEPS     := cc $(BUILD)~nasm
 

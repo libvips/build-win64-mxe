@@ -21,16 +21,16 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.11.1
-libxml2_VERSION  := 2.11.3
-libxml2_CHECKSUM := f1acae1664bda006cd81bfc238238217043d586d06659d5c0e3d1bcebe040870
+libxml2_VERSION  := 2.11.4
+libxml2_CHECKSUM := 737e1d7f8ab3f139729ca13a2494fd17bf30ddb4b7a427cf336252cab57f57f7
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-87
-imagemagick_CHECKSUM := 13b23019c8fa25b77b2959f1acabf5f787ac1beb08604143a3c7df90a5e0a327
+imagemagick_VERSION  := 6.9.12-88
+imagemagick_CHECKSUM := d42c0b51401bd343525cb35a1150b63983c460356d500c0893f18c7cae71bee2
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -69,8 +69,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.76.2
-glib_CHECKSUM := 24f3847857b1d8674cdb0389a36edec0f13c666cd3ce727ecd340eb9da8aca9e
+glib_VERSION  := 2.76.3
+glib_CHECKSUM := c0be444e403d7c3184d1f394f89f0b644710b5e9331b54fa4e8b5037813ad32a
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -657,12 +657,9 @@ endef
 
 # disable unneeded loaders
 define libwebp_BUILD
-    # Avoids an ICE on Armv7:
+    # When targeting Armv7 we need to build without `-gcodeview`:
     # `fatal error: error in backend: unknown codeview register D1_D2`
-    # FIXME(kleisauke): Report this upstream.
-    $(if $(call seq,armv7,$(PROCESSOR)), \
-	    $(eval unexport CFLAGS))
-
+    # FIXME(kleisauke): Report this ICE upstream.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gl \
@@ -672,7 +669,8 @@ define libwebp_BUILD
         --disable-tiff \
         --disable-gif \
         --enable-libwebpmux \
-        --enable-libwebpdemux
+        --enable-libwebpdemux \
+        $(if $(call seq,armv7,$(PROCESSOR)), CFLAGS='')
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef

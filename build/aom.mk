@@ -11,12 +11,9 @@ $(PKG)_URL      := https://storage.googleapis.com/aom-releases/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc $(BUILD)~nasm
 
 define $(PKG)_BUILD
-    # Avoids an ICE on Armv7:
+    # When targeting Armv7 we need to build without `-gcodeview`:
     # `fatal error: error in backend: unknown codeview register D11_D12`
-    # FIXME(kleisauke): Report this upstream.
-    $(if $(call seq,armv7,$(PROCESSOR)), \
-	    $(eval unexport CFLAGS))
-
+    # FIXME(kleisauke): Report this ICE upstream.
     cd '$(BUILD_DIR)' && NASM_PATH='$(PREFIX)/$(BUILD)/bin' $(TARGET)-cmake \
         -DENABLE_NASM=ON \
         -DENABLE_DOCS=OFF \
@@ -29,6 +26,7 @@ define $(PKG)_BUILD
         $(if $(IS_ARM), -DCONFIG_RUNTIME_CPU_DETECT=0) \
         $(if $(IS_GCC), -DCONFIG_PIC=1) \
         $(if $(call seq,i686,$(PROCESSOR)), -DAOM_TARGET_CPU='x86') \
+        $(if $(call seq,armv7,$(PROCESSOR)), -DCMAKE_C_FLAGS='') \
         '$(SOURCE_DIR)'
 
     # parallel build sometimes doesn't work; fallback to -j 1.
