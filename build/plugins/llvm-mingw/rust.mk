@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2023-05-24/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2023-06-01/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := b5a9c914034ca1c151fa2df0a8f798c775e09a420ff56515c2c9c4f2fd9dd49f
+$(PKG)_CHECKSUM := 6da527928d5931dd4751423cb8ce31ef8e096e9f475d3a8c3624c7517057f12e
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2023-05-24/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2023-06-01/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -32,9 +32,6 @@ define $(PKG)_BUILD_$(BUILD)
     $(eval unexport CXXFLAGS)
     $(eval unexport LDFLAGS)
 
-    # Workaround for a regression introduced in https://github.com/rust-lang/rust/pull/109848
-    $(TOUCH) '$(SOURCE_DIR)/.gitmodules'
-
     # TODO(kleisauke): Build with --enable-vendor if we are no longer
     # patching panic_unwind/unwind.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
@@ -45,6 +42,7 @@ define $(PKG)_BUILD_$(BUILD)
         --tools=cargo,src \
         --disable-docs \
         --disable-codegen-tests \
+        --disable-manage-submodules \
         --python='$(PYTHON3)' \
         --llvm-root='$(PREFIX)/$(BUILD)' \
         --set target.$(BUILD_RUST).cc='$(PREFIX)/$(BUILD)/bin/clang' \

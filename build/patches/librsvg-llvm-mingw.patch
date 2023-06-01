@@ -10,13 +10,14 @@ diff --git a/vendor/cfg-expr/src/targets/builtins.rs b/vendor/cfg-expr/src/targe
 index 1111111..2222222 100644
 --- a/vendor/cfg-expr/src/targets/builtins.rs
 +++ b/vendor/cfg-expr/src/targets/builtins.rs
-@@ -541,6 +553,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+@@ -650,6 +650,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
          has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
          panic: Panic::unwind,
      },
 +    TargetInfo {
 +        triple: Triple::new_const("armv7-pc-windows-gnullvm"),
 +        os: Some(Os::windows),
++        abi: None,
 +        arch: Arch::arm,
 +        env: Some(Env::gnu),
 +        vendor: Some(Vendor::pc),
@@ -27,15 +28,16 @@ index 1111111..2222222 100644
 +        panic: Panic::unwind,
 +    },
      TargetInfo {
-         triple: Triple::new_const("armv7-unknown-freebsd"),
-         os: Some(Os::freebsd),
-@@ -889,6 +913,18 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+         triple: Triple::new_const("armv7-sony-vita-newlibeabihf"),
+         os: Some(Os::vita),
+@@ -1040,6 +1053,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
          has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
          panic: Panic::unwind,
      },
 +    TargetInfo {
 +        triple: Triple::new_const("i686-pc-windows-gnullvm"),
 +        os: Some(Os::windows),
++        abi: None,
 +        arch: Arch::x86,
 +        env: Some(Env::gnu),
 +        vendor: Some(Vendor::pc),
@@ -228,6 +230,78 @@ diff --git a/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs b/ve
 index 1111111..2222222 100644
 --- a/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs
 +++ b/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs
+@@ -6619,16 +6619,16 @@ impl ::core::clone::Clone for SERVENT {
+ }
+ #[repr(C)]
+ #[doc = "*Required features: `\"Win32_Networking_WinSock\"`*"]
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ pub struct SERVENT {
+     pub s_name: ::windows_sys::core::PSTR,
+     pub s_aliases: *mut *mut i8,
+     pub s_port: i16,
+     pub s_proto: ::windows_sys::core::PSTR,
+ }
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::marker::Copy for SERVENT {}
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::clone::Clone for SERVENT {
+     fn clone(&self) -> Self {
+         *self
+@@ -7860,7 +7860,7 @@ impl ::core::clone::Clone for WSADATA {
+ }
+ #[repr(C)]
+ #[doc = "*Required features: `\"Win32_Networking_WinSock\"`*"]
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ pub struct WSADATA {
+     pub wVersion: u16,
+     pub wHighVersion: u16,
+@@ -7870,9 +7870,9 @@ pub struct WSADATA {
+     pub iMaxUdpDg: u16,
+     pub lpVendorInfo: ::windows_sys::core::PSTR,
+ }
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::marker::Copy for WSADATA {}
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::clone::Clone for WSADATA {
+     fn clone(&self) -> Self {
+         *self
+
+diff --git a/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs b/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
+index 1111111..2222222 100644
+--- a/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
++++ b/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
+@@ -2241,7 +2241,7 @@ impl ::core::clone::Clone for DELAYLOAD_INFO {
+ }
+ #[repr(C)]
+ #[doc = "*Required features: `\"Win32_System_WindowsProgramming\"`*"]
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ pub struct DELAYLOAD_INFO {
+     pub Size: u32,
+     pub DelayloadDescriptor: *mut IMAGE_DELAYLOAD_DESCRIPTOR,
+@@ -2252,9 +2252,9 @@ pub struct DELAYLOAD_INFO {
+     pub Unused: *mut ::core::ffi::c_void,
+     pub LastError: u32,
+ }
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::marker::Copy for DELAYLOAD_INFO {}
+-#[cfg(target_arch = "x86")]
++#[cfg(any(target_arch = "arm", target_arch = "x86"))]
+ impl ::core::clone::Clone for DELAYLOAD_INFO {
+     fn clone(&self) -> Self {
+         *self
+
+diff --git a/vendor/windows-sys-0.45.0/src/Windows/Win32/Networking/WinSock/mod.rs b/vendor/windows-sys-0.45.0/src/Windows/Win32/Networking/WinSock/mod.rs
+index 1111111..2222222 100644
+--- a/vendor/windows-sys-0.45.0/src/Windows/Win32/Networking/WinSock/mod.rs
++++ b/vendor/windows-sys-0.45.0/src/Windows/Win32/Networking/WinSock/mod.rs
 @@ -6687,16 +6687,16 @@ impl ::core::clone::Clone for SERVENT {
  }
  #[repr(C)]
@@ -270,10 +344,10 @@ index 1111111..2222222 100644
  #[cfg(feature = "Win32_Foundation")]
  impl ::core::clone::Clone for WSADATA {
      fn clone(&self) -> Self {
-diff --git a/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs b/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
+diff --git a/vendor/windows-sys-0.45.0/src/Windows/Win32/System/WindowsProgramming/mod.rs b/vendor/windows-sys-0.45.0/src/Windows/Win32/System/WindowsProgramming/mod.rs
 index 1111111..2222222 100644
---- a/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
-+++ b/vendor/windows-sys/src/Windows/Win32/System/WindowsProgramming/mod.rs
+--- a/vendor/windows-sys-0.45.0/src/Windows/Win32/System/WindowsProgramming/mod.rs
++++ b/vendor/windows-sys-0.45.0/src/Windows/Win32/System/WindowsProgramming/mod.rs
 @@ -2179,7 +2179,7 @@ impl ::core::clone::Clone for DELAYLOAD_INFO {
  }
  #[repr(C)]
