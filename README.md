@@ -28,6 +28,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [glib]          | 2.76.3    | LGPLv3                                                       |
 | [harfbuzz]      | 7.3.0     | MIT Licence                                                  |
 | [lcms]          | 2.15      | MIT Licence                                                  |
+| [libarchive]    | 3.6.2     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
 | [libheif]       | 1.16.2    | LGPLv3                                                       |
@@ -35,7 +36,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libpng]        | 1.6.39    | [libpng License version 2]                                   |
 | [librsvg]       | 2.56.1    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
-| [libtiff]       | 4.5.0     | [libtiff License] (BSD-like)                                 |
+| [libtiff]       | 4.5.1     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.14.2    | LGPLv3                                                       |
 | [libwebp]       | 1.3.0     | New BSD License                                              |
 | [libxml2]       | 2.11.4    | MIT Licence                                                  |
@@ -44,7 +45,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [pango]         | 1.50.14   | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
-| [zlib-ng]       | 2.0.7     | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.1.2     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 
@@ -62,6 +63,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
 [lcms]: https://github.com/mm2/Little-CMS
+[libarchive]: https://github.com/libarchive/libarchive
 [libexif]: https://github.com/libexif/libexif
 [libffi]: https://github.com/libffi/libffi
 [libheif]: https://github.com/strukturag/libheif
@@ -97,13 +99,13 @@ Same as libvips-web + these extra dependencies:
 | [highway]       | 1.0.4     | Apache-2.0 License                                           |
 | [imagemagick]   | 6.9.12-89 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
-| [libjxl]        | 0.8.1     | BSD 3-Clause                                                 |
+| [libjxl]        | 0.8.2     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
-| [openexr]       | 3.1.7     | BSD 3-Clause                                                 |
+| [openexr]       | 3.1.8     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 23.05.0   | GPLv2                                                        |
+| [poppler]       | 23.06.0   | GPLv2                                                        |
 | [sqlite]        | 3.42.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
@@ -174,7 +176,7 @@ prebuilt binaries while it is patent-encumbered.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libde265]      | 1.0.11    | LGPLv3                                                       |
+| [libde265]      | 1.0.12    | LGPLv3                                                       |
 | [x265]          | 3.5       | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265

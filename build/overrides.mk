@@ -28,6 +28,14 @@ libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
+# upstream version is 3.4.0
+libarchive_VERSION  := 3.6.2
+libarchive_CHECKSUM := 9e2c1b80d5fbe59b61308fdfab6c79b5021d7ff4ff2489fb12daf0a96a83551d
+libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
+libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
+libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
+libarchive_URL      := https://www.libarchive.org/downloads/$(libarchive_FILE)
+
 # upstream version is 7, we want ImageMagick 6
 imagemagick_VERSION  := 6.9.12-89
 imagemagick_CHECKSUM := 929960d533322f96f46efa1e44acdb9c5b9881e63a49376dd4c3fa81ae422f9b
@@ -90,11 +98,19 @@ cairo_SUBDIR   := cairo-$(cairo_VERSION)
 cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
 cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
 
+# upstream version is 4.5.0
+tiff_VERSION  := 4.5.1
+tiff_CHECKSUM := d7f38b6788e4a8f5da7940c5ac9424f494d8a79eba53d555f4a507167dca5e2b
+tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
+tiff_SUBDIR   := tiff-$(tiff_VERSION)
+tiff_FILE     := tiff-$(tiff_VERSION).tar.gz
+tiff_URL      := https://download.osgeo.org/libtiff/$(tiff_FILE)
+
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.1.7
-openexr_CHECKSUM := 78dbca39115a1c526e6728588753955ee75fa7f5bb1a6e238bed5b6d66f91fd7
+openexr_VERSION  := 3.1.8
+openexr_CHECKSUM := 3ff47111ef7e5da6f69330e66e1e90ae620b79df1cedf2512bb9bffe86c2c617
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -116,12 +132,6 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
-
-# upstream version is 7.2.0
-harfbuzz_VERSION  := 7.3.0
-harfbuzz_CHECKSUM := 20770789749ac9ba846df33983dbda22db836c70d9f5d050cb9aa5347094a8fb
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
@@ -216,6 +226,8 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: meson-wrapper
 # HarfBuzz:
 #  Removed: icu4c
+# libarchive:
+#  Removed: bzip2 libiconv libxml2 nettle openssl xz
 
 freetype_DEPS           := $(subst bzip2,meson-wrapper,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(subst bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
@@ -237,6 +249,7 @@ cfitsio_DEPS            := cc zlib
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 pixman_DEPS             := cc meson-wrapper libpng
 harfbuzz_DEPS           := $(filter-out  icu4c,$(harfbuzz_DEPS))
+libarchive_DEPS         := cc zlib
 
 ## Override build scripts
 
@@ -744,6 +757,30 @@ define libxml2_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
     ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
+endef
+
+# Only build libarchive with zlib support
+define libarchive_BUILD
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS) \
+        --without-bz2lib \
+        --without-libb2 \
+        --without-iconv \
+        --without-lz4 \
+        --without-zstd \
+        --without-lzma \
+        --without-cng \
+        --without-openssl \
+        --without-xml2 \
+        --without-expat \
+        --disable-acl \
+        --disable-xattr \
+        --disable-bsdtar \
+        --disable-bsdcat \
+        --disable-bsdcpio \
+        --disable-posix-regex-lib
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
 endef
 
 # build with the Meson build system

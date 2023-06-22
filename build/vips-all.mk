@@ -8,7 +8,7 @@ $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 $(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
-$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango \
+$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc imagemagick matio openexr \
                    cfitsio nifticlib poppler fftw openslide libjxl cgif
@@ -21,6 +21,7 @@ define $(PKG)_PRE_CONFIGURE
 
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \
+     printf '  "archive": "$(libarchive_VERSION)",\n'; \
      $(if $(IS_LLVM),printf '  "brotli": "$(brotli_VERSION)"$(comma)\n';) \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
      printf '  "cfitsio": "$(cfitsio_VERSION)",\n'; \
@@ -77,6 +78,7 @@ define $(PKG)_BUILD
 
     $(MXE_MESON_WRAPPER) \
         -Ddeprecated=false \
+        -Dexamples=false \
         -Dintrospection=false \
         -Dmodules=enabled \
         -Dheif-module=$(if $(IS_HEVC),enabled,disabled) \
@@ -84,7 +86,6 @@ define $(PKG)_BUILD
         $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), -Dmagick-package=GraphicsMagick) \
         -Dpdfium=disabled \
         -Dquantizr=disabled \
-        -Dgsf=disabled \
         -Dc_args='$(CFLAGS) -DVIPS_DLLDIR_AS_LIBDIR' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'

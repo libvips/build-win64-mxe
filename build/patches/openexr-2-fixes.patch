@@ -12,7 +12,7 @@ diff --git a/src/lib/IlmThread/IlmThreadSemaphore.h b/src/lib/IlmThread/IlmThrea
 index 1111111..2222222 100644
 --- a/src/lib/IlmThread/IlmThreadSemaphore.h
 +++ b/src/lib/IlmThread/IlmThreadSemaphore.h
-@@ -52,18 +52,20 @@ class ILMTHREAD_EXPORT_TYPE Semaphore
+@@ -56,18 +56,20 @@ class ILMTHREAD_EXPORT_TYPE Semaphore
  
    private:
  
@@ -22,10 +22,10 @@ index 1111111..2222222 100644
  
  	mutable sem_t _semaphore;
  
--#elif defined(__APPLE__)
-+#   elif defined(__APPLE__)
+-#elif defined(__APPLE__) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1050 && !defined(__ppc__)
++#   elif defined(__APPLE__) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1050 && !defined(__ppc__)
 +
- 	mutable dispatch_semaphore_t _semaphore;
+     mutable dispatch_semaphore_t _semaphore;
  
 -#elif (defined (_WIN32) || defined (_WIN64))
 +#   elif (defined (_WIN32) || defined (_WIN64))
@@ -34,10 +34,10 @@ index 1111111..2222222 100644
  
 -#elif ILMTHREAD_THREADING_ENABLED
 +#   else
- 	//
- 	// If the platform has threads but no semapohores,
- 	// then we implement them ourselves using condition variables
-@@ -79,6 +81,7 @@ class ILMTHREAD_EXPORT_TYPE Semaphore
+     //
+     // If the platform has threads but no semaphores,
+     // then we implement them ourselves using condition variables
+@@ -83,6 +85,7 @@ class ILMTHREAD_EXPORT_TYPE Semaphore
  
  	mutable sema_t _semaphore;
    
@@ -157,26 +157,17 @@ index 1111111..2222222 100644
  	_fromYca->readPixels (scanLine1, scanLine2);
      }
      else
-diff --git a/src/lib/OpenEXRCore/unpack.c b/src/lib/OpenEXRCore/unpack.c
+diff --git a/src/lib/OpenEXRCore/internal_cpuid.h b/src/lib/OpenEXRCore/internal_cpuid.h
 index 1111111..2222222 100644
---- a/src/lib/OpenEXRCore/unpack.c
-+++ b/src/lib/OpenEXRCore/unpack.c
-@@ -12,7 +12,7 @@
- #include <stdbool.h>
- 
- #if defined(__x86_64__) || defined(_M_X64)
--#    ifndef _WIN32
-+#    if !defined(_MSC_VER) || defined(__clang__)
- #        include <cpuid.h>
- #    endif
- #endif
-@@ -145,7 +145,7 @@ static void (*half_to_float_buffer) (float*, const uint16_t*, int) =
- choose_half_to_float_impl ()
- {
-     // regs[2] in the extended block is ECX, where f16c indicator lives
--#        ifdef _WIN32
-+#        if defined(_MSC_VER) && !defined(__clang__)
-     int regs[4];
+--- a/src/lib/OpenEXRCore/internal_cpuid.h
++++ b/src/lib/OpenEXRCore/internal_cpuid.h
+@@ -35,7 +35,7 @@ static void (*half_to_float_buffer) (float*, const uint16_t*, int) =
+     *avx = 1;
+     *sse2 = 1;
+ #        else
+-#            ifdef _WIN32
++#            if defined(_MSC_VER) && !defined(__clang__)
+     int regs[4], osxsave;
  
      __cpuid (regs, 0);
 

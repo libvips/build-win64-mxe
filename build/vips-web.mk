@@ -8,7 +8,7 @@ $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 $(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
-$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango \
+$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant orc cgif
 
@@ -20,6 +20,7 @@ define $(PKG)_PRE_CONFIGURE
 
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \
+     printf '  "archive": "$(libarchive_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
      printf '  "cgif": "$(cgif_VERSION)",\n'; \
      printf '  "exif": "$(libexif_VERSION)",\n'; \
@@ -63,6 +64,7 @@ define $(PKG)_BUILD
     $(MXE_MESON_WRAPPER) \
         --default-library=shared \
         -Ddeprecated=false \
+        -Dexamples=false \
         -Dintrospection=false \
         -Dmodules=disabled \
         -Dcfitsio=disabled \
@@ -77,7 +79,6 @@ define $(PKG)_BUILD
         -Dpdfium=disabled \
         -Dpoppler=disabled \
         -Dquantizr=disabled \
-        -Dgsf=disabled \
         -Dppm=false \
         -Danalyze=false \
         -Dradiance=false \
