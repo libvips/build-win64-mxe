@@ -10,7 +10,7 @@ diff --git a/vendor/cfg-expr/src/targets/builtins.rs b/vendor/cfg-expr/src/targe
 index 1111111..2222222 100644
 --- a/vendor/cfg-expr/src/targets/builtins.rs
 +++ b/vendor/cfg-expr/src/targets/builtins.rs
-@@ -650,6 +650,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+@@ -663,6 +663,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
          has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
          panic: Panic::unwind,
      },
@@ -30,7 +30,7 @@ index 1111111..2222222 100644
      TargetInfo {
          triple: Triple::new_const("armv7-sony-vita-newlibeabihf"),
          os: Some(Os::vita),
-@@ -1040,6 +1053,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+@@ -1079,6 +1092,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
          has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
          panic: Panic::unwind,
      },
@@ -66,7 +66,7 @@ diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/build.rs
 +++ b/vendor/compiler_builtins/build.rs
-@@ -331,7 +331,7 @@ mod c {
+@@ -390,7 +390,7 @@ mod c {
          if target_arch == "arm"
              && target_os != "ios"
              && target_os != "watchos"
@@ -286,78 +286,6 @@ index 1111111..2222222 100644
      pub Size: u32,
      pub DelayloadDescriptor: *mut IMAGE_DELAYLOAD_DESCRIPTOR,
 @@ -2252,9 +2252,9 @@ pub struct DELAYLOAD_INFO {
-     pub Unused: *mut ::core::ffi::c_void,
-     pub LastError: u32,
- }
--#[cfg(target_arch = "x86")]
-+#[cfg(any(target_arch = "arm", target_arch = "x86"))]
- impl ::core::marker::Copy for DELAYLOAD_INFO {}
--#[cfg(target_arch = "x86")]
-+#[cfg(any(target_arch = "arm", target_arch = "x86"))]
- impl ::core::clone::Clone for DELAYLOAD_INFO {
-     fn clone(&self) -> Self {
-         *self
-
-diff --git a/vendor/windows-sys-0.45.0/src/Windows/Win32/Networking/WinSock/mod.rs b/vendor/windows-sys-0.45.0/src/Windows/Win32/Networking/WinSock/mod.rs
-index 1111111..2222222 100644
---- a/vendor/windows-sys-0.45.0/src/Windows/Win32/Networking/WinSock/mod.rs
-+++ b/vendor/windows-sys-0.45.0/src/Windows/Win32/Networking/WinSock/mod.rs
-@@ -6687,16 +6687,16 @@ impl ::core::clone::Clone for SERVENT {
- }
- #[repr(C)]
- #[doc = "*Required features: `\"Win32_Networking_WinSock\"`*"]
--#[cfg(target_arch = "x86")]
-+#[cfg(any(target_arch = "arm", target_arch = "x86"))]
- pub struct SERVENT {
-     pub s_name: ::windows_sys::core::PSTR,
-     pub s_aliases: *mut *mut i8,
-     pub s_port: i16,
-     pub s_proto: ::windows_sys::core::PSTR,
- }
--#[cfg(target_arch = "x86")]
-+#[cfg(any(target_arch = "arm", target_arch = "x86"))]
- impl ::core::marker::Copy for SERVENT {}
--#[cfg(target_arch = "x86")]
-+#[cfg(any(target_arch = "arm", target_arch = "x86"))]
- impl ::core::clone::Clone for SERVENT {
-     fn clone(&self) -> Self {
-         *self
-@@ -8009,7 +8009,7 @@ impl ::core::clone::Clone for WSADATA {
- }
- #[repr(C)]
- #[doc = "*Required features: `\"Win32_Networking_WinSock\"`, `\"Win32_Foundation\"`*"]
--#[cfg(target_arch = "x86")]
-+#[cfg(any(target_arch = "arm", target_arch = "x86"))]
- #[cfg(feature = "Win32_Foundation")]
- pub struct WSADATA {
-     pub wVersion: u16,
-@@ -8020,10 +8020,10 @@ pub struct WSADATA {
-     pub iMaxUdpDg: u16,
-     pub lpVendorInfo: ::windows_sys::core::PSTR,
- }
--#[cfg(target_arch = "x86")]
-+#[cfg(any(target_arch = "arm", target_arch = "x86"))]
- #[cfg(feature = "Win32_Foundation")]
- impl ::core::marker::Copy for WSADATA {}
--#[cfg(target_arch = "x86")]
-+#[cfg(any(target_arch = "arm", target_arch = "x86"))]
- #[cfg(feature = "Win32_Foundation")]
- impl ::core::clone::Clone for WSADATA {
-     fn clone(&self) -> Self {
-diff --git a/vendor/windows-sys-0.45.0/src/Windows/Win32/System/WindowsProgramming/mod.rs b/vendor/windows-sys-0.45.0/src/Windows/Win32/System/WindowsProgramming/mod.rs
-index 1111111..2222222 100644
---- a/vendor/windows-sys-0.45.0/src/Windows/Win32/System/WindowsProgramming/mod.rs
-+++ b/vendor/windows-sys-0.45.0/src/Windows/Win32/System/WindowsProgramming/mod.rs
-@@ -2179,7 +2179,7 @@ impl ::core::clone::Clone for DELAYLOAD_INFO {
- }
- #[repr(C)]
- #[doc = "*Required features: `\"Win32_System_WindowsProgramming\"`*"]
--#[cfg(target_arch = "x86")]
-+#[cfg(any(target_arch = "arm", target_arch = "x86"))]
- pub struct DELAYLOAD_INFO {
-     pub Size: u32,
-     pub DelayloadDescriptor: *mut IMAGE_DELAYLOAD_DESCRIPTOR,
-@@ -2190,9 +2190,9 @@ pub struct DELAYLOAD_INFO {
      pub Unused: *mut ::core::ffi::c_void,
      pub LastError: u32,
  }

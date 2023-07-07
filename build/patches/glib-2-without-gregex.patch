@@ -105,7 +105,7 @@ diff --git a/glib/meson.build b/glib/meson.build
 index 1111111..2222222 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -216,7 +216,6 @@ glib_sub_headers = files(
+@@ -220,7 +220,6 @@ glib_sub_headers = files(
    'grcbox.h',
    'grefcount.h',
    'grefstring.h',
@@ -113,7 +113,7 @@ index 1111111..2222222 100644
    'gscanner.h',
    'gsequence.h',
    'gshell.h',
-@@ -305,7 +304,6 @@ glib_sources += files(
+@@ -309,7 +308,6 @@ glib_sources += files(
    'grcbox.c',
    'grefcount.c',
    'grefstring.c',
@@ -121,7 +121,7 @@ index 1111111..2222222 100644
    'gscanner.c',
    'gsequence.c',
    'gshell.c',
-@@ -394,13 +392,7 @@ else
+@@ -398,13 +396,7 @@ else
    glib_dtrace_hdr = []
  endif
  
@@ -136,7 +136,7 @@ index 1111111..2222222 100644
  libglib = library('glib-2.0',
    glib_dtrace_obj, glib_dtrace_hdr,
    sources : [deprecated_sources, glib_sources],
-@@ -419,7 +411,6 @@ libglib = library('glib-2.0',
+@@ -423,7 +415,6 @@ libglib = library('glib-2.0',
      libm,
      librt,
      libsysprof_capture_dep,
@@ -182,12 +182,14 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2037,44 +2037,6 @@ else
+@@ -2051,46 +2051,6 @@ else
    libiconv = dependency('iconv')
  endif
  
 -pcre2_req = '>=10.32'
--pcre2 = dependency('libpcre2-8', version: pcre2_req, required: false, allow_fallback: false)
+-
+-# Pick up pcre from the system, or if "--force-fallback-for libpcre2-8" was specified
+-pcre2 = dependency('libpcre2-8', version: pcre2_req, required: false, default_options: ['default_library=static'])
 -if not pcre2.found()
 -  if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
 -  # MSVC: Search for the PCRE2 library by the configuration, which corresponds
@@ -203,7 +205,7 @@ index 1111111..2222222 100644
 -
 -# Try again with the fallback
 -if not pcre2.found()
--  pcre2 = dependency('libpcre2-8', version: pcre2_req, allow_fallback: true)
+-  pcre2 = dependency('libpcre2-8', version: pcre2_req, allow_fallback: true, default_options: ['default_library=static'])
 -  assert(pcre2.type_name() == 'internal')
 -  # static flags are automatically enabled by the subproject if it's built
 -  # with default_library=static

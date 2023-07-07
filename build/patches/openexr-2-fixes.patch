@@ -22,8 +22,8 @@ index 1111111..2222222 100644
  
  	mutable sem_t _semaphore;
  
--#elif defined(__APPLE__) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1050 && !defined(__ppc__)
-+#   elif defined(__APPLE__) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1050 && !defined(__ppc__)
+-#elif defined(__APPLE__) && MAC_OS_X_VERSION_MIN_REQUIRED > 1050 && !defined(__ppc__)
++#   elif defined(__APPLE__) && MAC_OS_X_VERSION_MIN_REQUIRED > 1050 && !defined(__ppc__)
 +
      mutable dispatch_semaphore_t _semaphore;
  

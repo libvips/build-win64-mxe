@@ -22,10 +22,10 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [cgif]          | 0.3.2     | MIT Licence                                                  |
 | [expat]         | 2.5.0     | MIT Licence                                                  |
 | [fontconfig]    | 2.14.2    | [fontconfig Licence] (BSD-like)                              |
-| [freetype]      | 2.13.0    | [freetype Licence] (BSD-like)                                |
+| [freetype]      | 2.13.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
-| [glib]          | 2.76.3    | LGPLv3                                                       |
+| [glib]          | 2.77.0    | LGPLv3                                                       |
 | [harfbuzz]      | 7.3.0     | MIT Licence                                                  |
 | [lcms]          | 2.15      | MIT Licence                                                  |
 | [libarchive]    | 3.6.2     | BSD 2-Clause                                                 |
@@ -33,19 +33,19 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
 | [libheif]       | 1.16.2    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.39    | [libpng License version 2]                                   |
-| [librsvg]       | 2.56.1    | LGPLv3                                                       |
+| [libpng]        | 1.6.40    | [libpng License version 2]                                   |
+| [librsvg]       | 2.56.90   | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.5.1     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.14.2    | LGPLv3                                                       |
-| [libwebp]       | 1.3.0     | New BSD License                                              |
+| [libwebp]       | 1.3.1     | New BSD License                                              |
 | [libxml2]       | 2.11.4    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.34    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.50.14   | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
-| [zlib-ng]       | 2.1.2     | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.1.3     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 
@@ -97,15 +97,15 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.2.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.4     | Apache-2.0 License                                           |
-| [imagemagick]   | 6.9.12-89 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-90 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.8.2     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
-| [openexr]       | 3.1.8     | BSD 3-Clause                                                 |
+| [openexr]       | 3.1.9     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 23.06.0   | GPLv2                                                        |
+| [poppler]       | 23.07.0   | GPLv2                                                        |
 | [sqlite]        | 3.42.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
@@ -138,7 +138,7 @@ In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 2.1.5.1   | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 3.0.0     | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/LICENSE.md

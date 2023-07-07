@@ -37,8 +37,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://www.libarchive.org/downloads/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-89
-imagemagick_CHECKSUM := 929960d533322f96f46efa1e44acdb9c5b9881e63a49376dd4c3fa81ae422f9b
+imagemagick_VERSION  := 6.9.12-90
+imagemagick_CHECKSUM := d17bdab4ba3dbe735026cbbe82046a28e8ad36ff8bf090be37bd34f4aedc8d78
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -51,8 +51,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.56.1
-librsvg_CHECKSUM := 1685aeacae9a441dcb12c0c3ec63706172a2f52705dafbefb8e7311d4d5e430b
+librsvg_VERSION  := 2.56.90
+librsvg_CHECKSUM := 0ed8c500dfe60cc8f9714cdaf333f1c43b4df1d97aab461832e0e35dc5ec2565
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -77,8 +77,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.76.3
-glib_CHECKSUM := c0be444e403d7c3184d1f394f89f0b644710b5e9331b54fa4e8b5037813ad32a
+glib_VERSION  := 2.77.0
+glib_CHECKSUM := 1897fd8ad4ebb523c32fabe7508c3b0b039c089661ae1e7917df0956a320ac4d
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -98,19 +98,11 @@ cairo_SUBDIR   := cairo-$(cairo_VERSION)
 cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
 cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
 
-# upstream version is 4.5.0
-tiff_VERSION  := 4.5.1
-tiff_CHECKSUM := d7f38b6788e4a8f5da7940c5ac9424f494d8a79eba53d555f4a507167dca5e2b
-tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
-tiff_SUBDIR   := tiff-$(tiff_VERSION)
-tiff_FILE     := tiff-$(tiff_VERSION).tar.gz
-tiff_URL      := https://download.osgeo.org/libtiff/$(tiff_FILE)
-
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.1.8
-openexr_CHECKSUM := 3ff47111ef7e5da6f69330e66e1e90ae620b79df1cedf2512bb9bffe86c2c617
+openexr_VERSION  := 3.1.9
+openexr_CHECKSUM := 103e902d3902800ab07b5f3a298be7afd2755312737b2cdbfa01326ff99dac07
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -569,13 +561,11 @@ define librsvg_BUILD
     $(if $(IS_LLVM), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
-        $(SED) -i 's/ab303aac584036360008c268b10f62b0bf53aa902efb57506a86e0af21777cac/5daafb0bcd77f2fe98d7a23e9448d0230fcb5ec8eff90772282ec6366621690d/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/45ab03c8f5369df7579abb8adc2554a892f415187a384c85832e75abe898d357/cf2110871315c70c673461bcff64c692247b7736c26b1e0aae688cdb84f9b27c/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/d95b386e483d2bc77b2d5c41b62d01a8cc791fb3fb18ce97317947ecd5a3c02b/8fa2a3cef0acaaabcb2211d8195bc65c1debbb6a55a59dc59848ea67502f69e1/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/6de5dd59fd75d1fc8ac4f93940c4d8821e585da7da2377cb2c5b7e6c476ff985/447eba72c483dafea4a40b49550d1dfecf7c2302941fb4a074457b2fe1b2b6e3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/3f2f9589f896c5dc7e7ce39f5809f4f63d1199e5f80ae23b343a7f1d889d0206/4b12abe52af6a7f3fdfbc34701701838492c3b0d2c2d8c6b4156ca966e6a2e19/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/8bf710288f88cfbf67e510f68abbb5a4f7173d2ea9ef32f98d594935fc051641/891c080ebd853786846af1987ca5bdb92485a792d3ec7281cf20ddaef94c9b21/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/01bdacaccadd2b9b69183f9b5a28d010d3454d886841432f51aa79cb274c24ec/014ceac5eddbc6492e09f1a1f1bbc6dc65bb061450df613f1b3e32c00387e1df/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         $(SED) -i 's/e990dd3ef1561f99521c4129a261a38130c823addf52f46b341fe99960d4cb74/b819750a2bb403807ebabb845b88707e81359b1c01782424dcb07f44acd001de/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
-        $(SED) -i 's/14f6fabcd2f0ae1a6ddd27ade6d3327f6df7346eb9cd2e99151ac8e84dcd2a78/e4a3af2f635bac2d51ea0f7ac9d2db7d27c9bb9e53fa8a189b1a93ca43a96bf5/' '$(SOURCE_DIR)/vendor/windows-sys-0.45.0/.cargo-checksum.json'; \
-        $(SED) -i 's/d57b1956970299e10b9c0c811580d5805c8b28138bf83f41f877c5ae50fcfdbe/0826e8d25a22c15935f05e1d066d5a7737d14f0f77baf7a8f1deda568e70317e/' '$(SOURCE_DIR)/vendor/windows-sys-0.45.0/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(SOURCE_DIR)/.cargo'
         (echo '[source.crates-io]'; \
@@ -596,8 +586,7 @@ define librsvg_BUILD
         RUST_TARGET='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
         CARGO='$(TARGET)-cargo' \
         RUSTC='$(TARGET)-rustc' \
-        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all") \
-        LIBS='-lntdll'
+        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all")
 
     $(if $(IS_GCC), MXE_ENABLE_NETWORK=1) $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_SCRIPTS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=

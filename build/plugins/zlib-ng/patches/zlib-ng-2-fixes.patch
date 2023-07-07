@@ -12,7 +12,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -1079,7 +1079,12 @@ endforeach()
+@@ -1094,7 +1094,12 @@ endforeach()
  if(WIN32)
      # Shared library
      if(NOT DEFINED BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
@@ -81,7 +81,7 @@ diff --git a/configure b/configure
 index 1111111..2222222 100644
 --- a/configure
 +++ b/configure
-@@ -1195,7 +1195,7 @@ EOF
+@@ -1200,7 +1200,7 @@ EOF
  check_neon_compiler_flag() {
      # Check whether -mfpu=neon is available on ARM processors.
      cat > $test.c << EOF
@@ -90,7 +90,7 @@ index 1111111..2222222 100644
   #  include <arm64_neon.h>
   #else
   #  include <arm_neon.h>
-@@ -1220,7 +1220,7 @@ check_neon_ld4_intrinsics() {
+@@ -1225,7 +1225,7 @@ check_neon_ld4_intrinsics() {
          fi
      fi
      cat > $test.c << EOF
