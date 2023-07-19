@@ -61,7 +61,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1385,7 +1385,9 @@ supported_targets! {
+@@ -1386,7 +1386,9 @@ supported_targets! {
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
      ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
@@ -93,11 +93,11 @@ ld.lld: error: undefined symbol: _Unwind_VRS_Set
 
 Upstream-Status: Pending
 
-diff --git a/library/std/src/personality/gcc.rs b/library/std/src/personality/gcc.rs
+diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/personality/gcc.rs
 index 1111111..2222222 100644
---- a/library/std/src/personality/gcc.rs
-+++ b/library/std/src/personality/gcc.rs
-@@ -85,7 +85,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
+--- a/library/std/src/sys/personality/gcc.rs
++++ b/library/std/src/sys/personality/gcc.rs
+@@ -90,7 +90,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
  // https://github.com/gcc-mirror/gcc/blob/trunk/libgcc/unwind-c.c
  
  cfg_if::cfg_if! {
@@ -194,11 +194,11 @@ See: https://github.com/msys2/MINGW-packages/pull/13278
 
 Upstream-Status: Pending
 
-diff --git a/library/std/src/personality/gcc.rs b/library/std/src/personality/gcc.rs
+diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/personality/gcc.rs
 index 1111111..2222222 100644
---- a/library/std/src/personality/gcc.rs
-+++ b/library/std/src/personality/gcc.rs
-@@ -184,7 +184,7 @@ cfg_if::cfg_if! {
+--- a/library/std/src/sys/personality/gcc.rs
++++ b/library/std/src/sys/personality/gcc.rs
+@@ -189,7 +189,7 @@ cfg_if::cfg_if! {
          }
      } else {
          // Default personality routine, which is used directly on most targets
@@ -207,7 +207,7 @@ index 1111111..2222222 100644
          unsafe extern "C" fn rust_eh_personality_impl(
              version: c_int,
              actions: uw::_Unwind_Action,
-@@ -226,9 +226,9 @@ cfg_if::cfg_if! {
+@@ -231,9 +231,9 @@ cfg_if::cfg_if! {
          }
  
          cfg_if::cfg_if! {

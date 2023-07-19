@@ -13,10 +13,10 @@ OPTIONS:
 	--tmpdir <DIR>		Where intermediate files should be stored (default in /var/tmp/mxe)
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
 	--with-hevc		Build libheif with the HEVC-related dependencies
-	--with-debug		Build binaires without optimizations to improve debuggability
-	--without-llvm		Build binaires with GCC
-	--without-mozjpeg	Build binaires with libjpeg-turbo
-	--without-zlib-ng	Build binaires with vanilla zlib
+	--with-debug		Build binaries without optimizations to improve debuggability
+	--without-llvm		Build binaries with GCC
+	--without-mozjpeg	Build binaries with libjpeg-turbo
+	--without-zlib-ng	Build binaries with vanilla zlib
 
 DEPS:
 	The group of dependencies to build libvips with,

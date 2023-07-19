@@ -1,0 +1,268 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Federico Mena Quintero <federico@gnome.org>
+Date: Wed, 19 Jul 2023 16:59:11 -0600
+Subject: [PATCH 1/1] (#996): Fix arbitrary file read when href has special
+ characters
+
+In UrlResolver::resolve_href() we now explicitly disallow URLs that
+have a query string ("?") or a fragment identifier ("#").
+
+We also explicitly check for a base URL and not resolving to a path,
+for example, "file:///base/foo.svg" + "." would resolve to
+"file:///base/" - this is technically correct, but we don't want to
+resolve to directories.
+
+Also, we pass a canonicalized path name as a URL upstream, so that
+g_file_new_from_url() will consume it later, instead of passing the
+original and potentially malicious URL.
+
+Fixes https://gitlab.gnome.org/GNOME/librsvg/-/issues/996
+
+Upstream-Status: Accepted [https://gitlab.gnome.org/GNOME/librsvg/-/commit/5032540e177097137b1c26c1c528bfa929c5e1f8]
+
+diff --git a/include/librsvg/rsvg.h b/include/librsvg/rsvg.h
+index 1111111..2222222 100644
+--- a/include/librsvg/rsvg.h
++++ b/include/librsvg/rsvg.h
+@@ -132,28 +132,30 @@ GType rsvg_error_get_type (void);
+  * 1. All `data:` URLs may be loaded.  These are sometimes used
+  *    to include raster image data, encoded as base-64, directly in an SVG file.
+  *
+- * 2. All other URL schemes in references require a base URL.  For
++ * 2. URLs with queries ("?") or fragment identifiers ("#") are not allowed.
++ *
++ * 3. All URL schemes other than data: in references require a base URL.  For
+  *    example, this means that if you load an SVG with
+  *    [ctor@Rsvg.Handle.new_from_data] without calling [method@Rsvg.Handle.set_base_uri],
+  *    then any referenced files will not be allowed (e.g. raster images to be
+  *    loaded from other files will not work).
+  *
+- * 3. If referenced URLs are absolute, rather than relative, then they must
++ * 4. If referenced URLs are absolute, rather than relative, then they must
+  *    have the same scheme as the base URL.  For example, if the base URL has a
+  *    `file` scheme, then all URL references inside the SVG must
+  *    also have the `file` scheme, or be relative references which
+  *    will be resolved against the base URL.
+  *
+- * 4. If referenced URLs have a `resource` scheme, that is,
++ * 5. If referenced URLs have a `resource` scheme, that is,
+  *    if they are included into your binary program with GLib's resource
+  *    mechanism, they are allowed to be loaded (provided that the base URL is
+  *    also a `resource`, per the previous rule).
+  *
+- * 5. Otherwise, non-`file` schemes are not allowed.  For
++ * 6. Otherwise, non-`file` schemes are not allowed.  For
+  *    example, librsvg will not load `http` resources, to keep
+  *    malicious SVG data from "phoning home".
+  *
+- * 6. A relative URL must resolve to the same directory as the base URL, or to
++ * 7. A relative URL must resolve to the same directory as the base URL, or to
+  *    one of its subdirectories.  Librsvg will canonicalize filenames, by
+  *    removing ".." path components and resolving symbolic links, to decide whether
+  *    files meet these conditions.
+diff --git a/rsvg/src/error.rs b/rsvg/src/error.rs
+index 1111111..2222222 100644
+--- a/rsvg/src/error.rs
++++ b/rsvg/src/error.rs
+@@ -333,6 +333,12 @@ pub enum AllowedUrlError {
+     /// or in one directory below the base file.
+     NotSiblingOrChildOfBaseFile,
+ 
++    /// Loaded file:// URLs cannot have a query part, e.g. `file:///foo?blah`
++    NoQueriesAllowed,
++
++    /// URLs may not have fragment identifiers at this stage
++    NoFragmentIdentifierAllowed,
++
+     /// Error when obtaining the file path or the base file path
+     InvalidPath,
+ 
+@@ -345,17 +351,18 @@ pub enum AllowedUrlError {
+ 
+ impl fmt::Display for AllowedUrlError {
+     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
++        use AllowedUrlError::*;
+         match *self {
+-            AllowedUrlError::UrlParseError(e) => write!(f, "URL parse error: {e}"),
+-            AllowedUrlError::BaseRequired => write!(f, "base required"),
+-            AllowedUrlError::DifferentUriSchemes => write!(f, "different URI schemes"),
+-            AllowedUrlError::DisallowedScheme => write!(f, "disallowed scheme"),
+-            AllowedUrlError::NotSiblingOrChildOfBaseFile => {
+-                write!(f, "not sibling or child of base file")
+-            }
+-            AllowedUrlError::InvalidPath => write!(f, "invalid path"),
+-            AllowedUrlError::BaseIsRoot => write!(f, "base is root"),
+-            AllowedUrlError::CanonicalizationError => write!(f, "canonicalization error"),
++            UrlParseError(e) => write!(f, "URL parse error: {e}"),
++            BaseRequired => write!(f, "base required"),
++            DifferentUriSchemes => write!(f, "different URI schemes"),
++            DisallowedScheme => write!(f, "disallowed scheme"),
++            NotSiblingOrChildOfBaseFile => write!(f, "not sibling or child of base file"),
++            NoQueriesAllowed => write!(f, "no queries allowed"),
++            NoFragmentIdentifierAllowed => write!(f, "no fragment identifier allowed"),
++            InvalidPath => write!(f, "invalid path"),
++            BaseIsRoot => write!(f, "base is root"),
++            CanonicalizationError => write!(f, "canonicalization error"),
+         }
+     }
+ }
+diff --git a/rsvg/src/lib.rs b/rsvg/src/lib.rs
+index 1111111..2222222 100644
+--- a/rsvg/src/lib.rs
++++ b/rsvg/src/lib.rs
+@@ -100,28 +100,30 @@
+ //! include raster image data, encoded as base-64, directly in an SVG
+ //! file.
+ //!
+-//! 2. All other URL schemes in references require a base URL.  For
++//! 2. URLs with queries ("?") or fragment identifiers ("#") are not allowed.
++//!
++//! 3. All URL schemes other than data: in references require a base URL.  For
+ //! example, this means that if you load an SVG with [`Loader::read_stream`]
+ //! without providing a `base_file`, then any referenced files will not
+ //! be allowed (e.g. raster images to be loaded from other files will
+ //! not work).
+ //!
+-//! 3. If referenced URLs are absolute, rather than relative, then
++//! 4. If referenced URLs are absolute, rather than relative, then
+ //! they must have the same scheme as the base URL.  For example, if
+ //! the base URL has a "`file`" scheme, then all URL references inside
+ //! the SVG must also have the "`file`" scheme, or be relative
+ //! references which will be resolved against the base URL.
+ //!
+-//! 4. If referenced URLs have a "`resource`" scheme, that is, if they
++//! 5. If referenced URLs have a "`resource`" scheme, that is, if they
+ //! are included into your binary program with GLib's resource
+ //! mechanism, they are allowed to be loaded (provided that the base
+ //! URL is also a "`resource`", per the previous rule).
+ //!
+-//! 5. Otherwise, non-`file` schemes are not allowed.  For example,
++//! 6. Otherwise, non-`file` schemes are not allowed.  For example,
+ //! librsvg will not load `http` resources, to keep malicious SVG data
+ //! from "phoning home".
+ //!
+-//! 6. A relative URL must resolve to the same directory as the base
++//! 7. A relative URL must resolve to the same directory as the base
+ //! URL, or to one of its subdirectories.  Librsvg will canonicalize
+ //! filenames, by removing "`..`" path components and resolving symbolic
+ //! links, to decide whether files meet these conditions.
+diff --git a/rsvg/src/url_resolver.rs b/rsvg/src/url_resolver.rs
+index 1111111..2222222 100644
+--- a/rsvg/src/url_resolver.rs
++++ b/rsvg/src/url_resolver.rs
+@@ -1,13 +1,13 @@
+ //! Determine which URLs are allowed for loading.
+ 
+ use std::fmt;
+-use std::io;
+ use std::ops::Deref;
+-use std::path::{Path, PathBuf};
+ use url::Url;
+ 
+ use crate::error::AllowedUrlError;
+ 
++/// Decides which URLs are allowed to be loaded.
++///
+ /// Currently only contains the base URL.
+ ///
+ /// The plan is to add:
+@@ -29,6 +29,11 @@ impl UrlResolver {
+         UrlResolver { base_url }
+     }
+ 
++    /// Decides which URLs are allowed to be loaded based on the presence of a base URL.
++    ///
++    /// This function implements the policy described in "Security and locations of
++    /// referenced files" in the [crate
++    /// documentation](index.html#security-and-locations-of-referenced-files).
+     pub fn resolve_href(&self, href: &str) -> Result<AllowedUrl, AllowedUrlError> {
+         let url = Url::options()
+             .base_url(self.base_url.as_ref())
+@@ -40,6 +45,17 @@ impl UrlResolver {
+             return Ok(AllowedUrl(url));
+         }
+ 
++        // Queries are not allowed.
++        if url.query().is_some() {
++            return Err(AllowedUrlError::NoQueriesAllowed);
++        }
++
++        // Fragment identifiers are not allowed.  They should have been stripped
++        // upstream, by NodeId.
++        if url.fragment().is_some() {
++            return Err(AllowedUrlError::NoFragmentIdentifierAllowed);
++        }
++
+         // All other sources require a base url
+         if self.base_url.is_none() {
+             return Err(AllowedUrlError::BaseRequired);
+@@ -62,6 +78,26 @@ impl UrlResolver {
+             return Err(AllowedUrlError::DisallowedScheme);
+         }
+ 
++        // The rest of this function assumes file: URLs; guard against
++        // incorrect refactoring.
++        assert!(url.scheme() == "file");
++
++        // If we have a base_uri of "file:///foo/bar.svg", and resolve an href of ".",
++        // Url.parse() will give us "file:///foo/".  We don't want that, so check
++        // if the last path segment is empty - it will not be empty for a normal file.
++
++        if let Some(segments) = url.path_segments() {
++            if segments
++                .last()
++                .expect("URL path segments always contain at last 1 element")
++                .is_empty()
++            {
++                return Err(AllowedUrlError::NotSiblingOrChildOfBaseFile);
++            }
++        } else {
++            unreachable!("the file: URL cannot have an empty path");
++        }
++
+         // We have two file: URIs.  Now canonicalize them (remove .. and symlinks, etc.)
+         // and see if the directories match
+ 
+@@ -79,13 +115,17 @@ impl UrlResolver {
+ 
+         let base_parent = base_parent.unwrap();
+ 
+-        let url_canon =
+-            canonicalize(url_path).map_err(|_| AllowedUrlError::CanonicalizationError)?;
+-        let parent_canon =
+-            canonicalize(base_parent).map_err(|_| AllowedUrlError::CanonicalizationError)?;
+-
+-        if url_canon.starts_with(parent_canon) {
+-            Ok(AllowedUrl(url))
++        let path_canon = url_path
++            .canonicalize()
++            .map_err(|_| AllowedUrlError::CanonicalizationError)?;
++        let parent_canon = base_parent
++            .canonicalize()
++            .map_err(|_| AllowedUrlError::CanonicalizationError)?;
++
++        if path_canon.starts_with(parent_canon) {
++            // Finally, convert the canonicalized path back to a URL.
++            let path_to_url = Url::from_file_path(path_canon).unwrap();
++            Ok(AllowedUrl(path_to_url))
+         } else {
+             Err(AllowedUrlError::NotSiblingOrChildOfBaseFile)
+         }
+@@ -156,17 +156,6 @@ impl fmt::Display for AllowedUrl {
+     }
+ }
+ 
+-// For tests, we don't want to touch the filesystem.  In that case,
+-// assume that we are being passed canonical file names.
+-#[cfg(not(test))]
+-fn canonicalize<P: AsRef<Path>>(path: P) -> Result<PathBuf, io::Error> {
+-    path.as_ref().canonicalize()
+-}
+-#[cfg(test)]
+-fn canonicalize<P: AsRef<Path>>(path: P) -> Result<PathBuf, io::Error> {
+-    Ok(path.as_ref().to_path_buf())
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;
