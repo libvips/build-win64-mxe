@@ -29,16 +29,16 @@ libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.6.2
-libarchive_CHECKSUM := 9e2c1b80d5fbe59b61308fdfab6c79b5021d7ff4ff2489fb12daf0a96a83551d
+libarchive_VERSION  := 3.7.0
+libarchive_CHECKSUM := 44729a0cc3b0b0be6742a9873d25e85e240c9318f5f5ebf2cca6bc84d7b91b07
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
-libarchive_URL      := https://www.libarchive.org/downloads/$(libarchive_FILE)
+libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-90
-imagemagick_CHECKSUM := d17bdab4ba3dbe735026cbbe82046a28e8ad36ff8bf090be37bd34f4aedc8d78
+imagemagick_VERSION  := 6.9.12-91
+imagemagick_CHECKSUM := d55f906897ee806e8fc3ba4a20afe2290603435db3f775522035c501358f5b32
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -124,6 +124,12 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
+
+# upstream version is 7.3.0
+harfbuzz_VERSION  := 8.0.1
+harfbuzz_CHECKSUM := c1ce780acd385569f25b9a29603d1d5bc71e6940e55bfdd4f7266fad50e42620
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
@@ -577,8 +583,6 @@ define librsvg_BUILD
 
     # Allow libtool to statically link against libintl
     # by specifying lt_cv_deplibs_check_method="pass_all"
-    # Need to explicitly link against ntdll after PR:
-    # https://github.com/rust-lang/rust/pull/108262
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
@@ -767,7 +771,8 @@ define libarchive_BUILD
         --disable-bsdtar \
         --disable-bsdcat \
         --disable-bsdcpio \
-        --disable-posix-regex-lib
+        --disable-posix-regex-lib \
+        $(if $(BUILD_STATIC), CFLAGS='-DLIBARCHIVE_STATIC')
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
 endef
@@ -791,6 +796,7 @@ define glib_BUILD
         --default-library=shared \
         --force-fallback-for=gvdb \
         -Dnls=disabled \
+        -Dtests=false \
         -Dglib_assert=false \
         -Dglib_checks=false \
         '$(SOURCE_DIR)' \
