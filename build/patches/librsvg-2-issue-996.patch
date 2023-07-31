@@ -248,7 +248,7 @@ index 1111111..2222222 100644
          } else {
              Err(AllowedUrlError::NotSiblingOrChildOfBaseFile)
          }
-@@ -156,17 +156,6 @@ impl fmt::Display for AllowedUrl {
+@@ -116,17 +156,6 @@ impl fmt::Display for AllowedUrl {
      }
  }
  

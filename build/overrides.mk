@@ -29,16 +29,16 @@ libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.7.0
-libarchive_CHECKSUM := 44729a0cc3b0b0be6742a9873d25e85e240c9318f5f5ebf2cca6bc84d7b91b07
+libarchive_VERSION  := 3.7.1
+libarchive_CHECKSUM := b17403ce670ff18d8e06fea05a9ea9accf70678c88f1b9392a2e29b51127895f
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-91
-imagemagick_CHECKSUM := d55f906897ee806e8fc3ba4a20afe2290603435db3f775522035c501358f5b32
+imagemagick_VERSION  := 6.9.12-93
+imagemagick_CHECKSUM := a44fff9597e5ef4076022e403e62d0e1a3bc5c3218fd424b1c305a14dfd2ee4d
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -77,8 +77,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.77.0
-glib_CHECKSUM := 1897fd8ad4ebb523c32fabe7508c3b0b039c089661ae1e7917df0956a320ac4d
+glib_VERSION  := 2.77.1
+glib_CHECKSUM := dce8d0c9e916d8c81a64436bd4ee4d6515a52dd3d157c994e1cdb9b3d6300a03
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -109,8 +109,8 @@ openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 3410
-cfitsio_VERSION  := 4.2.0
-cfitsio_CHECKSUM := eba53d1b3f6e345632bb09a7b752ec7ced3d63ec5153a848380f3880c5d61889
+cfitsio_VERSION  := 4.3.0
+cfitsio_CHECKSUM := fdadc01d09cf9f54253802c5ec87eb10de51ce4130411415ae88c30940621b8b
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
