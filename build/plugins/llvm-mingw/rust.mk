@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2023-07-20/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2023-08-15/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 70db253cf921333787f5fca18c6926755397449a63c83390fc8f042416e44a0e
+$(PKG)_CHECKSUM := c0136cbf650568ae9e42d39e0c38b0ee34f92ed8e36897e0cdeed180fc6afe74
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2023-07-20/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2023-08-15/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -81,7 +81,7 @@ define $(PKG)_BUILD
 
     # Build and prepare startup objects like rsbegin.o and rsend.o
     $(foreach FILE, rsbegin rsend, \
-        $(PREFIX)/$(BUILD)/bin/rustc --target='$(TARGET_RUST)' --emit=obj -o '$(BUILD_DIR)/$(FILE).o' \
+        $(PREFIX)/$(BUILD)/bin/rustc -Ainternal_features --target='$(TARGET_RUST)' --emit=obj -o '$(BUILD_DIR)/$(FILE).o' \
             '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/rtstartup/$(FILE).rs';)
 
     # Install the startup objects

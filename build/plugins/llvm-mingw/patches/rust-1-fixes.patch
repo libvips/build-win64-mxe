@@ -61,7 +61,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1386,7 +1386,9 @@ supported_targets! {
+@@ -1390,7 +1390,9 @@ supported_targets! {
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
      ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
@@ -97,7 +97,7 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -90,7 +90,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
+@@ -93,7 +93,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
  // https://github.com/gcc-mirror/gcc/blob/trunk/libgcc/unwind-c.c
  
  cfg_if::cfg_if! {
@@ -110,7 +110,7 @@ diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -117,7 +117,7 @@ extern "C" {
+@@ -120,7 +120,7 @@ extern "C" {
  }
  
  cfg_if::cfg_if! {
@@ -119,7 +119,7 @@ index 1111111..2222222 100644
      // Not ARM EHABI
      #[repr(C)]
      #[derive(Copy, Clone, PartialEq)]
-@@ -131,7 +131,7 @@ if #[cfg(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm")))
+@@ -134,7 +134,7 @@ if #[cfg(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm")))
      pub use _Unwind_Action::*;
  
      #[cfg_attr(
@@ -166,13 +166,13 @@ index 1111111..2222222 100644
  #![feature(c_unwind)]
 -#![feature(cfg_target_abi)]
  #![cfg_attr(not(target_env = "msvc"), feature(libc))]
+ #![cfg_attr(not(bootstrap), allow(internal_features))]
  
- cfg_if::cfg_if! {
 diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -99,10 +99,7 @@ pub type _Unwind_Exception_Cleanup_Fn =
+@@ -102,10 +102,7 @@ pub type _Unwind_Exception_Cleanup_Fn =
  // rustc_codegen_ssa::src::back::symbol_export, rustc_middle::middle::exported_symbols
  // and RFC 2841
  #[cfg_attr(
@@ -198,7 +198,7 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -189,7 +189,7 @@ cfg_if::cfg_if! {
+@@ -192,7 +192,7 @@ cfg_if::cfg_if! {
          }
      } else {
          // Default personality routine, which is used directly on most targets
@@ -207,7 +207,7 @@ index 1111111..2222222 100644
          unsafe extern "C" fn rust_eh_personality_impl(
              version: c_int,
              actions: uw::_Unwind_Action,
-@@ -231,9 +231,9 @@ cfg_if::cfg_if! {
+@@ -234,9 +234,9 @@ cfg_if::cfg_if! {
          }
  
          cfg_if::cfg_if! {
@@ -224,7 +224,7 @@ diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -278,7 +278,7 @@ if #[cfg(not(all(target_os = "ios", target_arch = "arm")))] {
+@@ -281,7 +281,7 @@ if #[cfg(not(all(target_os = "ios", target_arch = "arm")))] {
  } // cfg_if!
  
  cfg_if::cfg_if! {

@@ -25,8 +25,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.1    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
-| [glib]          | 2.77.1    | LGPLv3                                                       |
-| [harfbuzz]      | 8.0.1     | MIT Licence                                                  |
+| [glib]          | 2.77.2    | LGPLv3                                                       |
+| [harfbuzz]      | 8.1.1     | MIT Licence                                                  |
 | [lcms]          | 2.15      | MIT Licence                                                  |
 | [libarchive]    | 3.7.1     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
@@ -34,15 +34,15 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.16.2    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.40    | [libpng License version 2]                                   |
-| [librsvg]       | 2.56.90   | LGPLv3                                                       |
+| [librsvg]       | 2.56.92   | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.5.1     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.14.3    | LGPLv3                                                       |
+| [libvips]       | 8.14.4    | LGPLv3                                                       |
 | [libwebp]       | 1.3.1     | New BSD License                                              |
-| [libxml2]       | 2.11.4    | MIT Licence                                                  |
+| [libxml2]       | 2.11.5    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.3     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.34    | [orc License] (BSD-like)                                     |
-| [pango]         | 1.50.14   | LGPLv3                                                       |
+| [pango]         | 1.51.0    | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.1.3     | [zlib-ng Licence]                                            |
@@ -96,16 +96,16 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.0.9     | MIT Licence                                                  |
 | [cfitsio]       | 4.3.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [highway]       | 1.0.5     | Apache-2.0 License                                           |
+| [highway]       | 1.0.6     | Apache-2.0 License, BSD 3-Clause                             |
 | [imagemagick]   | 6.9.12-93 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.8.2     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
-| [openexr]       | 3.1.9     | BSD 3-Clause                                                 |
+| [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 23.07.0   | GPLv2                                                        |
+| [poppler]       | 23.08.0   | GPLv2                                                        |
 | [sqlite]        | 3.42.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli

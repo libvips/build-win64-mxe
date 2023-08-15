@@ -13,7 +13,7 @@ $(PKG)_DEPS     := cc $(BUILD)~nasm
 define $(PKG)_BUILD
     # When targeting Armv7 we need to build without `-gcodeview`:
     # `fatal error: error in backend: unknown codeview register D11_D12`
-    # FIXME(kleisauke): Report this ICE upstream.
+    # FIXME(kleisauke): https://github.com/llvm/llvm-project/issues/64278
     cd '$(BUILD_DIR)' && NASM_PATH='$(PREFIX)/$(BUILD)/bin' $(TARGET)-cmake \
         -DENABLE_NASM=ON \
         -DENABLE_DOCS=OFF \

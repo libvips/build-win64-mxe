@@ -21,8 +21,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.11.1
-libxml2_VERSION  := 2.11.4
-libxml2_CHECKSUM := 737e1d7f8ab3f139729ca13a2494fd17bf30ddb4b7a427cf336252cab57f57f7
+libxml2_VERSION  := 2.11.5
+libxml2_CHECKSUM := 3727b078c360ec69fa869de14bd6f75d7ee8d36987b071e6928d4720a28df3a6
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -51,16 +51,17 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.56.90
-librsvg_CHECKSUM := 0ed8c500dfe60cc8f9714cdaf333f1c43b4df1d97aab461832e0e35dc5ec2565
+librsvg_VERSION  := 2.56.92
+librsvg_CHECKSUM := 13fcb11c2569e55fe135e864f0fa3097b0e9b117c4f3a95eb1986898b5029287
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.50.0
-pango_VERSION  := 1.50.14
-pango_CHECKSUM := 1d67f205bfc318c27a29cfdfb6828568df566795df0cb51d2189cde7f2d581e8
+# FIXME: https://gitlab.gnome.org/GNOME/pango/-/issues/760
+pango_VERSION  := 1.51.0
+pango_CHECKSUM := 74efc109ae6f903bbe6af77eaa2ac6094b8ee245a2e23f132a7a8f0862d1a9f5
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -101,8 +102,8 @@ cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
-openexr_VERSION  := 3.1.9
-openexr_CHECKSUM := 103e902d3902800ab07b5f3a298be7afd2755312737b2cdbfa01326ff99dac07
+openexr_VERSION  := 3.1.11
+openexr_CHECKSUM := 06b4a20d0791b5ec0f804c855d320a0615ce8445124f293616a086e093f1f1e1
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
@@ -126,8 +127,8 @@ pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # upstream version is 7.3.0
-harfbuzz_VERSION  := 8.0.1
-harfbuzz_CHECKSUM := c1ce780acd385569f25b9a29603d1d5bc71e6940e55bfdd4f7266fad50e42620
+harfbuzz_VERSION  := 8.1.1
+harfbuzz_CHECKSUM := 0305ad702e11906a5fc0c1ba11c270b7f64a8f5390d676aacfd71db129d6565f
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
@@ -138,6 +139,14 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
+
+# upstream version is 23.07.0
+poppler_VERSION  := 23.08.0
+poppler_CHECKSUM := 4a4bf7fc903b9f1a2ab7d04b7c5d8220db9bc6261cc73fdb9a826dc272f49aa8
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.14.02
 nasm_VERSION  := 2.15.05
@@ -567,8 +576,8 @@ define librsvg_BUILD
     $(if $(IS_LLVM), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
-        $(SED) -i 's/6de5dd59fd75d1fc8ac4f93940c4d8821e585da7da2377cb2c5b7e6c476ff985/447eba72c483dafea4a40b49550d1dfecf7c2302941fb4a074457b2fe1b2b6e3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/3f2f9589f896c5dc7e7ce39f5809f4f63d1199e5f80ae23b343a7f1d889d0206/4b12abe52af6a7f3fdfbc34701701838492c3b0d2c2d8c6b4156ca966e6a2e19/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/fb3db78e75fff60b65b8066667bbf12f7d0a8e905d0b6f806499ae122e12619a/2667eebc63c7ca98b5a6f701e8f3a75fc4f83ed15227ae54677ad088d8f6155f/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/2791024558e8884c3b755c4fb1e019ecce615f2849cd3f38866cb7fdc817f408/d8d4c9529b50f809b7352a257751600047bfe0e420e2fd98abf8a77d9451ad40/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/8bf710288f88cfbf67e510f68abbb5a4f7173d2ea9ef32f98d594935fc051641/891c080ebd853786846af1987ca5bdb92485a792d3ec7281cf20ddaef94c9b21/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/01bdacaccadd2b9b69183f9b5a28d010d3454d886841432f51aa79cb274c24ec/014ceac5eddbc6492e09f1a1f1bbc6dc65bb061450df613f1b3e32c00387e1df/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         $(SED) -i 's/e990dd3ef1561f99521c4129a261a38130c823addf52f46b341fe99960d4cb74/b819750a2bb403807ebabb845b88707e81359b1c01782424dcb07f44acd001de/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
@@ -667,7 +676,7 @@ endef
 define libwebp_BUILD
     # When targeting Armv7 we need to build without `-gcodeview`:
     # `fatal error: error in backend: unknown codeview register D1_D2`
-    # FIXME(kleisauke): Report this ICE upstream.
+    # FIXME(kleisauke): https://github.com/llvm/llvm-project/issues/64278
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gl \

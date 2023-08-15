@@ -57,21 +57,21 @@ index 1111111..2222222 100644
  rust-version.workspace = true
  
  [dependencies]
--cairo-rs = { version = "0.17", features=["v1_16", "png", "pdf", "ps", "svg"] }
-+cairo-rs = { version = "0.17", features=["v1_16", "png", "svg"] }
+-cairo-rs = { version = "0.18", features=["v1_16", "png", "pdf", "ps", "svg"] }
++cairo-rs = { version = "0.18", features=["v1_16", "png", "svg"] }
  cast = "0.3.0"
  float-cmp = "0.9.0"
- gdk-pixbuf = "0.17"
+ gdk-pixbuf = "0.18"
 diff --git a/rsvg/Cargo.toml b/rsvg/Cargo.toml
 index 1111111..2222222 100644
 --- a/rsvg/Cargo.toml
 +++ b/rsvg/Cargo.toml
-@@ -44,7 +44,7 @@ name = "rsvg"
+@@ -45,7 +45,7 @@ name = "rsvg"
  # Keep these in sync with respect to the cairo-rs version:
  #   src/lib.rs - toplevel example in the docs
  byteorder = "1.4"
--cairo-rs = { version = "0.17", features=["v1_16", "png", "pdf", "ps", "svg"] }
-+cairo-rs = { version = "0.17", features=["v1_16", "png", "svg"] }
+-cairo-rs = { version = "0.18", features=["v1_16", "png", "pdf", "ps", "svg"] }
++cairo-rs = { version = "0.18", features=["v1_16", "png", "svg"] }
  cast = "0.3.0"
  cssparser = "0.29.0"
- data-url = "0.2.0"
+ data-url = "0.3.0"
