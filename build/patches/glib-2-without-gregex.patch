@@ -12,7 +12,7 @@ diff --git a/gio/gsettingsschema.c b/gio/gsettingsschema.c
 index 1111111..2222222 100644
 --- a/gio/gsettingsschema.c
 +++ b/gio/gsettingsschema.c
-@@ -553,62 +553,7 @@ start_element (GMarkupParseContext  *context,
+@@ -558,62 +558,7 @@ start_element (GMarkupParseContext  *context,
  static gchar *
  normalise_whitespace (const gchar *orig)
  {
@@ -182,7 +182,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2063,46 +2063,6 @@ else
+@@ -2081,46 +2081,6 @@ else
    libiconv = dependency('iconv')
  endif
  

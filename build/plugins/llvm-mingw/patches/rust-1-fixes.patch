@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 15 Sep 2020 11:50:00 +0200
-Subject: [PATCH 1/4] Add llvm-mingw i686/ARMv7 targets
+Subject: [PATCH 1/4] Add `armv7-pc-windows-gnullvm` triple
 
 Upstream-Status: Pending
 
@@ -32,45 +32,18 @@ index 0000000..1111111
 +        options: base,
 +    }
 +}
-diff --git a/compiler/rustc_target/src/spec/i686_pc_windows_gnullvm.rs b/compiler/rustc_target/src/spec/i686_pc_windows_gnullvm.rs
-new file mode 100644
-index 0000000..1111111
---- /dev/null
-+++ b/compiler/rustc_target/src/spec/i686_pc_windows_gnullvm.rs
-@@ -0,0 +1,19 @@
-+use crate::spec::{FramePointer, Target};
-+
-+pub fn target() -> Target {
-+    let mut base = super::windows_gnullvm_base::opts();
-+    base.cpu = "pentium4".into();
-+    base.max_atomic_width = Some(64);
-+    base.frame_pointer = FramePointer::Always; // Required for backtraces
-+    base.linker = Some("i686-w64-mingw32-clang".into());
-+
-+    Target {
-+        llvm_target: "i686-pc-windows-gnu".into(),
-+        pointer_width: 32,
-+        data_layout: "e-m:x-p:32:32-p270:32:32-p271:32:32-p272:64:64-\
-+            i64:64-f80:32-n8:16:32-a:0:32-S32"
-+            .into(),
-+        arch: "x86".into(),
-+        options: base,
-+    }
-+}
 diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1390,7 +1390,9 @@ supported_targets! {
+@@ -1419,6 +1419,7 @@ supported_targets! {
+     ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
-     ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
 +    ("armv7-pc-windows-gnullvm", armv7_pc_windows_gnullvm),
+     ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
+     ("i686-pc-windows-gnullvm", i686_pc_windows_gnullvm),
      ("x86_64-pc-windows-gnullvm", x86_64_pc_windows_gnullvm),
-+    ("i686-pc-windows-gnullvm", i686_pc_windows_gnullvm),
- 
-     ("aarch64-pc-windows-msvc", aarch64_pc_windows_msvc),
-     ("aarch64-uwp-windows-msvc", aarch64_uwp_windows_msvc),
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -166,7 +139,7 @@ index 1111111..2222222 100644
  #![feature(c_unwind)]
 -#![feature(cfg_target_abi)]
  #![cfg_attr(not(target_env = "msvc"), feature(libc))]
- #![cfg_attr(not(bootstrap), allow(internal_features))]
+ #![allow(internal_features)]
  
 diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644

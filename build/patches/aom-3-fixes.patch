@@ -5,14 +5,14 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 10 Jun 2020 14:50:00 +0200
-Subject: [PATCH 1/5] Prefer native win32 threading functionality
+Subject: [PATCH 1/4] Prefer native win32 threading functionality
 
 
 diff --git a/build/cmake/aom_configure.cmake b/build/cmake/aom_configure.cmake
 index 1111111..2222222 100644
 --- a/build/cmake/aom_configure.cmake
 +++ b/build/cmake/aom_configure.cmake
-@@ -243,6 +243,12 @@ aom_get_inline("INLINE")
+@@ -257,6 +257,12 @@ aom_get_inline("INLINE")
  # Don't just check for pthread.h, but use the result of the full pthreads
  # including a linking check in FindThreads above.
  set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
@@ -29,7 +29,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 8 Oct 2020 19:40:00 +0200
-Subject: [PATCH 2/5] Ensure ESP is aligned on 16-byte boundaries on x86
+Subject: [PATCH 2/4] Ensure ESP is aligned on 16-byte boundaries on x86
 
 Reference:
 https://sourceforge.net/p/mingw-w64/mailman/message/35294616/
@@ -95,7 +95,7 @@ diff --git a/av1/encoder/encoder.c b/av1/encoder/encoder.c
 index 1111111..2222222 100644
 --- a/av1/encoder/encoder.c
 +++ b/av1/encoder/encoder.c
-@@ -3896,6 +3896,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
+@@ -3981,6 +3981,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
    return AOM_CODEC_OK;
  }
  
@@ -107,7 +107,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 6 Oct 2020 19:40:00 +0200
-Subject: [PATCH 3/5] aom_thread: switch win32 mutex API entirely to SWR
+Subject: [PATCH 3/4] aom_thread: switch win32 mutex API entirely to SWR
 
 See:
 https://code.videolan.org/videolan/dav1d/-/merge_requests/107
@@ -168,53 +168,12 @@ index 1111111..2222222 100644
 +  ok = SleepConditionVariableSRW(condition, mutex, INFINITE, 0);
    return !ok;
  }
- #elif defined(__OS2__)
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Wed, 7 Oct 2020 18:19:52 +0200
-Subject: [PATCH 4/5] aom_thread: release mutex before signaling
-
-See:
-https://github.com/webmproject/libwebp/commit/6682f2c4155a1b606566cc6461a62da643aba6ef
-
-diff --git a/aom_util/aom_thread.c b/aom_util/aom_thread.c
-index 1111111..2222222 100644
---- a/aom_util/aom_thread.c
-+++ b/aom_util/aom_thread.c
-@@ -75,8 +75,12 @@ static THREADFN thread_loop(void *ptr) {
-       done = 1;
-     }
-     // signal to the main thread that we're done (for sync())
--    pthread_cond_signal(&worker->impl_->condition_);
-+    // Note the associated mutex does not need to be held when signaling the
-+    // condition. Unlocking the mutex first may improve performance in some
-+    // implementations, avoiding the case where the waiting thread can't
-+    // reacquire the mutex when woken.
-     pthread_mutex_unlock(&worker->impl_->mutex_);
-+    pthread_cond_signal(&worker->impl_->condition_);
-   }
-   return THREAD_RETURN(NULL);  // Thread is finished
- }
-@@ -97,7 +101,13 @@ static void change_state(AVxWorker *const worker, AVxWorkerStatus new_status) {
-     // assign new status and release the working thread if needed
-     if (new_status != OK) {
-       worker->status_ = new_status;
-+      // Note the associated mutex does not need to be held when signaling the
-+      // condition. Unlocking the mutex first may improve performance in some
-+      // implementations, avoiding the case where the waiting thread can't
-+      // reacquire the mutex when woken.
-+      pthread_mutex_unlock(&worker->impl_->mutex_);
-       pthread_cond_signal(&worker->impl_->condition_);
-+      return;
-     }
-   }
-   pthread_mutex_unlock(&worker->impl_->mutex_);
+ #else                 // _WIN32
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 7 Oct 2020 18:43:50 +0200
-Subject: [PATCH 5/5] aom_thread: fix potentially bad call to execute
+Subject: [PATCH 4/4] aom_thread: fix potentially bad call to execute
 
 See:
 https://github.com/webmproject/libwebp/commit/fde2782ecbb95043c9640f53682d128713542c49
@@ -235,12 +194,12 @@ index 1111111..2222222 100644
  #ifdef __APPLE__
    if (worker->thread_name != NULL) {
      // Apple's version of pthread_setname_np takes one argument and operates on
-@@ -69,7 +68,7 @@ static THREADFN thread_loop(void *ptr) {
-       pthread_cond_wait(&worker->impl_->condition_, &worker->impl_->mutex_);
-     }
-     if (worker->status_ == WORK) {
+@@ -74,7 +73,7 @@ static THREADFN thread_loop(void *ptr) {
+       // without holding worker->impl_->mutex_. When the worker reacquires
+       // worker->impl_->mutex_, worker->status_ must still be WORK.
+       pthread_mutex_unlock(&worker->impl_->mutex_);
 -      execute(worker);
 +      winterface->execute(worker);
+       pthread_mutex_lock(&worker->impl_->mutex_);
+       assert(worker->status_ == WORK);
        worker->status_ = OK;
-     } else if (worker->status_ == NOT_OK) {  // finish the worker
-       done = 1;

@@ -66,12 +66,12 @@ diff --git a/rsvg/Cargo.toml b/rsvg/Cargo.toml
 index 1111111..2222222 100644
 --- a/rsvg/Cargo.toml
 +++ b/rsvg/Cargo.toml
-@@ -45,7 +45,7 @@ name = "rsvg"
+@@ -48,7 +48,7 @@ name = "rsvg"
+ [dependencies]
  # Keep these in sync with respect to the cairo-rs version:
  #   src/lib.rs - toplevel example in the docs
- byteorder = "1.4"
 -cairo-rs = { version = "0.18", features=["v1_16", "png", "pdf", "ps", "svg"] }
 +cairo-rs = { version = "0.18", features=["v1_16", "png", "svg"] }
  cast = "0.3.0"
- cssparser = "0.29.0"
+ cssparser = "~0.31"
  data-url = "0.3.0"

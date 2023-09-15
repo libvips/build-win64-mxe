@@ -10,7 +10,7 @@ diff --git a/vendor/cfg-expr/src/targets/builtins.rs b/vendor/cfg-expr/src/targe
 index 1111111..2222222 100644
 --- a/vendor/cfg-expr/src/targets/builtins.rs
 +++ b/vendor/cfg-expr/src/targets/builtins.rs
-@@ -663,6 +663,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+@@ -676,6 +676,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
          has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
          panic: Panic::unwind,
      },
@@ -30,7 +30,7 @@ index 1111111..2222222 100644
      TargetInfo {
          triple: Triple::new_const("armv7-sony-vita-newlibeabihf"),
          os: Some(Os::vita),
-@@ -1079,6 +1092,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+@@ -1092,6 +1105,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
          has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
          panic: Panic::unwind,
      },

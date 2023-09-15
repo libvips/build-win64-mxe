@@ -17,30 +17,30 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.6.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.7.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.17.8    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.3.2     | MIT Licence                                                  |
 | [expat]         | 2.5.0     | MIT Licence                                                  |
 | [fontconfig]    | 2.14.2    | [fontconfig Licence] (BSD-like)                              |
-| [freetype]      | 2.13.1    | [freetype Licence] (BSD-like)                                |
+| [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
-| [glib]          | 2.77.2    | LGPLv3                                                       |
-| [harfbuzz]      | 8.1.1     | MIT Licence                                                  |
+| [glib]          | 2.78.0    | LGPLv3                                                       |
+| [harfbuzz]      | 8.2.0     | MIT Licence                                                  |
 | [lcms]          | 2.15      | MIT Licence                                                  |
-| [libarchive]    | 3.7.1     | BSD 2-Clause                                                 |
+| [libarchive]    | 3.7.2     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
 | [libheif]       | 1.16.2    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.40    | [libpng License version 2]                                   |
-| [librsvg]       | 2.56.92   | LGPLv3                                                       |
+| [librsvg]       | 2.57.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
-| [libtiff]       | 4.5.1     | [libtiff License] (BSD-like)                                 |
+| [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.14.4    | LGPLv3                                                       |
-| [libwebp]       | 1.3.1     | New BSD License                                              |
+| [libwebp]       | 1.3.2     | New BSD License                                              |
 | [libxml2]       | 2.11.5    | MIT Licence                                                  |
-| [mozjpeg]       | 4.1.3     | [zlib License, IJG License, BSD-3-Clause]                    |
+| [mozjpeg]       | 4.1.4     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [orc]           | 0.4.34    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.51.0    | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
@@ -93,10 +93,10 @@ Same as libvips-web + these extra dependencies:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [brotli]        | 1.0.9     | MIT Licence                                                  |
+| [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.3.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [highway]       | 1.0.6     | Apache-2.0 License, BSD 3-Clause                             |
+| [highway]       | 1.0.7     | Apache-2.0 License, BSD 3-Clause                             |
 | [imagemagick]   | 6.9.12-93 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.8.2     | BSD 3-Clause                                                 |
@@ -105,8 +105,8 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 23.08.0   | GPLv2                                                        |
-| [sqlite]        | 3.42.0    | Public domain                                                |
+| [poppler]       | 23.09.0   | GPLv2                                                        |
+| [sqlite]        | 3.43.1    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -157,7 +157,7 @@ In that case, the following version of zlib is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [zlib]          | 1.2.13    | [zlib Licence]                                               |
+| [zlib]          | 1.3       | [zlib Licence]                                               |
 
 [zlib]: https://zlib.net/
 [zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h
