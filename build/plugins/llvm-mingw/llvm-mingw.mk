@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/7e8bcdc43c8b68dd25d39e583cb41dc21a0d6c22
-$(PKG)_VERSION  := 7e8bcdc
-$(PKG)_CHECKSUM := 0b588b0510b01186a6a0c7824b96227302f7ffe8a5b1604abc59d5d6db2923cc
+# https://github.com/mstorsjo/llvm-mingw/tarball/2bfe3e7c483901a12e5227fc246315d7815df5e3
+$(PKG)_VERSION  := 2bfe3e7
+$(PKG)_CHECKSUM := 0d0350b0c11d43dddc4cf18e22664a1043dfb50edb207d8295f203df6b2ec3d9
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := mingw-w64
@@ -55,21 +55,25 @@ define $(PKG)_BUILD_mingw-w64
 endef
 
 define $(PKG)_PRE_BUILD
-    # setup symlinks
-    $(foreach EXEC, clang clang++ ld.lld llvm-objdump, \
-        ln -sf '$(PREFIX)/$(BUILD)/bin/$(EXEC)' '$(PREFIX)/$(TARGET)/bin/$(EXEC)';)
-
     # setup target wrappers
-    $(foreach EXEC, addr2line ar ranlib nm objcopy strings strip windres dlltool, \
+    $(foreach EXEC, addr2line ar dlltool nm objcopy ranlib strings strip, \
         ln -sf '$(PREFIX)/$(BUILD)/bin/llvm-$(EXEC)' '$(PREFIX)/$(TARGET)/bin/$(PROCESSOR)-w64-mingw32-$(EXEC)'; \
         (echo '#!/bin/sh'; \
          echo 'exec "$(PREFIX)/$(TARGET)/bin/$(PROCESSOR)-w64-mingw32-$(EXEC)" "$$@"') \
                  > '$(PREFIX)/bin/$(TARGET)-$(EXEC)'; \
         chmod 0755 '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)
 
+    # https://github.com/llvm/llvm-project/issues/64927
+    ln -sf '$(PREFIX)/$(BUILD)/bin/llvm-windres' '$(PREFIX)/$(TARGET)/bin/$(PROCESSOR)-w64-mingw32-windres'
+    (echo '#!/bin/sh'; \
+     echo 'exec "$(PREFIX)/$(TARGET)/bin/$(PROCESSOR)-w64-mingw32-windres" \
+         --preprocessor-arg="--sysroot=$(PREFIX)/$(TARGET)" "$$@"') \
+             > '$(PREFIX)/bin/$(TARGET)-windres'
+    chmod 0755 '$(PREFIX)/bin/$(TARGET)-windres'
+
     $(foreach EXEC, clang-target ld objdump, \
         $(SED) -i -e 's|^DEFAULT_TARGET=.*|DEFAULT_TARGET=$(PROCESSOR)-w64-mingw32|' \
-                  -e 's|^DIR=.*|DIR="$(PREFIX)/$(TARGET)/bin"|' \
+                  -e 's|^DIR=.*|DIR="$(PREFIX)/$(BUILD)/bin"|' \
                   -e 's|$$FLAGS "$$@"|$$FLAGS --sysroot="$(PREFIX)/$(TARGET)" "$$@"|' '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh'; \
         $(INSTALL) -m755 '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh' '$(PREFIX)/$(TARGET)/bin';)
 
