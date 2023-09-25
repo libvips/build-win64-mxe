@@ -18,7 +18,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
 | [aom]           | 3.7.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
-| [cairo]         | 1.17.8    | Mozilla Public License 2.0                                   |
+| [cairo]         | 1.18.0    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.3.2     | MIT Licence                                                  |
 | [expat]         | 2.5.0     | MIT Licence                                                  |
 | [fontconfig]    | 2.14.2    | [fontconfig Licence] (BSD-like)                              |
@@ -26,7 +26,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
 | [glib]          | 2.78.0    | LGPLv3                                                       |
-| [harfbuzz]      | 8.2.0     | MIT Licence                                                  |
+| [harfbuzz]      | 8.2.1     | MIT Licence                                                  |
 | [lcms]          | 2.15      | MIT Licence                                                  |
 | [libarchive]    | 3.7.2     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
@@ -97,7 +97,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.3.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.7     | Apache-2.0 License, BSD 3-Clause                             |
-| [imagemagick]   | 6.9.12-93 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-96 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libjxl]        | 0.8.2     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |

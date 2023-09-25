@@ -37,8 +37,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-93
-imagemagick_CHECKSUM := a44fff9597e5ef4076022e403e62d0e1a3bc5c3218fd424b1c305a14dfd2ee4d
+imagemagick_VERSION  := 6.9.12-96
+imagemagick_CHECKSUM := 624c43a8f0c579e5d5946f3dfd57027a5a3b0ae6d46a363777a6972a3335f563
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -68,14 +68,6 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
-# upstream version is 1.3.1
-libwebp_VERSION  := 1.3.2
-libwebp_CHECKSUM := 2a499607df669e40258e53d0ade8035ba4ec0175244869d1025d460562aa09b4
-libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
-libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
-libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
-libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
-
 # upstream version is 2.70.2
 glib_VERSION  := 2.78.0
 glib_CHECKSUM := 44eaab8b720877ce303c5540b657b126f12dc94972d9880b52959f43fb537b30
@@ -91,20 +83,12 @@ libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.bz2
 
 # upstream version is 1.16.0
-cairo_VERSION  := 1.17.8
-cairo_CHECKSUM := 5b10c8892d1b58d70d3f0ba5b47863a061262fa56b9dc7944161f8c8b783bc64
+cairo_VERSION  := 1.18.0
+cairo_CHECKSUM := 243a0736b978a33dee29f9cca7521733b78a65b5418206fef7bd1c3d4cf10b64
 cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
 cairo_SUBDIR   := cairo-$(cairo_VERSION)
 cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
-cairo_URL      := https://cairographics.org/snapshots/$(cairo_FILE)
-
-# upstream version is 4.5.1
-tiff_VERSION  := 4.6.0
-tiff_CHECKSUM := e178649607d1e22b51cf361dd20a3753f244f022eefab1f2f218fc62ebaf87d2
-tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
-tiff_SUBDIR   := tiff-$(tiff_VERSION)
-tiff_FILE     := tiff-$(tiff_VERSION).tar.xz
-tiff_URL      := https://download.osgeo.org/libtiff/$(tiff_FILE)
+cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -134,33 +118,11 @@ pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
-# upstream version is 2.13.1
-freetype_VERSION  := 2.13.2
-freetype_CHECKSUM := 12991c4e55c506dd7f9b765933e62fd2be2e06d421505d7950a132e4f1bb484d
-freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
-freetype_SUBDIR   := freetype-$(freetype_VERSION)
-freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
-freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
-
-# upstream version is 2.13.1
-freetype-bootstrap_VERSION  := $(freetype_VERSION)
-freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
-freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
-freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
-freetype-bootstrap_FILE     := $(freetype_FILE)
-freetype-bootstrap_URL      := $(freetype_URL)
-
 # upstream version is 7.3.0
-harfbuzz_VERSION  := 8.2.0
-harfbuzz_CHECKSUM := 8cb7117a62f42d5ad25d4a697e1bbfc65933b3eed2ee7f247203c79c9f1b514c
+harfbuzz_VERSION  := 8.2.1
+harfbuzz_CHECKSUM := 0fec78f98c9c8faf228957a201c8846f809452c20f8445eb092a1ba6f22dbea5
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
-
-# upstream version is 1.2.13
-zlib_VERSION  := 1.3
-zlib_CHECKSUM := 8a9ba2898e1d0d774eca6ba5b4627a11e5588ba85c8851336eb38de4683050a7
-zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
-zlib_GH_CONF  := madler/zlib/releases,v,,,,.tar.xz
 
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
@@ -187,7 +149,7 @@ nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
 nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
-# upstream version is 11.0.0
+# upstream version is 11.0.1
 # Update MinGW-w64 to 8a397f1
 # https://github.com/mingw-w64/mingw-w64/tarball/8a397f16736a140ab523e308b159ec9265cf6135
 mingw-w64_VERSION  := 8a397f1
@@ -217,7 +179,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 ## Override sub-dependencies
 # freetype:
 #  Added: meson-wrapper
-#  Removed: bzip2
+#  Removed: brotli, bzip2
 # freetype-bootstrap:
 #  Added: meson-wrapper
 #  Removed: bzip2
@@ -262,12 +224,12 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # Pixman:
 #  Added: meson-wrapper
 # HarfBuzz:
-#  Removed: brotli icu4c
+#  Removed: brotli, icu4c
 # libarchive:
-#  Removed: bzip2 libiconv libxml2 nettle openssl xz
+#  Removed: bzip2, libiconv, libxml2, nettle, openssl, xz
 
-freetype_DEPS           := $(subst bzip2,meson-wrapper,$(freetype_DEPS))
-freetype-bootstrap_DEPS := $(subst bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
+freetype_DEPS           := $(subst brotli bzip2,meson-wrapper,$(freetype_DEPS))
+freetype-bootstrap_DEPS := $(subst brotli bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
 glib_DEPS               := cc meson-wrapper gettext libffi zlib
 gdk-pixbuf_DEPS         := cc meson-wrapper glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
@@ -607,7 +569,7 @@ define librsvg_BUILD
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
         $(SED) -i 's/1cb3a78f27813219776604dc99a86b95c3c4649c34a06f840440433ffb178c1d/930123760293dc184dbabc209c73cbfc079af5ca3eaabd76a06316bafbd399a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/2791024558e8884c3b755c4fb1e019ecce615f2849cd3f38866cb7fdc817f408/d8d4c9529b50f809b7352a257751600047bfe0e420e2fd98abf8a77d9451ad40/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/254c36fa4cd3835468e679fdf7e47abe98570a4af35afa215cf252eeaa818151/0f0a18fa2e517bb2c439a13c9c24bb27f7b8f63f06123af7094eca58b57905ce/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/8bf710288f88cfbf67e510f68abbb5a4f7173d2ea9ef32f98d594935fc051641/891c080ebd853786846af1987ca5bdb92485a792d3ec7281cf20ddaef94c9b21/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/01bdacaccadd2b9b69183f9b5a28d010d3454d886841432f51aa79cb274c24ec/014ceac5eddbc6492e09f1a1f1bbc6dc65bb061450df613f1b3e32c00387e1df/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         $(SED) -i 's/e990dd3ef1561f99521c4129a261a38130c823addf52f46b341fe99960d4cb74/b819750a2bb403807ebabb845b88707e81359b1c01782424dcb07f44acd001de/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
@@ -724,7 +686,7 @@ endef
 
 # node-canvas needs a Cairo with SVG support, so compile with -Dpng=enabled
 # ensure the FontConfig backend is enabled
-# build with -Dzlib=disabled to disable the script, PostScript, PDF and XML surfaces
+# build with -Dzlib=disabled to disable the script, PostScript and PDF surfaces
 define cairo_BUILD
     $(MXE_MESON_WRAPPER) \
         -Ddwrite=disabled \
@@ -736,7 +698,6 @@ define cairo_BUILD
         -Dxcb=disabled \
         -Dxlib=disabled \
         -Dxlib-xcb=disabled \
-        -Dxml=disabled \
         -Dzlib=disabled \
         -Dtests=disabled \
         -Dgtk2-utils=disabled \
