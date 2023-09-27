@@ -2,15 +2,14 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.14.5
-$(PKG)_CHECKSUM := 90374e9f6fbd5657b5faf306cacda20658d6144d385316b59b865bc1a487b68d
+# https://github.com/libvips/libvips/tarball/c1e4d031fba77b76d4ce5a104ac8608ffa8f1f18
+$(PKG)_VERSION  := c1e4d03
+$(PKG)_CHECKSUM := a30bb40cb59b580136d4ae0882efc95eb933613174a2ecca4d739538c53b4940
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
-$(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
+$(PKG)_GH_CONF  := libvips/libvips/branches/master
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
-                   libspng libimagequant orc cgif
+                   libspng libimagequant highway cgif
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -34,11 +33,11 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "glib": "$(glib_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
+     printf '  "highway": "$(highway_VERSION)",\n'; \
      printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
-     printf '  "orc": "$(orc_VERSION)",\n'; \
      printf '  "pango": "$(pango_VERSION)",\n'; \
      printf '  "pixman": "$(pixman_VERSION)",\n'; \
      printf '  "png": "$(libpng_VERSION)",\n'; \
@@ -68,7 +67,7 @@ define $(PKG)_BUILD
         --default-library=shared \
         -Ddeprecated=false \
         -Dexamples=false \
-        -Dintrospection=false \
+        -Dintrospection=disabled \
         -Dmodules=disabled \
         -Dcfitsio=disabled \
         -Dfftw=disabled \
