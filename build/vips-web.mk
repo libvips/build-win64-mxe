@@ -59,6 +59,9 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
+    $(eval export CFLAGS += -O3)
+    $(eval export CXXFLAGS += -O3)
+
     # Always build as shared library, we need
     # libvips-42.dll for the language bindings.
     $(MXE_MESON_WRAPPER) \

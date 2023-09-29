@@ -13,6 +13,9 @@ $(PKG)_DEPS     := cc
 # Dynamic dispatch requires Linux to detect CPU capabilities on both Armv7
 # and AArch64.
 define $(PKG)_BUILD
+    $(eval export CFLAGS += -O3)
+    $(eval export CXXFLAGS += -O3)
+
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DBUILD_TESTING=OFF \
         -DHWY_ENABLE_CONTRIB=OFF \

@@ -8,8 +8,10 @@
 MXE_TMP := /var/tmp
 
 # Special flags for compiler.
-export CFLAGS   := -s -O3 -fPIC
-export CXXFLAGS := -s -O3 -fPIC
+# Default optimisation level is for binary size (-Os).
+# Overriden to performance (-O3) for select dependencies that benefit.
+export CFLAGS   := -s -Os -fPIC
+export CXXFLAGS := -s -Os -fPIC
 export LDFLAGS  := -Wl,-s
 
 # Special flags for Rust.

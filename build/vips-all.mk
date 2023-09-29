@@ -76,6 +76,9 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
+    $(eval export CFLAGS += -O3)
+    $(eval export CXXFLAGS += -O3)
+
     $(MXE_MESON_WRAPPER) \
         -Ddeprecated=false \
         -Dexamples=false \

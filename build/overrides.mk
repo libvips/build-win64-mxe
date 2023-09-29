@@ -459,6 +459,8 @@ endef
 # build with -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT to avoid a
 # horrible hack (we don't target pre-Windows XP, so it should be safe)
 define lcms_BUILD
+    $(eval export CFLAGS += -O3)
+
     $(MXE_MESON_WRAPPER) \
         -Djpeg=disabled \
         -Dtiff=disabled \
