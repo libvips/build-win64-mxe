@@ -9,6 +9,8 @@ $(PKG)_GH_CONF  := randy408/libspng/tags,v
 $(PKG)_DEPS     := cc meson-wrapper zlib
 
 define $(PKG)_BUILD
+    $(eval export CFLAGS += -O3)
+
     # -Denable_opt=false is a workaround for:
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109504
     $(MXE_MESON_WRAPPER) \

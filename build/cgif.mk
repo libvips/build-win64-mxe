@@ -10,6 +10,8 @@ $(PKG)_GH_CONF  := dloebl/cgif/tags,V
 $(PKG)_DEPS     := cc meson-wrapper
 
 define $(PKG)_BUILD
+    $(eval export CFLAGS += -O3)
+
     $(MXE_MESON_WRAPPER) \
         -Dtests=false \
         '$(SOURCE_DIR)' \

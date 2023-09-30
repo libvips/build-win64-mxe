@@ -9,6 +9,9 @@ $(PKG)_GH_CONF  := strukturag/libheif/releases,v
 $(PKG)_DEPS     := cc aom
 
 define $(PKG)_BUILD
+    $(eval export CFLAGS += -O3)
+    $(eval export CXXFLAGS += -O3)
+
     # Disable multithreading when building with Win32 threads to
     # avoid a dependency on mingw-std-threads (which we only use
     # in the "all" variant). Disabling multithreading only affects
