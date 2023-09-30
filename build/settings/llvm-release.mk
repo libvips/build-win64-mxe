@@ -14,11 +14,6 @@ export CFLAGS   := -Os -g -gcodeview -fdata-sections -ffunction-sections
 export CXXFLAGS := -Os -g -gcodeview -fdata-sections -ffunction-sections
 export LDFLAGS  := -Wl,--pdb= -Wl,--gc-sections -Wl,-s
 
-# Force inclusion of a couple of GLib symbols that would otherwise
-# get removed by --gc-sections.
-export LDFLAGS += -Wl,-u,g_atomic_int_inc -Wl,-u,_g_atomic_int_inc
-export LDFLAGS += -Wl,-u,g_atomic_int_dec_and_test -Wl,-u,_g_atomic_int_dec_and_test
-
 # Special flags for Rust.
 export CARGO_PROFILE_RELEASE_DEBUG         := false
 export CARGO_PROFILE_RELEASE_CODEGEN_UNITS := 1
