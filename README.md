@@ -104,9 +104,11 @@ Same as libvips-web + these extra dependencies:
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
-| [openslide]     | 3.4.1     | LGPLv3                                                       |
+| [openslide]     | [642b057] | LGPLv3                                                       |
 | [poppler]       | 23.09.0   | GPLv2                                                        |
 | [sqlite]        | 3.43.1    | Public domain                                                |
+
+[642b057]: https://github.com/openslide/openslide/commit/642b057b1e15f7c83eadd651c092724e993e8700
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
