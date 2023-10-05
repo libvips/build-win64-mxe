@@ -77,7 +77,7 @@ index 1111111..2222222 100644
 -    if #[cfg(all(target_arch = "arm", not(target_os = "ios"), not(target_os = "tvos"), not(target_os = "watchos"), not(target_os = "netbsd")))] {
 +    if #[cfg(all(target_arch = "arm", not(target_os = "ios"), not(target_os = "tvos"), not(target_os = "watchos"), not(target_os = "netbsd"), not(target_os = "windows")))] {
          // ARM EHABI personality routine.
-         // https://infocenter.arm.com/help/topic/com.arm.doc.ihi0038b/IHI0038B_ehabi.pdf
+         // https://web.archive.org/web/20190728160938/https://infocenter.arm.com/help/topic/com.arm.doc.ihi0038b/IHI0038B_ehabi.pdf
          //
 diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
