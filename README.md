@@ -97,16 +97,17 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.3.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [highway]       | 1.0.7     | Apache-2.0 License, BSD 3-Clause                             |
-| [imagemagick]   | 6.9.12-96 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.12-98 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
+| [libdicom]      | 1.0.5     | MIT Licence                                                  |
 | [libjxl]        | 0.8.2     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.23    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
-| [openslide]     | 3.4.1     | LGPLv3                                                       |
-| [poppler]       | 23.09.0   | GPLv2                                                        |
-| [sqlite]        | 3.43.1    | Public domain                                                |
+| [openslide]     | 4.0.0     | LGPLv3                                                       |
+| [poppler]       | 23.10.0   | GPLv2                                                        |
+| [sqlite]        | 3.43.2    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -115,6 +116,7 @@ Same as libvips-web + these extra dependencies:
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://imagemagick.org/script/license.php
 [imath]: https://github.com/AcademySoftwareFoundation/Imath
+[libdicom]: https://github.com/ImagingDataCommons/libdicom
 [libjxl]: https://github.com/libjxl/libjxl
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://github.com/NIFTI-Imaging/nifti_clib

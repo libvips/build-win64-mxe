@@ -37,8 +37,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-96
-imagemagick_CHECKSUM := 624c43a8f0c579e5d5946f3dfd57027a5a3b0ae6d46a363777a6972a3335f563
+imagemagick_VERSION  := 6.9.12-98
+imagemagick_CHECKSUM := 6b3e62dcdbfda21a11dc093e465eba685063e9484c3a88e6b6382c78b273b370
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -133,8 +133,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 23.07.0
-poppler_VERSION  := 23.09.0
-poppler_CHECKSUM := 80d1d44dd8bdf4ac1a47d56c5065075eb9991790974b1ed7d14b972acde88e55
+poppler_VERSION  := 23.10.0
+poppler_CHECKSUM := 31a3dfdea79f4922402d313737415a44d44dc14d6b317f959a77c5bba0647dd9
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -610,16 +610,19 @@ define poppler_BUILD
         -DENABLE_LIBTIFF=ON \
         -DENABLE_LIBPNG=ON \
         -DENABLE_GLIB=ON \
-        -DENABLE_CMS='lcms2' \
+        -DENABLE_LCMS=ON \
         -DENABLE_LIBOPENJPEG='openjpeg2' \
         -DENABLE_DCTDECODER='libjpeg' \
         -DFONT_CONFIGURATION=win32 \
         -DENABLE_UNSTABLE_API_ABI_HEADERS=OFF \
+        -DENABLE_NSS3=OFF \
+        -DENABLE_GPGME=OFF \
         -DENABLE_BOOST=OFF \
         -DENABLE_CPP=OFF \
         -DBUILD_GTK_TESTS=OFF \
         -DENABLE_UTILS=OFF \
         -DENABLE_QT5=OFF \
+        -DENABLE_QT6=OFF \
         -DENABLE_LIBCURL=OFF \
         -DBUILD_QT5_TESTS=OFF \
         -DBUILD_QT6_TESTS=OFF \

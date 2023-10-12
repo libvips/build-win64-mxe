@@ -2,22 +2,18 @@ PKG             := openslide
 $(PKG)_WEBSITE  := https://openslide.org/
 $(PKG)_DESCR    := C library for reading virtual slide images.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3.4.1
-$(PKG)_CHECKSUM := fed08fab8a9b1ded95a34e196652291127ebe392c11f9bc13d26e760295a102d
+$(PKG)_VERSION  := 4.0.0
+$(PKG)_CHECKSUM := cc227c44316abb65fb28f1c967706eb7254f91dbfab31e9ae6a48db6cf4ae562
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := openslide/openslide/releases,v
-$(PKG)_DEPS     := cc zlib cairo gdk-pixbuf libjpeg-turbo tiff openjpeg sqlite
+$(PKG)_GH_CONF  := openslide/openslide/releases,v,,,,.tar.xz
+$(PKG)_DEPS     := cc zlib glib libxml2 cairo gdk-pixbuf libjpeg-turbo tiff openjpeg sqlite libdicom
 
 define $(PKG)_BUILD
-    # This can be removed once the patch "openslide-3-fixes.patch" is accepted by upstream
-    cd '$(SOURCE_DIR)' && autoreconf -fi -I'$(PREFIX)/$(TARGET)/share/aclocal'
+    $(MXE_MESON_WRAPPER) \
+        -Dtest=disabled \
+        -Ddoc=disabled \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
 
-    # Allow libtool to statically link against libintl
-    # by specifying lt_cv_deplibs_check_method="pass_all"
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all")
-
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
