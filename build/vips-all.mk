@@ -27,6 +27,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "cfitsio": "$(cfitsio_VERSION)",\n'; \
      printf '  "cgif": "$(cgif_VERSION)",\n'; \
      $(if $(IS_HEVC),printf '  "de265": "$(libde265_VERSION)"$(comma)\n';) \
+     printf '  "dicom": "$(libdicom_VERSION)",\n'; \
      printf '  "exif": "$(libexif_VERSION)",\n'; \
      printf '  "expat": "$(expat_VERSION)",\n'; \
      printf '  "ffi": "$(libffi_VERSION)",\n'; \
