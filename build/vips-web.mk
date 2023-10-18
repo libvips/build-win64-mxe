@@ -2,15 +2,15 @@ PKG             := vips-web
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.14.5
-$(PKG)_CHECKSUM := 90374e9f6fbd5657b5faf306cacda20658d6144d385316b59b865bc1a487b68d
+$(PKG)_VERSION  := 8.15.0
+$(PKG)_CHECKSUM := af5f2aac8e73bd4dad08f4e0d6a505a4e8441aedad53d6263ab6bc5bd8fc5bb7
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,-rc1,,,.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
-                   libspng libimagequant orc cgif
+                   libspng libimagequant highway cgif
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -34,11 +34,11 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "glib": "$(glib_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
+     printf '  "highway": "$(highway_VERSION)",\n'; \
      printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
-     printf '  "orc": "$(orc_VERSION)",\n'; \
      printf '  "pango": "$(pango_VERSION)",\n'; \
      printf '  "pixman": "$(pixman_VERSION)",\n'; \
      printf '  "png": "$(libpng_VERSION)",\n'; \
@@ -68,7 +68,7 @@ define $(PKG)_BUILD
         --default-library=shared \
         -Ddeprecated=false \
         -Dexamples=false \
-        -Dintrospection=false \
+        -Dintrospection=disabled \
         -Dmodules=disabled \
         -Dcfitsio=disabled \
         -Dfftw=disabled \

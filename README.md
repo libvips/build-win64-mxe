@@ -27,6 +27,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
 | [glib]          | 2.78.0    | LGPLv3                                                       |
 | [harfbuzz]      | 8.2.1     | MIT Licence                                                  |
+| [highway]       | 1.0.7     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.15      | MIT Licence                                                  |
 | [libarchive]    | 3.7.2     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
@@ -37,17 +38,18 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.57.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.14.5    | LGPLv3                                                       |
+| [libvips]       | 8.15.0²   | LGPLv3                                                       |
 | [libwebp]       | 1.3.2     | New BSD License                                              |
 | [libxml2]       | 2.11.5    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
-| [orc]           | 0.4.34    | [orc License] (BSD-like)                                     |
 | [pango]         | 1.51.0    | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.1.3     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
+² libvips is built from the [`v8.15.0-rc1`](https://github.com/libvips/libvips/tree/v8.15.0-rc1) tag, see:
+https://github.com/libvips/libvips/releases/tag/v8.15.0-rc1
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -62,6 +64,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
+[highway]: https://github.com/google/highway
 [lcms]: https://github.com/mm2/Little-CMS
 [libarchive]: https://github.com/libarchive/libarchive
 [libexif]: https://github.com/libexif/libexif
@@ -79,8 +82,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [libxml2]: https://gitlab.gnome.org/GNOME/libxml2
 [mozjpeg]: https://github.com/mozilla/mozjpeg
 [zlib License, IJG License, BSD-3-Clause]: https://github.com/mozilla/mozjpeg/blob/master/LICENSE.md
-[orc]: https://gitlab.freedesktop.org/gstreamer/orc
-[orc License]: https://gitlab.freedesktop.org/gstreamer/orc/blob/master/COPYING
 [pango]: https://gitlab.gnome.org/GNOME/pango
 [pixman]: https://gitlab.freedesktop.org/pixman/pixman
 [proxy-libintl]: https://github.com/frida/proxy-libintl
@@ -96,7 +97,6 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.3.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [highway]       | 1.0.7     | Apache-2.0 License, BSD 3-Clause                             |
 | [imagemagick]   | 6.9.12-98 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
@@ -112,7 +112,6 @@ Same as libvips-web + these extra dependencies:
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [fftw]: https://github.com/FFTW/fftw3
-[highway]: https://github.com/google/highway
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://imagemagick.org/script/license.php
 [imath]: https://github.com/AcademySoftwareFoundation/Imath

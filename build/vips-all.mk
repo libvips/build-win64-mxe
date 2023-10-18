@@ -2,15 +2,15 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.14.5
-$(PKG)_CHECKSUM := 90374e9f6fbd5657b5faf306cacda20658d6144d385316b59b865bc1a487b68d
+$(PKG)_VERSION  := 8.15.0
+$(PKG)_CHECKSUM := af5f2aac8e73bd4dad08f4e0d6a505a4e8441aedad53d6263ab6bc5bd8fc5bb7
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,-rc1,,,.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
-                   libspng libimagequant orc imagemagick matio openexr \
+                   libspng libimagequant highway imagemagick matio openexr \
                    cfitsio nifticlib poppler fftw openslide libjxl cgif
 
 define $(PKG)_PRE_CONFIGURE
@@ -41,7 +41,7 @@ define $(PKG)_PRE_CONFIGURE
      $(if $(findstring graphicsmagick,$($(PKG)_DEPS)),printf '  "graphicsmagick": "$(graphicsmagick_VERSION)"$(comma)\n';) \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \
      printf '  "heif": "$(libheif_VERSION)",\n'; \
-     $(if $(IS_LLVM),printf '  "highway": "$(highway_VERSION)"$(comma)\n';) \
+     printf '  "highway": "$(highway_VERSION)",\n'; \
      $(if $(findstring imagemagick,$($(PKG)_DEPS)),printf '  "imagemagick": "$(imagemagick_VERSION)"$(comma)\n';) \
      printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
@@ -53,7 +53,6 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "openexr": "$(openexr_VERSION)",\n'; \
      printf '  "openjpeg": "$(openjpeg_VERSION)",\n'; \
      printf '  "openslide": "$(openslide_VERSION)",\n'; \
-     printf '  "orc": "$(orc_VERSION)",\n'; \
      printf '  "pango": "$(pango_VERSION)",\n'; \
      printf '  "pixman": "$(pixman_VERSION)",\n'; \
      printf '  "png": "$(libpng_VERSION)",\n'; \
@@ -83,7 +82,7 @@ define $(PKG)_BUILD
     $(MXE_MESON_WRAPPER) \
         -Ddeprecated=false \
         -Dexamples=false \
-        -Dintrospection=false \
+        -Dintrospection=disabled \
         -Dmodules=enabled \
         -Dheif-module=$(if $(IS_HEVC),enabled,disabled) \
         -Djpeg-xl=$(if $(IS_LLVM),enabled,disabled) \
