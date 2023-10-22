@@ -119,8 +119,8 @@ pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # upstream version is 7.3.0
-harfbuzz_VERSION  := 8.2.1
-harfbuzz_CHECKSUM := 0fec78f98c9c8faf228957a201c8846f809452c20f8445eb092a1ba6f22dbea5
+harfbuzz_VERSION  := 8.2.2
+harfbuzz_CHECKSUM := e433ad85fbdf57f680be29479b3f964577379aaf319f557eb76569f0ecbc90f3
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 

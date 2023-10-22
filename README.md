@@ -26,13 +26,13 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
 | [glib]          | 2.78.0    | LGPLv3                                                       |
-| [harfbuzz]      | 8.2.1     | MIT Licence                                                  |
+| [harfbuzz]      | 8.2.2     | MIT Licence                                                  |
 | [highway]       | 1.0.7     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.15      | MIT Licence                                                  |
 | [libarchive]    | 3.7.2     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
-| [libheif]       | 1.17.0    | LGPLv3                                                       |
+| [libheif]       | 1.17.1    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.40    | [libpng License version 2]                                   |
 | [librsvg]       | 2.57.0    | LGPLv3                                                       |
@@ -45,7 +45,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [pango]         | 1.51.0    | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
-| [zlib-ng]       | 2.1.3     | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.1.4     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 ² libvips is built from the [`v8.15.0-rc1`](https://github.com/libvips/libvips/tree/v8.15.0-rc1) tag, see:

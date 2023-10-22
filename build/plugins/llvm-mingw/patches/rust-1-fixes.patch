@@ -70,7 +70,7 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -93,7 +93,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
+@@ -92,7 +92,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
  // https://github.com/gcc-mirror/gcc/blob/trunk/libgcc/unwind-c.c
  
  cfg_if::cfg_if! {
@@ -138,9 +138,9 @@ index 1111111..2222222 100644
  #![feature(staged_api)]
  #![feature(c_unwind)]
 -#![feature(cfg_target_abi)]
+ #![feature(strict_provenance)]
  #![cfg_attr(not(target_env = "msvc"), feature(libc))]
  #![allow(internal_features)]
- 
 diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
@@ -171,7 +171,7 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -192,7 +192,7 @@ cfg_if::cfg_if! {
+@@ -191,7 +191,7 @@ cfg_if::cfg_if! {
          }
      } else {
          // Default personality routine, which is used directly on most targets
@@ -180,7 +180,7 @@ index 1111111..2222222 100644
          unsafe extern "C" fn rust_eh_personality_impl(
              version: c_int,
              actions: uw::_Unwind_Action,
-@@ -234,9 +234,9 @@ cfg_if::cfg_if! {
+@@ -233,9 +233,9 @@ cfg_if::cfg_if! {
          }
  
          cfg_if::cfg_if! {
