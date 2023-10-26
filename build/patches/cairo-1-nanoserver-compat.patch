@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 20 Mar 2022 12:32:56 +0100
+Subject: [PATCH 1/1] Disable the Win32 surface and font backend
+
+To avoid having to link against -lgdi32 and -lmsimg32, see:
+https://github.com/kleisauke/net-vips/issues/61
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -483,29 +483,6 @@ if host_machine.system() == 'windows'
+ 
+   add_project_arguments('-DWIN32_LEAN_AND_MEAN', '-DNOMINMAX', language: ['c', 'cpp'])
+ 
+-  win32_extra_deps = [
+-    cc.find_library('gdi32'),
+-    cc.find_library('msimg32'),
+-  ]
+-
+-  deps += win32_extra_deps
+-
+-  feature_conf.set('CAIRO_HAS_WIN32_SURFACE', 1)
+-  feature_conf.set('CAIRO_HAS_WIN32_FONT', 1)
+-
+-  built_features += [
+-    {
+-      'name': 'cairo-win32',
+-      'description': 'Microsoft Windows surface backend',
+-      'deps': win32_extra_deps,
+-    },
+-    {
+-      'name': 'cairo-win32-font',
+-      'description': 'Microsoft Windows font backend',
+-      'deps': win32_extra_deps,
+-    }
+-  ]
+-
+   cpp_compiler = meson.get_compiler('cpp')
+   d2d_dep = cpp_compiler.find_library('d2d1', required: get_option('dwrite'))
+   dwrite_dep = cpp_compiler.find_library('dwrite', required: get_option('dwrite'))

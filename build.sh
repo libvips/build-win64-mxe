@@ -13,6 +13,7 @@ OPTIONS:
 	--tmpdir <DIR>		Where intermediate files should be stored (default in /var/tmp/mxe)
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
 	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
+	--with-disp		Build vipsdisp image viewer
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaries without optimizations to improve debuggability
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
@@ -56,6 +57,7 @@ git_ref=""
 tmpdir="/var/tmp/mxe"
 jpeg_impl="mozjpeg"
 with_ffi_compat=false
+with_disp=false
 with_hevc=false
 with_debug=false
 with_llvm=true
@@ -72,6 +74,7 @@ while [ $# -gt 0 ]; do
     --tmpdir) tmpdir="$2"; shift ;;
     --nightly) git_ref="master" ;;
     --with-ffi-compat) with_ffi_compat=true ;;
+    --with-disp) with_disp=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --without-llvm) with_llvm=false ;;
@@ -124,6 +127,11 @@ fi
 
 if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
   echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
+  exit 1
+fi
+
+if [ "$type" = "static" ] && [ "$with_disp" = "true" ]; then
+  echo "ERROR: GTK cannot be built as a statically linked library on Windows." >&2
   exit 1
 fi
 
@@ -188,6 +196,7 @@ $oci_runtime run --rm -t \
   -e "GIT_COMMIT=$git_commit" \
   -e "FFI_COMPAT=$with_ffi_compat" \
   -e "JPEG_IMPL=$jpeg_impl" \
+  -e "DISP=$with_disp" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "LLVM=$with_llvm" \

@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 14 Feb 2020 15:20:00 +0100
-Subject: [PATCH 1/8] Add support for targeting ARM64
+Subject: [PATCH 1/9] Add support for targeting ARM64
 
 See: mxe/mxe#2330
 
@@ -84,7 +84,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 17 Jul 2021 15:00:00 +0200
-Subject: [PATCH 2/8] Improve meson wrapper
+Subject: [PATCH 2/9] Improve meson wrapper
 
 
 diff --git a/src/meson-wrapper.mk b/src/meson-wrapper.mk
@@ -164,7 +164,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 18 Jul 2021 11:30:00 +0200
-Subject: [PATCH 3/8] Ensure grep is non-recursive and done only on *.mk files
+Subject: [PATCH 3/9] Ensure grep is non-recursive and done only on *.mk files
 
 For example, this prevents all files under log/, usr/, pkg/, etc.
 from being grep'd when MXE_PLUGIN_DIRS is set to $PWD.
@@ -189,7 +189,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 18 Jul 2021 12:00:00 +0200
-Subject: [PATCH 4/8] Use recursively expanded variables where possible
+Subject: [PATCH 4/9] Use recursively expanded variables where possible
 
 This should be safe in terms of performance, since these variables
 are evaluated only once.
@@ -230,7 +230,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 3 Mar 2020 15:00:00 +0100
-Subject: [PATCH 5/8] Update libffi test
+Subject: [PATCH 5/9] Update libffi test
 
 See:
 http://www.chiark.greenend.org.uk/doc/libffi-dev/html/Simple-Example.html#Simple-Example
@@ -280,7 +280,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 2 Mar 2021 13:00:00 +0100
-Subject: [PATCH 6/8] Allow networking when MXE_ENABLE_NETWORK is set
+Subject: [PATCH 6/9] Allow networking when MXE_ENABLE_NETWORK is set
 
 
 diff --git a/Makefile b/Makefile
@@ -467,7 +467,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 19 Jan 2022 13:00:00 +0100
-Subject: [PATCH 7/8] Ensure downloads are not skipped when SKIP_CHECKSUM is set
+Subject: [PATCH 7/9] Ensure downloads are not skipped when SKIP_CHECKSUM is set
 
 
 diff --git a/Makefile b/Makefile
@@ -506,7 +506,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 22 May 2023 20:47:58 +0200
-Subject: [PATCH 8/8] Add INSTALL_PDB setting
+Subject: [PATCH 8/9] Add INSTALL_PDB setting
 
 
 diff --git a/Makefile b/Makefile
@@ -531,3 +531,29 @@ index 1111111..2222222 100644
  	    (du -k -d 0 '$(2)' 2>/dev/null || du -k --max-depth 0 '$(2)') | $(SED) -n 's/^\(\S*\).*/du: \1 KiB/p'
  	    rm -rfv  '$(2)'
  	    )
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 26 Oct 2023 14:19:41 +0200
+Subject: [PATCH 9/9] Fix `-Wstrict-prototypes` build error
+
+Details:
+/data/mxe/src/libepoxy-test.c:7:9: error: a function declaration without a prototype is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
+    7 | int main() {
+      |         ^
+      |          void
+1 error generated.
+
+diff --git a/src/libepoxy-test.c b/src/libepoxy-test.c
+index 1111111..2222222 100644
+--- a/src/libepoxy-test.c
++++ b/src/libepoxy-test.c
+@@ -4,7 +4,7 @@
+ 
+ #include <epoxy/gl.h>
+ 
+-int main() {
++int main(void) {
+     glGetString(GL_SHADING_LANGUAGE_VERSION);
+     return 0;
+ }

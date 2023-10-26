@@ -532,6 +532,9 @@ define pango_BUILD
         '$(BUILD_DIR)'
 
     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+
+    # pangowin32-dwrite-utils-legacy.cpp depends upon the C++ standard library
+    echo 'Libs.private: -lc++' >> '$(PREFIX)/$(TARGET)/lib/pkgconfig/pangowin32.pc'
 endef
 
 # compile with the Rust toolchain
@@ -666,6 +669,7 @@ define cairo_BUILD
         -Dspectre=disabled \
         -Dsymbol-lookup=disabled \
         -Dgtk_doc=false \
+        $(cairo_CONFIGURE_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -753,6 +757,7 @@ define glib_BUILD
         -Dglib_debug=disabled \
         -Dglib_assert=false \
         -Dglib_checks=false \
+        $(glib_CONFIGURE_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

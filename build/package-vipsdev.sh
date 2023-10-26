@@ -85,6 +85,11 @@ if [ "$FFI_COMPAT" = "true" ]; then
   zip_suffix+="-ffi"
 fi
 
+if [ "$DISP" = "true" ]; then
+  zip_suffix+="-disp"
+  pe_targets+=($bin_dir/vipsdisp.exe $bin_dir/gdbus.exe)
+fi
+
 if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
 fi
@@ -123,6 +128,11 @@ whitelist+=(ntdll.dll)
 # See: https://github.com/rust-lang/rust/pull/121317
 whitelist+=(api-ms-win-core-synch-l1-2-0.dll)
 
+# Whitelist dwrite.dll, hid.dll and opengl32.dll for GTK
+if [ "$DISP" = "true" ]; then
+   whitelist+=(dwrite.dll hid.dll opengl32.dll)
+fi
+
 # Copy libvips and dependencies with pe-util
 for pe_target in "${pe_targets[@]}"; do
   [ -f "$pe_target" ] || { echo "WARNING: $pe_target doesn't exist." >&2 ; continue; }
@@ -160,7 +170,16 @@ else
   rm -rf $repackage_dir/lib/{*.so*,ldscripts,rustlib}
 fi
 
-rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
+if [ "$DISP" = "true" ]; then
+  # We need to distribute share/glib-2.0/schemas/* for vipsdisp
+  # Note: you may also need to set the XDG_DATA_DIRS env variable, see:
+  # https://stackoverflow.com/a/28962391
+  rm -rf $repackage_dir/share/glib-2.0/{codegen,dtds,gdb}
+else
+  rm -rf $repackage_dir/share/glib-2.0
+fi
+
+rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
 rm -rf $repackage_dir/etc/bash_completion.d
 
 # Remove dynamic modules
@@ -192,6 +211,7 @@ fi
 echo "Copying packaging files"
 
 cp $install_dir/vips-packaging/{ChangeLog,LICENSE,README.md,versions.json} $repackage_dir
+[ "$DISP" = "true" ] && cp $install_dir/vips-packaging/versions-disp.json $repackage_dir
 
 zipfile=$vips_package-dev-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
 

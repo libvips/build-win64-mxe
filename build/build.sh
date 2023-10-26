@@ -94,6 +94,10 @@ if [ "$JPEG_IMPL" != "libjpeg-turbo" ]; then
   plugins+=" $work_dir/plugins/$JPEG_IMPL"
 fi
 
+if [ "$DISP" = "true" ]; then
+  plugins+=" $work_dir/plugins/vipsdisp"
+fi
+
 if [ "$HEVC" = "true" ]; then
   plugins+=" $work_dir/plugins/hevc"
 fi
@@ -135,6 +139,13 @@ make gendef vips-$deps \
   MXE_PLUGIN_DIRS="$plugins" \
   MXE_TARGETS=$target.$deps \
   GIT_COMMIT=$GIT_COMMIT
+  
+# Build vipsdisp, if requested
+if [ "$DISP" = "true" ]; then
+  make vipsdisp \
+    MXE_PLUGIN_DIRS="$plugins" \
+    MXE_TARGETS=$target.$deps
+fi
 
 # Build and bundle llvm-mingw tests when debugging
 if [ "$LLVM" = "true" ] && [ "$DEBUG" = "true" ]; then
