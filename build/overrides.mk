@@ -707,6 +707,7 @@ define cairo_BUILD
         -Dspectre=disabled \
         -Dsymbol-lookup=disabled \
         -Dgtk_doc=false \
+        $(cairo_CONFIGURE_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -795,6 +796,7 @@ define glib_BUILD
         -Dtests=false \
         -Dglib_assert=false \
         -Dglib_checks=false \
+        $(glib_CONFIGURE_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

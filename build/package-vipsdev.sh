@@ -67,6 +67,10 @@ if [ "$FFI_COMPAT" = "true" ]; then
   zip_suffix+="-ffi"
 fi
 
+if [ "$DISP" = "true" ]; then
+  zip_suffix+="-disp"
+fi
+
 if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
 fi
@@ -121,6 +125,11 @@ whitelist+=(ntdll.dll)
 # See: https://github.com/rust-lang/rust/pull/121317
 whitelist+=(api-ms-win-core-synch-l1-2-0.dll)
 
+# Whitelist dwrite.dll, hid.dll and opengl32.dll for GTK
+if [ "$DISP" = "true" ]; then
+   whitelist+=(dwrite.dll hid.dll opengl32.dll)
+fi
+
 # Copy libvips and dependencies with pe-util
 binaries=$(peldd $bin_dir/$target_dll --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
 for dll in $binaries; do
@@ -128,6 +137,16 @@ for dll in $binaries; do
   cp $dll $repackage_dir/bin
   [ -f $lib_dir/$base.pdb ] && cp $lib_dir/$base.pdb $pdb_dir
 done
+
+# Copy transitive dependencies of vipsdisp
+if [ "$DISP" = "true" ]; then
+  binaries=$(peldd $bin_dir/vipsdisp.exe --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --transitive)
+  for dll in $binaries; do
+    base=$(basename $dll .dll)
+    cp -n $dll $repackage_dir/bin
+    [ -f $lib_dir/$base.pdb ] && cp -n $lib_dir/$base.pdb $pdb_dir
+  done
+fi
 
 # Copy the transitive dependencies of the modules
 # which are not yet present in the bin directory.
@@ -166,7 +185,16 @@ else
   rm -rf $repackage_dir/lib/{*.so*,ldscripts,rustlib}
 fi
 
-rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,glib-2.0,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
+if [ "$DISP" = "true" ]; then
+  # We need to distribute share/glib-2.0/schemas/* for vipsdisp
+  # Note: you may also need to set the XDG_DATA_DIRS env variable, see:
+  # https://stackoverflow.com/a/28962391
+  rm -rf $repackage_dir/share/glib-2.0/{codegen,dtds,gdb}
+else
+  rm -rf $repackage_dir/share/glib-2.0
+fi
+
+rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
 rm -rf $repackage_dir/etc/bash_completion.d
 
 # Remove dynamic modules
@@ -191,6 +219,7 @@ echo "Copying vips executables"
 
 # We still need to copy the vips executables
 cp $install_dir/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
+[ "$DISP" = "true" ] && cp $install_dir/bin/{vipsdisp,gdbus}.exe $repackage_dir/bin/
 
 echo "Strip unneeded symbols"
 
@@ -203,6 +232,7 @@ fi
 echo "Copying packaging files"
 
 cp $install_dir/vips-packaging/{ChangeLog,LICENSE,README.md,versions.json} $repackage_dir
+[ "$DISP" = "true" ] && cp $install_dir/vips-packaging/versions-disp.json $repackage_dir
 
 zipfile=$vips_package-dev-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
 
