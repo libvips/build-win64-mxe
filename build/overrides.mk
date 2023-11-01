@@ -28,6 +28,15 @@ libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
+# upstream version is 1.5.23
+# cannot use GH_CONF:
+# matio_GH_CONF  := tbeu/matio/releases,v
+matio_VERSION  := 1.5.24
+matio_CHECKSUM := e6e024f3f89e44af467e578bb2a22f94c5f7894b0cd0af542995e242e95aa896
+matio_SUBDIR   := matio-$(matio_VERSION)
+matio_FILE     := matio-$(matio_VERSION).tar.xz
+matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
+
 # upstream version is 3.4.0
 libarchive_VERSION  := 3.7.2
 libarchive_CHECKSUM := 04357661e6717b6941682cde02ad741ae4819c67a260593dfb2431861b251acb
@@ -69,8 +78,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.78.0
-glib_CHECKSUM := 44eaab8b720877ce303c5540b657b126f12dc94972d9880b52959f43fb537b30
+glib_VERSION  := 2.78.1
+glib_CHECKSUM := 915bc3d0f8507d650ead3832e2f8fb670fce59aac4d7754a7dab6f1e6fed78b2
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz

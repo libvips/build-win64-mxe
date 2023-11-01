@@ -25,7 +25,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
-| [glib]          | 2.78.0    | LGPLv3                                                       |
+| [glib]          | 2.78.1    | LGPLv3                                                       |
 | [harfbuzz]      | 8.2.2     | MIT Licence                                                  |
 | [highway]       | 1.0.7     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.15      | MIT Licence                                                  |
@@ -101,7 +101,7 @@ Same as libvips-web + these extra dependencies:
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
 | [libjxl]        | 0.8.2     | BSD 3-Clause                                                 |
-| [matio]         | 1.5.23    | BSD 2-Clause                                                 |
+| [matio]         | 1.5.24    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
@@ -139,7 +139,7 @@ In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 3.0.0     | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 3.0.1     | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/LICENSE.md
