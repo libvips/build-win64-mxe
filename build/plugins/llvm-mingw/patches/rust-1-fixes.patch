@@ -36,7 +36,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1487,6 +1487,7 @@ supported_targets! {
+@@ -1629,6 +1629,7 @@ supported_targets! {
      ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
