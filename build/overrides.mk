@@ -142,8 +142,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 23.07.0
-poppler_VERSION  := 23.10.0
-poppler_CHECKSUM := 31a3dfdea79f4922402d313737415a44d44dc14d6b317f959a77c5bba0647dd9
+poppler_VERSION  := 23.11.0
+poppler_CHECKSUM := f99cca6799cb9cb6c92fc1e0eb78547b611cb733750ab7cb047cb0e6c246539c
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -794,12 +794,6 @@ endef
 # build with the Meson build system
 # compile with the internal PCRE library
 define glib_BUILD
-    # other packages expect glib-tools in $(TARGET)/bin
-    rm -f  '$(PREFIX)/$(TARGET)/bin/glib-*'
-    ln -sf '$(PREFIX)/$(BUILD)/bin/glib-genmarshal'        '$(PREFIX)/$(TARGET)/bin/'
-    ln -sf '$(PREFIX)/$(BUILD)/bin/glib-compile-schemas'   '$(PREFIX)/$(TARGET)/bin/'
-    ln -sf '$(PREFIX)/$(BUILD)/bin/glib-compile-resources' '$(PREFIX)/$(TARGET)/bin/'
-
     $(if $(findstring .ffi,$(TARGET)), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(glib_PATCHES))))/glib-static.patch)
 

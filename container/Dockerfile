@@ -1,4 +1,4 @@
-FROM buildpack-deps:bullseye
+FROM docker.io/library/buildpack-deps:bullseye
 
 RUN apt-get update \
   && apt-get install -y \

@@ -89,7 +89,7 @@ diff --git a/poppler/GlobalParams.h b/poppler/GlobalParams.h
 index 1111111..2222222 100644
 --- a/poppler/GlobalParams.h
 +++ b/poppler/GlobalParams.h
-@@ -47,7 +47,11 @@
+@@ -48,7 +48,11 @@
  #include <unordered_map>
  #include <string>
  #include <memory>

@@ -32,7 +32,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libarchive]    | 3.7.2     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
-| [libheif]       | 1.17.1    | LGPLv3                                                       |
+| [libheif]       | 1.17.3    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.40    | [libpng License version 2]                                   |
 | [librsvg]       | 2.57.0    | LGPLv3                                                       |
@@ -106,8 +106,8 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 23.10.0   | GPLv2                                                        |
-| [sqlite]        | 3.43.2    | Public domain                                                |
+| [poppler]       | 23.11.0   | GPLv2                                                        |
+| [sqlite]        | 3.44.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/

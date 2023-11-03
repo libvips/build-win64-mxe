@@ -178,7 +178,7 @@ fi
 mkdir -p $tmpdir
 
 # Ensure latest Debian stable base image
-$oci_runtime pull buildpack-deps:bullseye
+$oci_runtime pull docker.io/library/buildpack-deps:bullseye
 
 # Create a machine image with all the required build tools pre-installed
 $oci_runtime build -t libvips-build-win-mxe container
