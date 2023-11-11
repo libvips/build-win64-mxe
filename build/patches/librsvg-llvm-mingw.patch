@@ -54,7 +54,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 21 Sep 2020 11:00:00 +0200
-Subject: [PATCH 2/4] Fix linker error on llvm-mingw (targeting ARMv7)
+Subject: [PATCH 2/4] Fix linker error on `armv7-pc-windows-gnullvm`
 
 Details:
 lld-link: error: undefined symbol: __aeabi_idiv
@@ -66,10 +66,10 @@ diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/build.rs
 +++ b/vendor/compiler_builtins/build.rs
-@@ -391,7 +391,7 @@ mod c {
-         if target_arch == "arm"
+@@ -393,7 +393,7 @@ mod c {
              && target_os != "ios"
              && target_os != "watchos"
+             && target_os != "tvos"
 -            && target_env != "msvc"
 +            && target_os != "windows"
          {
@@ -194,7 +194,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 30 Apr 2022 16:05:00 +0200
-Subject: [PATCH 4/4] Fix build errors on llvm-mingw (targeting ARMv7)
+Subject: [PATCH 4/4] Fix build errors on `armv7-pc-windows-gnullvm`
 
 Details:
 error[E0412]: cannot find type `WSADATA` in this scope

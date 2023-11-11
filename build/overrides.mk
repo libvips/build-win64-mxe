@@ -580,7 +580,7 @@ define librsvg_BUILD
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
         $(SED) -i 's/1cb3a78f27813219776604dc99a86b95c3c4649c34a06f840440433ffb178c1d/930123760293dc184dbabc209c73cbfc079af5ca3eaabd76a06316bafbd399a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/254c36fa4cd3835468e679fdf7e47abe98570a4af35afa215cf252eeaa818151/0f0a18fa2e517bb2c439a13c9c24bb27f7b8f63f06123af7094eca58b57905ce/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/c3d31731175775918d2e7b3e4c19457085be966b85992e33e75435bda32acd9f/0ffa5a52d0b1c19b327ead7d1d39c9582c950a4d0770bf8c0ec2ec462ff710c7/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/8bf710288f88cfbf67e510f68abbb5a4f7173d2ea9ef32f98d594935fc051641/891c080ebd853786846af1987ca5bdb92485a792d3ec7281cf20ddaef94c9b21/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/01bdacaccadd2b9b69183f9b5a28d010d3454d886841432f51aa79cb274c24ec/014ceac5eddbc6492e09f1a1f1bbc6dc65bb061450df613f1b3e32c00387e1df/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         $(SED) -i 's/e990dd3ef1561f99521c4129a261a38130c823addf52f46b341fe99960d4cb74/b819750a2bb403807ebabb845b88707e81359b1c01782424dcb07f44acd001de/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
