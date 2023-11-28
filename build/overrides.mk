@@ -21,8 +21,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.11.1
-libxml2_VERSION  := 2.11.5
-libxml2_CHECKSUM := 3727b078c360ec69fa869de14bd6f75d7ee8d36987b071e6928d4720a28df3a6
+libxml2_VERSION  := 2.12.1
+libxml2_CHECKSUM := 8982b9ccdf7f456e30d8f7012d50858c6623e495333b6191def455c7e95427eb
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -31,8 +31,8 @@ libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.24
-matio_CHECKSUM := e6e024f3f89e44af467e578bb2a22f94c5f7894b0cd0af542995e242e95aa896
+matio_VERSION  := 1.5.26
+matio_CHECKSUM := 06352c6a34b2e001b5bd5e748cc405683c88ec71b1098dcf3561a4859c33f44f
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.xz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
@@ -111,8 +111,8 @@ openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 3410
-cfitsio_VERSION  := 4.3.0
-cfitsio_CHECKSUM := fdadc01d09cf9f54253802c5ec87eb10de51ce4130411415ae88c30940621b8b
+cfitsio_VERSION  := 4.3.1
+cfitsio_CHECKSUM := 47a7c8ee05687be1e1d8eeeb94fb88f060fbf3cd8a4df52ccb88d5eb0f5062be
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
@@ -128,8 +128,8 @@ pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # upstream version is 7.3.0
-harfbuzz_VERSION  := 8.2.2
-harfbuzz_CHECKSUM := e433ad85fbdf57f680be29479b3f964577379aaf319f557eb76569f0ecbc90f3
+harfbuzz_VERSION  := 8.3.0
+harfbuzz_CHECKSUM := 109501eaeb8bde3eadb25fab4164e993fbace29c3d775bcaa1c1e58e2f15f847
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
