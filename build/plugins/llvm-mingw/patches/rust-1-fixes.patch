@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 15 Sep 2020 11:50:00 +0200
-Subject: [PATCH 1/5] Add `armv7-pc-windows-gnullvm` triple
+Subject: [PATCH 1/4] Add `armv7-pc-windows-gnullvm` triple
 
 Upstream-Status: Pending
 
@@ -36,7 +36,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1595,6 +1595,7 @@ supported_targets! {
+@@ -1592,6 +1592,7 @@ supported_targets! {
      ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
@@ -48,7 +48,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 22 Sep 2020 10:00:00 +0200
-Subject: [PATCH 2/5] std/unwind: Fix linker errors on `armv7-pc-windows-gnullvm`
+Subject: [PATCH 2/4] std/unwind: Fix linker errors on `armv7-pc-windows-gnullvm`
 
 Details:
 ld.lld: error: undefined symbol: __gnu_unwind_frame
@@ -101,7 +101,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 30 Aug 2022 23:20:27 +0200
-Subject: [PATCH 3/5] windows-gnullvm: Avoid linking to libunwind statically
+Subject: [PATCH 3/4] windows-gnullvm: Avoid linking to libunwind statically
 
 Avoid linking against the static variant of libunwind, which is not
 always available. Instead, prefer to use the unwind library from the
@@ -157,7 +157,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 17 Oct 2022 11:50:00 +0200
-Subject: [PATCH 4/5] Use GCC-style unwinding on MinGW targets other than i686
+Subject: [PATCH 4/4] Use GCC-style unwinding on MinGW targets other than i686
 
 See: https://github.com/msys2/MINGW-packages/pull/13278
 
@@ -202,106 +202,3 @@ index 1111111..2222222 100644
      // We declare these as opaque types. This is fine since you just need to
      // pass them to _GCC_specific_handler and forget about them.
      pub enum EXCEPTION_RECORD {}
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sat, 4 Nov 2023 12:01:36 +0100
-Subject: [PATCH 5/5] backtrace-rs: Fix build errors on `armv7-pc-windows-gnullvm`
-
-Resolves: https://github.com/rust-lang/backtrace-rs/issues/572
-
-Upstream-Status: Accepted [https://github.com/rust-lang/backtrace-rs/commit/3f9d175d402b7ecdd52524bf01e774a6059b5c3e]
-
-diff --git a/library/backtrace/src/backtrace/dbghelp.rs b/library/backtrace/src/backtrace/dbghelp.rs
-index 1111111..2222222 100644
---- a/library/backtrace/src/backtrace/dbghelp.rs
-+++ b/library/backtrace/src/backtrace/dbghelp.rs
-@@ -86,6 +86,42 @@ impl MyContext {
-     }
- }
- 
-+#[cfg(target_arch = "x86")]
-+impl MyContext {
-+    #[inline(always)]
-+    fn ip(&self) -> DWORD {
-+        self.0.Eip
-+    }
-+
-+    #[inline(always)]
-+    fn sp(&self) -> DWORD {
-+        self.0.Esp
-+    }
-+
-+    #[inline(always)]
-+    fn fp(&self) -> DWORD {
-+        self.0.Ebp
-+    }
-+}
-+
-+#[cfg(target_arch = "arm")]
-+impl MyContext {
-+    #[inline(always)]
-+    fn ip(&self) -> DWORD {
-+        self.0.Pc
-+    }
-+
-+    #[inline(always)]
-+    fn sp(&self) -> DWORD {
-+        self.0.Sp
-+    }
-+
-+    #[inline(always)]
-+    fn fp(&self) -> DWORD {
-+        self.0.R11
-+    }
-+}
-+
- #[cfg(any(target_arch = "x86_64", target_arch = "aarch64"))]
- #[inline(always)]
- pub unsafe fn trace(cb: &mut dyn FnMut(&super::Frame) -> bool) {
-@@ -167,11 +203,11 @@ pub unsafe fn trace(cb: &mut dyn FnMut(&super::Frame) -> bool) {
-         Some(StackWalkEx) => {
-             let mut stack_frame_ex: STACKFRAME_EX = mem::zeroed();
-             stack_frame_ex.StackFrameSize = mem::size_of::<STACKFRAME_EX>() as DWORD;
--            stack_frame_ex.AddrPC.Offset = context.0.Eip as u64;
-+            stack_frame_ex.AddrPC.Offset = context.ip() as u64;
-             stack_frame_ex.AddrPC.Mode = AddrModeFlat;
--            stack_frame_ex.AddrStack.Offset = context.0.Esp as u64;
-+            stack_frame_ex.AddrStack.Offset = context.sp() as u64;
-             stack_frame_ex.AddrStack.Mode = AddrModeFlat;
--            stack_frame_ex.AddrFrame.Offset = context.0.Ebp as u64;
-+            stack_frame_ex.AddrFrame.Offset = context.fp() as u64;
-             stack_frame_ex.AddrFrame.Mode = AddrModeFlat;
- 
-             while StackWalkEx(
-@@ -205,11 +241,11 @@ pub unsafe fn trace(cb: &mut dyn FnMut(&super::Frame) -> bool) {
-         }
-         None => {
-             let mut stack_frame64: STACKFRAME64 = mem::zeroed();
--            stack_frame64.AddrPC.Offset = context.0.Eip as u64;
-+            stack_frame64.AddrPC.Offset = context.ip() as u64;
-             stack_frame64.AddrPC.Mode = AddrModeFlat;
--            stack_frame64.AddrStack.Offset = context.0.Esp as u64;
-+            stack_frame64.AddrStack.Offset = context.sp() as u64;
-             stack_frame64.AddrStack.Mode = AddrModeFlat;
--            stack_frame64.AddrFrame.Offset = context.0.Ebp as u64;
-+            stack_frame64.AddrFrame.Offset = context.fp() as u64;
-             stack_frame64.AddrFrame.Mode = AddrModeFlat;
- 
-             while dbghelp.StackWalk64()(
-diff --git a/library/backtrace/src/lib.rs b/library/backtrace/src/lib.rs
-index 1111111..2222222 100644
---- a/library/backtrace/src/lib.rs
-+++ b/library/backtrace/src/lib.rs
-@@ -194,7 +194,10 @@ mod lock {
- 
- #[cfg(all(
-     windows,
--    any(target_env = "msvc", all(target_env = "gnu", target_arch = "x86")),
-+    any(
-+        target_env = "msvc",
-+        all(target_env = "gnu", any(target_arch = "x86", target_arch = "arm"))
-+    ),
-     not(target_vendor = "uwp")
- ))]
- mod dbghelp;
