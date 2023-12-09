@@ -17,7 +17,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.7.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.8.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.0    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.3.2     | MIT Licence                                                  |
 | [expat]         | 2.5.0     | MIT Licence                                                  |
@@ -25,10 +25,10 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
-| [glib]          | 2.78.1    | LGPLv3                                                       |
+| [glib]          | 2.78.3    | LGPLv3                                                       |
 | [harfbuzz]      | 8.3.0     | MIT Licence                                                  |
 | [highway]       | 1.0.7     | Apache-2.0 License, BSD 3-Clause                             |
-| [lcms]          | 2.15      | MIT Licence                                                  |
+| [lcms]          | 2.16      | MIT Licence                                                  |
 | [libarchive]    | 3.7.2     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.4     | MIT Licence                                                  |
@@ -40,7 +40,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.0    | LGPLv3                                                       |
 | [libwebp]       | 1.3.2     | New BSD License                                              |
-| [libxml2]       | 2.12.1    | MIT Licence                                                  |
+| [libxml2]       | 2.12.2    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.51.0    | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
@@ -95,7 +95,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.3.1     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [imagemagick]   | 6.9.12-98 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-0  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
 | [libjxl]        | 0.8.2     | BSD 3-Clause                                                 |
@@ -104,7 +104,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 23.11.0   | GPLv2                                                        |
+| [poppler]       | 23.12.0   | GPLv2                                                        |
 | [sqlite]        | 3.44.2    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli

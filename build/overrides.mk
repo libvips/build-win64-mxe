@@ -21,8 +21,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.11.1
-libxml2_VERSION  := 2.12.1
-libxml2_CHECKSUM := 8982b9ccdf7f456e30d8f7012d50858c6623e495333b6191def455c7e95427eb
+libxml2_VERSION  := 2.12.2
+libxml2_CHECKSUM := 3f2e6464fa15073eb8f3d18602d54fafc489b7715171064615a40490c6be9f4f
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -46,8 +46,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.12-98
-imagemagick_CHECKSUM := 6b3e62dcdbfda21a11dc093e465eba685063e9484c3a88e6b6382c78b273b370
+imagemagick_VERSION  := 6.9.13-0
+imagemagick_CHECKSUM := 2885de49e8464812add81989bd400231daf66825f70da6b617cea554b83b595d
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -78,8 +78,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.78.1
-glib_CHECKSUM := 915bc3d0f8507d650ead3832e2f8fb670fce59aac4d7754a7dab6f1e6fed78b2
+glib_VERSION  := 2.78.3
+glib_CHECKSUM := 609801dd373796e515972bf95fc0b2daa44545481ee2f465c4f204d224b2bc21
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -142,8 +142,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 23.07.0
-poppler_VERSION  := 23.11.0
-poppler_CHECKSUM := f99cca6799cb9cb6c92fc1e0eb78547b611cb733750ab7cb047cb0e6c246539c
+poppler_VERSION  := 23.12.0
+poppler_CHECKSUM := beba398c9d37a9b6d02486496635e08f1df3d437cfe61dab2593f47c4d14cdbb
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -614,8 +614,6 @@ define poppler_BUILD
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(poppler_PATCHES))))/poppler-mingw-std-threads.patch)
 
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
-        -DENABLE_TESTS=OFF \
-        -DENABLE_ZLIB=ON \
         -DENABLE_LIBTIFF=ON \
         -DENABLE_LIBPNG=ON \
         -DENABLE_GLIB=ON \

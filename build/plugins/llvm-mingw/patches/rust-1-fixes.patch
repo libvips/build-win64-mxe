@@ -66,7 +66,7 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -92,7 +92,7 @@ const UNWIND_DATA_REG: (i32, i32) = (10, 11); // x10, x11
+@@ -92,7 +92,7 @@ const UNWIND_DATA_REG: (i32, i32) = (4, 5); // a0, a1
  // https://github.com/gcc-mirror/gcc/blob/trunk/libgcc/unwind-c.c
  
  cfg_if::cfg_if! {
@@ -79,7 +79,7 @@ diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -120,7 +120,7 @@ extern "C" {
+@@ -123,7 +123,7 @@ extern "C" {
  }
  
  cfg_if::cfg_if! {
@@ -88,12 +88,12 @@ index 1111111..2222222 100644
      // Not ARM EHABI
      #[repr(C)]
      #[derive(Copy, Clone, PartialEq)]
-@@ -134,7 +134,7 @@ if #[cfg(any(target_os = "ios", target_os = "netbsd", not(target_arch = "arm")))
+@@ -137,7 +137,7 @@ if #[cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", targe
      pub use _Unwind_Action::*;
  
      #[cfg_attr(
--        all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux")),
-+        all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux", target_os = "windows")),
+-        all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux", target_os = "xous")),
++        all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux", target_os = "xous", target_os = "windows")),
          link(name = "unwind", kind = "static", modifiers = "-bundle")
      )]
      extern "C" {
@@ -141,15 +141,18 @@ diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -102,10 +102,7 @@ pub type _Unwind_Exception_Cleanup_Fn =
+@@ -102,13 +102,7 @@ pub type _Unwind_Exception_Cleanup_Fn =
  // rustc_codegen_ssa::src::back::symbol_export, rustc_middle::middle::exported_symbols
  // and RFC 2841
  #[cfg_attr(
 -    any(
--        all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux")),
+-        all(
+-            feature = "llvm-libunwind",
+-            any(target_os = "fuchsia", target_os = "linux", target_os = "xous")
+-        ),
 -        all(target_os = "windows", target_env = "gnu", target_abi = "llvm")
 -    ),
-+    all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux")),
++    all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux", target_os = "xous")),
      link(name = "unwind", kind = "static", modifiers = "-bundle")
  )]
  extern "C-unwind" {

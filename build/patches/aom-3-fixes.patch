@@ -12,7 +12,7 @@ diff --git a/build/cmake/aom_configure.cmake b/build/cmake/aom_configure.cmake
 index 1111111..2222222 100644
 --- a/build/cmake/aom_configure.cmake
 +++ b/build/cmake/aom_configure.cmake
-@@ -257,6 +257,12 @@ aom_get_inline("INLINE")
+@@ -254,6 +254,12 @@ aom_get_inline("INLINE")
  # Don't just check for pthread.h, but use the result of the full pthreads
  # including a linking check in FindThreads above.
  set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
@@ -54,9 +54,9 @@ index 1111111..2222222 100644
 +#define FORCE_ALIGN
 +#endif
 +
- /* Indicates that the usage of the specified variable has been audited to assure
-  * that it's safe to use uninitialized. Silences 'may be used uninitialized'
-  * warnings on gcc.
+ #if HAVE_NEON && defined(_MSC_VER)
+ #define __builtin_prefetch(x)
+ #endif
 diff --git a/aom_util/aom_thread.h b/aom_util/aom_thread.h
 index 1111111..2222222 100644
 --- a/aom_util/aom_thread.h
@@ -70,7 +70,7 @@ index 1111111..2222222 100644
  #ifdef __cplusplus
  extern "C" {
  #endif
-@@ -57,7 +59,7 @@ typedef CONDITION_VARIABLE pthread_cond_t;
+@@ -58,7 +60,7 @@ typedef CONDITION_VARIABLE pthread_cond_t;
  // simplistic pthread emulation layer
  
  // _beginthreadex requires __stdcall
@@ -78,12 +78,12 @@ index 1111111..2222222 100644
 +#define THREADFN FORCE_ALIGN unsigned int __stdcall
  #define THREAD_RETURN(val) (unsigned int)((DWORD_PTR)val)
  
- static INLINE int pthread_create(pthread_t *const thread, const void *attr,
+ static INLINE int pthread_attr_init(pthread_attr_t *attr) {
 diff --git a/av1/decoder/decodeframe.c b/av1/decoder/decodeframe.c
 index 1111111..2222222 100644
 --- a/av1/decoder/decodeframe.c
 +++ b/av1/decoder/decodeframe.c
-@@ -5229,6 +5229,7 @@ static AOM_INLINE void setup_frame_info(AV1Decoder *pbi) {
+@@ -5235,6 +5235,7 @@ static AOM_INLINE void setup_frame_info(AV1Decoder *pbi) {
    }
  }
  
@@ -95,7 +95,7 @@ diff --git a/av1/encoder/encoder.c b/av1/encoder/encoder.c
 index 1111111..2222222 100644
 --- a/av1/encoder/encoder.c
 +++ b/av1/encoder/encoder.c
-@@ -3988,6 +3988,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
+@@ -3940,6 +3940,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
    return AOM_CODEC_OK;
  }
  
@@ -109,17 +109,17 @@ From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 6 Oct 2020 19:40:00 +0200
 Subject: [PATCH 3/4] aom_thread: switch win32 mutex API entirely to SWR
 
-See:
+Incorporates the changes from:
 https://code.videolan.org/videolan/dav1d/-/merge_requests/107
 
 diff --git a/aom_util/aom_thread.h b/aom_util/aom_thread.h
 index 1111111..2222222 100644
 --- a/aom_util/aom_thread.h
 +++ b/aom_util/aom_thread.h
-@@ -39,7 +39,9 @@ extern "C" {
- #include <process.h>  // NOLINT
+@@ -40,7 +40,9 @@ extern "C" {
  #include <windows.h>  // NOLINT
  typedef HANDLE pthread_t;
+ typedef int pthread_attr_t;
 -typedef CRITICAL_SECTION pthread_mutex_t;
 +
 +// use lightweight mutex/condition variable API for Windows Vista and later
@@ -127,7 +127,7 @@ index 1111111..2222222 100644
  
  #if _WIN32_WINNT < 0x0600
  #error _WIN32_WINNT must target Windows Vista / Server 2008 or newer.
-@@ -93,26 +95,27 @@ static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
+@@ -105,26 +107,27 @@ static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
  static INLINE int pthread_mutex_init(pthread_mutex_t *const mutex,
                                       void *mutexattr) {
    (void)mutexattr;
@@ -160,7 +160,7 @@ index 1111111..2222222 100644
    return 0;
  }
  
-@@ -142,7 +145,7 @@ static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
+@@ -154,7 +157,7 @@ static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
  static INLINE int pthread_cond_wait(pthread_cond_t *const condition,
                                      pthread_mutex_t *const mutex) {
    int ok;
@@ -175,14 +175,14 @@ From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 7 Oct 2020 18:43:50 +0200
 Subject: [PATCH 4/4] aom_thread: fix potentially bad call to execute
 
-See:
-https://github.com/webmproject/libwebp/commit/fde2782ecbb95043c9640f53682d128713542c49
+Incorporates the changes from:
+https://chromium.googlesource.com/webm/libwebp/+/fde2782ecbb95043c9640f53682d128713542c49
 
 diff --git a/aom_util/aom_thread.c b/aom_util/aom_thread.c
 index 1111111..2222222 100644
 --- a/aom_util/aom_thread.c
 +++ b/aom_util/aom_thread.c
-@@ -36,10 +36,9 @@ struct AVxWorkerImpl {
+@@ -37,10 +37,9 @@ struct AVxWorkerImpl {
  
  //------------------------------------------------------------------------------
  
@@ -194,7 +194,7 @@ index 1111111..2222222 100644
  #ifdef __APPLE__
    if (worker->thread_name != NULL) {
      // Apple's version of pthread_setname_np takes one argument and operates on
-@@ -74,7 +73,7 @@ static THREADFN thread_loop(void *ptr) {
+@@ -75,7 +74,7 @@ static THREADFN thread_loop(void *ptr) {
        // without holding worker->impl_->mutex_. When the worker reacquires
        // worker->impl_->mutex_, worker->status_ must still be WORK.
        pthread_mutex_unlock(&worker->impl_->mutex_);
