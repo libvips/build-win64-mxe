@@ -14,9 +14,9 @@ $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
 $(PKG)_DEPS_$(BUILD) := $(BUILD)~llvm
 
-# Build Rust from source to support the ARM targets and
-# to ensure that it links against UCRT (the prebuilt Rust
-# binaries are built with --with-default-msvcrt=msvcrt)
+# Build Rust from source to support to ensure that it links
+# against UCRT (the prebuilt Rust binaries are built with
+# --with-default-msvcrt=msvcrt)
 define $(PKG)_BUILD_$(BUILD)
     # x86_64-pc-linux-gnu -> x86_64-unknown-linux-gnu
     $(eval BUILD_RUST := $(firstword $(subst -, ,$(BUILD)))-unknown-linux-gnu)
@@ -71,11 +71,6 @@ define $(PKG)_BUILD_$(BUILD)
     # Note: we are only interested in the stage1 compiler
     cd '$(BUILD_DIR)' && \
         $(PYTHON3) $(SOURCE_DIR)/x.py install --stage 1 -j '$(JOBS)' -v
-
-    # Copy the Cargo.lock for Rust to places `vendor` will see
-    # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524
-    # https://github.com/rust-lang/cargo/pull/12088
-    cp '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/Cargo.lock' '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/sysroot'
 
     # `c` feature of the `compiler-builtins` crate needs the
     # compiler-rt sources from LLVM

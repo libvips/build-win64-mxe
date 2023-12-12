@@ -16,4 +16,3 @@ vips-web_DEPS       := $(subst libjpeg-turbo,mozjpeg,$(vips-web_DEPS))
 libjpeg-turbo_BUILD_x86_64-w64-mingw32  =
 libjpeg-turbo_BUILD_i686-w64-mingw32    =
 libjpeg-turbo_BUILD_aarch64-w64-mingw32 =
-libjpeg-turbo_BUILD_armv7-w64-mingw32   =

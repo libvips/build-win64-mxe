@@ -25,8 +25,6 @@ TARGET:
 		- i686-w64-mingw32.static
 		- aarch64-w64-mingw32.shared
 		- aarch64-w64-mingw32.static
-		- armv7-w64-mingw32.shared
-		- armv7-w64-mingw32.static
 EOF
   exit 0
 fi
@@ -46,7 +44,6 @@ case "$arch" in
   x86_64) arch=w64 ;;
   i686) arch=w32 ;;
   aarch64) arch=arm64 ;;
-  armv7) arch=arm32 ;;
 esac
 
 # Make sure that the repackaging dir is empty

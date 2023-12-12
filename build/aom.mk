@@ -11,9 +11,6 @@ $(PKG)_URL      := https://storage.googleapis.com/aom-releases/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc $(BUILD)~nasm
 
 define $(PKG)_BUILD
-    # When targeting Armv7 we need to build without `-gcodeview`:
-    # `fatal error: error in backend: unknown codeview register D11_D12`
-    # FIXME(kleisauke): https://github.com/llvm/llvm-project/issues/64278
     cd '$(BUILD_DIR)' && NASM_PATH='$(PREFIX)/$(BUILD)/bin' $(TARGET)-cmake \
         -DENABLE_NASM=ON \
         -DENABLE_DOCS=OFF \
@@ -23,9 +20,8 @@ define $(PKG)_BUILD
         -DENABLE_EXAMPLES=OFF \
         -DCONFIG_AV1_HIGHBITDEPTH=0 \
         -DCONFIG_WEBM_IO=0 \
-        $(if $(IS_ARM), -DCONFIG_RUNTIME_CPU_DETECT=0) \
         $(if $(call seq,i686,$(PROCESSOR)), -DAOM_TARGET_CPU='x86') \
-        $(if $(call seq,armv7,$(PROCESSOR)), -DCMAKE_C_FLAGS='') \
+        $(if $(call seq,aarch64,$(PROCESSOR)), -DCONFIG_RUNTIME_CPU_DETECT=0) \
         '$(SOURCE_DIR)'
 
     # parallel build sometimes doesn't work; fallback to -j 1.

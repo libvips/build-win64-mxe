@@ -33,7 +33,6 @@ ARCH:
 	    - x86_64
 	    - i686
 	    - aarch64
-	    - armv7
 
 TYPE:
 	Specifies the type of binary to be created,

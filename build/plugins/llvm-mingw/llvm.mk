@@ -29,7 +29,7 @@ define $(PKG)_BUILD_$(BUILD)
         -DCMAKE_BUILD_TYPE=Release \
         -DLLVM_ENABLE_ASSERTIONS=OFF \
         -DLLVM_ENABLE_PROJECTS='clang;lld;lldb' \
-        -DLLVM_TARGETS_TO_BUILD='ARM;AArch64;X86' \
+        -DLLVM_TARGETS_TO_BUILD='AArch64;X86' \
         -DLLVM_TOOLCHAIN_TOOLS='llvm-ar;llvm-config;llvm-ranlib;llvm-objdump;llvm-rc;llvm-cvtres;llvm-nm;llvm-strings;llvm-readobj;llvm-dlltool;llvm-pdbutil;llvm-objcopy;llvm-strip;llvm-cov;llvm-profdata;llvm-addr2line;llvm-symbolizer;llvm-windres' \
         -DLLVM_BUILD_DOCS=OFF \
         -DLLVM_BUILD_EXAMPLES=OFF \
