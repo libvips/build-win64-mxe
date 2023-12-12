@@ -9,4 +9,3 @@ glib_DEPS := $(subst gettext,proxy-libintl,$(glib_DEPS))
 gettext_BUILD_x86_64-w64-mingw32  =
 gettext_BUILD_i686-w64-mingw32    =
 gettext_BUILD_aarch64-w64-mingw32 =
-gettext_BUILD_armv7-w64-mingw32   =

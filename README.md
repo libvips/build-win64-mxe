@@ -1,7 +1,7 @@
 # build-win64-mxe
 
-libvips and its dependencies cross-compiled for all four Windows architectures (`x86_64`, `i686`,
-`aarch64` and `armv7`).
+libvips and its dependencies cross-compiled for all supported Windows architectures (`x86_64`,
+`i686` and `aarch64`).
 
 Uses [MXE](https://github.com/mxe/mxe) as base environment. A custom plugin based upon the
 [llvm-mingw](https://github.com/mstorsjo/llvm-mingw) repository is used to swap GCC and binutils

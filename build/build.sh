@@ -28,8 +28,6 @@ TARGET:
 		- i686-w64-mingw32.static
 		- aarch64-w64-mingw32.shared
 		- aarch64-w64-mingw32.static
-		- armv7-w64-mingw32.shared
-		- armv7-w64-mingw32.static
 EOF
   exit 0
 fi
@@ -67,7 +65,7 @@ if [ ! "$curr_revision" = "$revision" ]; then
 fi
 
 if [ "$initialize" = true ]; then
-  # Patch MXE to support the ARM/ARM64 targets
+  # Patch MXE to support the ARM64 target
   git apply $work_dir/patches/mxe-fixes.patch
 fi
 

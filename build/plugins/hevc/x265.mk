@@ -31,7 +31,6 @@ define $(PKG)_BUILD
         -DENABLE_CLI=OFF \
         -DENABLE_HDR10_PLUS=ON \
         -DMAIN12=ON \
-        $(if $(call seq,armv7,$(PROCESSOR)), -DCROSS_COMPILE_ARM=ON) \
         $(if $(call seq,aarch64,$(PROCESSOR)), -DCROSS_COMPILE_ARM64=ON)
 
     $(MAKE) -C '$(BUILD_DIR)/12bit' -j '$(JOBS)'
@@ -45,7 +44,6 @@ define $(PKG)_BUILD
         -DENABLE_ASSEMBLY=$(if $(call seq,64,$(BITS)),ON,OFF) \
         -DENABLE_CLI=OFF \
         -DENABLE_HDR10_PLUS=ON \
-        $(if $(call seq,armv7,$(PROCESSOR)), -DCROSS_COMPILE_ARM=ON) \
         $(if $(call seq,aarch64,$(PROCESSOR)), -DCROSS_COMPILE_ARM64=ON)
 
     $(MAKE) -C '$(BUILD_DIR)/10bit' -j '$(JOBS)'
@@ -63,7 +61,6 @@ define $(PKG)_BUILD
         -DEXTRA_LINK_FLAGS=-L'$(BUILD_DIR)' \
         -DLINKED_10BIT=ON \
         -DLINKED_12BIT=ON \
-        $(if $(call seq,armv7,$(PROCESSOR)), -DCROSS_COMPILE_ARM=ON) \
         $(if $(call seq,aarch64,$(PROCESSOR)), -DCROSS_COMPILE_ARM64=ON)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(subst -,/,$(INSTALL_STRIP_LIB))

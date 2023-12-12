@@ -23,4 +23,3 @@ tiff_DEPS               := $(subst zlib,zlib-ng,$(tiff_DEPS))
 zlib_BUILD_x86_64-w64-mingw32  =
 zlib_BUILD_i686-w64-mingw32    =
 zlib_BUILD_aarch64-w64-mingw32 =
-zlib_BUILD_armv7-w64-mingw32   =

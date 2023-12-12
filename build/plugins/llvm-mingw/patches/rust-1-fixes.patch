@@ -4,109 +4,8 @@ Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Tue, 15 Sep 2020 11:50:00 +0200
-Subject: [PATCH 1/5] Add `armv7-pc-windows-gnullvm` triple
-
-Upstream-Status: Pending
-
-diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
-index 1111111..2222222 100644
---- a/compiler/rustc_target/src/spec/mod.rs
-+++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1706,6 +1706,7 @@ fn $module() {
-     ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
-     ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
- 
-+    ("armv7-pc-windows-gnullvm", armv7_pc_windows_gnullvm),
-     ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
-     ("i686-pc-windows-gnullvm", i686_pc_windows_gnullvm),
-     ("x86_64-pc-windows-gnullvm", x86_64_pc_windows_gnullvm),
-diff --git a/compiler/rustc_target/src/spec/targets/armv7_pc_windows_gnullvm.rs b/compiler/rustc_target/src/spec/targets/armv7_pc_windows_gnullvm.rs
-new file mode 100644
-index 0000000..1111111
---- /dev/null
-+++ b/compiler/rustc_target/src/spec/targets/armv7_pc_windows_gnullvm.rs
-@@ -0,0 +1,23 @@
-+use crate::spec::{base, FramePointer, Target};
-+
-+pub fn target() -> Target {
-+    let mut base = base::windows_gnullvm::opts();
-+    base.max_atomic_width = Some(64);
-+    base.frame_pointer = FramePointer::Always; // Required for backtraces
-+    base.features = "+v7,+thumb-mode,+thumb2,+vfp3,+neon".into();
-+    base.linker = Some("armv7-w64-mingw32-clang".into());
-+
-+    Target {
-+        llvm_target: "armv7-pc-windows-gnu".into(),
-+        metadata: crate::spec::TargetMetadata {
-+            description: None,
-+            tier: None,
-+            host_tools: None,
-+            std: None,
-+        },
-+        pointer_width: 32,
-+        data_layout: "e-m:w-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
-+        arch: "arm".into(),
-+        options: base,
-+    }
-+}
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Tue, 22 Sep 2020 10:00:00 +0200
-Subject: [PATCH 2/5] std/unwind: Fix linker errors on `armv7-pc-windows-gnullvm`
-
-Details:
-ld.lld: error: undefined symbol: __gnu_unwind_frame
->>> referenced by libstd-<HASH>.rlib(<O_FILE>):(std::personality::gcc::rust_eh_personality::continue_unwind::<HASH>)
-
-ld.lld: error: undefined symbol: _Unwind_VRS_Get
->>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_GetGR::<HASH>)
-
-ld.lld: error: undefined symbol: _Unwind_VRS_Set
->>> referenced by libunwind-<HASH>.rlib(<O_FILE>):(unwind::libunwind::_Unwind_SetGR::<HASH>)
-
-Upstream-Status: Pending
-
-diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/personality/gcc.rs
-index 1111111..2222222 100644
---- a/library/std/src/sys/personality/gcc.rs
-+++ b/library/std/src/sys/personality/gcc.rs
-@@ -98,6 +98,7 @@
-             target_arch = "arm",
-             not(all(target_vendor = "apple", not(target_os = "watchos"))),
-             not(target_os = "netbsd"),
-+            not(target_os = "windows"),
-         ))] {
-         /// personality fn called by [ARM EHABI][armeabi-eh]
-         ///
-diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
-index 1111111..2222222 100644
---- a/library/unwind/src/libunwind.rs
-+++ b/library/unwind/src/libunwind.rs
-@@ -123,7 +123,7 @@ pub enum _Unwind_Context {}
- }
- 
- cfg_if::cfg_if! {
--if #[cfg(any(all(target_vendor = "apple", not(target_os = "watchos")), target_os = "netbsd", not(target_arch = "arm")))] {
-+if #[cfg(any(all(target_vendor = "apple", not(target_os = "watchos")), target_os = "netbsd", target_os = "windows", not(target_arch = "arm")))] {
-     // Not ARM EHABI
-     #[repr(C)]
-     #[derive(Copy, Clone, PartialEq)]
-@@ -137,7 +137,7 @@ pub enum _Unwind_Action {
-     pub use _Unwind_Action::*;
- 
-     #[cfg_attr(
--        all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux", target_os = "xous")),
-+        all(feature = "llvm-libunwind", any(target_os = "fuchsia", target_os = "linux", target_os = "xous", target_os = "windows")),
-         link(name = "unwind", kind = "static", modifiers = "-bundle")
-     )]
-     extern "C" {
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 30 Aug 2022 23:20:27 +0200
-Subject: [PATCH 3/5] windows-gnullvm: Avoid linking to libunwind statically
+Subject: [PATCH 1/2] windows-gnullvm: Avoid linking to libunwind statically
 
 Avoid linking against the static variant of libunwind, which is not
 always available. Instead, prefer to use the unwind library from the
@@ -154,57 +53,8 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Mon, 17 Oct 2022 11:50:00 +0200
-Subject: [PATCH 4/5] Use GCC-style unwinding on MinGW targets other than i686
-
-See: https://github.com/msys2/MINGW-packages/pull/13278
-
-Upstream-Status: Pending
-
-diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/personality/gcc.rs
-index 1111111..2222222 100644
---- a/library/std/src/sys/personality/gcc.rs
-+++ b/library/std/src/sys/personality/gcc.rs
-@@ -204,7 +204,7 @@ fn __gnu_unwind_frame(
-         }
-     } else {
-         /// Default personality routine, which is used directly on most targets
--        /// and indirectly on Windows x86_64 and AArch64 via SEH.
-+        /// and indirectly on Windows x86_64, AArch64 and ARMv7 via SEH.
-         unsafe extern "C" fn rust_eh_personality_impl(
-             version: c_int,
-             actions: uw::_Unwind_Action,
-@@ -248,10 +248,10 @@ fn __gnu_unwind_frame(
-         }
- 
-         cfg_if::cfg_if! {
--            if #[cfg(all(windows, any(target_arch = "aarch64", target_arch = "x86_64"), target_env = "gnu"))] {
-+            if #[cfg(all(windows, target_env = "gnu", not(target_arch = "x86")))] {
-                 /// personality fn called by [Windows Structured Exception Handling][windows-eh]
-                 ///
--                /// On x86_64 and AArch64 MinGW targets, the unwinding mechanism is SEH,
-+                /// On MinGW targets other than i686, the unwinding mechanism is SEH,
-                 /// however the unwind handler data (aka LSDA) uses GCC-compatible encoding
-                 ///
-                 /// [windows-eh]: https://learn.microsoft.com/en-us/cpp/cpp/structured-exception-handling-c-cpp?view=msvc-170
-diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
-index 1111111..2222222 100644
---- a/library/unwind/src/libunwind.rs
-+++ b/library/unwind/src/libunwind.rs
-@@ -284,7 +284,7 @@ pub fn _Unwind_Backtrace(trace: _Unwind_Trace_Fn,
- } // cfg_if!
- 
- cfg_if::cfg_if! {
--if #[cfg(all(windows, any(target_arch = "aarch64", target_arch = "x86_64"), target_env = "gnu"))] {
-+if #[cfg(all(windows, target_env = "gnu", not(target_arch = "x86")))] {
-     // We declare these as opaque types. This is fine since you just need to
-     // pass them to _GCC_specific_handler and forget about them.
-     pub enum EXCEPTION_RECORD {}
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 16 Apr 2024 15:51:34 +0000
-Subject: [PATCH 5/5] std: revert use of `raw-dylib`
+Subject: [PATCH 2/2] std: revert use of `raw-dylib`
 
 See:
 https://github.com/msys2/MINGW-packages/issues/21017

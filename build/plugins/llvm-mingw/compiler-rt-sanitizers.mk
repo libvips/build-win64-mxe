@@ -38,5 +38,4 @@ define $(PKG)_BUILD
 endef
 
 # Sanitizers on windows only support x86.
-$(PKG)_BUILD_armv7-w64-mingw32   =
 $(PKG)_BUILD_aarch64-w64-mingw32 =

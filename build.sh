@@ -34,7 +34,6 @@ ARCH:
 	    - x86_64
 	    - i686
 	    - aarch64 (disables --without-llvm)
-	    - armv7 (disables --without-llvm)
 
 TYPE:
 	Specifies the type of binary to be created,
@@ -96,9 +95,9 @@ deps="${1:-web}"
 arch="${2:-x86_64}"
 type="${3:-shared}"
 
-if [ "$arch" = "aarch64" ] || [ "$arch" = "armv7" ]; then
-  # Force the LLVM toolchain for the ARM/ARM64 targets,
-  # GCC does not support Windows on ARM.
+if [ "$arch" = "aarch64" ]; then
+  # Force the LLVM toolchain for the ARM64 target,
+  # GCC 14.x does not support Windows on ARM64.
   with_llvm=true
 fi
 

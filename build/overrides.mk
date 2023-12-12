@@ -579,28 +579,8 @@ endef
 define librsvg_BUILD
     $(eval export CARGO_HOME := $(PREFIX)/$(TARGET)/.cargo)
 
-    # Allow building vendored sources with `-Zbuild-std`, see:
-    # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524
-    $(if $(IS_LLVM), \
-        cd '$(BUILD_DIR)' && \
-            MXE_ENABLE_NETWORK=1 \
-            cargo vendor --manifest-path '$(SOURCE_DIR)/Cargo.toml' -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/Cargo.toml')
-
-    $(if $(IS_LLVM), \
-        (cd '$(BUILD_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
-        # Update expected Cargo SHA256 hashes for the vendored files we have patched
-        $(SED) -i 's/ddb4a16b289d368cc5c02080e67e2fd66091eed0b8478dfdb05006469494f6b0/42daa223b23e5df3f03e9da95e1e61411bfe507cba5a403bb6b8867892a95db0/' '$(BUILD_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/b279dc902e1c7763dd212f44194307a93a23dac83003f2a45c784803dc0af72d/ea38c16e227c390dbc0064f98e19c29ca4d1e031147a36618a829e76e20a04ad/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/a7be2be8ecb1feaafd2c22847d27f1a86d1090e771bd7097af831b1c94ba5bb4/ad4a2305fce53f883715d22d6f1f7b5f2175bc4790fcd541a4b7059d74781fc0/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(BUILD_DIR)/vendor/windows-sys-0.52.0/.cargo-checksum.json'; \
-        # Install Cargo config
-        $(INSTALL) -d '$(BUILD_DIR)/.cargo'
-        (echo '[source.crates-io]'; \
-         echo 'registry = "https://github.com/rust-lang/crates.io-index"'; \
-         echo 'replace-with = "vendored-sources"'; \
-         echo '[source.vendored-sources]'; \
-         echo 'directory = "./vendor"';) \
-                 > '$(BUILD_DIR)/.cargo/config.toml')
+    # Enable networking while we build librsvg
+    $(eval export MXE_ENABLE_NETWORK := 1)
 
     # Disable tools
     $(SED) -i "/subdir('rsvg_convert')/d" '$(SOURCE_DIR)/meson.build'
@@ -617,7 +597,7 @@ define librsvg_BUILD
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    $(if $(IS_GCC), MXE_ENABLE_NETWORK=1) $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 
     # Add native libraries needed for static linking to .pc file.
     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
@@ -692,9 +672,6 @@ endef
 
 # disable unneeded loaders
 define libwebp_BUILD
-    # When targeting Armv7 we need to build without `-gcodeview`:
-    # `fatal error: error in backend: unknown codeview register D1_D2`
-    # FIXME(kleisauke): https://github.com/llvm/llvm-project/issues/64278
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-gl \
@@ -704,8 +681,7 @@ define libwebp_BUILD
         --disable-tiff \
         --disable-gif \
         --enable-libwebpmux \
-        --enable-libwebpdemux \
-        $(if $(call seq,armv7,$(PROCESSOR)), CFLAGS='')
+        --enable-libwebpdemux
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef
