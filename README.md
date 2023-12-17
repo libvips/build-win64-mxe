@@ -35,12 +35,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.17.5    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.40    | [libpng License version 2]                                   |
-| [librsvg]       | 2.57.0    | LGPLv3                                                       |
+| [librsvg]       | 2.57.1    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.0    | LGPLv3                                                       |
 | [libwebp]       | 1.3.2     | New BSD License                                              |
-| [libxml2]       | 2.12.2    | MIT Licence                                                  |
+| [libxml2]       | 2.12.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.51.0    | LGPLv3                                                       |
 | [pixman]        | 0.42.2    | MIT Licence                                                  |
@@ -95,7 +95,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.3.1     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [imagemagick]   | 6.9.13-0  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-1  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
 | [libjxl]        | 0.8.2     | BSD 3-Clause                                                 |
