@@ -2,7 +2,7 @@
 
 PKG             := compiler-rt-sanitizers
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
-$(PKG)_VERSION  := 17.0.6
+$(PKG)_VERSION  := 9e3d915
 $(PKG)_DEPS     := cc
 $(PKG)_TYPE     := meta
 

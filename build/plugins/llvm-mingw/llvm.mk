@@ -5,14 +5,15 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the compiler-rt-sanitizers package
-$(PKG)_VERSION  := 17.0.6
-$(PKG)_CHECKSUM := 58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813
+# https://github.com/llvm/llvm-project/tarball/9e3d915d8ebf86e24c9ff58766be8e7c6aa7b0c0
+$(PKG)_VERSION  := 9e3d915
+$(PKG)_CHECKSUM := 8985bb5d3cb66f5790dc815071903bbdfb91c73dfe083c2899cd9ec2a350796a
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
-$(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
-$(PKG)_SUBDIR   := $(PKG)-project-$(subst -,,$($(PKG)_VERSION)).src
-$(PKG)_FILE     := $($(PKG)_SUBDIR).tar.xz
+$(PKG)_GH_CONF  := llvm/llvm-project/branches/main
+$(PKG)_SUBDIR   := $(PKG)-llvm-project-$($(PKG)_VERSION)
+$(PKG)_FILE     := $($(PKG)_SUBDIR).tar.gz
 # This is needed to properly override: https://github.com/mxe/mxe/blob/master/src/llvm.mk#L11
-$(PKG)_URL      := https://github.com/llvm/llvm-project/releases/download/llvmorg-$($(PKG)_VERSION)/$($(PKG)_FILE)
+$(PKG)_URL      := https://github.com/llvm/llvm-project/tarball/$($(PKG)_VERSION)/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG) llvm-mingw
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
