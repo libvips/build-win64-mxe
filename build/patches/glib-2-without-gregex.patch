@@ -12,7 +12,7 @@ diff --git a/gio/gsettingsschema.c b/gio/gsettingsschema.c
 index 1111111..2222222 100644
 --- a/gio/gsettingsschema.c
 +++ b/gio/gsettingsschema.c
-@@ -558,62 +558,7 @@ start_element (GMarkupParseContext  *context,
+@@ -548,62 +548,7 @@ start_element (GMarkupParseContext  *context,
  static gchar *
  normalise_whitespace (const gchar *orig)
  {
@@ -38,7 +38,7 @@ index 1111111..2222222 100644
 -  gchar *result;
 -  gint i;
 -
--  if (g_once_init_enter (&splitter))
+-  if (g_once_init_enter_pointer (&splitter))
 -    {
 -      GRegex *s;
 -
@@ -51,7 +51,7 @@ index 1111111..2222222 100644
 -      s = g_regex_new ("\\n\\s*\\n+", G_REGEX_DEFAULT,
 -                       G_REGEX_MATCH_DEFAULT, NULL);
 -
--      g_once_init_leave (&splitter, s);
+-      g_once_init_leave_pointer (&splitter, s);
 -    }
 -
 -  lines = g_regex_split (splitter, orig, 0);
@@ -80,7 +80,7 @@ diff --git a/glib/glib-autocleanups.h b/glib/glib-autocleanups.h
 index 1111111..2222222 100644
 --- a/glib/glib-autocleanups.h
 +++ b/glib/glib-autocleanups.h
-@@ -73,8 +73,6 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(GPatternSpec, g_pattern_spec_free)
+@@ -75,8 +75,6 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(GPatternSpec, g_pattern_spec_free)
  G_DEFINE_AUTOPTR_CLEANUP_FUNC(GQueue, g_queue_free)
  G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC(GQueue, g_queue_clear)
  G_DEFINE_AUTOPTR_CLEANUP_FUNC(GRand, g_rand_free)
@@ -113,7 +113,7 @@ index 1111111..2222222 100644
    'gscanner.h',
    'gsequence.h',
    'gshell.h',
-@@ -309,7 +308,6 @@ glib_sources += files(
+@@ -310,7 +309,6 @@ glib_sources += files(
    'grcbox.c',
    'grefcount.c',
    'grefstring.c',
@@ -121,7 +121,7 @@ index 1111111..2222222 100644
    'gscanner.c',
    'gsequence.c',
    'gshell.c',
-@@ -398,13 +396,7 @@ else
+@@ -399,13 +397,7 @@ else
    glib_dtrace_hdr = []
  endif
  
@@ -135,8 +135,8 @@ index 1111111..2222222 100644
 +glib_c_args = ['-DG_LOG_DOMAIN="GLib"'] + glib_c_args_internal
  libglib = library('glib-2.0',
    glib_dtrace_obj, glib_dtrace_hdr,
-   sources : [deprecated_sources, glib_sources],
-@@ -423,7 +415,6 @@ libglib = library('glib-2.0',
+   sources : [glib_deprecated_sources, glib_sources],
+@@ -424,7 +416,6 @@ libglib = library('glib-2.0',
      libm,
      librt,
      libsysprof_capture_dep,
@@ -148,7 +148,7 @@ diff --git a/gobject/gboxed.c b/gobject/gboxed.c
 index 1111111..2222222 100644
 --- a/gobject/gboxed.c
 +++ b/gobject/gboxed.c
-@@ -150,9 +150,6 @@ G_DEFINE_BOXED_TYPE (GByteArray, g_byte_array, g_byte_array_ref, g_byte_array_un
+@@ -121,9 +121,6 @@ G_DEFINE_BOXED_TYPE (GByteArray, g_byte_array, g_byte_array_ref, g_byte_array_un
  G_DEFINE_BOXED_TYPE (GBytes, g_bytes, g_bytes_ref, g_bytes_unref)
  G_DEFINE_BOXED_TYPE (GTree, g_tree, g_tree_ref, g_tree_unref)
  
@@ -182,7 +182,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2081,46 +2081,6 @@ else
+@@ -2131,46 +2131,6 @@ else
    libiconv = dependency('iconv')
  endif
  

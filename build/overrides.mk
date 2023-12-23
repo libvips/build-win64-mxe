@@ -78,8 +78,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.78.3
-glib_CHECKSUM := 609801dd373796e515972bf95fc0b2daa44545481ee2f465c4f204d224b2bc21
+glib_VERSION  := 2.79.0
+glib_CHECKSUM := d7ebde5505f5c4741a04ffe32f6927bd165b13caaabe18e962ddc58c811f84c9
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -132,6 +132,14 @@ harfbuzz_VERSION  := 8.3.0
 harfbuzz_CHECKSUM := 109501eaeb8bde3eadb25fab4164e993fbace29c3d775bcaa1c1e58e2f15f847
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
+# upstream version is 2.14.2
+fontconfig_VERSION  := 2.15.0
+fontconfig_CHECKSUM := 63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
+fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
+fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
+fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
+fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
 
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10

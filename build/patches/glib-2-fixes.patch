@@ -15,7 +15,7 @@ diff --git a/gio/giomodule.c b/gio/giomodule.c
 index 1111111..2222222 100644
 --- a/gio/giomodule.c
 +++ b/gio/giomodule.c
-@@ -1117,7 +1117,7 @@ extern GType _g_win32_network_monitor_get_type (void);
+@@ -1105,7 +1105,7 @@ extern GType _g_win32_network_monitor_get_type (void);
  
  static HMODULE gio_dll = NULL;
  
@@ -24,7 +24,7 @@ index 1111111..2222222 100644
  
  BOOL WINAPI DllMain (HINSTANCE hinstDLL,
                       DWORD     fdwReason,
-@@ -1137,9 +1137,13 @@ DllMain (HINSTANCE hinstDLL,
+@@ -1125,9 +1125,13 @@ DllMain (HINSTANCE hinstDLL,
    return TRUE;
  }
  
@@ -39,7 +39,7 @@ index 1111111..2222222 100644
  
  #ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
  #pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(giomodule_init_ctor)
-@@ -1162,14 +1166,18 @@ giomodule_init_ctor (void)
+@@ -1150,14 +1154,18 @@ giomodule_init_ctor (void)
     * In this case, we must ensure explicitly that glib and gobject are always
     * well initialized BEFORE gio.
     */

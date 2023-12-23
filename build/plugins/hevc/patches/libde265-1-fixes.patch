@@ -23,7 +23,7 @@ index 1111111..2222222 100644
 +endif()
  
  # The version number.
- set (NUMERIC_VERSION 0x01001400)
+ set (NUMERIC_VERSION 0x01001500)
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 20011
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
