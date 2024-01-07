@@ -43,7 +43,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.12.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.51.0    | LGPLv3                                                       |
-| [pixman]        | 0.42.2    | MIT Licence                                                  |
+| [pixman]        | 0.43.0    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.1.5     | [zlib-ng Licence]                                            |
 
@@ -95,7 +95,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.3.1     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [imagemagick]   | 6.9.13-1  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-3  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
 | [libjxl]        | 0.9.0     | BSD 3-Clause                                                 |
@@ -104,7 +104,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.0     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 23.12.0   | GPLv2                                                        |
+| [poppler]       | 24.01.0   | GPLv2                                                        |
 | [sqlite]        | 3.44.2    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli

@@ -23,8 +23,8 @@ index 1111111..2222222 100644
 -@MAGICKCORE_ZERO_CONFIGURATION_SUPPORT_TRUE@am__append_5 = magick/threshold-map.h
  subdir = .
  ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
- am__aclocal_m4_deps = $(top_srcdir)/m4/ac_func_fseeko.m4 \
-@@ -1270,7 +1269,7 @@ coders_uil_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+ am__aclocal_m4_deps = $(top_srcdir)/m4/ax_c___attribute__.m4 \
+@@ -1269,7 +1268,7 @@ coders_uil_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
  @WITH_MODULES_TRUE@am_coders_uil_la_rpath = -rpath $(codersdir)
  coders_url_la_DEPENDENCIES = $(MAGICKCORE_LIBS) $(am__DEPENDENCIES_1) \
  	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -33,7 +33,7 @@ index 1111111..2222222 100644
  am_coders_url_la_OBJECTS = coders/url_la-url.lo
  coders_url_la_OBJECTS = $(am_coders_url_la_OBJECTS)
  coders_url_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-@@ -3404,7 +3403,7 @@ MODULECOMMONCPPFLAGS = $(AM_CPPFLAGS)
+@@ -3403,7 +3402,7 @@ MODULECOMMONCPPFLAGS = $(AM_CPPFLAGS)
  DISTCHECK_CONFIGURE_FLAGS = $(DISTCHECK_CONFIG_FLAGS)
  DISTCLEANFILES = _configs.sed magick/magick-baseconfig.h
  CLEANFILES = $(WAND_CLEANFILES) $(MAGICKPP_CLEANFILES) \
@@ -42,7 +42,7 @@ index 1111111..2222222 100644
  
  # Binary scripts
  bin_SCRIPTS = \
-@@ -4514,8 +4513,7 @@ coders_uil_la_LIBADD = $(MAGICKCORE_LIBS)
+@@ -4512,8 +4511,7 @@ coders_uil_la_LIBADD = $(MAGICKCORE_LIBS)
  coders_url_la_SOURCES = coders/url.c
  coders_url_la_CPPFLAGS = $(MAGICK_CODER_CPPFLAGS)
  coders_url_la_LDFLAGS = $(MODULECOMMONFLAGS)
@@ -52,7 +52,7 @@ index 1111111..2222222 100644
  
  # UYVY coder module
  coders_uyvy_la_SOURCES = coders/uyvy.c
-@@ -4658,13 +4656,13 @@ MAGICKCORE_LIBS = magick/libMagickCore-@MAGICK_MAJOR_VERSION@.@MAGICK_ABI_SUFFIX
+@@ -4656,13 +4654,13 @@ MAGICKCORE_LIBS = magick/libMagickCore-@MAGICK_MAJOR_VERSION@.@MAGICK_ABI_SUFFIX
  @WITH_MODULES_FALSE@magick_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES = $(MAGICK_BASE_SRCS) $(MAGICK_PLATFORM_SRCS) $(MAGICK_CODER_SRCS) $(MAGICK_FILTER_SRCS)
  @WITH_MODULES_TRUE@magick_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES = $(MAGICK_BASE_SRCS) $(MAGICK_PLATFORM_SRCS)
  @WITH_MODULES_FALSE@magick_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_LIBADD =  \

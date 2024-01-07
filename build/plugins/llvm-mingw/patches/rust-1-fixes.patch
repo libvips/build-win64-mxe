@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 15 Sep 2020 11:50:00 +0200
-Subject: [PATCH 1/5] Add `armv7-pc-windows-gnullvm` triple
+Subject: [PATCH 1/4] Add `armv7-pc-windows-gnullvm` triple
 
 Upstream-Status: Pending
 
@@ -36,7 +36,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1597,6 +1597,7 @@ supported_targets! {
+@@ -1555,6 +1555,7 @@ supported_targets! {
      ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
@@ -48,7 +48,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 22 Sep 2020 10:00:00 +0200
-Subject: [PATCH 2/5] std/unwind: Fix linker errors on `armv7-pc-windows-gnullvm`
+Subject: [PATCH 2/4] std/unwind: Fix linker errors on `armv7-pc-windows-gnullvm`
 
 Details:
 ld.lld: error: undefined symbol: __gnu_unwind_frame
@@ -101,7 +101,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 30 Aug 2022 23:20:27 +0200
-Subject: [PATCH 3/5] windows-gnullvm: Avoid linking to libunwind statically
+Subject: [PATCH 3/4] windows-gnullvm: Avoid linking to libunwind statically
 
 Avoid linking against the static variant of libunwind, which is not
 always available. Instead, prefer to use the unwind library from the
@@ -160,7 +160,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 17 Oct 2022 11:50:00 +0200
-Subject: [PATCH 4/5] Use GCC-style unwinding on MinGW targets other than i686
+Subject: [PATCH 4/4] Use GCC-style unwinding on MinGW targets other than i686
 
 See: https://github.com/msys2/MINGW-packages/pull/13278
 
@@ -205,27 +205,3 @@ index 1111111..2222222 100644
      // We declare these as opaque types. This is fine since you just need to
      // pass them to _GCC_specific_handler and forget about them.
      pub enum EXCEPTION_RECORD {}
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sun, 17 Dec 2023 11:52:24 +0100
-Subject: [PATCH 5/5] Don't consider weak symbols as built-in functions
-
-See: https://github.com/rust-lang/rust/issues/118609
-
-Upstream-Status: Pending
-
-diff --git a/compiler/rustc_codegen_ssa/src/back/symbol_export.rs b/compiler/rustc_codegen_ssa/src/back/symbol_export.rs
-index 1111111..2222222 100644
---- a/compiler/rustc_codegen_ssa/src/back/symbol_export.rs
-+++ b/compiler/rustc_codegen_ssa/src/back/symbol_export.rs
-@@ -112,7 +112,8 @@ fn reachable_non_generics_provider(tcx: TyCtxt<'_>, _: LocalCrate) -> DefIdMap<S
-             let is_builtin_fn = is_compiler_builtins
-                 && symbol_export_level(tcx, def_id.to_def_id())
-                     .is_below_threshold(SymbolExportLevel::C)
--                && codegen_attrs.flags.contains(CodegenFnAttrFlags::NO_MANGLE);
-+                && codegen_attrs.flags.contains(CodegenFnAttrFlags::NO_MANGLE)
-+                && codegen_attrs.linkage != Some(rustc_middle::mir::mono::Linkage::WeakAny);
-             let used = name == "rust_eh_personality";
- 
-             let export_level = if special_runtime_crate {

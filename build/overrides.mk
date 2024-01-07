@@ -46,8 +46,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-1
-imagemagick_CHECKSUM := f2ecb7e352c6acbecb44366e415701766d54d51499160773742bf163788a31b2
+imagemagick_VERSION  := 6.9.13-3
+imagemagick_CHECKSUM := aa5dcbc27d6ea1bf1610e4eb3780af870b14bde1d2c2380675dcaac8ea050caf
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -120,8 +120,8 @@ cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsi
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
 # upstream version is 0.33.6
-pixman_VERSION  := 0.42.2
-pixman_CHECKSUM := ea1480efada2fd948bc75366f7c349e1c96d3297d09a3fe62626e38e234a625e
+pixman_VERSION  := 0.43.0
+pixman_CHECKSUM := a65c28209858fb16bee50d809c80f90a8e415c0e4fd8321078a1822785a5560a
 pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pixman-[0-9]*.patch)))
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
@@ -133,14 +133,6 @@ harfbuzz_CHECKSUM := 109501eaeb8bde3eadb25fab4164e993fbace29c3d775bcaa1c1e58e2f1
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
-# upstream version is 2.14.2
-fontconfig_VERSION  := 2.15.0
-fontconfig_CHECKSUM := 63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
-fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
-fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
-fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
-fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
-
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
 fftw_CHECKSUM := 56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467
@@ -150,8 +142,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 23.07.0
-poppler_VERSION  := 23.12.0
-poppler_CHECKSUM := beba398c9d37a9b6d02486496635e08f1df3d437cfe61dab2593f47c4d14cdbb
+poppler_VERSION  := 24.01.0
+poppler_CHECKSUM := c7def693a7a492830f49d497a80cc6b9c85cb57b15e9be2d2d615153b79cae08
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
