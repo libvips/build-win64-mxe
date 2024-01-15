@@ -21,8 +21,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.11.1
-libxml2_VERSION  := 2.12.3
-libxml2_CHECKSUM := 8c8f1092340a89ff32bc44ad5c9693aff9bc8a7a3e161bb239666e5d15ac9aaa
+libxml2_VERSION  := 2.12.4
+libxml2_CHECKSUM := 497360e423cf0bd99eacdb7c6215dea92e6d6e89ee940393c2bae0e77cb9b7d0
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -46,8 +46,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-3
-imagemagick_CHECKSUM := aa5dcbc27d6ea1bf1610e4eb3780af870b14bde1d2c2380675dcaac8ea050caf
+imagemagick_VERSION  := 6.9.13-4
+imagemagick_CHECKSUM := aa91095441e145edbdec77b07f6989a9e014067509e072811552b912d56ae381
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 

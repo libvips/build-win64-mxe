@@ -18,8 +18,7 @@ export LDFLAGS  := -Wl,--pdb= -Wl,--gc-sections -Wl,-s
 export CARGO_PROFILE_RELEASE_DEBUG         := false
 export CARGO_PROFILE_RELEASE_CODEGEN_UNITS := 1
 export CARGO_PROFILE_RELEASE_INCREMENTAL   := false
-# Temporarily disabled due to https://github.com/rust-lang/rust/issues/118609#issuecomment-1859245254
-#export CARGO_PROFILE_RELEASE_LTO           := true
+export CARGO_PROFILE_RELEASE_LTO           := true
 export CARGO_PROFILE_RELEASE_OPT_LEVEL     := z
 export CARGO_PROFILE_RELEASE_PANIC         := abort
 
