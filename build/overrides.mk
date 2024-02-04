@@ -12,6 +12,7 @@ libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_
 libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
 # upstream version is 2.42.6
+# gdk-pixbuf is still used by OpenSlide and the C API of librsvg
 gdk-pixbuf_VERSION  := 2.42.10
 gdk-pixbuf_CHECKSUM := ee9b6c75d13ba096907a2e3c6b27b61bcd17f5c7ebeab5a5b439d2f2e39fe44b
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
@@ -46,8 +47,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-4
-imagemagick_CHECKSUM := aa91095441e145edbdec77b07f6989a9e014067509e072811552b912d56ae381
+imagemagick_VERSION  := 6.9.13-5
+imagemagick_CHECKSUM := 850395950025648e91f10202c7da678f9066c7988dbbd9e720f6aaad2d83849a
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -60,8 +61,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.57.1
-librsvg_CHECKSUM := 074671a3ed6fbcd67cae2a40e539107f4f097ca8a4ab1a894c05e2524ff340ef
+librsvg_VERSION  := 2.57.90
+librsvg_CHECKSUM := 12241d5b920d363b3b97ce32b1cb585861105d2e96ad1a3cf9b0788ba991fe1a
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -78,8 +79,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.79.0
-glib_CHECKSUM := d7ebde5505f5c4741a04ffe32f6927bd165b13caaabe18e962ddc58c811f84c9
+glib_VERSION  := 2.79.1
+glib_CHECKSUM := b3764dd6e29b664085921dd4dd6ba2430fc19760ab6857ecfa3ebd4e8c1d114c
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -120,8 +121,8 @@ cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsi
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
 # upstream version is 0.33.6
-pixman_VERSION  := 0.43.0
-pixman_CHECKSUM := a65c28209858fb16bee50d809c80f90a8e415c0e4fd8321078a1822785a5560a
+pixman_VERSION  := 0.43.2
+pixman_CHECKSUM := ea79297e5418fb528d0466e8b5b91d1be88857fa3706f49777b2925a72ae9924
 pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pixman-[0-9]*.patch)))
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
@@ -142,8 +143,8 @@ fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 23.07.0
-poppler_VERSION  := 24.01.0
-poppler_CHECKSUM := c7def693a7a492830f49d497a80cc6b9c85cb57b15e9be2d2d615153b79cae08
+poppler_VERSION  := 24.02.0
+poppler_CHECKSUM := 19187a3fdd05f33e7d604c4799c183de5ca0118640c88b370ddcf3136343222e
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -579,7 +580,7 @@ define librsvg_BUILD
     $(if $(IS_LLVM), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
-        $(SED) -i 's/1cb3a78f27813219776604dc99a86b95c3c4649c34a06f840440433ffb178c1d/930123760293dc184dbabc209c73cbfc079af5ca3eaabd76a06316bafbd399a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/6ff27ce632a988dd9bcf083dbaa02615254ff29f3e82252539b04f0eb3c629ba/4e83c7139d3bee1826c1f430f57ea39ac099d245d2ca352046b4c448c386078a/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
         $(SED) -i 's/c3d31731175775918d2e7b3e4c19457085be966b85992e33e75435bda32acd9f/0ffa5a52d0b1c19b327ead7d1d39c9582c950a4d0770bf8c0ec2ec462ff710c7/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(SOURCE_DIR)/.cargo'
