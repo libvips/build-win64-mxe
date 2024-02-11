@@ -20,7 +20,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.8.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.0    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.3.2     | MIT Licence                                                  |
-| [expat]         | 2.5.0     | MIT Licence                                                  |
+| [expat]         | 2.6.0     | MIT Licence                                                  |
 | [fontconfig]    | 2.15.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
@@ -35,14 +35,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.17.6    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.42    | [libpng License version 2]                                   |
-| [librsvg]       | 2.57.90   | LGPLv3                                                       |
+| [librsvg]       | 2.57.91   | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.1    | LGPLv3                                                       |
 | [libwebp]       | 1.3.2     | New BSD License                                              |
-| [libxml2]       | 2.12.4    | MIT Licence                                                  |
+| [libxml2]       | 2.12.5    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
-| [pango]         | 1.51.0    | LGPLv3                                                       |
+| [pango]         | 1.51.2    | LGPLv3                                                       |
 | [pixman]        | 0.43.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.1.6     | [zlib-ng Licence]                                            |
@@ -98,7 +98,7 @@ Same as libvips-web + these extra dependencies:
 | [imagemagick]   | 6.9.13-5  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
-| [libjxl]        | 0.9.1     | BSD 3-Clause                                                 |
+| [libjxl]        | 0.9.2     | BSD 3-Clause                                                 |
 | [matio]         | 1.5.26    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |

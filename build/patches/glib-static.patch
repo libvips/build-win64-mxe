@@ -12,7 +12,7 @@ diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -840,12 +840,9 @@ else
+@@ -842,12 +842,9 @@ else
    gio_dtrace_hdr = []
  endif
  
