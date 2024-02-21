@@ -25,13 +25,13 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
-| [glib]          | 2.79.1    | LGPLv3                                                       |
+| [glib]          | 2.79.2    | LGPLv3                                                       |
 | [harfbuzz]      | 8.3.0     | MIT Licence                                                  |
-| [highway]       | 1.0.7     | Apache-2.0 License, BSD 3-Clause                             |
+| [highway]       | 1.1.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.16      | MIT Licence                                                  |
 | [libarchive]    | 3.7.2     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
-| [libffi]        | 3.4.4     | MIT Licence                                                  |
+| [libffi]        | 3.4.6     | MIT Licence                                                  |
 | [libheif]       | 1.17.6    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.42    | [libpng License version 2]                                   |
@@ -95,7 +95,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.3.1     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [imagemagick]   | 6.9.13-5  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-6  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
 | [libjxl]        | 0.9.2     | BSD 3-Clause                                                 |
