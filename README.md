@@ -98,7 +98,7 @@ Same as libvips-web + these extra dependencies:
 | [imagemagick]   | 6.9.13-7  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
-| [libjxl]        | 0.10.1    | BSD 3-Clause                                                 |
+| [libjxl]        | 0.10.2    | BSD 3-Clause                                                 |
 | [matio]         | 1.5.26    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
@@ -127,20 +127,42 @@ Same as libvips-web + these extra dependencies:
 
 libvips does not use any of MozJPEG's improvements by default unless explicitly set,
 yet one can still choose to build the above variants with [libjpeg-turbo] instead of
-MozJPEG. This can be accomplished with the `--without-mozjpeg` argument. For example:
+[MozJPEG][mozjpeg]. This can be accomplished with the `--with-jpeg-turbo` argument.
+For example:
 
 ```bash
-./build.sh --without-mozjpeg
+./build.sh --with-jpeg-turbo
 ```
 
 In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 3.0.1     | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 3.0.2     | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/LICENSE.md
+
+## jpegli
+
+[jpegli] is an improved JPEG encoder and decoder implementation, fully compatible with
+the API/ABI of libjpeg62. It leverages many of the insights from related projects like
+[guetzli](https://github.com/google/guetzli), [butteraugli](
+https://github.com/google/butteraugli), and [JPEG XL][libjxl] to achieve a higher
+quality-per-byte for JPEG images. To enable this, use the `--with-jpegli` argument when
+building. For example:
+
+```bash
+./build.sh --with-jpegli
+```
+
+In that case, the following version of jpegli is built:
+
+| Dependency      | Version   | Used under the terms of                                      |
+|-----------------|-----------|--------------------------------------------------------------|
+| [jpegli]        | 0.10.2    | BSD 3-Clause                                                 |
+
+[jpegli]: https://github.com/libjxl/libjxl/tree/main/lib/jpegli
 
 ## zlib
 

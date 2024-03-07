@@ -44,7 +44,9 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "highway": "$(highway_VERSION)",\n'; \
      $(if $(findstring imagemagick,$($(PKG)_DEPS)),printf '  "imagemagick": "$(imagemagick_VERSION)"$(comma)\n';) \
      printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
-     $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
+     $(if $(IS_JPEGLI), \
+          printf '  "jpegli": "$(jpegli_VERSION)"$(comma)\n';, \
+          $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';)) \
      $(if $(IS_LLVM),printf '  "jxl": "$(libjxl_VERSION)"$(comma)\n';) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      printf '  "matio": "$(matio_VERSION)",\n'; \

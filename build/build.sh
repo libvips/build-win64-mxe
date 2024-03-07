@@ -96,8 +96,8 @@ if [ -n "$GIT_COMMIT" ]; then
   plugins+=" $work_dir/plugins/nightly"
 fi
 
-if [ "$MOZJPEG" = "true" ]; then
-  plugins+=" $work_dir/plugins/mozjpeg"
+if [ "$JPEG_IMPL" != "libjpeg-turbo" ]; then
+  plugins+=" $work_dir/plugins/$JPEG_IMPL"
 fi
 
 if [ "$HEVC" = "true" ]; then

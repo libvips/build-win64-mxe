@@ -36,7 +36,9 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "heif": "$(libheif_VERSION)",\n'; \
      printf '  "highway": "$(highway_VERSION)",\n'; \
      printf '  "imagequant": "$(libimagequant_VERSION)",\n'; \
-     $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';) \
+     $(if $(IS_JPEGLI), \
+          printf '  "jpegli": "$(jpegli_VERSION)"$(comma)\n';, \
+          $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';)) \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
      printf '  "pango": "$(pango_VERSION)",\n'; \

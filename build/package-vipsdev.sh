@@ -83,8 +83,8 @@ if [ "$LLVM" = "false" ]; then
   zip_suffix+="-gcc"
 fi
 
-if [ "$MOZJPEG" = "false" ]; then
-  zip_suffix+="-libjpeg-turbo"
+if [ "$JPEG_IMPL" != "mozjpeg" ]; then
+  zip_suffix+="-$JPEG_IMPL"
 fi
 
 if [ "$ZLIB_NG" = "false" ]; then

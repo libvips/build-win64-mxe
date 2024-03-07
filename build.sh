@@ -15,8 +15,9 @@ OPTIONS:
 	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaries without optimizations to improve debuggability
+	--with-jpegli		Build binaries with jpegli instead of mozjpeg
+	--with-jpeg-turbo	Build binaries with libjpeg-turbo instead of mozjpeg
 	--without-llvm		Build binaries with GCC
-	--without-mozjpeg	Build binaries with libjpeg-turbo
 	--without-zlib-ng	Build binaries with vanilla zlib
 
 DEPS:
@@ -54,11 +55,11 @@ EOF
 git_commit=""
 git_ref=""
 tmpdir="/var/tmp/mxe"
+jpeg_impl="mozjpeg"
 with_ffi_compat=false
 with_hevc=false
 with_debug=false
 with_llvm=true
-with_mozjpeg=true
 with_zlib_ng=true
 
 # Parse arguments
@@ -75,7 +76,9 @@ while [ $# -gt 0 ]; do
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --without-llvm) with_llvm=false ;;
-    --without-mozjpeg) with_mozjpeg=false ;;
+    --with-jpegli) jpeg_impl="jpegli" ;;
+    --with-jpeg-turbo) jpeg_impl="libjpeg-turbo" ;;
+    --without-mozjpeg) jpeg_impl="libjpeg-turbo" ;; # For compat
     --without-zlib-ng) with_zlib_ng=false ;;
     -*)
       echo "ERROR: Unknown option $1" >&2
@@ -193,10 +196,10 @@ $oci_runtime run --rm -t \
   -v $tmpdir:/var/tmp:z \
   -e "GIT_COMMIT=$git_commit" \
   -e "FFI_COMPAT=$with_ffi_compat" \
+  -e "JPEG_IMPL=$jpeg_impl" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "LLVM=$with_llvm" \
-  -e "MOZJPEG=$with_mozjpeg" \
   -e "ZLIB_NG=$with_zlib_ng" \
   libvips-build-win-mxe \
   $deps \

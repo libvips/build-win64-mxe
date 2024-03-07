@@ -164,6 +164,14 @@ openjpeg_CHECKSUM := 90e3896fed910c376aaf79cdd98bdfdaf98c6472efd8e1debf0a854938c
 openjpeg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openjpeg-[0-9]*.patch)))
 openjpeg_GH_CONF  := uclouvain/openjpeg/tags,v
 
+# upstream version is 3.0.1
+libjpeg-turbo_VERSION  := 3.0.2
+libjpeg-turbo_CHECKSUM := c2ce515a78d91b09023773ef2770d6b0df77d674e144de80d63e0389b3a15ca6
+libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
+libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
+libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
+
 # upstream version is 23.07.0
 poppler_VERSION  := 24.03.0
 poppler_CHECKSUM := bafbf0db5713dec25b5d16eb2cd87e4a62351cdc40f050c3937cd8dd6882d446
@@ -451,9 +459,12 @@ endef
 # build with the Meson build system
 define gdk-pixbuf_BUILD
     $(MXE_MESON_WRAPPER) \
-        -Dbuiltin_loaders='jpeg,png,tiff' \
+        -Dtiff=disabled \
         -Dintrospection=disabled \
+        -Dtests=false \
+        -Dinstalled_tests=false \
         -Dman=false \
+        -Dbuiltin_loaders='png,jpeg' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

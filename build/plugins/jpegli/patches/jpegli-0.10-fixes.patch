@@ -1,0 +1,233 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: szabadka <9074039+szabadka@users.noreply.github.com>
+Date: Thu, 7 Mar 2024 15:11:57 +0000
+Subject: [PATCH 1/2] Fix jpegli_has_multiple_scans precondition check. (#3394)
+
+Fixes https://github.com/libjxl/libjxl/issues/3378.
+
+Upstream-Status: Backport [https://github.com/libjxl/libjxl/commit/5e7560d9e431b40159cf688b9d9be6c0f2e229a1]
+
+diff --git a/lib/jpegli/decode.cc b/lib/jpegli/decode.cc
+index 1111111..2222222 100644
+--- a/lib/jpegli/decode.cc
++++ b/lib/jpegli/decode.cc
+@@ -740,8 +740,11 @@ void jpegli_calc_output_dimensions(j_decompress_ptr cinfo) {
+ }
+ 
+ boolean jpegli_has_multiple_scans(j_decompress_ptr cinfo) {
+-  if (cinfo->input_scan_number == 0) {
+-    JPEGLI_ERROR("No SOS marker found.");
++  if (cinfo->global_state != jpegli::kDecHeaderDone &&
++      cinfo->global_state != jpegli::kDecProcessScan &&
++      cinfo->global_state != jpegli::kDecProcessMarkers) {
++    JPEGLI_ERROR("jpegli_has_multiple_scans: unexpected state %d",
++                 cinfo->global_state);
+   }
+   return TO_JXL_BOOL(cinfo->master->is_multiscan_);
+ }
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 7 Mar 2024 18:28:49 +0100
+Subject: [PATCH 2/2] Build fixes for Windows
+
+Upstream-Status: Pending
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -101,9 +101,9 @@ set(JPEGXL_ENABLE_TOOLS true CACHE BOOL
+ set(JPEGXL_ENABLE_JPEGLI ${ENABLE_JPEGLI_DEFAULT} CACHE BOOL
+     "Build jpegli library.")
+ set(JPEGXL_ENABLE_JPEGLI_LIBJPEG true CACHE BOOL
+-    "Build libjpeg.so shared library based on jpegli.")
++    "Build libjpeg library based on jpegli.")
+ set(JPEGXL_INSTALL_JPEGLI_LIBJPEG false CACHE BOOL
+-    "Install jpegli version of libjpeg.so system-wide.")
++    "Install jpegli version of libjpeg system-wide.")
+ set(JPEGLI_LIBJPEG_LIBRARY_VERSION "62.3.0" CACHE STRING
+     "Library version of the libjpeg.so shared library that we build.")
+ set(JPEGLI_LIBJPEG_LIBRARY_SOVERSION "62" CACHE STRING
+diff --git a/lib/jpegli.cmake b/lib/jpegli.cmake
+index 1111111..2222222 100644
+--- a/lib/jpegli.cmake
++++ b/lib/jpegli.cmake
+@@ -29,24 +29,27 @@ configure_file(
+   ../third_party/libjpeg-turbo/jpeglib.h include/jpegli/jpeglib.h COPYONLY)
+ configure_file(
+   ../third_party/libjpeg-turbo/jmorecfg.h include/jpegli/jmorecfg.h COPYONLY)
++configure_file(
++  ../third_party/libjpeg-turbo/jerror.h include/jpegli/jerror.h COPYONLY)
+ 
+-add_library(jpegli-static STATIC EXCLUDE_FROM_ALL "${JPEGXL_INTERNAL_JPEGLI_SOURCES}")
+-target_compile_options(jpegli-static PRIVATE "${JPEGXL_INTERNAL_FLAGS}")
+-target_compile_options(jpegli-static PUBLIC ${JPEGXL_COVERAGE_FLAGS})
+-set_property(TARGET jpegli-static PROPERTY POSITION_INDEPENDENT_CODE ON)
+-target_include_directories(jpegli-static PRIVATE
+-  "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
+-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+-  "${JXL_HWY_INCLUDE_DIRS}"
++add_library(jpegli-obj OBJECT "${JPEGXL_INTERNAL_JPEGLI_SOURCES}")
++set_target_properties(jpegli-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
++target_compile_options(jpegli-obj
++  PUBLIC "${JPEGXL_COVERAGE_FLAGS}"
++  PRIVATE "${JPEGXL_INTERNAL_FLAGS}"
+ )
+-target_include_directories(jpegli-static PUBLIC
+-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/jpegli>"
++target_include_directories(jpegli-obj
++  PUBLIC
++    "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/jpegli>"
++  PRIVATE
++    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
++    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
++    "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
++    "${JXL_HWY_INCLUDE_DIRS}"
+ )
+-target_link_libraries(jpegli-static PUBLIC ${JPEGLI_INTERNAL_LIBS})
+ 
+ #
+-# Tests for jpegli-static
++# Tests for jpegli
+ #
+ 
+ find_package(JPEG)
+@@ -69,6 +72,7 @@ foreach (TESTFILE IN LISTS JPEGXL_INTERNAL_JPEGLI_TESTS)
+   # The TESTNAME is the name without the extension or directory.
+   get_filename_component(TESTNAME ${TESTFILE} NAME_WE)
+   add_executable(${TESTNAME} ${TESTFILE}
++    $<TARGET_OBJECTS:jpegli-obj>
+     $<TARGET_OBJECTS:jpegli_libjpeg_util-obj>
+     ${JPEGXL_INTERNAL_JPEGLI_TESTLIB_FILES}
+   )
+@@ -86,12 +90,13 @@ foreach (TESTFILE IN LISTS JPEGXL_INTERNAL_JPEGLI_TESTS)
+     "${CMAKE_CURRENT_BINARY_DIR}/include"
+   )
+   target_link_libraries(${TESTNAME}
+-    hwy
+-    jpegli-static
+-    gmock
+-    GTest::GTest
+-    GTest::Main
+-    ${JPEG_LIBRARIES}
++    PUBLIC
++      gmock
++      GTest::GTest
++      GTest::Main
++      ${JPEG_LIBRARIES}
++    PRIVATE
++      ${JPEGLI_INTERNAL_LIBS}
+   )
+   set_target_properties(${TESTNAME} PROPERTIES LINK_FLAGS "${JPEGXL_COVERAGE_LINK_FLAGS}")
+   # Output test targets in the test directory.
+@@ -105,39 +110,41 @@ endforeach ()
+ endif()
+ 
+ #
+-# Build libjpeg.so that links to libjpeg-static
++# Build libjpeg.{so,a,dll,lib} that uses the objects and properties of jpegli-obj
+ #
+ 
+-if (JPEGXL_ENABLE_JPEGLI_LIBJPEG AND NOT APPLE AND NOT WIN32 AND NOT EMSCRIPTEN)
+-add_library(jpegli-libjpeg-obj OBJECT "${JPEGXL_INTERNAL_JPEGLI_WRAPPER_SOURCES}")
+-target_compile_options(jpegli-libjpeg-obj PRIVATE ${JPEGXL_INTERNAL_FLAGS})
+-target_compile_options(jpegli-libjpeg-obj PUBLIC ${JPEGXL_COVERAGE_FLAGS})
+-set_property(TARGET jpegli-libjpeg-obj PROPERTY POSITION_INDEPENDENT_CODE ON)
+-target_include_directories(jpegli-libjpeg-obj PRIVATE
++if (JPEGXL_ENABLE_JPEGLI_LIBJPEG)
++add_library(jpeg
++  $<TARGET_OBJECTS:jpegli-obj>
++  "${JPEGXL_INTERNAL_JPEGLI_WRAPPER_SOURCES}"
++)
++target_link_libraries(jpeg 
++  PUBLIC ${JPEGXL_COVERAGE_FLAGS}
++  PRIVATE ${JPEGLI_INTERNAL_LIBS}
++)
++target_compile_options(jpeg PRIVATE ${JPEGXL_INTERNAL_FLAGS})
++target_include_directories(jpeg PRIVATE
+   "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
+   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/jpegli>"
+ )
+-target_compile_definitions(jpegli-libjpeg-obj PUBLIC
+-  ${JPEGLI_LIBJPEG_OBJ_COMPILE_DEFINITIONS}
+-)
+-set(JPEGLI_LIBJPEG_INTERNAL_OBJECTS $<TARGET_OBJECTS:jpegli-libjpeg-obj>)
+-
+-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/jpegli)
+-add_library(jpeg SHARED ${JPEGLI_LIBJPEG_INTERNAL_OBJECTS})
+-target_link_libraries(jpeg PUBLIC ${JPEGXL_COVERAGE_FLAGS})
+-target_link_libraries(jpeg PRIVATE jpegli-static)
+ set_target_properties(jpeg PROPERTIES
++  POSITION_INDEPENDENT_CODE ON
+   VERSION ${JPEGLI_LIBJPEG_LIBRARY_VERSION}
+   SOVERSION ${JPEGLI_LIBJPEG_LIBRARY_SOVERSION}
+   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/jpegli"
+   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/jpegli")
+ 
+-# Add a jpeg.version file as a version script to tag symbols with the
+-# appropriate version number.
+-set_target_properties(jpeg PROPERTIES
+-  LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/jpegli/jpeg.version.${JPEGLI_LIBJPEG_LIBRARY_SOVERSION})
+-set_property(TARGET jpeg APPEND_STRING PROPERTY
+-  LINK_FLAGS " -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/jpegli/jpeg.version.${JPEGLI_LIBJPEG_LIBRARY_SOVERSION}")
++if(APPLE)
++  set_property(TARGET jpeg APPEND_STRING PROPERTY
++    LINK_FLAGS "-Wl,-exported_symbol,_jpeg* -Wl,-exported_symbol,_tj*")
++elseif(NOT WIN32)
++  # Add a jpeg.version file as a version script to tag symbols with the
++  # appropriate version number.
++  set_target_properties(jpeg PROPERTIES
++    LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/jpegli/jpeg.version.${JPEGLI_LIBJPEG_LIBRARY_SOVERSION})
++  set_property(TARGET jpeg APPEND_STRING PROPERTY
++    LINK_FLAGS " -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/jpegli/jpeg.version.${JPEGLI_LIBJPEG_LIBRARY_SOVERSION}")
++endif()  # APPLE
+ 
+ if (JPEGXL_INSTALL_JPEGLI_LIBJPEG)
+   install(TARGETS jpeg
+@@ -147,6 +154,26 @@ if (JPEGXL_INSTALL_JPEGLI_LIBJPEG)
+   install(
+     DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/jpegli/"
+     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
++
++  ### Add a pkg-config file for libjpeg.
++
++  # Allow adding prefix if CMAKE_INSTALL_INCLUDEDIR not absolute.
++  if(IS_ABSOLUTE "${CMAKE_INSTALL_INCLUDEDIR}")
++    set(PKGCONFIG_TARGET_INCLUDES "${CMAKE_INSTALL_INCLUDEDIR}")
++  else()
++    set(PKGCONFIG_TARGET_INCLUDES "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
++  endif()
++  # Allow adding prefix if CMAKE_INSTALL_LIBDIR not absolute.
++  if(IS_ABSOLUTE "${CMAKE_INSTALL_LIBDIR}")
++    set(PKGCONFIG_TARGET_LIBS "${CMAKE_INSTALL_LIBDIR}")
++  else()
++    set(PKGCONFIG_TARGET_LIBS "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
++  endif()
++
++  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/jpegli/libjpeg.pc.in"
++                 "libjpeg.pc" @ONLY)
++  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libjpeg.pc"
++          DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+ endif()
+ 
+ # This hides the default visibility symbols from static libraries bundled into
+diff --git a/lib/jpegli/libjpeg.pc.in b/lib/jpegli/libjpeg.pc.in
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/lib/jpegli/libjpeg.pc.in
+@@ -0,0 +1,12 @@
++prefix=@CMAKE_INSTALL_PREFIX@
++exec_prefix=${prefix}
++libdir=@PKGCONFIG_TARGET_LIBS@
++includedir=@PKGCONFIG_TARGET_INCLUDES@
++
++Name: libjpeg
++Description: Improved JPEG encoder and decoder implementation
++Version: @JPEGXL_LIBRARY_VERSION@
++Requires.private: libhwy
++Libs: -L${libdir} -ljpeg
++Libs.private: @PKGCONFIG_CXX_LIB@
++Cflags: -I${includedir}
