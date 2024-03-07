@@ -110,15 +110,4 @@ define $(PKG)_BUILD
      echo 'linker = "$(TARGET)-clang"'; \
      echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"';) \
              > '$(PREFIX)/$(TARGET)/.cargo/config.toml'
-
-    # Install prefixed wrappers
-    (echo '#!/usr/bin/env bash'; \
-     echo 'CARGO_HOME="$(PREFIX)/$(TARGET)/.cargo" \'; \
-     echo 'RUSTC="$(PREFIX)/$(BUILD)/bin/rustc" \'; \
-     echo 'exec $(PREFIX)/$(BUILD)/bin/cargo \'; \
-     echo '"$$@"';) \
-             > '$(PREFIX)/bin/$(TARGET)-cargo'
-    chmod 0755 '$(PREFIX)/bin/$(TARGET)-cargo'
-
-    ln -sf '$(PREFIX)/$(BUILD)/bin/rustc' '$(PREFIX)/bin/$(TARGET)-rustc'
 endef

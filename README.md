@@ -24,7 +24,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.15.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
-| [gdk-pixbuf]    | 2.42.11   | LGPLv3                                                       |
 | [glib]          | 2.80.0    | LGPLv3                                                       |
 | [harfbuzz]      | 8.4.0     | MIT Licence                                                  |
 | [highway]       | 1.1.0     | Apache-2.0 License, BSD 3-Clause                             |
@@ -59,7 +58,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [freetype]: https://gitlab.freedesktop.org/freetype/freetype
 [freetype Licence]: https://gitlab.freedesktop.org/freetype/freetype/blob/master/docs/FTL.TXT
 [fribidi]: https://github.com/fribidi/fribidi
-[gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
 [highway]: https://github.com/google/highway
@@ -95,6 +93,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.4.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
+| [gdk-pixbuf]    | 2.42.11   | LGPLv3                                                       |
 | [imagemagick]   | 6.9.13-8  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
@@ -110,6 +109,7 @@ Same as libvips-web + these extra dependencies:
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [fftw]: https://github.com/FFTW/fftw3
+[gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://imagemagick.org/script/license.php
 [imath]: https://github.com/AcademySoftwareFoundation/Imath
