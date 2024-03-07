@@ -5,8 +5,8 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the compiler-rt-sanitizers package
-$(PKG)_VERSION  := 17.0.6
-$(PKG)_CHECKSUM := 58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813
+$(PKG)_VERSION  := 18.1.0
+$(PKG)_CHECKSUM := 758a048046ac5024f86c868bb17c631500eed8f8d2677ae6a72ab7ad01602277
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-project-$(subst -,,$($(PKG)_VERSION)).src
@@ -62,7 +62,8 @@ define $(PKG)_BUILD_COMPILER_RT
         -DCMAKE_RANLIB='$(PREFIX)/$(BUILD)/bin/llvm-ranlib' \
         -DCMAKE_C_COMPILER_TARGET='$(PROCESSOR)-w64-windows-gnu' \
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=TRUE \
-        -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE
+        -DCOMPILER_RT_USE_BUILTINS_LIBRARY=TRUE \
+        -DCOMPILER_RT_EXCLUDE_ATOMIC_BUILTIN=FALSE
     $(MAKE) -C '$(BUILD_DIR).compiler-rt' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).compiler-rt' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
 endef

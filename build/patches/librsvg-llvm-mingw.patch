@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 5 May 2021 21:00:00 +0200
-Subject: [PATCH 1/3] Add `armv7-pc-windows-gnullvm` target
+Subject: [PATCH 1/4] Add `armv7-pc-windows-gnullvm` target
 
 Upstream-Status: Inappropriate [enable feature]
 Upstream only accepts Rust targets that are available in stable releases.
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 21 Sep 2020 11:00:00 +0200
-Subject: [PATCH 2/3] Fix linker error on `armv7-pc-windows-gnullvm`
+Subject: [PATCH 2/4] Fix linker error on `armv7-pc-windows-gnullvm`
 
 Details:
 lld-link: error: undefined symbol: __aeabi_idiv
@@ -59,7 +59,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 17 Feb 2024 10:37:54 +0100
-Subject: [PATCH 3/3] Fix build errors on `armv7-pc-windows-gnullvm`
+Subject: [PATCH 3/4] Fix build errors on `armv7-pc-windows-gnullvm`
 
 Details:
 error[E0412]: cannot find type `WSADATA` in this scope
@@ -130,3 +130,143 @@ index 1111111..2222222 100644
  impl ::core::clone::Clone for WSADATA {
      fn clone(&self) -> Self {
          *self
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 10 Feb 2024 14:47:03 +0100
+Subject: [PATCH 4/4] Sync x86 chkstk intrinsics with LLVM
+
+Incorporates the following commits:
+https://github.com/llvm/llvm-project/commit/885d7b759b5c166c07c07f4c58c6e0ba110fb0c2
+https://github.com/llvm/llvm-project/commit/1f9eff100ce8faea1284d68b779d844c6e019b77
+https://github.com/llvm/llvm-project/commit/7a5cba8bea8f774d48db1b0426bcc102edd2b69f
+
+Upstream-Status: Submitted [https://github.com/rust-lang/compiler-builtins/pull/575]
+
+diff --git a/vendor/compiler_builtins/src/x86.rs b/vendor/compiler_builtins/src/x86.rs
+index 1111111..2222222 100644
+--- a/vendor/compiler_builtins/src/x86.rs
++++ b/vendor/compiler_builtins/src/x86.rs
+@@ -6,39 +6,8 @@ use core::intrinsics;
+ // calling convention which can't be implemented using a normal Rust function
+ 
+ // NOTE These functions are never mangled as they are not tested against compiler-rt
+-// and mangling ___chkstk would break the `jmp ___chkstk` instruction in __alloca
+ 
+ intrinsics! {
+-    #[naked]
+-    #[cfg(all(
+-        windows,
+-        target_env = "gnu",
+-        not(feature = "no-asm")
+-    ))]
+-    pub unsafe extern "C" fn ___chkstk_ms() {
+-        core::arch::asm!(
+-            "push   %ecx",
+-            "push   %eax",
+-            "cmp    $0x1000,%eax",
+-            "lea    12(%esp),%ecx",
+-            "jb     1f",
+-            "2:",
+-            "sub    $0x1000,%ecx",
+-            "test   %ecx,(%ecx)",
+-            "sub    $0x1000,%eax",
+-            "cmp    $0x1000,%eax",
+-            "ja     2b",
+-            "1:",
+-            "sub    %eax,%ecx",
+-            "test   %ecx,(%ecx)",
+-            "pop    %eax",
+-            "pop    %ecx",
+-            "ret",
+-            options(noreturn, att_syntax)
+-        );
+-    }
+-
+-    // FIXME: __alloca should be an alias to __chkstk
+     #[naked]
+     #[cfg(all(
+         windows,
+@@ -46,19 +15,7 @@ intrinsics! {
+         not(feature = "no-asm")
+     ))]
+     pub unsafe extern "C" fn __alloca() {
+-        core::arch::asm!(
+-            "jmp ___chkstk", // Jump to ___chkstk since fallthrough may be unreliable"
+-            options(noreturn, att_syntax)
+-        );
+-    }
+-
+-    #[naked]
+-    #[cfg(all(
+-        windows,
+-        target_env = "gnu",
+-        not(feature = "no-asm")
+-    ))]
+-    pub unsafe extern "C" fn ___chkstk() {
++        // _chkstk and _alloca are the same function
+         core::arch::asm!(
+             "push   %ecx",
+             "cmp    $0x1000,%eax",
+diff --git a/vendor/compiler_builtins/src/x86_64.rs b/vendor/compiler_builtins/src/x86_64.rs
+index 1111111..2222222 100644
+--- a/vendor/compiler_builtins/src/x86_64.rs
++++ b/vendor/compiler_builtins/src/x86_64.rs
+@@ -6,7 +6,6 @@ use core::intrinsics;
+ // calling convention which can't be implemented using a normal Rust function
+ 
+ // NOTE These functions are never mangled as they are not tested against compiler-rt
+-// and mangling ___chkstk would break the `jmp ___chkstk` instruction in __alloca
+ 
+ intrinsics! {
+     #[naked]
+@@ -36,49 +35,6 @@ intrinsics! {
+             options(noreturn, att_syntax)
+         );
+     }
+-
+-    #[naked]
+-    #[cfg(all(
+-        any(all(windows, target_env = "gnu"), target_os = "uefi"),
+-        not(feature = "no-asm")
+-    ))]
+-    pub unsafe extern "C" fn __alloca() {
+-        core::arch::asm!(
+-            "mov    %rcx,%rax", // x64 _alloca is a normal function with parameter in rcx
+-            "jmp    ___chkstk", // Jump to ___chkstk since fallthrough may be unreliable"
+-            options(noreturn, att_syntax)
+-        );
+-    }
+-
+-    #[naked]
+-    #[cfg(all(
+-        any(all(windows, target_env = "gnu"), target_os = "uefi"),
+-        not(feature = "no-asm")
+-    ))]
+-    pub unsafe extern "C" fn ___chkstk() {
+-        core::arch::asm!(
+-            "push   %rcx",
+-            "cmp    $0x1000,%rax",
+-            "lea    16(%rsp),%rcx", // rsp before calling this routine -> rcx
+-            "jb     1f",
+-            "2:",
+-            "sub    $0x1000,%rcx",
+-            "test   %rcx,(%rcx)",
+-            "sub    $0x1000,%rax",
+-            "cmp    $0x1000,%rax",
+-            "ja     2b",
+-            "1:",
+-            "sub    %rax,%rcx",
+-            "test   %rcx,(%rcx)",
+-            "lea    8(%rsp),%rax",  // load pointer to the return address into rax
+-            "mov    %rcx,%rsp",     // install the new top of stack pointer into rsp
+-            "mov    -8(%rax),%rcx", // restore rcx
+-            "push   (%rax)",        // push return address onto the stack
+-            "sub    %rsp,%rax",     // restore the original value in rax
+-            "ret",
+-            options(noreturn, att_syntax)
+-        );
+-    }
+ }
+ 
+ // HACK(https://github.com/rust-lang/rust/issues/62785): x86_64-unknown-uefi needs special LLVM
