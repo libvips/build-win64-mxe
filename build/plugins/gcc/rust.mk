@@ -30,17 +30,6 @@ define $(PKG)_BUILD
      echo 'ar = "$(TARGET)-ar"';) \
              > '$(PREFIX)/$(TARGET)/.cargo/config.toml'
 
-    # Install prefixed wrappers
-    (echo '#!/usr/bin/env bash'; \
-     echo 'CARGO_HOME="$(PREFIX)/$(TARGET)/.cargo" \'; \
-     echo 'RUSTC="$(PREFIX)/$(TARGET)/bin/rustc" \'; \
-     echo 'exec $(PREFIX)/$(TARGET)/bin/cargo \'; \
-     echo '"$$@"';) \
-             > '$(PREFIX)/bin/$(TARGET)-cargo'
-    chmod 0755 '$(PREFIX)/bin/$(TARGET)-cargo'
-
-    ln -sf '$(PREFIX)/$(TARGET)/bin/rustc' '$(PREFIX)/bin/$(TARGET)-rustc'
-
     # Prefer the {,dll}crt2.o libraries from our
     # mingw-w64 to avoid any compatibility issues.
     $(foreach FILE, crt2.o dllcrt2.o, \

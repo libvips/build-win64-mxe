@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2024-03-23/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2024-03-28/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 44a9df63ed49f64607f09095361d46a7f6e10353304b1f4342c56bb11ca45fff
+$(PKG)_CHECKSUM := 32e9b5f816ca4ca0178df370011605b5937e44d58cddc041cac46311b4949e04
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2024-03-23/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2024-03-28/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -106,15 +106,4 @@ define $(PKG)_BUILD
      echo 'linker = "$(TARGET)-clang"'; \
      echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"';) \
              > '$(PREFIX)/$(TARGET)/.cargo/config.toml'
-
-    # Install prefixed wrappers
-    (echo '#!/usr/bin/env bash'; \
-     echo 'CARGO_HOME="$(PREFIX)/$(TARGET)/.cargo" \'; \
-     echo 'RUSTC="$(PREFIX)/$(BUILD)/bin/rustc" \'; \
-     echo 'exec $(PREFIX)/$(BUILD)/bin/cargo \'; \
-     echo '"$$@"';) \
-             > '$(PREFIX)/bin/$(TARGET)-cargo'
-    chmod 0755 '$(PREFIX)/bin/$(TARGET)-cargo'
-
-    ln -sf '$(PREFIX)/$(BUILD)/bin/rustc' '$(PREFIX)/bin/$(TARGET)-rustc'
 endef

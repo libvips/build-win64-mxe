@@ -61,12 +61,12 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.57.3
-librsvg_CHECKSUM := 1b2267082c0b77ef93b15747a5c754584eb5886baf2d5a08011cde0659c2c479
+librsvg_VERSION  := 673d37b5
+librsvg_CHECKSUM := 1facc23d3ba03d359a11d58266a2a2dabd03f798bd0dc80e28a1f8ef2ad67322
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
-librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
-librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
+librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.gz
+librsvg_URL      := https://gitlab.gnome.org/GNOME/librsvg/-/archive/$(librsvg_VERSION)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
 pango_VERSION  := 1.52.1
@@ -237,7 +237,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: libjpeg-turbo, lcms
 #  Removed: boost, curl, qt6-qtbase, libwebp
 # librsvg:
-#  Added: libxml2, rust
+#  Added: libxml2, rust, $(BUILD)~cargo-c
 #  Removed: libcroco, libgsf
 # Cairo:
 #  Added: meson-wrapper
@@ -272,7 +272,7 @@ imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
 graphicsmagick_DEPS     := $(imagemagick_DEPS)
 openexr_DEPS            := cc imath zlib
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
-librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust
+librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust $(BUILD)~cargo-c
 cairo_DEPS              := cc meson-wrapper fontconfig freetype-bootstrap glib libpng pixman
 matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
@@ -597,46 +597,53 @@ endef
 
 # compile with the Rust toolchain
 define librsvg_BUILD
+    $(eval export CARGO_HOME := $(PREFIX)/$(TARGET)/.cargo)
+
     # Allow building vendored sources with `-Zbuild-std`, see:
     # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524
     $(if $(IS_LLVM), \
-        cd '$(SOURCE_DIR)' && \
+        cd '$(BUILD_DIR)' && \
             MXE_ENABLE_NETWORK=1 \
-            $(TARGET)-cargo vendor -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/sysroot/Cargo.toml')
+            cargo vendor --manifest-path '$(SOURCE_DIR)/Cargo.toml' -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/sysroot/Cargo.toml')
 
     $(if $(IS_LLVM), \
-        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
+        (cd '$(BUILD_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
-        $(SED) -i 's/1cb3a78f27813219776604dc99a86b95c3c4649c34a06f840440433ffb178c1d/930123760293dc184dbabc209c73cbfc079af5ca3eaabd76a06316bafbd399a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/85f31d450b44d1f9e329e72a46d181a22e2933593407eeaaebb120453f82757f/30bd0d4dab0d3ca6a0dad131fec3b93bf336913e300c0a750515e8a1c1a5de70/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
-        $(SED) -i 's/117b50d6725ee0af0a7b3d197ea580655561f66a870ebc450d96af22bf7f39f6/15e6e8180d52761492423aa3a1284b6640bc3dee9ba030465ec0e15fe6cfe754/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/aa26062784eff574fee4075d23b0ea2fdd1bdbc9a7458b099c8fd307ee61024f/13b5e010a0d45164844fda4ada4d4e965f422f2a27768b3ce495c637714cf66f/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/6ff27ce632a988dd9bcf083dbaa02615254ff29f3e82252539b04f0eb3c629ba/4e83c7139d3bee1826c1f430f57ea39ac099d245d2ca352046b4c448c386078a/' '$(BUILD_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/85f31d450b44d1f9e329e72a46d181a22e2933593407eeaaebb120453f82757f/30bd0d4dab0d3ca6a0dad131fec3b93bf336913e300c0a750515e8a1c1a5de70/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(BUILD_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
+        $(SED) -i 's/117b50d6725ee0af0a7b3d197ea580655561f66a870ebc450d96af22bf7f39f6/15e6e8180d52761492423aa3a1284b6640bc3dee9ba030465ec0e15fe6cfe754/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/aa26062784eff574fee4075d23b0ea2fdd1bdbc9a7458b099c8fd307ee61024f/13b5e010a0d45164844fda4ada4d4e965f422f2a27768b3ce495c637714cf66f/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         # Install Cargo config
-        $(INSTALL) -d '$(SOURCE_DIR)/.cargo'
+        $(INSTALL) -d '$(BUILD_DIR)/.cargo'
         (echo '[source.crates-io]'; \
          echo 'registry = "https://github.com/rust-lang/crates.io-index"'; \
          echo 'replace-with = "vendored-sources"'; \
          echo '[source.vendored-sources]'; \
          echo 'directory = "./vendor"';) \
-                 > '$(SOURCE_DIR)/.cargo/config.toml')
+                 > '$(BUILD_DIR)/.cargo/config.toml')
 
-    # Allow libtool to statically link against libintl
-    # by specifying lt_cv_deplibs_check_method="pass_all"
-    # Need to link against synchronization after PR:
-    # https://github.com/rust-lang/rust/pull/121317
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --disable-pixbuf-loader \
-        --disable-introspection \
-        RUST_TARGET='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
-        CARGO='$(TARGET)-cargo' \
-        RUSTC='$(TARGET)-rustc' \
-        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all") \
-        LIBS='-lsynchronization'
+    # Disable tools
+    $(SED) -i "/subdir('rsvg_convert')/d" '$(SOURCE_DIR)/meson.build'
 
-    $(if $(IS_GCC), MXE_ENABLE_NETWORK=1) $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_SCRIPTS=
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=
+    $(MXE_MESON_WRAPPER) \
+        -Dintrospection=disabled \
+        -Dpixbuf-loader=disabled \
+        -Ddocs=disabled \
+        -Dvala=disabled \
+        -Dtests=disabled \
+        -Dtriplet='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
+        -Dc_link_args='$(LDFLAGS) -lntdll -luserenv -lsynchronization' \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+
+     # Add native libraries needed for static linking to .pc file.
+     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
+     # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
+     $(if $(BUILD_STATIC), \
+          $(SED) -i "/^Libs:/s/$$/ -lntdll -luserenv -lsynchronization/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
 endef
 
 # compile with CMake
