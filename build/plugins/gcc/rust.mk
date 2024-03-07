@@ -28,7 +28,7 @@ define $(PKG)_BUILD
      echo '[target.$(PROCESSOR)-pc-windows-gnu]'; \
      echo 'linker = "$(TARGET)-gcc"'; \
      echo 'ar = "$(TARGET)-ar"';) \
-             > '$(PREFIX)/$(TARGET)/.cargo/config'
+             > '$(PREFIX)/$(TARGET)/.cargo/config.toml'
 
     # Install prefixed wrappers
     (echo '#!/usr/bin/env bash'; \

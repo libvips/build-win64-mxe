@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 12 Nov 2022 14:49:04 +0100
-Subject: [PATCH 1/2] giomodule: allow to be statically linked against GLib
+Subject: [PATCH 1/1] giomodule: allow to be statically linked against GLib
 
 i.e. when GLib and/or GObject is build as a shared library.
 
@@ -61,63 +61,3 @@ index 1111111..2222222 100644
  void *
  _g_io_win32_get_module (void)
  
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Wed, 21 Feb 2024 10:42:25 +0100
-Subject: [PATCH 2/2] girepository: Fix static build under Windows
-
-Properly define `GI_STATIC_COMPILATION` when static build is enabled.
-Use `library()` instead of `shared_library()` to allow selecting static builds.
-
-Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/glib/-/merge_requests/3937]
-
-diff --git a/girepository/meson.build b/girepository/meson.build
-index 1111111..2222222 100644
---- a/girepository/meson.build
-+++ b/girepository/meson.build
-@@ -181,7 +181,7 @@ if cc.get_id() != 'msvc'
-   ])
- endif
- 
--libgirepository = shared_library('girepository-2.0',
-+libgirepository = library('girepository-2.0',
-   sources: girepo_sources + girepo_ffi_sources + [gi_visibility_h],
-   include_directories: [configinc, girepoinc],
-   c_args: gir_c_args,
-diff --git a/glib/glibconfig.h.in b/glib/glibconfig.h.in
-index 1111111..2222222 100644
---- a/glib/glibconfig.h.in
-+++ b/glib/glibconfig.h.in
-@@ -16,6 +16,7 @@
- #mesondefine GOBJECT_STATIC_COMPILATION
- #mesondefine GIO_STATIC_COMPILATION
- #mesondefine GMODULE_STATIC_COMPILATION
-+#mesondefine GI_STATIC_COMPILATION
- #mesondefine G_INTL_STATIC_COMPILATION
- #mesondefine FFI_STATIC_BUILD
- 
-diff --git a/meson.build b/meson.build
-index 1111111..2222222 100644
---- a/meson.build
-+++ b/meson.build
-@@ -316,6 +316,7 @@ if glib_build_static_only
-   glibconfig_conf.set('GOBJECT_STATIC_COMPILATION', '1')
-   glibconfig_conf.set('GIO_STATIC_COMPILATION', '1')
-   glibconfig_conf.set('GMODULE_STATIC_COMPILATION', '1')
-+  glibconfig_conf.set('GI_STATIC_COMPILATION', '1')
-   glibconfig_conf.set('G_INTL_STATIC_COMPILATION', '1')
-   glibconfig_conf.set('FFI_STATIC_BUILD', '1')
- endif
-diff --git a/tools/gen-visibility-macros.py b/tools/gen-visibility-macros.py
-index 1111111..2222222 100755
---- a/tools/gen-visibility-macros.py
-+++ b/tools/gen-visibility-macros.py
-@@ -81,7 +81,7 @@ def gen_visibility_macros(args, current_minor_version):
-     - GLIB_UNAVAILABLE(maj,min)
-     - GLIB_UNAVAILABLE_STATIC_INLINE(maj,min)
- 
--    The GLIB namespace can be replaced with one of GOBJECT, GIO, GMODULE.
-+    The GLIB namespace can be replaced with one of GOBJECT, GIO, GMODULE, GI.
-     """
- 
-     ns = args.namespace

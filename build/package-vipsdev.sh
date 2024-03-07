@@ -117,6 +117,10 @@ whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math
 # See: https://github.com/rust-lang/rust/pull/108262
 whitelist+=(ntdll.dll)
 
+# Whitelist api-ms-win-core-synch-l1-2-0.dll for Rust
+# See: https://github.com/rust-lang/rust/pull/121317
+whitelist+=(api-ms-win-core-synch-l1-2-0.dll)
+
 # Copy libvips and dependencies with pe-util
 binaries=$(peldd $bin_dir/$target_dll --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
 for dll in $binaries; do

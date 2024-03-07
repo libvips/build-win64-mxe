@@ -47,8 +47,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-6
-imagemagick_CHECKSUM := c8f56fe68397e678a864c72e6949958897a94dc81660af81fc925150bdc617b3
+imagemagick_VERSION  := 6.9.13-7
+imagemagick_CHECKSUM := b88e4471322eba0140f0a53bf3af9852e90102cf74c58639a802fdb3e21b1646
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -69,8 +69,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
-pango_VERSION  := 1.51.2
-pango_CHECKSUM := 3dba407f2b5fc117e192f3025f0a1cc8edc1fd9b934b1c578b2b97342139415a
+pango_VERSION  := 1.52.1
+pango_CHECKSUM := 58728a0a2d86f60761208df9493033d18ecb2497abac80ee1a274ad0c6e55f0f
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -87,12 +87,20 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.79.2
-glib_CHECKSUM := a47f7ecf7bba0346e6cd562887b93ee4ee37a57d8dcae0755f0de8dc75ca5e8c
+glib_VERSION  := 2.79.3
+glib_CHECKSUM := 00d1a313677ed5f5c5e6f7a77ca66e31cf7aa1e3d6b92b6041a16d7a024580c6
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
+# upstream version is 2.6.0
+expat_VERSION  := 2.6.1
+expat_CHECKSUM := 0c00d2760ad12efef6e26efc8b363c8eb28eb8c8de719e46d5bb67b40ba904a3
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
 
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.24
@@ -120,8 +128,8 @@ openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 3410
-cfitsio_VERSION  := 4.3.1
-cfitsio_CHECKSUM := 47a7c8ee05687be1e1d8eeeb94fb88f060fbf3cd8a4df52ccb88d5eb0f5062be
+cfitsio_VERSION  := 4.4.0
+cfitsio_CHECKSUM := 95900cf95ae760839e7cb9678a7b2fad0858d6ac12234f934bd1cb6bfc246ba9
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
@@ -129,8 +137,8 @@ cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsi
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
 # upstream version is 0.33.6
-pixman_VERSION  := 0.43.2
-pixman_CHECKSUM := ea79297e5418fb528d0466e8b5b91d1be88857fa3706f49777b2925a72ae9924
+pixman_VERSION  := 0.43.4
+pixman_CHECKSUM := a0624db90180c7ddb79fc7a9151093dc37c646d8c38d3f232f767cf64b85a226
 pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pixman-[0-9]*.patch)))
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
@@ -150,9 +158,15 @@ fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
+# upstream version is 2.5.0
+openjpeg_VERSION  := 2.5.2
+openjpeg_CHECKSUM := 90e3896fed910c376aaf79cdd98bdfdaf98c6472efd8e1debf0a854938cbda6a
+openjpeg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openjpeg-[0-9]*.patch)))
+openjpeg_GH_CONF  := uclouvain/openjpeg/tags,v
+
 # upstream version is 23.07.0
-poppler_VERSION  := 24.02.0
-poppler_CHECKSUM := 19187a3fdd05f33e7d604c4799c183de5ca0118640c88b370ddcf3136343222e
+poppler_VERSION  := 24.03.0
+poppler_CHECKSUM := bafbf0db5713dec25b5d16eb2cd87e4a62351cdc40f050c3937cd8dd6882d446
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -598,10 +612,12 @@ define librsvg_BUILD
          echo 'replace-with = "vendored-sources"'; \
          echo '[source.vendored-sources]'; \
          echo 'directory = "./vendor"';) \
-                 > '$(SOURCE_DIR)/.cargo/config')
+                 > '$(SOURCE_DIR)/.cargo/config.toml')
 
     # Allow libtool to statically link against libintl
     # by specifying lt_cv_deplibs_check_method="pass_all"
+    # Need to link against synchronization after PR:
+    # https://github.com/rust-lang/rust/pull/121317
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-pixbuf-loader \
@@ -609,7 +625,8 @@ define librsvg_BUILD
         RUST_TARGET='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
         CARGO='$(TARGET)-cargo' \
         RUSTC='$(TARGET)-rustc' \
-        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all")
+        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all") \
+        LIBS='-lsynchronization'
 
     $(if $(IS_GCC), MXE_ENABLE_NETWORK=1) $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_SCRIPTS=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=

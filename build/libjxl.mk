@@ -2,11 +2,11 @@ PKG             := libjxl
 $(PKG)_WEBSITE  := https://github.com/libjxl/libjxl
 $(PKG)_DESCR    := JPEG XL image format reference implementation
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 0.9.2
-$(PKG)_CHECKSUM := bf28e411d84c50578ab74107cdd624e099313129883a43907c261e8116a11b3b
+$(PKG)_VERSION  := 0.10.1
+$(PKG)_CHECKSUM := 91b9a83a230d608b5d35d2ab5068bd0ec7028797575e3013211be5928028c8cd
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := libjxl/libjxl/tags,v
-$(PKG)_DEPS     := cc brotli highway lcms libjpeg-turbo libpng
+$(PKG)_DEPS     := cc brotli highway lcms libpng
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
@@ -20,6 +20,7 @@ define $(PKG)_BUILD
         -DJPEGXL_ENABLE_SJPEG=OFF \
         -DJPEGXL_ENABLE_OPENEXR=OFF \
         -DJPEGXL_ENABLE_SKCMS=OFF \
+        -DJPEGXL_ENABLE_TRANSCODE_JPEG=OFF \
         -DJPEGXL_FORCE_SYSTEM_BROTLI=ON \
         -DJPEGXL_FORCE_SYSTEM_LCMS2=ON \
         -DJPEGXL_FORCE_SYSTEM_HWY=ON \

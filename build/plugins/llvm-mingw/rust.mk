@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2024-02-21/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2024-03-07/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := bdea965cfb8578d07b58417a97d2f5c236a3bae7e75105a7a66afc13e54aa5b6
+$(PKG)_CHECKSUM := 08d4fba3cf971f40f561ee426e2b52428fd7a17ed2eab54e8b1be1ac5c74d9f4
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2024-02-21/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2024-03-07/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -31,6 +31,10 @@ define $(PKG)_BUILD_$(BUILD)
     $(eval unexport CFLAGS)
     $(eval unexport CXXFLAGS)
     $(eval unexport LDFLAGS)
+
+    # ld.lld: error: librsvg_c_api.a(bcryptprimitives.dll): .idata$4 should not refer to special section 0
+    (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < \
+        '$(SOURCE_DIR)/compiler/rustc_codegen_cranelift/patches/0029-stdlib-rawdylib-processprng.patch'
 
     # TODO(kleisauke): Build with --enable-vendor if we are no longer
     # patching panic_unwind/unwind.
@@ -101,7 +105,7 @@ define $(PKG)_BUILD
      echo '[target.$(TARGET_RUST)]'; \
      echo 'linker = "$(TARGET)-clang"'; \
      echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"';) \
-             > '$(PREFIX)/$(TARGET)/.cargo/config'
+             > '$(PREFIX)/$(TARGET)/.cargo/config.toml'
 
     # Install prefixed wrappers
     (echo '#!/usr/bin/env bash'; \
