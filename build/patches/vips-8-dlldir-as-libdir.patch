@@ -9,7 +9,7 @@ diff --git a/libvips/include/vips/util.h b/libvips/include/vips/util.h
 index 1111111..2222222 100644
 --- a/libvips/include/vips/util.h
 +++ b/libvips/include/vips/util.h
-@@ -437,6 +437,7 @@ guint32 vips__random(guint32 seed);
+@@ -428,6 +428,7 @@ guint32 vips__random(guint32 seed);
  guint32 vips__random_add(guint32 seed, int value);
  
  const char *vips__icc_dir(void);

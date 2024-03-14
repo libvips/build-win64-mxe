@@ -61,8 +61,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.57.91
-librsvg_CHECKSUM := e0f9346258ba1c1299aee8abd7b0218ab2ef45fa83bb078a636c1ebb2ecdb6b2
+librsvg_VERSION  := 2.57.92
+librsvg_CHECKSUM := 2a2c30beabf3cfdd40a4a6dbed3fb33e677caee5d8f304788249b731e7be3852
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -87,16 +87,16 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.70.2
-glib_VERSION  := 2.79.3
-glib_CHECKSUM := 00d1a313677ed5f5c5e6f7a77ca66e31cf7aa1e3d6b92b6041a16d7a024580c6
+glib_VERSION  := 2.80.0
+glib_CHECKSUM := 8228a92f92a412160b139ae68b6345bd28f24434a7b5af150ebe21ff587a561d
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
-# upstream version is 2.6.0
-expat_VERSION  := 2.6.1
-expat_CHECKSUM := 0c00d2760ad12efef6e26efc8b363c8eb28eb8c8de719e46d5bb67b40ba904a3
+# upstream version is 2.6.1
+expat_VERSION  := 2.6.2
+expat_CHECKSUM := ee14b4c5d8908b1bec37ad937607eab183d4d9806a08adee472c3c3121d27364
 expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
 expat_SUBDIR   := expat-$(expat_VERSION)
 expat_FILE     := expat-$(expat_VERSION).tar.xz
@@ -157,12 +157,6 @@ fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 fftw_SUBDIR   := fftw-$(fftw_VERSION)
 fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
 fftw_URL      := http://www.fftw.org/$(fftw_FILE)
-
-# upstream version is 2.5.0
-openjpeg_VERSION  := 2.5.2
-openjpeg_CHECKSUM := 90e3896fed910c376aaf79cdd98bdfdaf98c6472efd8e1debf0a854938cbda6a
-openjpeg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openjpeg-[0-9]*.patch)))
-openjpeg_GH_CONF  := uclouvain/openjpeg/tags,v
 
 # upstream version is 3.0.1
 libjpeg-turbo_VERSION  := 3.0.2

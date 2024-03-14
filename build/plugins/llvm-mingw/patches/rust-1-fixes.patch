@@ -14,7 +14,7 @@ new file mode 100644
 index 0000000..1111111
 --- /dev/null
 +++ b/compiler/rustc_target/src/spec/targets/armv7_pc_windows_gnullvm.rs
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,23 @@
 +use crate::spec::{base, FramePointer, Target};
 +
 +pub fn target() -> Target {
@@ -26,7 +26,12 @@ index 0000000..1111111
 +
 +    Target {
 +        llvm_target: "armv7-pc-windows-gnu".into(),
-+        description: None,
++        metadata: crate::spec::TargetMetadata {
++            description: None,
++            tier: None,
++            host_tools: None,
++            std: None,
++        },
 +        pointer_width: 32,
 +        data_layout: "e-m:w-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
 +        arch: "arm".into(),
@@ -37,7 +42,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1559,6 +1559,7 @@ supported_targets! {
+@@ -1574,6 +1574,7 @@ supported_targets! {
      ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
@@ -138,7 +143,7 @@ index 1111111..2222222 100644
 -#![cfg_attr(bootstrap, feature(cfg_target_abi))]
  #![feature(strict_provenance)]
  #![cfg_attr(not(target_env = "msvc"), feature(libc))]
- #![allow(internal_features)]
+ #![cfg_attr(
 diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
