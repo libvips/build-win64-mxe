@@ -132,18 +132,6 @@ index 1111111..2222222 100644
      // Order of `late_link_args*` does not matter with LLD.
      let late_link_args = TargetOptions::link_args(
          LinkerFlavor::Gnu(Cc::Yes, Lld::No),
-diff --git a/library/unwind/src/lib.rs b/library/unwind/src/lib.rs
-index 1111111..2222222 100644
---- a/library/unwind/src/lib.rs
-+++ b/library/unwind/src/lib.rs
-@@ -3,7 +3,6 @@
- #![feature(link_cfg)]
- #![feature(staged_api)]
- #![feature(c_unwind)]
--#![cfg_attr(bootstrap, feature(cfg_target_abi))]
- #![feature(strict_provenance)]
- #![cfg_attr(not(target_env = "msvc"), feature(libc))]
- #![cfg_attr(
 diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
