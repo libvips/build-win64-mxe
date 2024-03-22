@@ -22,8 +22,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.11.1
-libxml2_VERSION  := 2.12.5
-libxml2_CHECKSUM := a972796696afd38073e0f59c283c3a2f5a560b5268b4babc391b286166526b21
+libxml2_VERSION  := 2.12.6
+libxml2_CHECKSUM := 889c593a881a3db5fdd96cc9318c87df34eb648edfc458272ad46fd607353fbb
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -61,8 +61,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.57.92
-librsvg_CHECKSUM := 2a2c30beabf3cfdd40a4a6dbed3fb33e677caee5d8f304788249b731e7be3852
+librsvg_VERSION  := 2.57.3
+librsvg_CHECKSUM := 1b2267082c0b77ef93b15747a5c754584eb5886baf2d5a08011cde0659c2c479
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -93,14 +93,6 @@ glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
-
-# upstream version is 2.6.1
-expat_VERSION  := 2.6.2
-expat_CHECKSUM := ee14b4c5d8908b1bec37ad937607eab183d4d9806a08adee472c3c3121d27364
-expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
-expat_SUBDIR   := expat-$(expat_VERSION)
-expat_FILE     := expat-$(expat_VERSION).tar.xz
-expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
 
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.24
@@ -145,10 +137,18 @@ pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # upstream version is 7.3.0
-harfbuzz_VERSION  := 8.3.0
-harfbuzz_CHECKSUM := 109501eaeb8bde3eadb25fab4164e993fbace29c3d775bcaa1c1e58e2f15f847
+harfbuzz_VERSION  := 8.3.1
+harfbuzz_CHECKSUM := f73e1eacd7e2ffae687bc3f056bb0c705b7a05aee86337686e09da8fc1c2030c
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
+# upstream version is 2.14.2
+fontconfig_VERSION  := 2.15.0
+fontconfig_CHECKSUM := 63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
+fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
+fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
+fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
+fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
 
 # upstream version is 3.3.8
 fftw_VERSION  := 3.3.10
@@ -607,7 +607,7 @@ define librsvg_BUILD
     $(if $(IS_LLVM), \
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
-        $(SED) -i 's/6ff27ce632a988dd9bcf083dbaa02615254ff29f3e82252539b04f0eb3c629ba/4e83c7139d3bee1826c1f430f57ea39ac099d245d2ca352046b4c448c386078a/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/1cb3a78f27813219776604dc99a86b95c3c4649c34a06f840440433ffb178c1d/930123760293dc184dbabc209c73cbfc079af5ca3eaabd76a06316bafbd399a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
         $(SED) -i 's/85f31d450b44d1f9e329e72a46d181a22e2933593407eeaaebb120453f82757f/30bd0d4dab0d3ca6a0dad131fec3b93bf336913e300c0a750515e8a1c1a5de70/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         $(SED) -i 's/117b50d6725ee0af0a7b3d197ea580655561f66a870ebc450d96af22bf7f39f6/15e6e8180d52761492423aa3a1284b6640bc3dee9ba030465ec0e15fe6cfe754/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \

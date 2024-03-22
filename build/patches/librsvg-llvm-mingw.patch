@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 5 May 2021 21:00:00 +0200
-Subject: [PATCH 1/4] Add `armv7-pc-windows-gnullvm` target
+Subject: [PATCH 1/4] Add llvm-mingw i686/ARMv7 targets
 
 Upstream-Status: Inappropriate [enable feature]
 Upstream only accepts Rust targets that are available in stable releases.
@@ -10,7 +10,7 @@ diff --git a/vendor/cfg-expr/src/targets/builtins.rs b/vendor/cfg-expr/src/targe
 index 1111111..2222222 100644
 --- a/vendor/cfg-expr/src/targets/builtins.rs
 +++ b/vendor/cfg-expr/src/targets/builtins.rs
-@@ -689,6 +689,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+@@ -676,6 +676,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
          has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
          panic: Panic::unwind,
      },
@@ -30,6 +30,26 @@ index 1111111..2222222 100644
      TargetInfo {
          triple: Triple::new_const("armv7-sony-vita-newlibeabihf"),
          os: Some(Os::vita),
+@@ -1092,6 +1105,19 @@ pub const ALL_BUILTINS: &[TargetInfo] = &[
+         has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
+         panic: Panic::unwind,
+     },
++    TargetInfo {
++        triple: Triple::new_const("i686-pc-windows-gnullvm"),
++        os: Some(Os::windows),
++        abi: None,
++        arch: Arch::x86,
++        env: Some(Env::gnu),
++        vendor: Some(Vendor::pc),
++        families: Families::windows,
++        pointer_width: 32,
++        endian: Endian::little,
++        has_atomics: HasAtomics::atomic_8_16_32_64_ptr,
++        panic: Panic::unwind,
++    },
+     TargetInfo {
+         triple: Triple::new_const("i686-pc-windows-msvc"),
+         os: Some(Os::windows),
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
