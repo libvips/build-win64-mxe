@@ -2,8 +2,8 @@ PKG             := x265
 $(PKG)_WEBSITE  := http://x265.org/
 $(PKG)_DESCR    := H.265/HEVC video stream encoder.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3.5
-$(PKG)_CHECKSUM := e70a3335cacacbba0b3a20ec6fecd6783932288ebc8163ad74bcc9606477cae8
+$(PKG)_VERSION  := 3.6
+$(PKG)_CHECKSUM := 663531f341c5389f460d730e62e10a4fcca3428ca2ca109693867bc5fe2e2807
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
 $(PKG)_SUBDIR   := x265_$($(PKG)_VERSION)
 $(PKG)_FILE     := x265_$($(PKG)_VERSION).tar.gz
@@ -22,13 +22,6 @@ endef
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && mkdir -p 10bit 12bit
 
-    # Fix ARM NEON includes when building the 10/12bit libraries
-    # https://bitbucket.org/multicoreware/x265_git/issues/549/fail-to-build-for-aarch64-and-armhf
-    $(if $(IS_ARM), \
-        $(foreach ARCH,aarch64 arm, \
-            $(SED) -i 's/PFX(\(.*\))/x265_\1/g' '$(SOURCE_DIR)/source/common/$(ARCH)/asm-primitives.cpp';) \
-        $(SED) -i 's/PFX(\(.*_neon\))/x265_\1/g' '$(SOURCE_DIR)/source/common/arm/dct8.h';)
-
     # 12 bit
     cd '$(BUILD_DIR)/12bit' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
         -DHIGH_BIT_DEPTH=ON \
@@ -38,7 +31,8 @@ define $(PKG)_BUILD
         -DENABLE_CLI=OFF \
         -DENABLE_HDR10_PLUS=ON \
         -DMAIN12=ON \
-        $(if $(IS_ARM), -DCROSS_COMPILE_ARM=ON)
+        $(if $(call seq,armv7,$(PROCESSOR)), -DCROSS_COMPILE_ARM=ON) \
+        $(if $(call seq,aarch64,$(PROCESSOR)), -DCROSS_COMPILE_ARM64=ON)
 
     $(MAKE) -C '$(BUILD_DIR)/12bit' -j '$(JOBS)'
     cp '$(BUILD_DIR)/12bit/libx265.a' '$(BUILD_DIR)/libx265_main12.a'
@@ -51,7 +45,8 @@ define $(PKG)_BUILD
         -DENABLE_ASSEMBLY=$(if $(call seq,64,$(BITS)),ON,OFF) \
         -DENABLE_CLI=OFF \
         -DENABLE_HDR10_PLUS=ON \
-        $(if $(IS_ARM), -DCROSS_COMPILE_ARM=ON)
+        $(if $(call seq,armv7,$(PROCESSOR)), -DCROSS_COMPILE_ARM=ON) \
+        $(if $(call seq,aarch64,$(PROCESSOR)), -DCROSS_COMPILE_ARM64=ON)
 
     $(MAKE) -C '$(BUILD_DIR)/10bit' -j '$(JOBS)'
     cp '$(BUILD_DIR)/10bit/libx265.a' '$(BUILD_DIR)/libx265_main10.a'
@@ -68,16 +63,16 @@ define $(PKG)_BUILD
         -DEXTRA_LINK_FLAGS=-L'$(BUILD_DIR)' \
         -DLINKED_10BIT=ON \
         -DLINKED_12BIT=ON \
-        $(if $(IS_ARM), -DCROSS_COMPILE_ARM=ON)
+        $(if $(call seq,armv7,$(PROCESSOR)), -DCROSS_COMPILE_ARM=ON) \
+        $(if $(call seq,aarch64,$(PROCESSOR)), -DCROSS_COMPILE_ARM64=ON)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(subst -,/,$(INSTALL_STRIP_LIB))
 
     $(if $(BUILD_SHARED), \
-        rm -f '$(PREFIX)/$(TARGET)/lib/libx265.a' && \
-        $(SED) -i 's/^\(Cflags:.* \)/\1-DX265_API_IMPORTS=1 /g' '$(PREFIX)/$(TARGET)/lib/pkgconfig/x265.pc' \
+        rm -f '$(PREFIX)/$(TARGET)/lib/libx265.a' \
     $(else), \
-        $(INSTALL) '$(BUILD_DIR)/libx265_main12.a' '$(PREFIX)/$(TARGET)/lib/libx265_main12.a' && \
-        $(INSTALL) '$(BUILD_DIR)/libx265_main10.a' '$(PREFIX)/$(TARGET)/lib/libx265_main10.a' && \
+        $(INSTALL) '$(BUILD_DIR)/libx265_main12.a' '$(PREFIX)/$(TARGET)/lib/libx265_main12.a'; \
+        $(INSTALL) '$(BUILD_DIR)/libx265_main10.a' '$(PREFIX)/$(TARGET)/lib/libx265_main10.a'; \
         $(SED) -i 's|-lx265|-lx265 -lx265_main10 -lx265_main12|' '$(PREFIX)/$(TARGET)/lib/pkgconfig/x265.pc')
 
     '$(TARGET)-gcc' \

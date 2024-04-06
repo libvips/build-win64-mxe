@@ -19,14 +19,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 |-----------------|-----------|--------------------------------------------------------------|
 | [aom]           | 3.8.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.0    | Mozilla Public License 2.0                                   |
-| [cgif]          | 0.3.2     | MIT Licence                                                  |
+| [cgif]          | 0.4.0     | MIT Licence                                                  |
 | [expat]         | 2.6.2     | MIT Licence                                                  |
 | [fontconfig]    | 2.15.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.13    | LGPLv3                                                       |
 | [gdk-pixbuf]    | 2.42.10   | LGPLv3                                                       |
 | [glib]          | 2.80.0    | LGPLv3                                                       |
-| [harfbuzz]      | 8.3.1     | MIT Licence                                                  |
+| [harfbuzz]      | 8.4.0     | MIT Licence                                                  |
 | [highway]       | 1.1.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.16      | MIT Licence                                                  |
 | [libarchive]    | 3.7.2     | BSD 2-Clause                                                 |
@@ -42,7 +42,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libwebp]       | 1.3.2     | New BSD License                                              |
 | [libxml2]       | 2.12.6    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
-| [pango]         | 1.52.1    | LGPLv3                                                       |
+| [pango]         | 1.52.2    | LGPLv3                                                       |
 | [pixman]        | 0.43.4    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.1.6     | [zlib-ng Licence]                                            |
@@ -104,7 +104,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.2     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 24.03.0   | GPLv2                                                        |
+| [poppler]       | 24.04.0   | GPLv2                                                        |
 | [sqlite]        | 3.45.2    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
@@ -198,7 +198,7 @@ prebuilt binaries while it is patent-encumbered.
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
 | [libde265]      | 1.0.15    | LGPLv3                                                       |
-| [x265]          | 3.5       | GPLv2                                                        |
+| [x265]          | 3.6       | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265
 [x265]: https://bitbucket.org/multicoreware/x265_git/wiki/Home
