@@ -161,25 +161,24 @@ https://github.com/llvm/llvm-project/commit/885d7b759b5c166c07c07f4c58c6e0ba110f
 https://github.com/llvm/llvm-project/commit/1f9eff100ce8faea1284d68b779d844c6e019b77
 https://github.com/llvm/llvm-project/commit/7a5cba8bea8f774d48db1b0426bcc102edd2b69f
 
-Upstream-Status: Submitted [https://github.com/rust-lang/compiler-builtins/pull/575]
+Upstream-Status: Backport [https://github.com/rust-lang/compiler-builtins/commit/d32d5eeeb565c3c6f4288976e4bc07d82d9694fd]
 
 diff --git a/vendor/compiler_builtins/src/x86.rs b/vendor/compiler_builtins/src/x86.rs
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/src/x86.rs
 +++ b/vendor/compiler_builtins/src/x86.rs
-@@ -6,39 +6,8 @@ use core::intrinsics;
+@@ -6,7 +6,6 @@ use core::intrinsics;
  // calling convention which can't be implemented using a normal Rust function
  
  // NOTE These functions are never mangled as they are not tested against compiler-rt
 -// and mangling ___chkstk would break the `jmp ___chkstk` instruction in __alloca
  
  intrinsics! {
--    #[naked]
--    #[cfg(all(
--        windows,
--        target_env = "gnu",
--        not(feature = "no-asm")
--    ))]
+     #[naked]
+@@ -15,50 +14,8 @@ intrinsics! {
+         target_env = "gnu",
+         not(feature = "no-asm")
+     ))]
 -    pub unsafe extern "C" fn ___chkstk_ms() {
 -        core::arch::asm!(
 -            "push   %ecx",
@@ -204,13 +203,13 @@ index 1111111..2222222 100644
 -    }
 -
 -    // FIXME: __alloca should be an alias to __chkstk
-     #[naked]
-     #[cfg(all(
-         windows,
-@@ -46,19 +15,7 @@ intrinsics! {
-         not(feature = "no-asm")
-     ))]
-     pub unsafe extern "C" fn __alloca() {
+-    #[naked]
+-    #[cfg(all(
+-        windows,
+-        target_env = "gnu",
+-        not(feature = "no-asm")
+-    ))]
+-    pub unsafe extern "C" fn __alloca() {
 -        core::arch::asm!(
 -            "jmp ___chkstk", // Jump to ___chkstk since fallthrough may be unreliable"
 -            options(noreturn, att_syntax)
@@ -224,6 +223,7 @@ index 1111111..2222222 100644
 -        not(feature = "no-asm")
 -    ))]
 -    pub unsafe extern "C" fn ___chkstk() {
++    pub unsafe extern "C" fn _alloca() {
 +        // _chkstk and _alloca are the same function
          core::arch::asm!(
              "push   %ecx",
