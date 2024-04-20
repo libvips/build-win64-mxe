@@ -144,10 +144,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 11.0.1
-# Update MinGW-w64 to cd4cf9b
-# https://github.com/mingw-w64/mingw-w64/tarball/cd4cf9b279f8fb0815f8b9665d3cea60a30290bc
-mingw-w64_VERSION  := cd4cf9b
-mingw-w64_CHECKSUM := d95690e9a137c85f8957997b7b55bbc0934fe493b93de1397f9a1525d3d6361d
+# Update MinGW-w64 to 1f467d5
+# https://github.com/mingw-w64/mingw-w64/tarball/1f467d531362d27f1ab458d8fecccc878514a49e
+mingw-w64_VERSION  := 1f467d5
+mingw-w64_CHECKSUM := 4f7fe84ea13594150b529e5be90bbb243cc37ef7c94c314e076e46b7d336dc68
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
@@ -574,10 +574,8 @@ define librsvg_BUILD
         (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
         $(SED) -i 's/1cb3a78f27813219776604dc99a86b95c3c4649c34a06f840440433ffb178c1d/930123760293dc184dbabc209c73cbfc079af5ca3eaabd76a06316bafbd399a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/85f31d450b44d1f9e329e72a46d181a22e2933593407eeaaebb120453f82757f/30bd0d4dab0d3ca6a0dad131fec3b93bf336913e300c0a750515e8a1c1a5de70/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/14d469045ff44fa399d2dc722fd526340b9b084c30e44ff5d5f661f6673132ec/9469cee1956a3391c9d948db414d34bc0ead78206bc5ecdf12f6098a65993752/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
-        $(SED) -i 's/117b50d6725ee0af0a7b3d197ea580655561f66a870ebc450d96af22bf7f39f6/1eebe6e65b11cae356e3c19a886d7585d3cfed41899b5387209516d957613032/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/aa26062784eff574fee4075d23b0ea2fdd1bdbc9a7458b099c8fd307ee61024f/13b5e010a0d45164844fda4ada4d4e965f422f2a27768b3ce495c637714cf66f/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(SOURCE_DIR)/.cargo'
         (echo '[source.crates-io]'; \

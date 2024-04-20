@@ -42,7 +42,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1574,6 +1574,7 @@ supported_targets! {
+@@ -1651,6 +1651,7 @@ supported_targets! {
      ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
@@ -76,8 +76,8 @@ index 1111111..2222222 100644
  // https://github.com/gcc-mirror/gcc/blob/trunk/libgcc/unwind-c.c
  
  cfg_if::cfg_if! {
--    if #[cfg(all(target_arch = "arm", not(target_os = "ios"), not(target_os = "tvos"), not(target_os = "watchos"), not(target_os = "netbsd")))] {
-+    if #[cfg(all(target_arch = "arm", not(target_os = "ios"), not(target_os = "tvos"), not(target_os = "watchos"), not(target_os = "netbsd"), not(target_os = "windows")))] {
+-    if #[cfg(all(target_arch = "arm", not(target_os = "ios"), not(target_os = "tvos"), not(target_os = "watchos"), not(target_os = "visionos"), not(target_os = "netbsd")))] {
++    if #[cfg(all(target_arch = "arm", not(target_os = "ios"), not(target_os = "tvos"), not(target_os = "watchos"), not(target_os = "visionos"), not(target_os = "netbsd"), not(target_os = "windows")))] {
          // ARM EHABI personality routine.
          // https://web.archive.org/web/20190728160938/https://infocenter.arm.com/help/topic/com.arm.doc.ihi0038b/IHI0038B_ehabi.pdf
          //
@@ -89,8 +89,8 @@ index 1111111..2222222 100644
  }
  
  cfg_if::cfg_if! {
--if #[cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "netbsd", not(target_arch = "arm")))] {
-+if #[cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "netbsd", target_os = "windows", not(target_arch = "arm")))] {
+-if #[cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos", target_os = "netbsd", not(target_arch = "arm")))] {
++if #[cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos", target_os = "netbsd", target_os = "windows", not(target_arch = "arm")))] {
      // Not ARM EHABI
      #[repr(C)]
      #[derive(Copy, Clone, PartialEq)]

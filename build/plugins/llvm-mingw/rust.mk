@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2024-04-06/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2024-04-20/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := e1d7998f2e84d633e6745fadde3591089df13c00ec20594a6afa33cbf284028c
+$(PKG)_CHECKSUM := fa355091d62673873ad7fd7f5a04de747fbb2ca2a910ff0548ccf971c9939f34
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2024-04-06/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2024-04-20/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -35,6 +35,10 @@ define $(PKG)_BUILD_$(BUILD)
     # ld.lld: error: librsvg_c_api.a(bcryptprimitives.dll): .idata$4 should not refer to special section 0
     (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < \
         '$(SOURCE_DIR)/compiler/rustc_codegen_cranelift/patches/0029-stdlib-rawdylib-processprng.patch'
+
+    # libtool: error: object name conflicts in archive: .libs/librsvg-2.lax/librsvg_c_api.a//<<BUILDDIR>>/./.libs/librsvg_c_api.a
+    (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < \
+        '$(SOURCE_DIR)/compiler/rustc_codegen_cranelift/patches/0030-stdlib-Revert-use-raw-dylib-for-Windows-futex-APIs.patch'
 
     # TODO(kleisauke): Build with --enable-vendor if we are no longer
     # patching panic_unwind/unwind.
