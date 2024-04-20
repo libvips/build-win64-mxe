@@ -2,7 +2,7 @@ $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
-# upstream version is 3.3
+# upstream version is 3.4.3
 libffi_VERSION  := 3.4.6
 libffi_CHECKSUM := b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e
 libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
@@ -11,10 +11,10 @@ libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
 libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
 libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
-# upstream version is 2.42.6
+# upstream version is 2.42.10
 # gdk-pixbuf is still used by OpenSlide and the C API of librsvg
-gdk-pixbuf_VERSION  := 2.42.10
-gdk-pixbuf_CHECKSUM := ee9b6c75d13ba096907a2e3c6b27b61bcd17f5c7ebeab5a5b439d2f2e39fe44b
+gdk-pixbuf_VERSION  := 2.42.11
+gdk-pixbuf_CHECKSUM := 49dcb402388708647e8c321d56b6fb30f21e51e515d0c5a942268d23052a2f00
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -39,16 +39,16 @@ matio_FILE     := matio-$(matio_VERSION).tar.xz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.7.2
-libarchive_CHECKSUM := 04357661e6717b6941682cde02ad741ae4819c67a260593dfb2431861b251acb
+libarchive_VERSION  := 3.7.3
+libarchive_CHECKSUM := 63e7a7174638fc7d6b79b4c8b0ad954e0f4f45abe7239c1ecb200232aa9a43d2
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-7
-imagemagick_CHECKSUM := b88e4471322eba0140f0a53bf3af9852e90102cf74c58639a802fdb3e21b1646
+imagemagick_VERSION  := 6.9.13-8
+imagemagick_CHECKSUM := 6c0f40ff98929d15b132a099dc331b3c96ca9748ab869c84544e9ef763f83631
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -76,37 +76,19 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 1.0.12
-# cannot use GH_CONF:
-# fribidi_GH_CONF  := fribidi/fribidi/releases,v
-fribidi_VERSION  := 1.0.13
-fribidi_CHECKSUM := 7fa16c80c81bd622f7b198d31356da139cc318a63fc7761217af4130903f54a2
-fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
-fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
-fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
-fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
-
-# upstream version is 2.70.2
-glib_VERSION  := 2.80.0
-glib_CHECKSUM := 8228a92f92a412160b139ae68b6345bd28f24434a7b5af150ebe21ff587a561d
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
-glib_SUBDIR   := glib-$(glib_VERSION)
-glib_FILE     := glib-$(glib_VERSION).tar.xz
-glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+# upstream version is 1.3.2
+libwebp_VERSION  := 1.4.0
+libwebp_CHECKSUM := 61f873ec69e3be1b99535634340d5bde750b2e4447caa1db9f61be3fd49ab1e5
+libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
+libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
+libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
+libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
 
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.24
 libexif_CHECKSUM := d47564c433b733d83b6704c70477e0a4067811d184ec565258ac563d8223f6ae
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.bz2
-
-# upstream version is 1.16.0
-cairo_VERSION  := 1.18.0
-cairo_CHECKSUM := 243a0736b978a33dee29f9cca7521733b78a65b5418206fef7bd1c3d4cf10b64
-cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
-cairo_SUBDIR   := cairo-$(cairo_VERSION)
-cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
-cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -128,14 +110,6 @@ cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
 
-# upstream version is 0.33.6
-pixman_VERSION  := 0.43.4
-pixman_CHECKSUM := a0624db90180c7ddb79fc7a9151093dc37c646d8c38d3f232f767cf64b85a226
-pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pixman-[0-9]*.patch)))
-pixman_SUBDIR   := pixman-$(pixman_VERSION)
-pixman_FILE     := pixman-$(pixman_VERSION).tar.gz
-pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
-
 # upstream version is 2.14.2
 fontconfig_VERSION  := 2.15.0
 fontconfig_CHECKSUM := 63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
@@ -143,14 +117,6 @@ fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_
 fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
-
-# upstream version is 3.3.8
-fftw_VERSION  := 3.3.10
-fftw_CHECKSUM := 56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467
-fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fftw-[0-9]*.patch)))
-fftw_SUBDIR   := fftw-$(fftw_VERSION)
-fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
-fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 3.0.1
 libjpeg-turbo_VERSION  := 3.0.2
@@ -160,7 +126,7 @@ libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
-# upstream version is 23.07.0
+# upstream version is 23.09.0
 poppler_VERSION  := 24.04.0
 poppler_CHECKSUM := 1e804ec565acf7126eb2e9bb3b56422ab2039f7e05863a5dfabdd1ffd1bb77a7
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
@@ -189,16 +155,20 @@ mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64
 
 ## Patches that we override with our own
 
+cairo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
+fftw_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fftw-[0-9]*.patch)))
+fontconfig_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 freetype_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
 freetype-bootstrap_PATCHES := $(freetype_PATCHES)
-libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+glib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 harfbuzz_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
+libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
-poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 meson_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/meson-[0-9]*.patch)))
 mingw-w64_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
-fontconfig_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
-lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
+poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
 # patch CMakeLists.txt
@@ -212,7 +182,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: meson-wrapper
 #  Removed: bzip2
 # GLib:
-#  Removed: dbus, libiconv, pcre
+#  Removed: dbus, libiconv, pcre2
 # GDK-PixBuf:
 #  Removed: jasper, libiconv
 #  Replaced: jpeg with libjpeg-turbo
@@ -220,7 +190,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: jpeg, tiff
 # libtiff:
 #  Replaced: jpeg with libjpeg-turbo
-#  Removed: xz
+#  Removed: xz, zstd
 # ImageMagick / GraphicsMagick:
 #  Added: libxml2, openjpeg
 #  Removed: bzip2, ffmpeg, fftw, freetype, jasper, liblqr-1, libltdl, libpng, libraw, openexr, pthreads, tiff, zlib
@@ -448,6 +418,8 @@ endef
 define gdk-pixbuf_BUILD
     $(MXE_MESON_WRAPPER) \
         -Dtiff=disabled \
+        -Dgif=disabled \
+        -Dothers=disabled \
         -Dintrospection=disabled \
         -Dtests=false \
         -Dinstalled_tests=false \

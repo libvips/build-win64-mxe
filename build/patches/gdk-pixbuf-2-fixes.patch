@@ -13,7 +13,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -335,15 +335,8 @@ if not tiff_opt.disabled() and not native_windows_loaders
+@@ -356,15 +356,8 @@ if not tiff_opt.disabled() and not native_windows_loaders
    endif
  endif
  
@@ -31,7 +31,7 @@ index 1111111..2222222 100644
    add_project_arguments([ '-DGDK_PIXBUF_RELOCATABLE' ], language: 'c')
  endif
  
-@@ -403,7 +396,7 @@ summary('MediaLib', use_medialib, section: 'Build')
+@@ -424,7 +417,7 @@ summary('MediaLib', use_medialib, section: 'Build')
  summary('Introspection', build_gir, section: 'Build')
  summary('Documentation', build_docs, section: 'Build')
  summary('Manual pages', get_option('man'), section: 'Build')
@@ -61,7 +61,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -286,9 +289,13 @@ else
+@@ -307,9 +310,13 @@ else
  endif
  
  if native_windows_loaders
@@ -77,7 +77,7 @@ index 1111111..2222222 100644
  endif
  
  # Don't check and build the jpeg loader if native_windows_loaders is true
-@@ -319,6 +326,9 @@ if not jpeg_opt.disabled() and not native_windows_loaders
+@@ -340,6 +347,9 @@ if not jpeg_opt.disabled() and not native_windows_loaders
      if has_destroy_decompress and has_simple_progression
        gdk_pixbuf_conf.set('HAVE_PROGRESSIVE_JPEG', has_simple_progression)
      endif
@@ -87,7 +87,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -332,6 +342,9 @@ if not tiff_opt.disabled() and not native_windows_loaders
+@@ -353,6 +363,9 @@ if not tiff_opt.disabled() and not native_windows_loaders
    if tiff_dep.found()
      enabled_loaders += 'tiff'
      loaders_deps += tiff_dep
