@@ -29,7 +29,6 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "fontconfig": "$(fontconfig_VERSION)",\n'; \
      printf '  "freetype": "$(freetype_VERSION)",\n'; \
      printf '  "fribidi": "$(fribidi_VERSION)",\n'; \
-     printf '  "gdkpixbuf": "$(gdk-pixbuf_VERSION)",\n'; \
      $(if $(IS_INTL_DUMMY),,printf '  "gettext": "$(gettext_VERSION)"$(comma)\n';) \
      printf '  "glib": "$(glib_VERSION)",\n'; \
      printf '  "harfbuzz": "$(harfbuzz_VERSION)",\n'; \

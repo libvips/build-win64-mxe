@@ -17,25 +17,24 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.8.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.9.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.0    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.4.0     | MIT Licence                                                  |
 | [expat]         | 2.6.2     | MIT Licence                                                  |
 | [fontconfig]    | 2.15.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
-| [fribidi]       | 1.0.13    | LGPLv3                                                       |
-| [gdk-pixbuf]    | 2.42.11   | LGPLv3                                                       |
+| [fribidi]       | 1.0.14    | LGPLv3                                                       |
 | [glib]          | 2.80.0    | LGPLv3                                                       |
 | [harfbuzz]      | 8.4.0     | MIT Licence                                                  |
 | [highway]       | 1.1.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.16      | MIT Licence                                                  |
-| [libarchive]    | 3.7.3     | BSD 2-Clause                                                 |
+| [libarchive]    | 3.7.4     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.6     | MIT Licence                                                  |
 | [libheif]       | 1.17.6    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.43    | [libpng License version 2]                                   |
-| [librsvg]       | 2.57.3    | LGPLv3                                                       |
+| [librsvg]       | 2.58.91   | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.1    | LGPLv3                                                       |
@@ -59,7 +58,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [freetype]: https://gitlab.freedesktop.org/freetype/freetype
 [freetype Licence]: https://gitlab.freedesktop.org/freetype/freetype/blob/master/docs/FTL.TXT
 [fribidi]: https://github.com/fribidi/fribidi
-[gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
 [highway]: https://github.com/google/highway
@@ -95,11 +93,12 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.4.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [imagemagick]   | 6.9.13-8  | [ImageMagick License] (Apache-2.0-like)                      |
+| [gdk-pixbuf]    | 2.42.11   | LGPLv3                                                       |
+| [imagemagick]   | 6.9.13-9  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
 | [libjxl]        | 0.10.2    | BSD 3-Clause                                                 |
-| [matio]         | 1.5.26    | BSD 2-Clause                                                 |
+| [matio]         | 1.5.27    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.2     | BSD 2-Clause                                                 |
@@ -110,6 +109,7 @@ Same as libvips-web + these extra dependencies:
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
 [fftw]: https://github.com/FFTW/fftw3
+[gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
 [ImageMagick License]: https://imagemagick.org/script/license.php
 [imath]: https://github.com/AcademySoftwareFoundation/Imath

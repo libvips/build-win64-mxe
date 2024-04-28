@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 10 Jun 2020 14:50:00 +0200
-Subject: [PATCH 1/4] Prefer native win32 threading functionality
+Subject: [PATCH 1/3] Prefer native win32 threading functionality
 
 
 diff --git a/build/cmake/aom_configure.cmake b/build/cmake/aom_configure.cmake
@@ -28,95 +28,17 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Thu, 8 Oct 2020 19:40:00 +0200
-Subject: [PATCH 2/4] Ensure ESP is aligned on 16-byte boundaries on x86
-
-Reference:
-https://sourceforge.net/p/mingw-w64/mailman/message/35294616/
-https://chromium-review.googlesource.com/c/webm/libvpx/+/364140
-
-diff --git a/aom_ports/mem.h b/aom_ports/mem.h
-index 1111111..2222222 100644
---- a/aom_ports/mem.h
-+++ b/aom_ports/mem.h
-@@ -24,6 +24,17 @@
- #define DECLARE_ALIGNED(n, typ, val) typ val
- #endif
- 
-+/* force_align_arg_pointer is required for proper function arguments aligning
-+ * when SSE code is used. Some systems (Windows, QNX) do not guarantee our
-+ * thread functions will be properly aligned on the stack, even though GCC may
-+ * generate code with the assumption that it is. */
-+#if defined(__GNUC__) && defined(__i386__) && \
-+    (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2))
-+#define FORCE_ALIGN __attribute__((force_align_arg_pointer))
-+#else
-+#define FORCE_ALIGN
-+#endif
-+
- #if HAVE_NEON && defined(_MSC_VER)
- #define __builtin_prefetch(x)
- #endif
-diff --git a/aom_util/aom_thread.h b/aom_util/aom_thread.h
-index 1111111..2222222 100644
---- a/aom_util/aom_thread.h
-+++ b/aom_util/aom_thread.h
-@@ -19,6 +19,8 @@
- 
- #include "config/aom_config.h"
- 
-+#include "aom_ports/mem.h"
-+
- #ifdef __cplusplus
- extern "C" {
- #endif
-@@ -58,7 +60,7 @@ typedef CONDITION_VARIABLE pthread_cond_t;
- // simplistic pthread emulation layer
- 
- // _beginthreadex requires __stdcall
--#define THREADFN unsigned int __stdcall
-+#define THREADFN FORCE_ALIGN unsigned int __stdcall
- #define THREAD_RETURN(val) (unsigned int)((DWORD_PTR)val)
- 
- static INLINE int pthread_attr_init(pthread_attr_t *attr) {
-diff --git a/av1/decoder/decodeframe.c b/av1/decoder/decodeframe.c
-index 1111111..2222222 100644
---- a/av1/decoder/decodeframe.c
-+++ b/av1/decoder/decodeframe.c
-@@ -5235,6 +5235,7 @@ static AOM_INLINE void setup_frame_info(AV1Decoder *pbi) {
-   }
- }
- 
-+FORCE_ALIGN
- void av1_decode_tg_tiles_and_wrapup(AV1Decoder *pbi, const uint8_t *data,
-                                     const uint8_t *data_end,
-                                     const uint8_t **p_data_end, int start_tile,
-diff --git a/av1/encoder/encoder.c b/av1/encoder/encoder.c
-index 1111111..2222222 100644
---- a/av1/encoder/encoder.c
-+++ b/av1/encoder/encoder.c
-@@ -3950,6 +3950,7 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
-   return AOM_CODEC_OK;
- }
- 
-+FORCE_ALIGN
- int av1_encode(AV1_COMP *const cpi, uint8_t *const dest,
-                const EncodeFrameInput *const frame_input,
-                const EncodeFrameParams *const frame_params,
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 6 Oct 2020 19:40:00 +0200
-Subject: [PATCH 3/4] aom_thread: switch win32 mutex API entirely to SWR
+Subject: [PATCH 2/3] aom_pthread: switch win32 mutex API entirely to SWR
 
 Incorporates the changes from:
 https://code.videolan.org/videolan/dav1d/-/merge_requests/107
 
-diff --git a/aom_util/aom_thread.h b/aom_util/aom_thread.h
+diff --git a/aom_util/aom_pthread.h b/aom_util/aom_pthread.h
 index 1111111..2222222 100644
---- a/aom_util/aom_thread.h
-+++ b/aom_util/aom_thread.h
-@@ -40,7 +40,9 @@ extern "C" {
+--- a/aom_util/aom_pthread.h
++++ b/aom_util/aom_pthread.h
+@@ -34,7 +34,9 @@ extern "C" {
  #include <windows.h>  // NOLINT
  typedef HANDLE pthread_t;
  typedef int pthread_attr_t;
@@ -127,7 +49,7 @@ index 1111111..2222222 100644
  
  #if _WIN32_WINNT < 0x0600
  #error _WIN32_WINNT must target Windows Vista / Server 2008 or newer.
-@@ -105,26 +107,27 @@ static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
+@@ -104,26 +106,27 @@ static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
  static INLINE int pthread_mutex_init(pthread_mutex_t *const mutex,
                                       void *mutexattr) {
    (void)mutexattr;
@@ -160,7 +82,7 @@ index 1111111..2222222 100644
    return 0;
  }
  
-@@ -154,7 +157,7 @@ static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
+@@ -153,7 +156,7 @@ static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
  static INLINE int pthread_cond_wait(pthread_cond_t *const condition,
                                      pthread_mutex_t *const mutex) {
    int ok;
@@ -173,7 +95,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 7 Oct 2020 18:43:50 +0200
-Subject: [PATCH 4/4] aom_thread: fix potentially bad call to execute
+Subject: [PATCH 3/3] aom_thread: fix potentially bad call to execute
 
 Incorporates the changes from:
 https://chromium.googlesource.com/webm/libwebp/+/fde2782ecbb95043c9640f53682d128713542c49
@@ -182,7 +104,7 @@ diff --git a/aom_util/aom_thread.c b/aom_util/aom_thread.c
 index 1111111..2222222 100644
 --- a/aom_util/aom_thread.c
 +++ b/aom_util/aom_thread.c
-@@ -37,10 +37,9 @@ struct AVxWorkerImpl {
+@@ -40,10 +40,9 @@ struct AVxWorkerImpl {
  
  //------------------------------------------------------------------------------
  
@@ -194,12 +116,12 @@ index 1111111..2222222 100644
  #ifdef __APPLE__
    if (worker->thread_name != NULL) {
      // Apple's version of pthread_setname_np takes one argument and operates on
-@@ -75,7 +74,7 @@ static THREADFN thread_loop(void *ptr) {
-       // without holding worker->impl_->mutex_. When the worker reacquires
-       // worker->impl_->mutex_, worker->status_ must still be WORK.
+@@ -79,7 +78,7 @@ static THREADFN thread_loop(void *ptr) {
+       // When the worker reacquires worker->impl_->mutex_, worker->status_ must
+       // still be AVX_WORKER_STATUS_WORKING.
        pthread_mutex_unlock(&worker->impl_->mutex_);
 -      execute(worker);
 +      winterface->execute(worker);
        pthread_mutex_lock(&worker->impl_->mutex_);
-       assert(worker->status_ == WORK);
-       worker->status_ = OK;
+       assert(worker->status_ == AVX_WORKER_STATUS_WORKING);
+       worker->status_ = AVX_WORKER_STATUS_OK;

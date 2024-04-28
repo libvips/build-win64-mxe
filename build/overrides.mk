@@ -12,7 +12,7 @@ libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_
 libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
 # upstream version is 2.42.10
-# gdk-pixbuf is still used by OpenSlide and the C API of librsvg
+# gdk-pixbuf is still used by OpenSlide
 gdk-pixbuf_VERSION  := 2.42.11
 gdk-pixbuf_CHECKSUM := 49dcb402388708647e8c321d56b6fb30f21e51e515d0c5a942268d23052a2f00
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
@@ -32,23 +32,24 @@ libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.26
-matio_CHECKSUM := 06352c6a34b2e001b5bd5e748cc405683c88ec71b1098dcf3561a4859c33f44f
+matio_VERSION  := 1.5.27
+matio_CHECKSUM := 0a6aa00b18c4512b63a8d27906b079c8c6ed41d4b2844f7a4ae598e18d22d3b3
+matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
-matio_FILE     := matio-$(matio_VERSION).tar.xz
+matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.7.3
-libarchive_CHECKSUM := 63e7a7174638fc7d6b79b4c8b0ad954e0f4f45abe7239c1ecb200232aa9a43d2
+libarchive_VERSION  := 3.7.4
+libarchive_CHECKSUM := f887755c434a736a609cbd28d87ddbfbe9d6a3bb5b703c22c02f6af80a802735
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-8
-imagemagick_CHECKSUM := 6c0f40ff98929d15b132a099dc331b3c96ca9748ab869c84544e9ef763f83631
+imagemagick_VERSION  := 6.9.13-9
+imagemagick_CHECKSUM := 0613756e31f69cbd18573315c5d27d9b51ac92f99e2cd373f8df154fa392c075
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -61,8 +62,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.57.3
-librsvg_CHECKSUM := 1b2267082c0b77ef93b15747a5c754584eb5886baf2d5a08011cde0659c2c479
+librsvg_VERSION  := 2.58.91
+librsvg_CHECKSUM := 65846ae57c11aba288bf3a6fe517f800f7e38e7fbc79b98c99a8177634ed29f7
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -76,13 +77,15 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 1.3.2
-libwebp_VERSION  := 1.4.0
-libwebp_CHECKSUM := 61f873ec69e3be1b99535634340d5bde750b2e4447caa1db9f61be3fd49ab1e5
-libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
-libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
-libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
-libwebp_URL      := http://downloads.webmproject.org/releases/webp/$(libwebp_FILE)
+# upstream version is 1.0.13
+# cannot use GH_CONF:
+# fribidi_GH_CONF  := fribidi/fribidi/releases,v
+fribidi_VERSION  := 1.0.14
+fribidi_CHECKSUM := 76ae204a7027652ac3981b9fa5817c083ba23114340284c58e756b259cd2259a
+fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
+fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
+fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
+fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.24
@@ -201,8 +204,8 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: libjpeg-turbo, lcms
 #  Removed: boost, curl, qt6-qtbase, libwebp
 # librsvg:
-#  Added: libxml2, rust
-#  Removed: libcroco, libgsf
+#  Added: libxml2, rust, $(BUILD)~cargo-c
+#  Removed: gdk-pixbuf, libcroco, libgsf
 # Cairo:
 #  Added: meson-wrapper
 #  Removed: lzo
@@ -236,7 +239,7 @@ imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
 graphicsmagick_DEPS     := $(imagemagick_DEPS)
 openexr_DEPS            := cc imath zlib
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
-librsvg_DEPS            := $(filter-out libcroco libgsf ,$(librsvg_DEPS)) libxml2 rust
+librsvg_DEPS            := cc cairo glib pango libxml2 rust $(BUILD)~cargo-c
 cairo_DEPS              := cc meson-wrapper fontconfig freetype-bootstrap glib libpng pixman
 matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
@@ -563,44 +566,52 @@ endef
 
 # compile with the Rust toolchain
 define librsvg_BUILD
+    $(eval export CARGO_HOME := $(PREFIX)/$(TARGET)/.cargo)
+
     # Allow building vendored sources with `-Zbuild-std`, see:
     # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524
     $(if $(IS_LLVM), \
-        cd '$(SOURCE_DIR)' && \
+        cd '$(BUILD_DIR)' && \
             MXE_ENABLE_NETWORK=1 \
-            $(TARGET)-cargo vendor -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/sysroot/Cargo.toml')
+            cargo vendor --manifest-path '$(SOURCE_DIR)/Cargo.toml' -s '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/sysroot/Cargo.toml')
 
     $(if $(IS_LLVM), \
-        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
+        (cd '$(BUILD_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
-        $(SED) -i 's/1cb3a78f27813219776604dc99a86b95c3c4649c34a06f840440433ffb178c1d/930123760293dc184dbabc209c73cbfc079af5ca3eaabd76a06316bafbd399a3/' '$(SOURCE_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/14d469045ff44fa399d2dc722fd526340b9b084c30e44ff5d5f661f6673132ec/9469cee1956a3391c9d948db414d34bc0ead78206bc5ecdf12f6098a65993752/' '$(SOURCE_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(SOURCE_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
+        $(SED) -i 's/ddb4a16b289d368cc5c02080e67e2fd66091eed0b8478dfdb05006469494f6b0/42daa223b23e5df3f03e9da95e1e61411bfe507cba5a403bb6b8867892a95db0/' '$(BUILD_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
+        $(SED) -i 's/14d469045ff44fa399d2dc722fd526340b9b084c30e44ff5d5f661f6673132ec/9469cee1956a3391c9d948db414d34bc0ead78206bc5ecdf12f6098a65993752/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(BUILD_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         # Install Cargo config
-        $(INSTALL) -d '$(SOURCE_DIR)/.cargo'
+        $(INSTALL) -d '$(BUILD_DIR)/.cargo'
         (echo '[source.crates-io]'; \
          echo 'registry = "https://github.com/rust-lang/crates.io-index"'; \
          echo 'replace-with = "vendored-sources"'; \
          echo '[source.vendored-sources]'; \
          echo 'directory = "./vendor"';) \
-                 > '$(SOURCE_DIR)/.cargo/config.toml')
+                 > '$(BUILD_DIR)/.cargo/config.toml')
 
-    # Allow libtool to statically link against libintl
-    # by specifying lt_cv_deplibs_check_method="pass_all"
-    # Need to link against synchronization after PR:
-    # https://github.com/rust-lang/rust/pull/121317
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --disable-pixbuf-loader \
-        --disable-introspection \
-        RUST_TARGET='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
-        CARGO='$(TARGET)-cargo' \
-        RUSTC='$(TARGET)-rustc' \
-        $(if $(IS_INTL_DUMMY), lt_cv_deplibs_check_method="pass_all") \
-        LIBS='-lsynchronization'
+    # Disable tools
+    $(SED) -i "/subdir('rsvg_convert')/d" '$(SOURCE_DIR)/meson.build'
 
-    $(if $(IS_GCC), MXE_ENABLE_NETWORK=1) $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' bin_SCRIPTS=
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) bin_SCRIPTS=
+    $(MXE_MESON_WRAPPER) \
+        -Dintrospection=disabled \
+        -Dpixbuf=disabled \
+        -Dpixbuf-loader=disabled \
+        -Ddocs=disabled \
+        -Dvala=disabled \
+        -Dtests=false \
+        -Dtriplet='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
+        -Dc_link_args='$(LDFLAGS) -lntdll -luserenv -lsynchronization' \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+
+     # Add native libraries needed for static linking to .pc file.
+     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
+     # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
+     $(if $(BUILD_STATIC), \
+          $(SED) -i "/^Libs:/s/$$/ -lntdll -luserenv -lsynchronization/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
 endef
 
 # compile with CMake
