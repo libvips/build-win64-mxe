@@ -20,20 +20,16 @@ DEPS:
 
 TARGET:
 	The binary target,
-	    defaults to 'x86_64-w64-mingw32.shared.win32'
+	    defaults to 'x86_64-w64-mingw32.shared'
 	Possible values are:
-		- aarch64-w64-mingw32.shared.posix
-		- aarch64-w64-mingw32.static.posix
-		- armv7-w64-mingw32.shared.posix
-		- armv7-w64-mingw32.static.posix
-		- i686-w64-mingw32.shared.posix
-		- i686-w64-mingw32.shared.win32
-		- i686-w64-mingw32.static.posix
-		- i686-w64-mingw32.static.win32
-		- x86_64-w64-mingw32.shared.posix
-		- x86_64-w64-mingw32.shared.win32
-		- x86_64-w64-mingw32.static.posix
-		- x86_64-w64-mingw32.static.win32
+		- x86_64-w64-mingw32.shared
+		- x86_64-w64-mingw32.static
+		- i686-w64-mingw32.shared
+		- i686-w64-mingw32.static
+		- aarch64-w64-mingw32.shared
+		- aarch64-w64-mingw32.static
+		- armv7-w64-mingw32.shared
+		- armv7-w64-mingw32.static
 EOF
   exit 0
 fi
@@ -44,7 +40,7 @@ fi
 shopt -s extglob
 
 deps="${1:-web}"
-target="${2:-x86_64-w64-mingw32.shared.win32}"
+target="${2:-x86_64-w64-mingw32.shared}"
 dlltool=$target.$deps-dlltool
 
 cd $repackage_dir

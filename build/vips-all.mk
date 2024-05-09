@@ -22,7 +22,7 @@ define $(PKG)_PRE_CONFIGURE
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \
      printf '  "archive": "$(libarchive_VERSION)",\n'; \
-     $(if $(IS_LLVM),printf '  "brotli": "$(brotli_VERSION)"$(comma)\n';) \
+     printf '  "brotli": "$(brotli_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
      printf '  "cfitsio": "$(cfitsio_VERSION)",\n'; \
      printf '  "cgif": "$(cgif_VERSION)",\n'; \
@@ -47,7 +47,7 @@ define $(PKG)_PRE_CONFIGURE
      $(if $(IS_JPEGLI), \
           printf '  "jpegli": "$(jpegli_VERSION)"$(comma)\n';, \
           $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';)) \
-     $(if $(IS_LLVM),printf '  "jxl": "$(libjxl_VERSION)"$(comma)\n';) \
+     printf '  "jxl": "$(libjxl_VERSION)",\n'; \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      printf '  "matio": "$(matio_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
@@ -87,7 +87,6 @@ define $(PKG)_BUILD
         -Dintrospection=disabled \
         -Dmodules=enabled \
         -Dheif-module=$(if $(IS_HEVC),enabled,disabled) \
-        -Djpeg-xl=$(if $(IS_LLVM),enabled,disabled) \
         $(if $(findstring graphicsmagick,$($(PKG)_DEPS)), -Dmagick-package=GraphicsMagick) \
         -Dpdfium=disabled \
         -Dquantizr=disabled \

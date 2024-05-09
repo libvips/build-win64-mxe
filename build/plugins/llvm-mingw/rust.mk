@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2024-04-28/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2024-05-09/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := f82d5c468945cfbc6c158c41456c60bea8bfb11abfe17b819e24109e09582ac4
+$(PKG)_CHECKSUM := c788fdd7a65a1e9f5791d573c4ec76665e46ffb8f6c1c9d3a84f1ac38e4832f7
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2024-04-28/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2024-05-09/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -100,7 +100,7 @@ define $(PKG)_BUILD
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
     (echo '[unstable]'; \
      echo 'build-std = ["std", "panic_abort"]'; \
-     echo 'build-std-features = ["panic_immediate_abort", "compiler-builtins-c", "compiler-builtins-weak-intrinsics"]'; \
+     echo 'build-std-features = ["panic_immediate_abort", "compiler-builtins-c"]'; \
      echo '[build]'; \
      echo 'target = "$(TARGET_RUST)"'; \
      echo '[env]'; \

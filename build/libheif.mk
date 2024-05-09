@@ -12,14 +12,9 @@ define $(PKG)_BUILD
     $(eval export CFLAGS += -O3)
     $(eval export CXXFLAGS += -O3)
 
-    # Disable multithreading when building with Win32 threads to
-    # avoid a dependency on mingw-std-threads (which we only use
-    # in the "all" variant). Disabling multithreading only affects
-    # decoding tiled HEIF images, so it should be fine.
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DENABLE_PLUGIN_LOADING=0 \
         -DWITH_EXAMPLES=0 \
-        $(if $(WIN32_THREADS), -DENABLE_MULTITHREADING_SUPPORT=0) \
         $(if $(IS_HEVC),, \
             -DWITH_LIBDE265=0 \
             -DWITH_X265=0) \

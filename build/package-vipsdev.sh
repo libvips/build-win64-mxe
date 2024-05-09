@@ -17,20 +17,16 @@ DEPS:
 
 TARGET:
 	The binary target,
-	    defaults to 'x86_64-w64-mingw32.shared.win32'
+	    defaults to 'x86_64-w64-mingw32.shared'
 	Possible values are:
-		- aarch64-w64-mingw32.shared.posix
-		- aarch64-w64-mingw32.static.posix
-		- armv7-w64-mingw32.shared.posix
-		- armv7-w64-mingw32.static.posix
-		- i686-w64-mingw32.shared.posix
-		- i686-w64-mingw32.shared.win32
-		- i686-w64-mingw32.static.posix
-		- i686-w64-mingw32.static.win32
-		- x86_64-w64-mingw32.shared.posix
-		- x86_64-w64-mingw32.shared.win32
-		- x86_64-w64-mingw32.static.posix
-		- x86_64-w64-mingw32.static.win32
+		- x86_64-w64-mingw32.shared
+		- x86_64-w64-mingw32.static
+		- i686-w64-mingw32.shared
+		- i686-w64-mingw32.static
+		- aarch64-w64-mingw32.shared
+		- aarch64-w64-mingw32.static
+		- armv7-w64-mingw32.shared
+		- armv7-w64-mingw32.static
 EOF
   exit 0
 fi
@@ -38,7 +34,7 @@ fi
 . variables.sh
 
 deps="${1:-web}"
-target="${2:-x86_64-w64-mingw32.shared.win32}"
+target="${2:-x86_64-w64-mingw32.shared}"
 arch="${target%%-*}"
 type="${target#*.}"
 type="${type%%.*}"
@@ -112,6 +108,10 @@ echo "Copying libvips and dependencies"
 # Whitelist the API set DLLs
 # Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
 whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
+
+# Whitelist bcryptprimitives.dll for Rust
+# See: https://github.com/rust-lang/rust/pull/84096
+whitelist+=(bcryptprimitives.dll)
 
 # Whitelist ntdll.dll for Rust
 # See: https://github.com/rust-lang/rust/pull/108262
@@ -211,10 +211,11 @@ echo "Creating $zipfile"
 rm -f $zipfile
 zip -r -qq $zipfile $repackage_dir
 
-zipfile=$vips_package-pdb-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
+if [ "$LLVM" = "true" ]; then
+  zipfile=$vips_package-pdb-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
 
-echo "Creating $zipfile"
+  echo "Creating $zipfile"
 
-rm -f $zipfile
-zip -r -qq $zipfile $pdb_dir
-
+  rm -f $zipfile
+  zip -r -qq $zipfile $pdb_dir
+fi

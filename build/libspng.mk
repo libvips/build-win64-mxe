@@ -11,12 +11,9 @@ $(PKG)_DEPS     := cc meson-wrapper zlib
 define $(PKG)_BUILD
     $(eval export CFLAGS += -O3)
 
-    # -Denable_opt=false is a workaround for:
-    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109504
     $(MXE_MESON_WRAPPER) \
         -Dbuild_examples=false \
         -Dstatic_zlib=$(if $(BUILD_STATIC),true,false) \
-        $(if $(and $(IS_GCC),$(call seq,i686,$(PROCESSOR))), -Denable_opt=false) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

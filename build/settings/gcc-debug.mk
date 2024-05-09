@@ -7,9 +7,10 @@
 # are no-op.
 MXE_TMP := /var/tmp
 
-# Turn on debugging
-export CFLAGS   := -g -Og -fPIC
-export CXXFLAGS := -g -Og -fPIC
+# Disable optimizations to improve debuggability.
+export CFLAGS   := -g -Og -fdata-sections -ffunction-sections
+export CXXFLAGS := -g -Og -fdata-sections -ffunction-sections
+export LDFLAGS  := -Wl,--gc-sections
 
 # GCC doesn't support generating debug info in the PDB format,
 # use https://github.com/rainers/cv2pdb as workaround, e.g.:
@@ -23,7 +24,7 @@ export CARGO_PROFILE_RELEASE_LTO           := true
 export CARGO_PROFILE_RELEASE_OPT_LEVEL     := 1
 export CARGO_PROFILE_RELEASE_PANIC         := abort
 
-# We need debugging symbols.
+# Avoid stripping.
 STRIP_TOOLCHAIN := $(false)
 STRIP_LIB       := $(false)
 STRIP_EXE       := $(false)

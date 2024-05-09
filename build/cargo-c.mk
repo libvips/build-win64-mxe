@@ -24,10 +24,10 @@ define $(PKG)_BUILD_$(BUILD)
     $(eval unexport CXXFLAGS)
     $(eval unexport LDFLAGS)
 
-    cd '$(SOURCE_DIR)' && $(PREFIX)/$(BUILD)/bin/cargo build \
+    cd '$(SOURCE_DIR)' && cargo build \
         --release
 
-    $(PREFIX)/$(BUILD)/bin/cargo install \
+    cargo install \
         --path='$(SOURCE_DIR)' \
         --root='$(PREFIX)/$(BUILD)'
 endef

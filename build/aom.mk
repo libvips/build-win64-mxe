@@ -29,7 +29,6 @@ define $(PKG)_BUILD
             -DCONFIG_RUNTIME_CPU_DETECT=0 \
             -DENABLE_SVE=0 \
             -DENABLE_SVE2=0) \
-        $(if $(IS_GCC), -DCONFIG_PIC=1) \
         $(if $(call seq,i686,$(PROCESSOR)), -DAOM_TARGET_CPU='x86') \
         $(if $(call seq,armv7,$(PROCESSOR)), -DCMAKE_C_FLAGS='') \
         '$(SOURCE_DIR)'

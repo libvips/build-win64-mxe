@@ -155,10 +155,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 11.0.1
-# Update MinGW-w64 to 1f467d5
-# https://github.com/mingw-w64/mingw-w64/tarball/1f467d531362d27f1ab458d8fecccc878514a49e
-mingw-w64_VERSION  := 1f467d5
-mingw-w64_CHECKSUM := 4f7fe84ea13594150b529e5be90bbb243cc37ef7c94c314e076e46b7d336dc68
+# Update MinGW-w64 to b463875
+# https://github.com/mingw-w64/mingw-w64/tarball/b4638756158e947ce3ddde9e1b3b6f1f63d2ba03
+mingw-w64_VERSION  := b463875
+mingw-w64_CHECKSUM := 7b458226262d166da246c747a43405643deb44111201f4c8490992e1f6099ca3
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
@@ -514,7 +514,8 @@ define imagemagick_BUILD
         --disable-largefile \
         --disable-opencl \
         --disable-openmp \
-        --disable-deprecated
+        --disable-deprecated \
+        $(if $(IS_GCC), CFLAGS='$(CFLAGS) -Wno-incompatible-pointer-types')
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
 endef
@@ -584,6 +585,7 @@ define librsvg_BUILD
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
         $(SED) -i 's/ddb4a16b289d368cc5c02080e67e2fd66091eed0b8478dfdb05006469494f6b0/42daa223b23e5df3f03e9da95e1e61411bfe507cba5a403bb6b8867892a95db0/' '$(BUILD_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
         $(SED) -i 's/14d469045ff44fa399d2dc722fd526340b9b084c30e44ff5d5f661f6673132ec/9469cee1956a3391c9d948db414d34bc0ead78206bc5ecdf12f6098a65993752/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/8bf710288f88cfbf67e510f68abbb5a4f7173d2ea9ef32f98d594935fc051641/891c080ebd853786846af1987ca5bdb92485a792d3ec7281cf20ddaef94c9b21/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(BUILD_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(BUILD_DIR)/.cargo'
@@ -605,24 +607,21 @@ define librsvg_BUILD
         -Dvala=disabled \
         -Dtests=false \
         -Dtriplet='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
-        -Dc_link_args='$(LDFLAGS) -lntdll -luserenv -lsynchronization' \
+        $(if $(IS_LLVM), -Dc_link_args='$(LDFLAGS) -lntdll -luserenv -lsynchronization') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+    $(if $(IS_GCC), MXE_ENABLE_NETWORK=1) $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 
     # Add native libraries needed for static linking to .pc file.
     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
     # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
-    $(if $(BUILD_STATIC), \
+    $(if $(and $(IS_LLVM),$(BUILD_STATIC)), \
         $(SED) -i "/^Libs:/s/$$/ -lntdll -luserenv -lsynchronization/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
 endef
 
 # compile with CMake
 define poppler_BUILD
-    $(if $(WIN32_THREADS), \
-        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(poppler_PATCHES))))/poppler-mingw-std-threads.patch)
-
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
         -DENABLE_LIBTIFF=ON \
         -DENABLE_LIBPNG=ON \
@@ -646,7 +645,6 @@ define poppler_BUILD
         -DBUILD_CPP_TESTS=OFF \
         -DBUILD_MANUAL_TESTS=OFF \
         -DENABLE_GTK_DOC=OFF \
-        $(if $(WIN32_THREADS), -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads') \
         '$(SOURCE_DIR)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
@@ -825,10 +823,10 @@ endef
 define openexr_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DOPENEXR_INSTALL_PKG_CONFIG=ON \
-        -DOPENEXR_ENABLE_THREADING=$(if $(WIN32_THREADS),OFF,ON) \
         -DOPENEXR_INSTALL_TOOLS=OFF \
         -DOPENEXR_BUILD_TOOLS=OFF \
         -DBUILD_TESTING=OFF \
+        $(if $(IS_GCC), -DCMAKE_C_FLAGS='$(CFLAGS) -Wno-incompatible-pointer-types') \
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))

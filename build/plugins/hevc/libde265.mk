@@ -9,15 +9,11 @@ $(PKG)_GH_CONF  := strukturag/libde265/releases,v
 $(PKG)_DEPS     := cc
 
 define $(PKG)_BUILD
-    $(if $(WIN32_THREADS), \
-        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(libde265_PATCHES))))/libde265-mingw-std-threads.patch)
-
     # Disable tools with -DENABLE_{DE,EN}CODER=OFF
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DENABLE_DECODER=OFF \
         -DENABLE_ENCODER=OFF \
-        $(if $(WIN32_THREADS), \
-            -DCMAKE_CXX_FLAGS='$(CXXFLAGS) -I$(PREFIX)/$(TARGET)/include/mingw-std-threads')
+        '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef

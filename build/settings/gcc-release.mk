@@ -10,9 +10,9 @@ MXE_TMP := /var/tmp
 # Special flags for compiler.
 # Default optimisation level is for binary size (-Os).
 # Overriden to performance (-O3) for select dependencies that benefit.
-export CFLAGS   := -s -Os -fPIC
-export CXXFLAGS := -s -Os -fPIC
-export LDFLAGS  := -Wl,-s
+export CFLAGS   := -Os -fdata-sections -ffunction-sections
+export CXXFLAGS := -Os -fdata-sections -ffunction-sections
+export LDFLAGS  := -Wl,--gc-sections -Wl,-s
 
 # Special flags for Rust.
 export CARGO_PROFILE_RELEASE_DEBUG         := false

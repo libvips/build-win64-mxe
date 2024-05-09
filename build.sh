@@ -96,21 +96,13 @@ deps="${1:-web}"
 arch="${2:-x86_64}"
 type="${3:-shared}"
 
-if [ "$with_llvm" = "true" ]; then
-  # This indicates that we don't need to force C++03
-  # compilication for some packages, we can safely use
-  # libstdc++'s C++11 <thread>, <mutex>, and <future>
-  # functionality when compiling with the LLVM toolchain.
-  # Note: We don't distribute the winpthreads DLL as
-  # libc++ uses Win32 threads to implement the internal
-  # threading API.
-  threads="posix"
-elif [ "$arch" = "aarch64" ] || [ "$arch" = "armv7" ]; then
+if [ "$arch" = "aarch64" ] || [ "$arch" = "armv7" ]; then
   # Force the LLVM toolchain for the ARM/ARM64 targets,
   # GCC does not support Windows on ARM.
-  threads="posix"
   with_llvm=true
-else
+fi
+
+if [ "$with_llvm" = "false" ]; then
   # Use native Win32 threading functions when compiling with
   # GCC because POSIX threads functionality is significantly
   # slower than the native Win32 implementation.
@@ -157,7 +149,7 @@ fi
 # GitHub's tarball API requires the short SHA commit as the directory name
 git_commit="${git_commit:0:7}"
 
-target="$arch-w64-mingw32.$type.$threads${unwind:+.$unwind}"
+target="$arch-w64-mingw32.$type${threads:+.$threads}${unwind:+.$unwind}"
 
 if [ "$with_ffi_compat" = "true" ]; then
   target+=".ffi"

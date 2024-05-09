@@ -16,14 +16,6 @@ _gcc_CONFIGURE_OPTS= \
     --with-build-sysroot='$(PREFIX)/$(TARGET)' \
     --disable-libgomp
 
-## Override sub-dependencies
-
-libde265_DEPS := $(libde265_DEPS) mingw-std-threads
-poppler_DEPS  := $(poppler_DEPS) mingw-std-threads
-
-# libjxl is not build-able with GCC 
-vips-all_DEPS := $(filter-out libjxl ,$(vips-all_DEPS))
-
 ## Override build scripts
 
 # The minimum Windows version we support is Windows 7, so build with:
@@ -67,13 +59,7 @@ define gcc_BUILD_mingw-w64
     $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR).crt' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
 
-    # build posix threads
-    mkdir '$(BUILD_DIR).pthreads'
-    cd '$(BUILD_DIR).pthreads' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-libraries/winpthreads/configure' \
-        $(MXE_CONFIGURE_OPTS) \
-        --prefix='$(PREFIX)/$(TARGET)/mingw'
-    $(MAKE) -C '$(BUILD_DIR).pthreads' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR).pthreads' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
+    # winpthreads is not needed
 
     # build rest of gcc
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' all-target-libstdc++-v3
