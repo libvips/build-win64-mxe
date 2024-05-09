@@ -48,8 +48,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-9
-imagemagick_CHECKSUM := 0613756e31f69cbd18573315c5d27d9b51ac92f99e2cd373f8df154fa392c075
+imagemagick_VERSION  := 6.9.13-10
+imagemagick_CHECKSUM := 4f07d1dbd7cb7dc3a9bef90cd0eba067f8487895665f26a62e8d8312cc3abbb0
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -76,6 +76,14 @@ pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
+
+# upstream version is 2.80.0
+glib_VERSION  := 2.80.2
+glib_CHECKSUM := b9cfb6f7a5bd5b31238fd5d56df226b2dda5ea37611475bf89f6a0f9400fe8bd
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 1.0.13
 # cannot use GH_CONF:
@@ -130,8 +138,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 24.04.0
-poppler_CHECKSUM := 1e804ec565acf7126eb2e9bb3b56422ab2039f7e05863a5dfabdd1ffd1bb77a7
+poppler_VERSION  := 24.05.0
+poppler_CHECKSUM := d8c5eb30b50285ad9f0af8c6335cc2d3b9597fca475cbc2598a5479fa379f779
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -207,7 +215,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: libxml2, rust, $(BUILD)~cargo-c
 #  Removed: gdk-pixbuf, libcroco, libgsf
 # Cairo:
-#  Added: meson-wrapper
 #  Removed: lzo
 # matio:
 #  Removed: hdf5
@@ -222,8 +229,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: zlib
 # libexif:
 #  Removed: gettext
-# Pixman:
-#  Added: meson-wrapper
 # HarfBuzz:
 #  Removed: brotli, icu4c
 # libarchive:
@@ -240,14 +245,13 @@ graphicsmagick_DEPS     := $(imagemagick_DEPS)
 openexr_DEPS            := cc imath zlib
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
 librsvg_DEPS            := cc cairo glib pango libxml2 rust $(BUILD)~cargo-c
-cairo_DEPS              := cc meson-wrapper fontconfig freetype-bootstrap glib libpng pixman
+cairo_DEPS              := $(filter-out lzo ,$(cairo_DEPS))
 matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
 libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
 fontconfig_DEPS         := cc meson-wrapper expat freetype-bootstrap
 cfitsio_DEPS            := cc zlib
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
-pixman_DEPS             := cc meson-wrapper libpng
 harfbuzz_DEPS           := cc meson-wrapper cairo freetype-bootstrap glib
 libarchive_DEPS         := cc zlib
 
@@ -605,13 +609,13 @@ define librsvg_BUILD
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
-     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 
-     # Add native libraries needed for static linking to .pc file.
-     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
-     # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
-     $(if $(BUILD_STATIC), \
-          $(SED) -i "/^Libs:/s/$$/ -lntdll -luserenv -lsynchronization/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
+    # Add native libraries needed for static linking to .pc file.
+    # We cannot use rustc --print native-static-libs due to -Zbuild-std.
+    # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
+    $(if $(BUILD_STATIC), \
+        $(SED) -i "/^Libs:/s/$$/ -lntdll -luserenv -lsynchronization/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
 endef
 
 # compile with CMake
@@ -790,7 +794,7 @@ define libarchive_BUILD
         --disable-bsdcat \
         --disable-bsdcpio \
         --disable-posix-regex-lib \
-        $(if $(BUILD_STATIC), CFLAGS='-DLIBARCHIVE_STATIC')
+        $(if $(BUILD_STATIC), CFLAGS='$(CFLAGS) -DLIBARCHIVE_STATIC')
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
 endef
