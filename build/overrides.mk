@@ -155,10 +155,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 11.0.1
-# Update MinGW-w64 to b463875
-# https://github.com/mingw-w64/mingw-w64/tarball/b4638756158e947ce3ddde9e1b3b6f1f63d2ba03
-mingw-w64_VERSION  := b463875
-mingw-w64_CHECKSUM := 7b458226262d166da246c747a43405643deb44111201f4c8490992e1f6099ca3
+# Update MinGW-w64 to dbda83c
+# https://github.com/mingw-w64/mingw-w64/tarball/dbda83ce39374428f82af7294c876f49d5921483
+mingw-w64_VERSION  := dbda83c
+mingw-w64_CHECKSUM := ce208e4453196b1fa542d8695240f55e5499367abedd300d1b598b47f2de4444
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
