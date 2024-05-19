@@ -13,8 +13,8 @@ libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
 
 # upstream version is 2.42.10
 # gdk-pixbuf is still used by OpenSlide
-gdk-pixbuf_VERSION  := 2.42.11
-gdk-pixbuf_CHECKSUM := 49dcb402388708647e8c321d56b6fb30f21e51e515d0c5a942268d23052a2f00
+gdk-pixbuf_VERSION  := 2.42.12
+gdk-pixbuf_CHECKSUM := b9505b3445b9a7e48ced34760c3bcb73e966df3ac94c95a148cb669ab748e3c7
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -22,8 +22,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.11.1
-libxml2_VERSION  := 2.12.6
-libxml2_CHECKSUM := 889c593a881a3db5fdd96cc9318c87df34eb648edfc458272ad46fd607353fbb
+libxml2_VERSION  := 2.12.7
+libxml2_CHECKSUM := 24ae78ff1363a973e6d8beba941a7945da2ac056e19b53956aeb6927fd6cfb56
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -130,8 +130,8 @@ fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
 
 # upstream version is 3.0.1
-libjpeg-turbo_VERSION  := 3.0.2
-libjpeg-turbo_CHECKSUM := c2ce515a78d91b09023773ef2770d6b0df77d674e144de80d63e0389b3a15ca6
+libjpeg-turbo_VERSION  := 3.0.3
+libjpeg-turbo_CHECKSUM := 343e789069fc7afbcdfe44dbba7dbbf45afa98a15150e079a38e60e44578865d
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz

@@ -25,7 +25,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.14    | LGPLv3                                                       |
 | [glib]          | 2.80.2    | LGPLv3                                                       |
-| [harfbuzz]      | 8.4.0     | MIT Licence                                                  |
+| [harfbuzz]      | 8.5.0     | MIT Licence                                                  |
 | [highway]       | 1.1.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.16      | MIT Licence                                                  |
 | [libarchive]    | 3.7.4     | BSD 2-Clause                                                 |
@@ -39,7 +39,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.1    | LGPLv3                                                       |
 | [libwebp]       | 1.4.0     | New BSD License                                              |
-| [libxml2]       | 2.12.6    | MIT Licence                                                  |
+| [libxml2]       | 2.12.7    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.52.2    | LGPLv3                                                       |
 | [pixman]        | 0.43.4    | MIT Licence                                                  |
@@ -93,7 +93,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.4.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [gdk-pixbuf]    | 2.42.11   | LGPLv3                                                       |
+| [gdk-pixbuf]    | 2.42.12   | LGPLv3                                                       |
 | [imagemagick]   | 6.9.13-10 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
@@ -138,7 +138,7 @@ In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 3.0.2     | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 3.0.3     | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/LICENSE.md
