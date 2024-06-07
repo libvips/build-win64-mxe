@@ -23,7 +23,7 @@ index 1111111..2222222 100644
  #define _tcsdup strdup
  #define _tcscpy strcpy
  #define _tcslen strlen
-@@ -159,9 +160,9 @@ static inline void split_argv(const TCHAR *argv0, const TCHAR **dir_ptr, const T
+@@ -198,9 +199,9 @@ static inline void split_argv(const TCHAR *argv0, const TCHAR **dir_ptr, const T
      }
  #endif
      basename = _tcsdup(basename);

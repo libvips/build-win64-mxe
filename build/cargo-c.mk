@@ -13,6 +13,10 @@ define $(PKG)_BUILD_$(BUILD)
     # Enable networking while we build cargo-c
     $(eval export MXE_ENABLE_NETWORK := 1)
 
+    # Ensure that the downloaded build dependencies of Cargo are
+    # stored in the build directory.
+    $(eval export CARGO_HOME := $(BUILD_DIR)/.cargo)
+
     # Disable LTO, panic strategy and optimization settings while
     # we build cargo-c
     $(eval unexport CARGO_PROFILE_RELEASE_LTO)
