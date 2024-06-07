@@ -2,10 +2,10 @@ PKG             := highway
 $(PKG)_WEBSITE  := https://github.com/google/highway
 $(PKG)_DESCR    := Performance-portable, length-agnostic SIMD with runtime dispatch
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.1.0
-$(PKG)_CHECKSUM := 354a8b4539b588e70b98ec70844273e3f2741302c4c377bcc4e81b3d1866f7c9
+$(PKG)_VERSION  := 1.2.0
+$(PKG)_CHECKSUM := 58e9d5d41d6573ad15245ad76aec53a69499ca7480c092d899c4424812ed906f
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := google/highway/tags
+$(PKG)_GH_CONF  := google/highway/releases
 $(PKG)_DEPS     := cc
 
 # Highway requires VFPv4 floating-point instructions when targeting Armv7.

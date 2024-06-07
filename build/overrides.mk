@@ -2,15 +2,6 @@ $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
-# upstream version is 3.4.3
-libffi_VERSION  := 3.4.6
-libffi_CHECKSUM := b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e
-libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
-libffi_SUBDIR   := libffi-$(libffi_VERSION)
-libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
-libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
-libffi_URL_2    := https://sourceware.org/pub/libffi/$(libffi_FILE)
-
 # upstream version is 2.42.10
 # gdk-pixbuf is still used by OpenSlide
 gdk-pixbuf_VERSION  := 2.42.12
@@ -48,8 +39,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-10
-imagemagick_CHECKSUM := 4f07d1dbd7cb7dc3a9bef90cd0eba067f8487895665f26a62e8d8312cc3abbb0
+imagemagick_VERSION  := 6.9.13-11
+imagemagick_CHECKSUM := 0c70bd093346372f54153ca1b448c8f801c080c5369ca44fb6f885fdf2bb60e0
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -76,14 +67,6 @@ pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
-
-# upstream version is 2.80.0
-glib_VERSION  := 2.80.2
-glib_CHECKSUM := b9cfb6f7a5bd5b31238fd5d56df226b2dda5ea37611475bf89f6a0f9400fe8bd
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
-glib_SUBDIR   := glib-$(glib_VERSION)
-glib_FILE     := glib-$(glib_VERSION).tar.xz
-glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 1.0.13
 # cannot use GH_CONF:
@@ -138,8 +121,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 24.05.0
-poppler_CHECKSUM := d8c5eb30b50285ad9f0af8c6335cc2d3b9597fca475cbc2598a5479fa379f779
+poppler_VERSION  := 24.06.0
+poppler_CHECKSUM := 0cdabd495cada11f6ee9e75c793f80daf46367b66c25a63ee8c26d0f9ec40c76
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
