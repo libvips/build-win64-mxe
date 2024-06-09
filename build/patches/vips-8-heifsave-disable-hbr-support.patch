@@ -18,9 +18,9 @@ diff --git a/libvips/foreign/heifsave.c b/libvips/foreign/heifsave.c
 index 1111111..2222222 100644
 --- a/libvips/foreign/heifsave.c
 +++ b/libvips/foreign/heifsave.c
-@@ -501,15 +501,10 @@ vips_foreign_save_heif_build(VipsObject *object)
- 		!vips_object_argument_isset(object, "effort"))
- 		heif->effort = 9 - heif->speed;
+@@ -527,15 +527,10 @@ vips_foreign_save_heif_build(VipsObject *object)
+ 		!vips_object_argument_isset(object, "subsample_mode"))
+ 		heif->subsample_mode = VIPS_FOREIGN_SUBSAMPLE_OFF;
  
 -	/* Default 12 bit save for 16-bit images. HEIC (for example) implements
 -	 * 8 / 10 / 12.
@@ -38,7 +38,7 @@ index 1111111..2222222 100644
  
  	/* Try to find the selected encoder.
  	 */
-@@ -651,14 +646,10 @@ vips_foreign_save_heif_build(VipsObject *object)
+@@ -702,14 +697,10 @@ vips_foreign_save_heif_build(VipsObject *object)
  }
  
  #define UC VIPS_FORMAT_UCHAR
@@ -54,7 +54,7 @@ index 1111111..2222222 100644
  };
  
  static void
-@@ -693,7 +684,7 @@ vips_foreign_save_heif_class_init(VipsForeignSaveHeifClass *class)
+@@ -744,7 +735,7 @@ vips_foreign_save_heif_class_init(VipsForeignSaveHeifClass *class)
  		_("Number of bits per pixel"),
  		VIPS_ARGUMENT_OPTIONAL_INPUT,
  		G_STRUCT_OFFSET(VipsForeignSaveHeif, bitdepth),
@@ -63,7 +63,7 @@ index 1111111..2222222 100644
  
  	VIPS_ARG_BOOL(class, "lossless", 13,
  		_("Lossless"),
-@@ -746,7 +737,7 @@ vips_foreign_save_heif_init(VipsForeignSaveHeif *heif)
+@@ -797,7 +788,7 @@ vips_foreign_save_heif_init(VipsForeignSaveHeif *heif)
  {
  	heif->ctx = heif_context_alloc();
  	heif->Q = 50;
