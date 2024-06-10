@@ -119,9 +119,14 @@ fi
 
 echo "Copying libvips and dependencies"
 
-# Whitelist the API set DLLs
-# Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
-whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
+if [ "$DEBUG" = "true" ]; then
+  # Whitelist ucrtbased.dll for debug builds
+  whitelist=(ucrtbased.dll)
+else
+  # Whitelist the API set DLLs
+  # Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
+  whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
+fi
 
 # Whitelist bcryptprimitives.dll for Rust
 # See: https://github.com/rust-lang/rust/pull/84096
