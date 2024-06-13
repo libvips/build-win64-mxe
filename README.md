@@ -41,7 +41,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libwebp]       | 1.4.0     | New BSD License                                              |
 | [libxml2]       | 2.12.7    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
-| [pango]         | 1.52.2    | LGPLv3                                                       |
+| [pango]         | 1.54.0    | LGPLv3                                                       |
 | [pixman]        | 0.43.4    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.1.6     | [zlib-ng Licence]                                            |

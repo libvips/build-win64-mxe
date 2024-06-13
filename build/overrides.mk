@@ -61,8 +61,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
-pango_VERSION  := 1.52.2
-pango_CHECKSUM := d0076afe01082814b853deec99f9349ece5f2ce83908b8e58ff736b41f78a96b
+pango_VERSION  := 1.54.0
+pango_CHECKSUM := 8a9eed75021ee734d7fc0fdf3a65c3bba51dfefe4ae51a9b414a60c70b2d1ed8
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -540,10 +540,13 @@ endef
 # build with the Meson build system
 # force FontConfig since the Win32 font backend within Cairo is disabled
 define pango_BUILD
-    # Disable utils, examples, tests and tools
-    $(SED) -i "/subdir('utils')/{N;N;N;d;}" '$(SOURCE_DIR)/meson.build'
+    # Disable utils and tools
+    $(SED) -i "/subdir('utils')/{N;d;}" '$(SOURCE_DIR)/meson.build'
 
     $(MXE_MESON_WRAPPER) \
+        -Ddocumentation=false \
+        -Dbuild-testsuite=false \
+        -Dbuild-examples=false \
         -Dintrospection=disabled \
         -Dfontconfig=enabled \
         '$(SOURCE_DIR)' \
