@@ -62,7 +62,7 @@ mkdir -p $repackage_dir/{bin,lib}
 mkdir $pdb_dir
 
 # List of PE targets that need to be copied, including their transitive dependencies and PDBs
-pe_targets=($bin_dir/libvips-42.dll $bin_dir/{$package,gdbus}.exe) # gdk-pixbuf-query-loaders
+pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{$package,gdbus}.exe) # gdk-pixbuf-query-loaders
 
 # DLL search paths
 search_paths=($bin_dir $install_dir/${target%%.*}/bin)

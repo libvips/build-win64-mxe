@@ -22,7 +22,6 @@ define $(PKG)_BUILD
         --default-library=shared \
         -Ddeprecated=false \
         -Dexamples=false \
-        -Dcplusplus=false \
         -Dintrospection=disabled \
         $(vips_MESON_OPTS) \
         '$(SOURCE_DIR)' \

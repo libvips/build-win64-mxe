@@ -11,9 +11,9 @@ MXE_VERBOSE := true
 MXE_TMP := /var/tmp
 
 # Disable optimizations to improve debuggability.
-TARGET_CFLAGS   := -g -Og -fsanitize=undefined -fno-sanitize=function -fdata-sections -ffunction-sections
-TARGET_CXXFLAGS := -g -Og -fsanitize=undefined -fno-sanitize=function -fdata-sections -ffunction-sections
-TARGET_LDFLAGS  := -lc++ -lc++abi -fsanitize=undefined -Wl,--gc-sections
+TARGET_CFLAGS   := -g -Og -fsanitize=address -fsanitize-recover=address -fdata-sections -ffunction-sections
+TARGET_CXXFLAGS := -g -Og -fsanitize=address -fsanitize-recover=address -fdata-sections -ffunction-sections
+TARGET_LDFLAGS  := -fsanitize=address -Wl,--gc-sections
 
 # Special flags for Rust.
 export CARGO_PROFILE_RELEASE_DEBUG         := true
