@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 15 Jun 2024 12:42:00 +0200
+Subject: [PATCH 1/1] Remove call to `_setmaxstdio()`
+
+Since it will not work with `-fsanitize=address`, see:
+https://developercommunity.visualstudio.com/t/asan-loading-a-dll-built-using-asan-instrumentatio/848257
+
+diff --git a/libvips/iofuncs/init.c b/libvips/iofuncs/init.c
+index 1111111..2222222 100644
+--- a/libvips/iofuncs/init.c
++++ b/libvips/iofuncs/init.c
+@@ -501,16 +501,6 @@ vips_init(const char *argv0)
+ 	if ((pipe_read_limit = g_getenv("VIPS_PIPE_READ_LIMIT")))
+ 		vips_pipe_read_limit_set(vips__parse_size(pipe_read_limit));
+ 
+-#ifdef G_OS_WIN32
+-	/* Windows has a limit of 512 files open at once for the fopen() family
+-	 * of functions, and 2048 for the _open() family. This raises the limit
+-	 * of fopen() to the same level as _open().
+-	 *
+-	 * It will not go any higher than this, unfortunately.
+-	 */
+-	(void) _setmaxstdio(2048);
+-#endif /*G_OS_WIN32*/
+-
+ 	vips__thread_init();
+ 	vips__threadpool_init();
+ 	vips__buffer_init();
