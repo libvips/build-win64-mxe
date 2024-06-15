@@ -13,8 +13,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.11.1
-libxml2_VERSION  := 2.12.7
-libxml2_CHECKSUM := 24ae78ff1363a973e6d8beba941a7945da2ac056e19b53956aeb6927fd6cfb56
+libxml2_VERSION  := 2.13.0
+libxml2_CHECKSUM := d5a2f36bea96e1fb8297c6046fb02016c152d81ed58e65f3d20477de85291bc9
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -68,11 +68,19 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
+# upstream version is 2.80.2
+glib_VERSION  := 2.80.3
+glib_CHECKSUM := 3947a0eaddd0f3613d0230bb246d0c69e46142c19022f5c4b1b2e3cba236d417
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
 # upstream version is 1.0.13
 # cannot use GH_CONF:
 # fribidi_GH_CONF  := fribidi/fribidi/releases,v
-fribidi_VERSION  := 1.0.14
-fribidi_CHECKSUM := 76ae204a7027652ac3981b9fa5817c083ba23114340284c58e756b259cd2259a
+fribidi_VERSION  := 1.0.15
+fribidi_CHECKSUM := 0bbc7ff633bfa208ae32d7e369cf5a7d20d5d2557a0b067c9aa98bcbf9967587
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
@@ -95,15 +103,6 @@ openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
-# upstream version is 3410
-cfitsio_VERSION  := 4.4.0
-cfitsio_CHECKSUM := 95900cf95ae760839e7cb9678a7b2fad0858d6ac12234f934bd1cb6bfc246ba9
-cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
-cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
-cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
-cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
-cfitsio_URL_2    := https://mirrorservice.org/sites/distfiles.macports.org/cfitsio/$(cfitsio_FILE)
-
 # upstream version is 2.14.2
 fontconfig_VERSION  := 2.15.0
 fontconfig_CHECKSUM := 63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
@@ -121,8 +120,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 24.06.0
-poppler_CHECKSUM := 0cdabd495cada11f6ee9e75c793f80daf46367b66c25a63ee8c26d0f9ec40c76
+poppler_VERSION  := 24.06.1
+poppler_CHECKSUM := 1e629e8732286c745fbc0b15a3ee591443fb37a2210856e7f3ec38a0fb93ab13
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -208,8 +207,6 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # Fontconfig:
 #  Added: meson-wrapper
 #  Removed: gettext
-# CFITSIO:
-#  Added: zlib
 # libexif:
 #  Removed: gettext
 # HarfBuzz:
@@ -233,7 +230,6 @@ matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
 libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
 fontconfig_DEPS         := cc meson-wrapper expat freetype-bootstrap
-cfitsio_DEPS            := cc zlib
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 harfbuzz_DEPS           := cc meson-wrapper cairo freetype-bootstrap glib
 libarchive_DEPS         := cc zlib
