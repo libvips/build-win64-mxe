@@ -68,7 +68,7 @@ fi
 module_dir_base=$(basename $module_dir)
 
 # List of PE targets that need to be copied, including their transitive dependencies and PDBs
-pe_targets=($bin_dir/libvips-42.dll $bin_dir/{vips,vipsedit,vipsheader,vipsthumbnail}.exe)
+pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{vips,vipsedit,vipsheader,vipsthumbnail}.exe)
 
 # DLL search paths
 search_paths=($bin_dir)
