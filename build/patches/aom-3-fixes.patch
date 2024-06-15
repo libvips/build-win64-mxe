@@ -25,7 +25,7 @@ index 1111111..2222222 100644
  
  #if _WIN32_WINNT < 0x0600
  #error _WIN32_WINNT must target Windows Vista / Server 2008 or newer.
-@@ -104,26 +106,27 @@ static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
+@@ -118,26 +120,27 @@ static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
  static INLINE int pthread_mutex_init(pthread_mutex_t *const mutex,
                                       void *mutexattr) {
    (void)mutexattr;
@@ -58,7 +58,7 @@ index 1111111..2222222 100644
    return 0;
  }
  
-@@ -153,7 +156,7 @@ static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
+@@ -167,7 +170,7 @@ static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
  static INLINE int pthread_cond_wait(pthread_cond_t *const condition,
                                      pthread_mutex_t *const mutex) {
    int ok;
