@@ -54,8 +54,8 @@ rm -rf $repackage_dir $pdb_dir
 mkdir -p $repackage_dir/bin
 mkdir $pdb_dir
 
-# Copy libvips-cpp-42.dll
-target_dll="libvips-cpp-42.dll"
+# Copy libvips-42.dll
+target_dll="libvips-42.dll"
 
 zip_suffix="${vips_pre_version:+-$vips_pre_version}"
 
