@@ -154,7 +154,7 @@ if [ "$with_ffi_compat" = true ]; then
 fi
 
 if [ "$with_debug" = true ]; then
-  mxe_targets=("${mxe_targets[@]/%/.debug}")
+  mxe_targets=("${mxe_targets[@]/%/.sanitize}")
 fi
 
 # Check whether we can build and run OCI-compliant containers
