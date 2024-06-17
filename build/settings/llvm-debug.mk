@@ -8,9 +8,9 @@
 MXE_TMP := /var/tmp
 
 # Disable optimizations to improve debuggability.
-export CFLAGS   := -g -gcodeview -Og -fdata-sections -ffunction-sections
-export CXXFLAGS := -g -gcodeview -Og -fdata-sections -ffunction-sections
-export LDFLAGS  := -Wl,--pdb= -Wl,--gc-sections
+export CFLAGS   := -g -Og -fsanitize=undefined -fno-sanitize=function -fdata-sections -ffunction-sections
+export CXXFLAGS := -g -Og -fsanitize=undefined -fno-sanitize=function -fdata-sections -ffunction-sections
+export LDFLAGS  := -lc++ -lc++abi -fsanitize=undefined -Wl,--gc-sections
 
 # Special flags for Rust.
 export CARGO_PROFILE_RELEASE_DEBUG         := true

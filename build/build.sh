@@ -133,6 +133,15 @@ if [ -n "$GIT_COMMIT" ]; then
   rm -f $mxe_dir/usr/$target.$deps/installed/vips-$deps
 fi
 
+if [ "$LLVM" = "true" ] && [ "$DEBUG" = "true" ]; then
+  make compiler-rt-sanitizers \
+    IGNORE_SETTINGS=yes \
+    MXE_PLUGIN_DIRS="$plugins" \
+    MXE_TARGETS=$target.$deps \
+    STRIP_TOOLCHAIN= \
+    MXE_USE_CCACHE=
+fi
+
 # Build gendef (a tool for generating def files from DLLs) 
 # and libvips (+ dependencies)
 make gendef vips-$deps \
@@ -148,11 +157,11 @@ if [ "$DISP" = "true" ]; then
 fi
 
 # Build and bundle llvm-mingw tests when debugging
-if [ "$LLVM" = "true" ] && [ "$DEBUG" = "true" ]; then
-  make test-llvm-mingw \
-    MXE_PLUGIN_DIRS="$plugins" \
-    MXE_TARGETS=$target.$deps
-fi
+#if [ "$LLVM" = "true" ] && [ "$DEBUG" = "true" ]; then
+#  make test-llvm-mingw \
+#    MXE_PLUGIN_DIRS="$plugins" \
+#    MXE_TARGETS=$target.$deps
+#fi
 
 cd $work_dir
 
