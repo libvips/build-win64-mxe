@@ -336,11 +336,6 @@ define libffi_BUILD
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
-
-    '$(TARGET)-gcc' \
-        -W -Wall -Werror -std=c99 -pedantic \
-        '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-libffi.exe' \
-        `'$(TARGET)-pkg-config' libffi --cflags --libs`
 endef
 
 # disable programs
@@ -804,11 +799,6 @@ define cfitsio_BUILD
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
-
-    '$(TARGET)-gcc' \
-        -W -Wall -Werror -ansi \
-        '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-cfitsio.exe' \
-        `'$(TARGET)-pkg-config' cfitsio --cflags --libs`
 endef
 
 # Disable tests
@@ -819,6 +809,14 @@ define brotli_BUILD
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
+endef
+
+define libpng_BUILD
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS)
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
 endef
 
 # build with --disable-load-extension

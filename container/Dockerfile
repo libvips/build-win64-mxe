@@ -21,6 +21,16 @@ RUN \
     cp -f /data/settings/release.mk settings.mk; \
   fi
 
+RUN --mount=type=cache,id=mxe-download,target=/usr/local/mxe/pkg \
+  if [ "$DEBUG" = true ]; then \
+    make compiler-rt-sanitizers \
+      IGNORE_SETTINGS=yes \
+      MXE_PLUGIN_DIRS="$PLUGIN_DIRS" \
+      MXE_TARGETS="$MXE_TARGETS" \
+      STRIP_TOOLCHAIN= \
+      MXE_USE_CCACHE=; \
+  fi
+
 # Build requested packages and gendef (a tool for generating def files from DLLs)
 RUN --mount=type=cache,id=mxe-download,target=/usr/local/mxe/pkg \
   make gendef $PKGS \

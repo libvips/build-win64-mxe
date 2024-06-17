@@ -146,7 +146,7 @@ git_commit="${git_commit:0:7}"
 
 # Ensure separate debug build targets
 if [ "$with_debug" = true ]; then
-  mxe_targets=("${mxe_targets[@]/%/.debug}")
+  mxe_targets=("${mxe_targets[@]/%/.sanitize}")
 fi
 
 # Check whether we can build and run OCI-compliant containers
