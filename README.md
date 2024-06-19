@@ -19,7 +19,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 |-----------------|-----------|--------------------------------------------------------------|
 | [aom]           | 3.9.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.0    | Mozilla Public License 2.0                                   |
-| [cgif]          | 0.4.0     | MIT Licence                                                  |
+| [cgif]          | 0.4.1     | MIT Licence                                                  |
 | [expat]         | 2.6.2     | MIT Licence                                                  |
 | [fontconfig]    | 2.15.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
