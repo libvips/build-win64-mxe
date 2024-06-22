@@ -39,12 +39,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.1    | LGPLv3                                                       |
 | [libwebp]       | 1.4.0     | New BSD License                                              |
-| [libxml2]       | 2.13.0    | MIT Licence                                                  |
+| [libxml2]       | 2.13.1    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.54.0    | LGPLv3                                                       |
 | [pixman]        | 0.43.4    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
-| [zlib-ng]       | 2.1.6     | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.1.7     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 
