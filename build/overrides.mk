@@ -13,8 +13,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.11.1
-libxml2_VERSION  := 2.13.1
-libxml2_CHECKSUM := 25239263dc37f5f55a5393eff27b35f0b7d9ea4b2a7653310598ea8299e3b741
+libxml2_VERSION  := 2.13.2
+libxml2_CHECKSUM := e7c8f5e0b5542159e0ddc409c22c9164304b581eaa9930653a76fb845b169263
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -39,8 +39,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-11
-imagemagick_CHECKSUM := 0c70bd093346372f54153ca1b448c8f801c080c5369ca44fb6f885fdf2bb60e0
+imagemagick_VERSION  := 6.9.13-12
+imagemagick_CHECKSUM := 1dd6e1fc2cbe1ac700d479fb1d3dba11e1fc3f46ab1c680a6992a5e868577463
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -69,8 +69,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.80.2
-glib_VERSION  := 2.80.3
-glib_CHECKSUM := 3947a0eaddd0f3613d0230bb246d0c69e46142c19022f5c4b1b2e3cba236d417
+glib_VERSION  := 2.81.0
+glib_CHECKSUM := 1665188ed9cc941c0a189dc6295e6859872523d1bfc84a5a84732a7ae87b02e4
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -120,8 +120,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 24.06.1
-poppler_CHECKSUM := 1e629e8732286c745fbc0b15a3ee591443fb37a2210856e7f3ec38a0fb93ab13
+poppler_VERSION  := 24.07.0
+poppler_CHECKSUM := 19eb4f49198e4ae3fd9e5a6cf24d0fc7e674e8802046a7de14baab1e40cc2f1d
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -791,6 +791,7 @@ define glib_BUILD
     MXE_ENABLE_NETWORK=1 $(MXE_MESON_WRAPPER) \
         $(if $(findstring .ffi,$(TARGET)), --default-library=shared) \
         --force-fallback-for=gvdb \
+        -Dsysprof=disabled \
         -Dnls=disabled \
         -Dtests=false \
         -Dglib_assert=false \

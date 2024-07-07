@@ -14,6 +14,7 @@ define $(PKG)_BUILD
 
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DENABLE_PLUGIN_LOADING=0 \
+        -DBUILD_TESTING=0 \
         -DWITH_EXAMPLES=0 \
         $(if $(IS_HEVC),, \
             -DWITH_LIBDE265=0 \
