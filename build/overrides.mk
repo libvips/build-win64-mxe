@@ -203,7 +203,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # libjpeg-turbo:
 #  Replaced: yasm with $(BUILD)~nasm
 # libxml2:
-#  Removed: xz
+#  Removed: xz, zlib
 # Fontconfig:
 #  Added: meson-wrapper
 #  Removed: gettext
@@ -228,7 +228,7 @@ librsvg_DEPS            := cc cairo glib pango libxml2 rust $(BUILD)~cargo-c
 cairo_DEPS              := $(filter-out lzo ,$(cairo_DEPS))
 matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
-libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
+libxml2_DEPS            := cc
 fontconfig_DEPS         := cc meson-wrapper expat freetype-bootstrap
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 harfbuzz_DEPS           := cc meson-wrapper cairo freetype-bootstrap glib
@@ -727,23 +727,20 @@ define matio_BUILD_SHARED
 endef
 
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
-# OpenSlide needs --with-xpath
-# ImageMagick's internal MSVG parser needs --with-sax1
+# OpenSlide needs --with-tree --with-xpath
+# ImageMagick's internal MSVG parser needs --with-push --with-sax1
 define libxml2_BUILD
     $(SED) -i 's,`uname`,MinGW,g' '$(1)/xml2-config.in'
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
-        --with-zlib='$(PREFIX)/$(TARGET)' \
         --with-minimum \
-        --with-reader \
-        --with-writer \
-        --with-valid \
-        --with-http \
-        --with-tree \
         $(if $(findstring .all,$(TARGET)), \
+            --with-tree \
             --with-xpath \
+            --with-push \
             --with-sax1) \
+        --without-zlib \
         --without-lzma \
         --without-debug \
         --without-iconv \
