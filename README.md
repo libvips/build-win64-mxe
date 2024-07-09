@@ -160,9 +160,11 @@ In that case, the following version of jpegli is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [jpegli]        | 0.10.2    | BSD 3-Clause                                                 |
+| [jpegli]        | [d0d9b8c] | BSD 3-Clause                                                 |
 
-[jpegli]: https://github.com/libjxl/libjxl/tree/main/lib/jpegli
+[d0d9b8c]: https://github.com/google/jpegli/commit/d0d9b8c256b10b7fa6b5d7d35a2ad65d543a6940
+
+[jpegli]: https://github.com/google/jpegli
 
 ## zlib
 
