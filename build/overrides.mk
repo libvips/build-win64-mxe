@@ -39,8 +39,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-12
-imagemagick_CHECKSUM := 1dd6e1fc2cbe1ac700d479fb1d3dba11e1fc3f46ab1c680a6992a5e868577463
+imagemagick_VERSION  := 6.9.13-13
+imagemagick_CHECKSUM := 4818f7e8b76924cde17bb84387946e2b0c98c7a735c2e686d54cb600bed74c9a
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -53,8 +53,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.58.91
-librsvg_CHECKSUM := 65846ae57c11aba288bf3a6fe517f800f7e38e7fbc79b98c99a8177634ed29f7
+librsvg_VERSION  := 2.58.92
+librsvg_CHECKSUM := edd55458dafd374d94d8b2cd0cd623d2d766d2916de2459e2d3add9236bfea83
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -203,7 +203,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # libjpeg-turbo:
 #  Replaced: yasm with $(BUILD)~nasm
 # libxml2:
-#  Removed: xz
+#  Removed: xz, zlib
 # Fontconfig:
 #  Added: meson-wrapper
 #  Removed: gettext
@@ -228,7 +228,7 @@ librsvg_DEPS            := cc cairo glib pango libxml2 rust $(BUILD)~cargo-c
 cairo_DEPS              := $(filter-out lzo ,$(cairo_DEPS))
 matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
-libxml2_DEPS            := $(filter-out xz ,$(libxml2_DEPS))
+libxml2_DEPS            := cc
 fontconfig_DEPS         := cc meson-wrapper expat freetype-bootstrap
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 harfbuzz_DEPS           := cc meson-wrapper cairo freetype-bootstrap glib
@@ -727,23 +727,20 @@ define matio_BUILD_SHARED
 endef
 
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
-# OpenSlide needs --with-xpath
-# ImageMagick's internal MSVG parser needs --with-sax1
+# OpenSlide needs --with-tree --with-xpath
+# ImageMagick's internal MSVG parser needs --with-push --with-sax1
 define libxml2_BUILD
     $(SED) -i 's,`uname`,MinGW,g' '$(1)/xml2-config.in'
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
-        --with-zlib='$(PREFIX)/$(TARGET)' \
         --with-minimum \
-        --with-reader \
-        --with-writer \
-        --with-valid \
-        --with-http \
-        --with-tree \
         $(if $(findstring .all,$(TARGET)), \
+            --with-tree \
             --with-xpath \
+            --with-push \
             --with-sax1) \
+        --without-zlib \
         --without-lzma \
         --without-debug \
         --without-iconv \

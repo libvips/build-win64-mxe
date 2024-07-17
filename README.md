@@ -31,10 +31,10 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libarchive]    | 3.7.4     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.6     | MIT Licence                                                  |
-| [libheif]       | 1.17.6    | LGPLv3                                                       |
+| [libheif]       | 1.18.0    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.43    | [libpng License version 2]                                   |
-| [librsvg]       | 2.58.91   | LGPLv3                                                       |
+| [librsvg]       | 2.58.92   | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.1    | LGPLv3                                                       |
@@ -94,7 +94,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.4.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.42.12   | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-12 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-13 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
 | [libjxl]        | 0.10.3    | BSD 3-Clause                                                 |
