@@ -72,15 +72,14 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -92,7 +92,7 @@ const UNWIND_DATA_REG: (i32, i32) = (4, 5); // a0, a1
- // https://github.com/gcc-mirror/gcc/blob/trunk/libgcc/unwind-c.c
- 
- cfg_if::cfg_if! {
--    if #[cfg(all(not(all(target_vendor = "apple", not(target_os = "watchos"))), target_arch = "arm", not(target_os = "netbsd")))] {
-+    if #[cfg(all(not(all(target_vendor = "apple", not(target_os = "watchos"))), target_arch = "arm", not(target_os = "netbsd"), not(target_os = "windows")))] {
-         // ARM EHABI personality routine.
-         // https://web.archive.org/web/20190728160938/https://infocenter.arm.com/help/topic/com.arm.doc.ihi0038b/IHI0038B_ehabi.pdf
-         //
+@@ -97,6 +97,7 @@ cfg_if::cfg_if! {
+             target_arch = "arm",
+             not(all(target_vendor = "apple", not(target_os = "watchos"))),
+             not(target_os = "netbsd"),
++            not(target_os = "windows"),
+         ))] {
+         /// personality fn called by [ARM EHABI][armeabi-eh]
+         ///
 diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
@@ -166,33 +165,33 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -192,7 +192,7 @@ cfg_if::cfg_if! {
+@@ -203,7 +203,7 @@ cfg_if::cfg_if! {
          }
      } else {
-         // Default personality routine, which is used directly on most targets
--        // and indirectly on Windows x86_64 via SEH.
-+        // and indirectly on Windows x86_64/armv7/aarch64 via SEH.
+         /// Default personality routine, which is used directly on most targets
+-        /// and indirectly on Windows x86_64 and AArch64 via SEH.
++        /// and indirectly on Windows x86_64, AArch64 and ARMv7 via SEH.
          unsafe extern "C" fn rust_eh_personality_impl(
              version: c_int,
              actions: uw::_Unwind_Action,
-@@ -234,9 +234,9 @@ cfg_if::cfg_if! {
+@@ -247,10 +247,10 @@ cfg_if::cfg_if! {
          }
  
          cfg_if::cfg_if! {
 -            if #[cfg(all(windows, any(target_arch = "aarch64", target_arch = "x86_64"), target_env = "gnu"))] {
--                // On x86_64 MinGW targets, the unwinding mechanism is SEH however the unwind
--                // handler data (aka LSDA) uses GCC-compatible encoding.
 +            if #[cfg(all(windows, target_env = "gnu", not(target_arch = "x86")))] {
-+                // On MinGW targets other than i686, the unwinding mechanism is SEH however
-+                // the unwind handler data (aka LSDA) uses GCC-compatible encoding.
-                 #[lang = "eh_personality"]
-                 #[allow(nonstandard_style)]
-                 unsafe extern "C" fn rust_eh_personality(
+                 /// personality fn called by [Windows Structured Exception Handling][windows-eh]
+                 ///
+-                /// On x86_64 and AArch64 MinGW targets, the unwinding mechanism is SEH,
++                /// On MinGW targets other than i686, the unwinding mechanism is SEH,
+                 /// however the unwind handler data (aka LSDA) uses GCC-compatible encoding
+                 ///
+                 /// [windows-eh]: https://learn.microsoft.com/en-us/cpp/cpp/structured-exception-handling-c-cpp?view=msvc-170
 diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -284,7 +284,7 @@ if #[cfg(not(all(target_os = "ios", target_arch = "arm")))] {
+@@ -284,7 +284,7 @@ if #[cfg(all(target_vendor = "apple", not(target_os = "watchos"), target_arch =
  } // cfg_if!
  
  cfg_if::cfg_if! {

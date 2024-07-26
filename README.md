@@ -31,7 +31,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libarchive]    | 3.7.4     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.6     | MIT Licence                                                  |
-| [libheif]       | 1.18.0    | LGPLv3                                                       |
+| [libheif]       | 1.18.1    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.43    | [libpng License version 2]                                   |
 | [librsvg]       | 2.58.92   | LGPLv3                                                       |
@@ -39,7 +39,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.1    | LGPLv3                                                       |
 | [libwebp]       | 1.4.0     | New BSD License                                              |
-| [libxml2]       | 2.13.2    | MIT Licence                                                  |
+| [libxml2]       | 2.13.3    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.54.0    | LGPLv3                                                       |
 | [pixman]        | 0.43.4    | MIT Licence                                                  |

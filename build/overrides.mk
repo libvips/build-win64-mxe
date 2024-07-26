@@ -13,8 +13,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.11.1
-libxml2_VERSION  := 2.13.2
-libxml2_CHECKSUM := e7c8f5e0b5542159e0ddc409c22c9164304b581eaa9930653a76fb845b169263
+libxml2_VERSION  := 2.13.3
+libxml2_CHECKSUM := 0805d7c180cf09caad71666c7a458a74f041561a532902454da5047d83948138
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
