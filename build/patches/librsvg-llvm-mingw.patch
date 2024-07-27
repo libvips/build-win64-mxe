@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 5 May 2021 21:00:00 +0200
-Subject: [PATCH 1/4] Add `armv7-pc-windows-gnullvm` target
+Subject: [PATCH 1/5] Add `armv7-pc-windows-gnullvm` target
 
 Upstream-Status: Inappropriate [enable feature]
 Upstream only accepts Rust targets that are available in stable releases.
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 21 Sep 2020 11:00:00 +0200
-Subject: [PATCH 2/4] Fix linker error on `armv7-pc-windows-gnullvm`
+Subject: [PATCH 2/5] Fix linker error on `armv7-pc-windows-gnullvm`
 
 Details:
 lld-link: error: undefined symbol: __aeabi_idiv
@@ -59,7 +59,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 15 Feb 2022 11:38:18 +0100
-Subject: [PATCH 3/4] Use appropriate fix/float aliases on llvm-mingw
+Subject: [PATCH 3/5] Use appropriate fix/float aliases on llvm-mingw
 
 See: https://github.com/llvm/llvm-project/commit/e6407356ba008e474322d52b7d031f65fa4913fc
 
@@ -174,7 +174,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 17 Feb 2024 10:37:54 +0100
-Subject: [PATCH 4/4] Fix build errors on `armv7-pc-windows-gnullvm`
+Subject: [PATCH 4/5] Fix build errors on `armv7-pc-windows-gnullvm`
 
 Details:
 error[E0412]: cannot find type `WSADATA` in this scope
@@ -245,3 +245,40 @@ index 1111111..2222222 100644
  impl ::core::clone::Clone for WSADATA {
      fn clone(&self) -> Self {
          *self
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 29 Jul 2024 15:00:00 +0200
+Subject: [PATCH 5/5] Ensure compatibility with LLVM 19
+
+See: https://github.com/rust-lang/cc-rs/issues/1167
+
+Upstream-Status: Pending
+
+diff --git a/vendor/cc-1.0.99/src/lib.rs b/vendor/cc-1.0.99/src/lib.rs
+index 1111111..2222222 100644
+--- a/vendor/cc-1.0.99/src/lib.rs
++++ b/vendor/cc-1.0.99/src/lib.rs
+@@ -1889,7 +1889,10 @@ impl Build {
+                     cmd.push_opt_unless_duplicate(format!("-O{}", opt_level).into());
+                 }
+ 
+-                if cmd.is_like_clang() && target.contains("windows") {
++                if cmd.is_like_clang()
++                    && target.contains("windows")
++                    && !target.ends_with("-gnullvm")
++                {
+                     // Disambiguate mingw and msvc on Windows. Problem is that
+                     // depending on the origin clang can default to a mismatchig
+                     // run-time.
+@@ -2129,6 +2132,10 @@ impl Build {
+                         }
+ 
+                         cmd.push_cc_arg(format!("--target={}", target).into());
++                    } else if target.ends_with("-gnullvm") {
++                        cmd.push_cc_arg(
++                            format!("--target={}", target.strip_suffix("llvm").unwrap()).into(),
++                        );
+                     } else {
+                         cmd.push_cc_arg(format!("--target={}", target).into());
+                     }
