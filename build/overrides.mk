@@ -153,10 +153,10 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 12.0.0
-# Update MinGW-w64 to 7c9cfe6
-# https://github.com/mingw-w64/mingw-w64/tarball/7c9cfe6708cafc83c14a2654308b2db62b126eae
-mingw-w64_VERSION  := 7c9cfe6
-mingw-w64_CHECKSUM := 4a9dd99c8e7c448b127a5e22ac1175166abac0a04f49eff9fc144901d39dca88
+# Update MinGW-w64 to 527522b
+# https://github.com/mingw-w64/mingw-w64/tarball/527522b8b0f7b8c49760acb75fc0c6c9ce0981ee
+mingw-w64_VERSION  := 527522b
+mingw-w64_CHECKSUM := d5e5ab697eac014e81482d4fd3445751ad0cede0ddd523462193010977f6cac9
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
@@ -585,6 +585,7 @@ define librsvg_BUILD
         $(SED) -i 's/d30364448703ab32cd2464745f9bbba314a7cee09c48f51027e532655b91b27b/58c03e8aea8836fabb019ede1e532e4839252e5194cc21abade4206786f986da/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/a7be2be8ecb1feaafd2c22847d27f1a86d1090e771bd7097af831b1c94ba5bb4/ad4a2305fce53f883715d22d6f1f7b5f2175bc4790fcd541a4b7059d74781fc0/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(BUILD_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
+        $(SED) -i 's/92440d3adb5cb6ea05596d9ca860a205d3937dbf0fc959e524bac5f2b748c1af/d7c8f937883854fa016e98e408faaccecb4c88ec95a0d2bdcc5791d871032723/' '$(BUILD_DIR)/vendor/cc-1.0.99/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(BUILD_DIR)/.cargo'
         (echo '[source.crates-io]'; \
