@@ -39,8 +39,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-13
-imagemagick_CHECKSUM := 4818f7e8b76924cde17bb84387946e2b0c98c7a735c2e686d54cb600bed74c9a
+imagemagick_VERSION  := 6.9.13-14
+imagemagick_CHECKSUM := 8bbb7de36546c60f4ebd37f9dce53e713a78efeee2a4246d534733e32a8cf149
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -53,8 +53,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.58.92
-librsvg_CHECKSUM := edd55458dafd374d94d8b2cd0cd623d2d766d2916de2459e2d3add9236bfea83
+librsvg_VERSION  := 2.58.93
+librsvg_CHECKSUM := f116eaf8196fc8261b0bbbdf996a4fe1bc97dc25664f953b328194d049a0dada
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -69,8 +69,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.80.2
-glib_VERSION  := 2.81.0
-glib_CHECKSUM := 1665188ed9cc941c0a189dc6295e6859872523d1bfc84a5a84732a7ae87b02e4
+glib_VERSION  := 2.81.1
+glib_CHECKSUM := 629365cde729a7b76b062fc218a109a84bbc4668ca0c92ab590ecccf969f824c
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -120,8 +120,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 24.07.0
-poppler_CHECKSUM := 19eb4f49198e4ae3fd9e5a6cf24d0fc7e674e8802046a7de14baab1e40cc2f1d
+poppler_VERSION  := 24.08.0
+poppler_CHECKSUM := 97453fbddf0c9a9eafa0ea45ac710d3d49bcf23a62e864585385d3c0b4403174
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -566,8 +566,8 @@ define librsvg_BUILD
         (cd '$(BUILD_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
         $(SED) -i 's/ddb4a16b289d368cc5c02080e67e2fd66091eed0b8478dfdb05006469494f6b0/42daa223b23e5df3f03e9da95e1e61411bfe507cba5a403bb6b8867892a95db0/' '$(BUILD_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/14d469045ff44fa399d2dc722fd526340b9b084c30e44ff5d5f661f6673132ec/9469cee1956a3391c9d948db414d34bc0ead78206bc5ecdf12f6098a65993752/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/8bf710288f88cfbf67e510f68abbb5a4f7173d2ea9ef32f98d594935fc051641/891c080ebd853786846af1987ca5bdb92485a792d3ec7281cf20ddaef94c9b21/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/666c050a52920a8eda20d9d2f2e645cb09660d5c17ce549c233a05c53ae6799b/525fa47360e61be4f017863ed397fd59ac23ac6e625175210efd2c96b7ae687c/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/995997abcd5cb764c07fb27c9e2af82f1b713d8ae0577fc9e2d9fff9a5b997e8/4c6478a4de07f25c72d3b62dee381ef706df0c4de0d363e2029c415508e873bc/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(BUILD_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(BUILD_DIR)/.cargo'

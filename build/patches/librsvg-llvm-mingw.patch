@@ -46,15 +46,15 @@ diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/build.rs
 +++ b/vendor/compiler_builtins/build.rs
-@@ -366,7 +366,7 @@ mod c {
-             && target_os != "ios"
-             && target_os != "watchos"
-             && target_os != "tvos"
--            && target_env != "msvc"
-+            && target_os != "windows"
-         {
+@@ -421,7 +421,7 @@ mod c {
+             }
+         }
+ 
+-        if target_arch == "arm" && target_vendor != "apple" && target_env != "msvc" {
++        if target_arch == "arm" && target_vendor != "apple" && target_os != "windows" {
              sources.extend(&[
                  ("__aeabi_div0", "arm/aeabi_div0.c"),
+                 ("__aeabi_drsub", "arm/aeabi_drsub.c"),
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -103,7 +103,7 @@ diff --git a/vendor/compiler_builtins/src/float/conv.rs b/vendor/compiler_builti
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/src/float/conv.rs
 +++ b/vendor/compiler_builtins/src/float/conv.rs
-@@ -82,12 +82,12 @@ intrinsics! {
+@@ -88,12 +88,12 @@ intrinsics! {
          f64::from_bits(int_to_float::u32_to_f64_bits(i))
      }
  
@@ -118,7 +118,7 @@ index 1111111..2222222 100644
      pub extern "C" fn __floatundidf(i: u64) -> f64 {
          f64::from_bits(int_to_float::u64_to_f64_bits(i))
      }
-@@ -117,13 +117,13 @@ intrinsics! {
+@@ -123,13 +123,13 @@ intrinsics! {
          f64::from_bits(int_to_float::u32_to_f64_bits(i.unsigned_abs()) | sign_bit)
      }
  
@@ -134,42 +134,42 @@ index 1111111..2222222 100644
      pub extern "C" fn __floatdidf(i: i64) -> f64 {
          let sign_bit = ((i >> 63) as u64) << 63;
          f64::from_bits(int_to_float::u64_to_f64_bits(i.unsigned_abs()) | sign_bit)
-@@ -160,7 +160,7 @@ intrinsics! {
-         }
+@@ -237,7 +237,7 @@ intrinsics! {
+         float_to_unsigned_int(f)
      }
  
 -    #[arm_aeabi_alias = __aeabi_f2ulz]
 +    #[arm_aeabi_alias = __stou64]
      pub extern "C" fn __fixunssfdi(f: f32) -> u64 {
-         let fbits = f.to_bits();
-         if fbits < 127 << 23 { // >= 0, < 1
-@@ -208,7 +208,7 @@ intrinsics! {
-         }
+         float_to_unsigned_int(f)
+     }
+@@ -252,7 +252,7 @@ intrinsics! {
+         float_to_unsigned_int(f)
      }
  
 -    #[arm_aeabi_alias = __aeabi_d2ulz]
 +    #[arm_aeabi_alias = __dtou64]
      pub extern "C" fn __fixunsdfdi(f: f64) -> u64 {
-         let fbits = f.to_bits();
-         if fbits < 1023 << 52 { // >= 0, < 1
-@@ -260,7 +260,7 @@ intrinsics! {
-         }
+         float_to_unsigned_int(f)
+     }
+@@ -288,7 +288,7 @@ intrinsics! {
+         float_to_signed_int(f)
      }
  
 -    #[arm_aeabi_alias = __aeabi_f2lz]
 +    #[arm_aeabi_alias = __stoi64]
      pub extern "C" fn __fixsfdi(f: f32) -> i64 {
-         let fbits = f.to_bits() & !0 >> 1; // Remove sign bit.
-         if fbits < 127 << 23 { // >= 0, < 1
-@@ -311,7 +311,7 @@ intrinsics! {
-         }
+         float_to_signed_int(f)
+     }
+@@ -303,7 +303,7 @@ intrinsics! {
+         float_to_signed_int(f)
      }
  
 -    #[arm_aeabi_alias = __aeabi_d2lz]
 +    #[arm_aeabi_alias = __dtoi64]
      pub extern "C" fn __fixdfdi(f: f64) -> i64 {
-         let fbits = f.to_bits() & !0 >> 1; // Remove sign bit.
-         if fbits < 1023 << 52 { // >= 0, < 1
+         float_to_signed_int(f)
+     }
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>

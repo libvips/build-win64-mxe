@@ -24,7 +24,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.15.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.2    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.15    | LGPLv3                                                       |
-| [glib]          | 2.81.0    | LGPLv3                                                       |
+| [glib]          | 2.81.1    | LGPLv3                                                       |
 | [harfbuzz]      | 9.0.0     | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.16      | MIT Licence                                                  |
@@ -34,7 +34,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.18.1    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.43    | [libpng License version 2]                                   |
-| [librsvg]       | 2.58.92   | LGPLv3                                                       |
+| [librsvg]       | 2.58.93   | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.1    | LGPLv3                                                       |
@@ -94,7 +94,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.4.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.42.12   | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-13 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-14 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
 | [libjxl]        | 0.10.3    | BSD 3-Clause                                                 |
@@ -103,7 +103,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.2     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 24.07.0   | GPLv2                                                        |
+| [poppler]       | 24.08.0   | GPLv2                                                        |
 | [sqlite]        | 3.46.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli

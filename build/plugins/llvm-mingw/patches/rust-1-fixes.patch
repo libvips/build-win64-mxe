@@ -42,7 +42,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1702,6 +1702,7 @@ supported_targets! {
+@@ -1705,6 +1705,7 @@ supported_targets! {
      ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
@@ -72,7 +72,7 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -97,6 +97,7 @@ cfg_if::cfg_if! {
+@@ -98,6 +98,7 @@ cfg_if::cfg_if! {
              target_arch = "arm",
              not(all(target_vendor = "apple", not(target_os = "watchos"))),
              not(target_os = "netbsd"),
@@ -119,7 +119,7 @@ diff --git a/compiler/rustc_target/src/spec/base/windows_gnullvm.rs b/compiler/r
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/base/windows_gnullvm.rs
 +++ b/compiler/rustc_target/src/spec/base/windows_gnullvm.rs
-@@ -6,10 +6,7 @@ pub fn opts() -> TargetOptions {
+@@ -7,10 +7,7 @@ pub fn opts() -> TargetOptions {
      // as a path since it's not added to linker search path by the default.
      // There were attempts to make it behave like libgcc (so one can just use -l<name>)
      // but LLVM maintainers rejected it: https://reviews.llvm.org/D51440
@@ -165,7 +165,7 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -203,7 +203,7 @@ cfg_if::cfg_if! {
+@@ -204,7 +204,7 @@ cfg_if::cfg_if! {
          }
      } else {
          /// Default personality routine, which is used directly on most targets
@@ -174,7 +174,7 @@ index 1111111..2222222 100644
          unsafe extern "C" fn rust_eh_personality_impl(
              version: c_int,
              actions: uw::_Unwind_Action,
-@@ -247,10 +247,10 @@ cfg_if::cfg_if! {
+@@ -248,10 +248,10 @@ cfg_if::cfg_if! {
          }
  
          cfg_if::cfg_if! {
