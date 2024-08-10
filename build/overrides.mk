@@ -585,7 +585,8 @@ define librsvg_BUILD
         $(SED) -i 's/d30364448703ab32cd2464745f9bbba314a7cee09c48f51027e532655b91b27b/58c03e8aea8836fabb019ede1e532e4839252e5194cc21abade4206786f986da/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/a7be2be8ecb1feaafd2c22847d27f1a86d1090e771bd7097af831b1c94ba5bb4/ad4a2305fce53f883715d22d6f1f7b5f2175bc4790fcd541a4b7059d74781fc0/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(BUILD_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
-        $(SED) -i 's/92440d3adb5cb6ea05596d9ca860a205d3937dbf0fc959e524bac5f2b748c1af/d7c8f937883854fa016e98e408faaccecb4c88ec95a0d2bdcc5791d871032723/' '$(BUILD_DIR)/vendor/cc-1.0.99/.cargo-checksum.json'; \
+        $(SED) -i 's/92440d3adb5cb6ea05596d9ca860a205d3937dbf0fc959e524bac5f2b748c1af/553a632e29e3f5123891cbe73d67797093fb470822de027ad09bbe5e5a1e86b9/' '$(BUILD_DIR)/vendor/cc-1.0.99/.cargo-checksum.json'; \
+        $(SED) -i 's/342be00f6215e161d8163e272a2945bb9f52f171648e15e11d46800a73186955/7e2d5dac7da2011e64c3acab75bfb4c3e652bae99ce301406124489701e5fa23/' '$(BUILD_DIR)/vendor/cc-1.0.99/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(BUILD_DIR)/.cargo'
         (echo '[source.crates-io]'; \

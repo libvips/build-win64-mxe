@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 5 May 2021 21:00:00 +0200
-Subject: [PATCH 1/5] Add `armv7-pc-windows-gnullvm` target
+Subject: [PATCH 1/6] Add `armv7-pc-windows-gnullvm` target
 
 Upstream-Status: Inappropriate [enable feature]
 Upstream only accepts Rust targets that are available in stable releases.
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 21 Sep 2020 11:00:00 +0200
-Subject: [PATCH 2/5] Fix linker error on `armv7-pc-windows-gnullvm`
+Subject: [PATCH 2/6] Fix linker error on `armv7-pc-windows-gnullvm`
 
 Details:
 lld-link: error: undefined symbol: __aeabi_idiv
@@ -59,7 +59,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 15 Feb 2022 11:38:18 +0100
-Subject: [PATCH 3/5] Use appropriate fix/float aliases on llvm-mingw
+Subject: [PATCH 3/6] Use appropriate fix/float aliases on llvm-mingw
 
 See: https://github.com/llvm/llvm-project/commit/e6407356ba008e474322d52b7d031f65fa4913fc
 
@@ -174,7 +174,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 17 Feb 2024 10:37:54 +0100
-Subject: [PATCH 4/5] Fix build errors on `armv7-pc-windows-gnullvm`
+Subject: [PATCH 4/6] Fix build errors on `armv7-pc-windows-gnullvm`
 
 Details:
 error[E0412]: cannot find type `WSADATA` in this scope
@@ -247,38 +247,74 @@ index 1111111..2222222 100644
          *self
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Mon, 29 Jul 2024 15:00:00 +0200
-Subject: [PATCH 5/5] Ensure compatibility with LLVM 19
+From: =?UTF-8?q?Mateusz=20Miku=C5=82a?= <mati865@gmail.com>
+Date: Sat, 10 Aug 2024 12:21:00 +0200
+Subject: [PATCH 5/6] Remap Windows targets triples to their LLVM counterparts
 
-See: https://github.com/rust-lang/cc-rs/issues/1167
+Fixes https://github.com/rust-lang/cc-rs/issues/1167
 
-Upstream-Status: Pending
+Upstream-Status: Backport [https://github.com/rust-lang/cc-rs/commit/1c100131bf5632ac58eadeb5a94619a02aa8dbfa]
 
 diff --git a/vendor/cc-1.0.99/src/lib.rs b/vendor/cc-1.0.99/src/lib.rs
 index 1111111..2222222 100644
 --- a/vendor/cc-1.0.99/src/lib.rs
 +++ b/vendor/cc-1.0.99/src/lib.rs
-@@ -1889,7 +1889,10 @@ impl Build {
-                     cmd.push_opt_unless_duplicate(format!("-O{}", opt_level).into());
-                 }
- 
--                if cmd.is_like_clang() && target.contains("windows") {
-+                if cmd.is_like_clang()
-+                    && target.contains("windows")
-+                    && !target.ends_with("-gnullvm")
-+                {
-                     // Disambiguate mingw and msvc on Windows. Problem is that
-                     // depending on the origin clang can default to a mismatchig
-                     // run-time.
-@@ -2129,6 +2132,10 @@ impl Build {
+@@ -2129,6 +2129,17 @@ impl Build {
                          }
  
                          cmd.push_cc_arg(format!("--target={}", target).into());
-+                    } else if target.ends_with("-gnullvm") {
-+                        cmd.push_cc_arg(
-+                            format!("--target={}", target.strip_suffix("llvm").unwrap()).into(),
-+                        );
++                    } else if let Ok(index) = target_info::WINDOWS_TRIPLE_MAPPING
++                        .binary_search_by_key(&target, |(target, _)| target)
++                    {
++                        cmd.args.push(
++                            format!(
++                                "--target={}-{}",
++                                target_info::WINDOWS_TRIPLE_MAPPING[index].1,
++                                rest
++                            )
++                            .into(),
++                        )
                      } else {
                          cmd.push_cc_arg(format!("--target={}", target).into());
                      }
+diff --git a/vendor/cc-1.0.99/src/target_info.rs b/vendor/cc-1.0.99/src/target_info.rs
+index 1111111..2222222 100644
+--- a/vendor/cc-1.0.99/src/target_info.rs
++++ b/vendor/cc-1.0.99/src/target_info.rs
+@@ -12,3 +12,15 @@ pub const RISCV_ARCH_MAPPING: &[(&str, &str)] = &[
+     ("riscv64gc", "riscv64"),
+     ("riscv64imac", "riscv64"),
+ ];
++pub const WINDOWS_TRIPLE_MAPPING: &[(&str, &str)] = &[
++    ("aarch64-pc-windows-gnullvm", "aarch64-pc-windows-gnu"),
++    ("aarch64-uwp-windows-msvc", "aarch64-pc-windows-msvc"),
++    ("i686-pc-windows-gnullvm", "i686-pc-windows-gnu"),
++    ("i686-uwp-windows-gnu", "i686-pc-windows-gnu"),
++    ("i686-uwp-windows-msvc", "i686-pc-windows-msvc"),
++    ("i686-win7-windows-msvc", "i686-pc-windows-msvc"),
++    ("thumbv7a-uwp-windows-msvc", "thumbv7a-pc-windows-msvc"),
++    ("x86_64-pc-windows-gnullvm", "x86_64-pc-windows-gnu"),
++    ("x86_64-uwp-windows-gnu", "x86_64-pc-windows-gnu"),
++    ("x86_64-uwp-windows-msvc", "x86_64-pc-windows-msvc"),
++];
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 10 Aug 2024 15:18:31 +0200
+Subject: [PATCH 6/6] Add `armv7-pc-windows-gnullvm` target
+
+Upstream-Status: Inappropriate [enable feature]
+Upstream only accepts Rust targets that are available in nightly releases.
+
+diff --git a/vendor/cc-1.0.99/src/target_info.rs b/vendor/cc-1.0.99/src/target_info.rs
+index 1111111..2222222 100644
+--- a/vendor/cc-1.0.99/src/target_info.rs
++++ b/vendor/cc-1.0.99/src/target_info.rs
+@@ -15,6 +15,7 @@ pub const RISCV_ARCH_MAPPING: &[(&str, &str)] = &[
+ pub const WINDOWS_TRIPLE_MAPPING: &[(&str, &str)] = &[
+     ("aarch64-pc-windows-gnullvm", "aarch64-pc-windows-gnu"),
+     ("aarch64-uwp-windows-msvc", "aarch64-pc-windows-msvc"),
++    ("armv7-pc-windows-gnullvm", "armv7-pc-windows-gnu"),
+     ("i686-pc-windows-gnullvm", "i686-pc-windows-gnu"),
+     ("i686-uwp-windows-gnu", "i686-pc-windows-gnu"),
+     ("i686-uwp-windows-msvc", "i686-pc-windows-msvc"),
