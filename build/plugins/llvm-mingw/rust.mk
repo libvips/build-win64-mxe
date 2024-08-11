@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2024-08-05/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2024-08-11/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 49657b6ce056360c7d9e3b9e619761ddd2c7b41b98f18b34232e6da9d9f1fa55
+$(PKG)_CHECKSUM := d9af0978ab441b62e806dc234b25266377f0b9c936ae2dbded3e4941616f2d09
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2024-08-05/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2024-08-11/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -32,20 +32,11 @@ define $(PKG)_BUILD_$(BUILD)
     $(eval unexport CXXFLAGS)
     $(eval unexport LDFLAGS)
 
-    # ld.lld: error: librsvg_c_api.a(bcryptprimitives.dll): .idata$4 should not refer to special section 0
-    (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < \
-        '$(SOURCE_DIR)/compiler/rustc_codegen_cranelift/patches/0029-stdlib-rawdylib-processprng.patch'
-
-    # libtool: error: object name conflicts in archive: .libs/librsvg-2.lax/librsvg_c_api.a//<<BUILDDIR>>/./.libs/librsvg_c_api.a
-    (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < \
-        '$(SOURCE_DIR)/compiler/rustc_codegen_cranelift/patches/0030-stdlib-Revert-use-raw-dylib-for-Windows-futex-APIs.patch'
-
-    # TODO(kleisauke): Build with --enable-vendor if we are no longer
-    # patching panic_unwind/unwind.
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --prefix='$(PREFIX)/$(BUILD)' \
         --sysconfdir='etc' \
         --release-channel=nightly \
+        --enable-vendor \
         --enable-extended \
         --tools=cargo,src \
         --disable-docs \
@@ -72,11 +63,6 @@ define $(PKG)_BUILD_$(BUILD)
     cd '$(BUILD_DIR)' && \
         $(PYTHON3) $(SOURCE_DIR)/x.py install --stage 1 -j '$(JOBS)' -v
 
-    # Copy the Cargo.lock for Rust to places `vendor` will see
-    # https://github.com/rust-lang/wg-cargo-std-aware/issues/23#issuecomment-720455524
-    # https://github.com/rust-lang/cargo/pull/12088
-    cp '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/Cargo.lock' '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/sysroot'
-
     # `c` feature of the `compiler-builtins` crate needs the
     # compiler-rt sources from LLVM
     $(call PREPARE_PKG_SOURCE,llvm,$(BUILD_DIR))
@@ -89,7 +75,7 @@ define $(PKG)_BUILD
 
     # Build and prepare startup objects like rsbegin.o and rsend.o
     $(foreach FILE, rsbegin rsend, \
-        $(PREFIX)/$(BUILD)/bin/rustc -Ainternal_features --target='$(TARGET_RUST)' --emit=obj -o '$(BUILD_DIR)/$(FILE).o' \
+        $(PREFIX)/$(BUILD)/bin/rustc --target='$(TARGET_RUST)' --emit=obj -o '$(BUILD_DIR)/$(FILE).o' \
             '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/rtstartup/$(FILE).rs';)
 
     # Install the startup objects
@@ -107,7 +93,7 @@ define $(PKG)_BUILD
      echo 'CC_$(TARGET_RUST) = "$(TARGET)-clang"'; \
      echo 'RUST_COMPILER_RT_ROOT = "$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/src/llvm-project/compiler-rt"'; \
      echo '[target.$(TARGET_RUST)]'; \
-     echo 'linker = "$(TARGET)-clang"'; \
-     echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"';) \
+     echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"'; \
+     echo 'linker = "$(TARGET)-clang"';) \
              > '$(PREFIX)/$(TARGET)/.cargo/config.toml'
 endef

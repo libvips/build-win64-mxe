@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 2 Jan 2021 20:00:00 +0100
-Subject: [PATCH 1/1] Add llvm-mingw armv7 dlltool target
+Subject: [PATCH 1/2] Add llvm-mingw armv7 dlltool target
 
 Upstream-Status: Inappropriate [enable feature]
 armv7-pc-windows-gnullvm is not an officially supported Rust target.
@@ -18,3 +18,47 @@ index 1111111..2222222 100644
                  _ => unimplemented!("Windows support for {} is not implemented yet.", arch),
              };
  
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 10 Aug 2024 11:43:45 +0200
+Subject: [PATCH 2/2] Bump cargo to rust-lang/cargo@50237f4
+
+To fix the build with `-Zbuild-std`.
+
+diff --git a/Cargo.toml b/Cargo.toml
+index 1111111..2222222 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -28,8 +28,8 @@ name = "cargo-ctest"
+ path = "src/bin/ctest.rs"
+ 
+ [dependencies]
+-cargo = "0.81.0"
+-cargo-util = "0.2"
++cargo = { git = "https://github.com/rust-lang/cargo.git", rev = "50237f4" }
++cargo-util = { git = "https://github.com/rust-lang/cargo.git", rev = "50237f4" }
+ semver = "1.0.3"
+ log = "0.4"
+ clap = { version = "4.0.29", features = ["color", "derive", "cargo", "string"] }
+diff --git a/src/build.rs b/src/build.rs
+index 1111111..2222222 100644
+--- a/src/build.rs
++++ b/src/build.rs
+@@ -1071,7 +1071,7 @@ pub fn cbuild(
+     let only_staticlib = !libkinds.contains(&"cdylib");
+     let only_cdylib = !libkinds.contains(&"staticlib");
+ 
+-    let profile = args.get_profile_name(config, default_profile, ProfileChecking::Custom)?;
++    let profile = args.get_profile_name(default_profile, ProfileChecking::Custom)?;
+ 
+     let profiles = Profiles::new(ws, profile)?;
+ 
+@@ -1258,7 +1258,7 @@ pub fn ctest(
+     mut compile_opts: CompileOptions,
+ ) -> CliResult {
+     compile_opts.build_config.requested_profile =
+-        args.get_profile_name(config, "test", ProfileChecking::Custom)?;
++        args.get_profile_name("test", ProfileChecking::Custom)?;
+     compile_opts.build_config.mode = CompileMode::Test;
+ 
+     compile_opts.filter = ops::CompileFilter::new(

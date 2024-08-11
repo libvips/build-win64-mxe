@@ -46,12 +46,12 @@ diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/build.rs
 +++ b/vendor/compiler_builtins/build.rs
-@@ -421,7 +421,7 @@ mod c {
+@@ -502,7 +502,7 @@ mod c {
              }
          }
  
--        if target_arch == "arm" && target_vendor != "apple" && target_env != "msvc" {
-+        if target_arch == "arm" && target_vendor != "apple" && target_os != "windows" {
+-        if target.arch == "arm" && target.vendor != "apple" && target.env != "msvc" {
++        if target.arch == "arm" && target.vendor != "apple" && target.os != "windows" {
              sources.extend(&[
                  ("__aeabi_div0", "arm/aeabi_div0.c"),
                  ("__aeabi_drsub", "arm/aeabi_drsub.c"),
