@@ -69,8 +69,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.80.2
-glib_VERSION  := 2.81.1
-glib_CHECKSUM := 629365cde729a7b76b062fc218a109a84bbc4668ca0c92ab590ecccf969f824c
+glib_VERSION  := 2.81.2
+glib_CHECKSUM := ce84b241b84750a3d42c78c456976fac57f2d2726a110f2ba059c052a4349d1c
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -102,6 +102,22 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
+
+# upstream version is 2.13.2
+freetype_VERSION  := 2.13.3
+freetype_CHECKSUM := 0550350666d427c74daeb85d5ac7bb353acba5f76956395995311a9c6f063289
+freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
+freetype_SUBDIR   := freetype-$(freetype_VERSION)
+freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
+freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
+
+# upstream version is 2.13.2
+freetype-bootstrap_VERSION  := $(freetype_VERSION)
+freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
+freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
+freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
+freetype-bootstrap_FILE     := $(freetype_FILE)
+freetype-bootstrap_URL      := $(freetype_URL)
 
 # upstream version is 2.14.2
 fontconfig_VERSION  := 2.15.0

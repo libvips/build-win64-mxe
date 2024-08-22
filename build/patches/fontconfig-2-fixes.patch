@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 13 Feb 2020 16:00:00 +0100
-Subject: [PATCH 1/1] Win32: ignore an error when loading the default config
+Subject: [PATCH 1/3] Win32: ignore an error when loading the default config
  file
 
 Windows simply does not have a default `fonts.conf` file and we
@@ -28,3 +28,57 @@ index 1111111..2222222 100644
  	FcStrBufDestroy (&reason);
  	return FcFalse;
      }
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Akira TAGOH <akira@tagoh.org>
+Date: Sat, 10 Feb 2024 02:15:45 +0900
+Subject: [PATCH 2/3] Fix undesired unref of FcConfig on Win32
+
+Upstream-Status: Backport [https://gitlab.freedesktop.org/fontconfig/fontconfig/-/commit/a76b95105ca26c600279b2daf4bd43b37a918823]
+
+diff --git a/src/fccache.c b/src/fccache.c
+index 1111111..2222222 100644
+--- a/src/fccache.c
++++ b/src/fccache.c
+@@ -106,8 +106,8 @@ FcDirCacheDeleteUUID (const FcChar8  *dir,
+     FcStrFree (target);
+ bail:
+     FcStrFree (d);
+-#endif
+     FcConfigDestroy (config);
++#endif
+ 
+     return ret;
+ }
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Andreas Falkenhahn <andreas@falkenhahn.com>
+Date: Sat, 6 Jul 2024 16:34:09 +0000
+Subject: [PATCH 3/3] Do not prefix cache_base with a "/"
+
+Doing so will lead to FcStrBuildFilename() composing paths that contain double
+slashes, e.g. in FcDirCacheProcess(). If FcDirCacheBasenameMD5() returns a
+cache_base that is prefixed with a "/", the call to FcStrBuildFilename() in
+FcDirCacheProcess() will compose a path that contains double slashes and this
+double-slashed path will then be passed to FcDirCacheOpenFile(). This won't
+cause any harm on Linux because Linux just ignores multiple slashes in paths
+but on other operating systems multiple slashes in paths are not allowed so
+FcDirCacheOpenFile() will fail on those platforms because of the double slash
+in the path.
+
+Upstream-Status: Backport [https://gitlab.freedesktop.org/fontconfig/fontconfig/-/commit/6ae9f7134f67b12602a2270e45e70887550c406f]
+
+diff --git a/src/fccache.c b/src/fccache.c
+index 1111111..2222222 100644
+--- a/src/fccache.c
++++ b/src/fccache.c
+@@ -194,8 +194,7 @@ FcDirCacheBasenameMD5 (FcConfig *config, const FcChar8 *dir, FcChar8 cache_base[
+     if (key)
+ 	FcStrFree (key);
+ 
+-    cache_base[0] = '/';
+-    hex_hash = cache_base + 1;
++    hex_hash = cache_base;
+     for (cnt = 0; cnt < 16; ++cnt)
+     {
+ 	hex_hash[2*cnt  ] = bin2hex[hash[cnt] >> 4];

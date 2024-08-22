@@ -42,7 +42,7 @@ diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/s
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1705,6 +1705,7 @@ supported_targets! {
+@@ -1706,6 +1706,7 @@ supported_targets! {
      ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
      ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
  
@@ -206,13 +206,15 @@ From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 16 Apr 2024 15:51:34 +0000
 Subject: [PATCH 5/5] std: revert use of `raw-dylib`
 
-See: https://github.com/msys2/MINGW-packages/issues/21017
+See:
+https://github.com/msys2/MINGW-packages/issues/21017
+https://github.com/rust-lang/rust/issues/129020
 
 diff --git a/library/std/src/sys/pal/windows/c.rs b/library/std/src/sys/pal/windows/c.rs
 index 1111111..2222222 100644
 --- a/library/std/src/sys/pal/windows/c.rs
 +++ b/library/std/src/sys/pal/windows/c.rs
-@@ -112,7 +112,7 @@ pub struct MOUNT_POINT_REPARSE_BUFFER {
+@@ -110,7 +110,7 @@ pub struct MOUNT_POINT_REPARSE_BUFFER {
  
  // Use raw-dylib to import ProcessPrng as we can't rely on there being an import library.
  cfg_if::cfg_if! {
@@ -221,7 +223,7 @@ index 1111111..2222222 100644
      #[cfg(target_arch = "x86")]
      #[link(name = "bcryptprimitives", kind = "raw-dylib", import_name_type = "undecorated")]
      extern "system" {
-@@ -157,19 +157,7 @@ pub fn GetTempPath2W(bufferlength: u32, buffer: PWSTR) -> u32 {
+@@ -155,19 +155,7 @@ pub fn GetTempPath2W(bufferlength: u32, buffer: PWSTR) -> u32 {
  }
  
  #[cfg(not(target_vendor = "win7"))]
