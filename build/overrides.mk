@@ -69,8 +69,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.80.2
-glib_VERSION  := 2.81.2
-glib_CHECKSUM := ce84b241b84750a3d42c78c456976fac57f2d2726a110f2ba059c052a4349d1c
+glib_VERSION  := 2.82.0
+glib_CHECKSUM := f4c82ada51366bddace49d7ba54b33b4e4d6067afa3008e4847f41cb9b5c38d3
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -805,8 +805,9 @@ define glib_BUILD
         $(if $(findstring .ffi,$(TARGET)), --default-library=shared) \
         --force-fallback-for=gvdb \
         -Dsysprof=disabled \
-        -Dnls=disabled \
         -Dtests=false \
+        -Dnls=disabled \
+        -Dglib_debug=disabled \
         -Dglib_assert=false \
         -Dglib_checks=false \
         '$(SOURCE_DIR)' \
