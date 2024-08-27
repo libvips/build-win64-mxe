@@ -11,7 +11,7 @@ diff --git a/libvips/create/text.c b/libvips/create/text.c
 index 1111111..2222222 100644
 --- a/libvips/create/text.c
 +++ b/libvips/create/text.c
-@@ -392,7 +392,7 @@ vips_text_build(VipsObject *object)
+@@ -391,7 +391,7 @@ vips_text_build(VipsObject *object)
  	VipsObjectClass *class = VIPS_OBJECT_GET_CLASS(object);
  	VipsCreate *create = VIPS_CREATE(object);
  	VipsText *text = (VipsText *) object;
@@ -20,7 +20,7 @@ index 1111111..2222222 100644
  
  	VipsRect extents;
  	VipsImage *image;
-@@ -471,20 +471,21 @@ vips_text_build(VipsObject *object)
+@@ -470,20 +470,21 @@ vips_text_build(VipsObject *object)
  		return -1;
  	}
  
@@ -48,7 +48,7 @@ index 1111111..2222222 100644
  
  	surface = cairo_image_surface_create_for_data(
  		VIPS_IMAGE_ADDR(image, 0, 0),
-@@ -527,12 +528,11 @@ vips_text_build(VipsObject *object)
+@@ -526,12 +527,11 @@ vips_text_build(VipsObject *object)
  	else {
  		/* We just want the alpha channel.
  		 */
