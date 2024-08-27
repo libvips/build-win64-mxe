@@ -807,9 +807,6 @@ define glib_BUILD
         -Dsysprof=disabled \
         -Dtests=false \
         -Dnls=disabled \
-        -Dglib_debug=disabled \
-        -Dglib_assert=false \
-        -Dglib_checks=false \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
