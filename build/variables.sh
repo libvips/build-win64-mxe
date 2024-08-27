@@ -3,7 +3,7 @@
 vips_package=vips
 vips_version=8.16
 vips_patch_version=0
-vips_pre_version=f801ed6
+vips_pre_version=f801ed6-debug
 
 if [ -n "$GIT_COMMIT" ]; then
   vips_version=$GIT_COMMIT

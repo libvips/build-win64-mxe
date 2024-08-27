@@ -66,6 +66,7 @@ define $(PKG)_BUILD
     # libvips-42.dll for the language bindings.
     $(MXE_MESON_WRAPPER) \
         --default-library=shared \
+        --buildtype=debug \
         -Ddeprecated=false \
         -Dexamples=false \
         -Dintrospection=disabled \

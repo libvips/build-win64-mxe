@@ -81,6 +81,7 @@ define $(PKG)_BUILD
     $(eval export CXXFLAGS += -O3)
 
     $(MXE_MESON_WRAPPER) \
+        --buildtype=debug \
         -Ddeprecated=false \
         -Dexamples=false \
         -Dintrospection=disabled \
