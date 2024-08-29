@@ -9,7 +9,7 @@ diff --git a/libvips/include/vips/util.h b/libvips/include/vips/util.h
 index 1111111..2222222 100644
 --- a/libvips/include/vips/util.h
 +++ b/libvips/include/vips/util.h
-@@ -418,6 +418,7 @@ guint32 vips__random(guint32 seed);
+@@ -427,6 +427,7 @@ guint32 vips__random(guint32 seed);
  guint32 vips__random_add(guint32 seed, int value);
  
  const char *vips__icc_dir(void);
@@ -21,7 +21,7 @@ diff --git a/libvips/iofuncs/init.c b/libvips/iofuncs/init.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/init.c
 +++ b/libvips/iofuncs/init.c
-@@ -1208,6 +1208,12 @@ vips_guess_prefix(const char *argv0, const char *env_name)
+@@ -1171,6 +1171,12 @@ vips_guess_prefix(const char *argv0, const char *env_name)
  const char *
  vips_guess_libdir(const char *argv0, const char *env_name)
  {
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
  	const char *prefix = vips_guess_prefix(argv0, env_name);
  	static char *libdir = NULL;
  
-@@ -1232,6 +1238,7 @@ vips_guess_libdir(const char *argv0, const char *env_name)
+@@ -1195,6 +1201,7 @@ vips_guess_libdir(const char *argv0, const char *env_name)
  		libdir = g_strdup_printf("%s/lib", prefix);
  
  	return libdir;
@@ -46,7 +46,7 @@ diff --git a/libvips/iofuncs/util.c b/libvips/iofuncs/util.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/util.c
 +++ b/libvips/iofuncs/util.c
-@@ -1894,6 +1894,54 @@ DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+@@ -1980,6 +1980,54 @@ DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
  	return TRUE;
  }
  #endif
