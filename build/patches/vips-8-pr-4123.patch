@@ -35,7 +35,7 @@ index 1111111..2222222 100644
  } VipsThreadpool;
  
  static int
-@@ -325,7 +325,7 @@ vips_worker_work_unit(VipsWorker *worker)
+@@ -328,7 +328,7 @@ vips_worker_work_unit(VipsWorker *worker)
  
  	/* Has a thread been asked to exit? Volunteer if yes.
  	 */
@@ -44,7 +44,7 @@ index 1111111..2222222 100644
  		/* A thread had been asked to exit, and we've grabbed the
  		 * flag.
  		 */
-@@ -333,12 +333,6 @@ vips_worker_work_unit(VipsWorker *worker)
+@@ -336,12 +336,6 @@ vips_worker_work_unit(VipsWorker *worker)
  		g_mutex_unlock(pool->allocate_lock);
  		return;
  	}
@@ -57,7 +57,7 @@ index 1111111..2222222 100644
  
  	if (vips_worker_allocate(worker)) {
  		pool->error = TRUE;
-@@ -456,10 +450,10 @@ vips__worker_lock(GMutex *mutex)
+@@ -459,10 +453,10 @@ vips__worker_lock(GMutex *mutex)
  	VipsWorker *worker = (VipsWorker *) g_private_get(&worker_key);
  
  	if (worker)
@@ -69,21 +69,8 @@ index 1111111..2222222 100644
 +		g_atomic_int_dec_and_test(&worker->pool->n_waiting);
  }
  
- void
-@@ -468,10 +462,10 @@ vips__worker_cond_wait(GCond *cond, GMutex *mutex)
- 	VipsWorker *worker = (VipsWorker *) g_private_get(&worker_key);
- 
- 	if (worker)
--		g_atomic_int_add(&worker->pool->n_waiting, 1);
-+		g_atomic_int_inc(&worker->pool->n_waiting);
- 	g_cond_wait(cond, mutex);
- 	if (worker)
--		g_atomic_int_add(&worker->pool->n_waiting, -1);
-+		g_atomic_int_dec_and_test(&worker->pool->n_waiting);
- }
- 
  static void
-@@ -519,7 +513,7 @@ vips_threadpool_new(VipsImage *im)
+@@ -510,7 +504,7 @@ vips_threadpool_new(VipsImage *im)
  	vips_semaphore_init(&pool->tick, 0, "tick");
  	pool->error = FALSE;
  	pool->stop = FALSE;
@@ -92,7 +79,7 @@ index 1111111..2222222 100644
  
  	/* If this is a tiny image, we won't need all max_workers threads.
  	 * Guess how
-@@ -702,7 +696,7 @@ vips_threadpool_run(VipsImage *im,
+@@ -693,7 +687,7 @@ vips_threadpool_run(VipsImage *im,
  		if (n_waiting > 3 &&
  			n_working > 1) {
  			VIPS_DEBUG_MSG("shrinking thread pool\n");
