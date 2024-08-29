@@ -3,7 +3,7 @@
 vips_package=vips
 vips_version=8.15
 vips_patch_version=4
-vips_pre_version=beta1
+vips_pre_version=beta2
 
 if [ -n "$GIT_COMMIT" ]; then
   vips_version=$GIT_COMMIT
