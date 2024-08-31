@@ -9,6 +9,18 @@ Subject: [PATCH 1/5] Add `armv7-pc-windows-gnullvm` triple
 
 Upstream-Status: Pending
 
+diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
+index 1111111..2222222 100644
+--- a/compiler/rustc_target/src/spec/mod.rs
++++ b/compiler/rustc_target/src/spec/mod.rs
+@@ -1706,6 +1706,7 @@ fn $module() {
+     ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
+     ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
+ 
++    ("armv7-pc-windows-gnullvm", armv7_pc_windows_gnullvm),
+     ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
+     ("i686-pc-windows-gnullvm", i686_pc_windows_gnullvm),
+     ("x86_64-pc-windows-gnullvm", x86_64_pc_windows_gnullvm),
 diff --git a/compiler/rustc_target/src/spec/targets/armv7_pc_windows_gnullvm.rs b/compiler/rustc_target/src/spec/targets/armv7_pc_windows_gnullvm.rs
 new file mode 100644
 index 0000000..1111111
@@ -38,18 +50,6 @@ index 0000000..1111111
 +        options: base,
 +    }
 +}
-diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
-index 1111111..2222222 100644
---- a/compiler/rustc_target/src/spec/mod.rs
-+++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -1706,6 +1706,7 @@ supported_targets! {
-     ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
-     ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
- 
-+    ("armv7-pc-windows-gnullvm", armv7_pc_windows_gnullvm),
-     ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
-     ("i686-pc-windows-gnullvm", i686_pc_windows_gnullvm),
-     ("x86_64-pc-windows-gnullvm", x86_64_pc_windows_gnullvm),
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
@@ -72,7 +72,7 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -98,6 +98,7 @@ cfg_if::cfg_if! {
+@@ -98,6 +98,7 @@
              target_arch = "arm",
              not(all(target_vendor = "apple", not(target_os = "watchos"))),
              not(target_os = "netbsd"),
@@ -84,7 +84,7 @@ diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -123,7 +123,7 @@ extern "C" {
+@@ -123,7 +123,7 @@ pub enum _Unwind_Context {}
  }
  
  cfg_if::cfg_if! {
@@ -93,7 +93,7 @@ index 1111111..2222222 100644
      // Not ARM EHABI
      #[repr(C)]
      #[derive(Copy, Clone, PartialEq)]
-@@ -137,7 +137,7 @@ if #[cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", targe
+@@ -137,7 +137,7 @@ pub enum _Unwind_Action {
      pub use _Unwind_Action::*;
  
      #[cfg_attr(
@@ -165,7 +165,7 @@ diff --git a/library/std/src/sys/personality/gcc.rs b/library/std/src/sys/person
 index 1111111..2222222 100644
 --- a/library/std/src/sys/personality/gcc.rs
 +++ b/library/std/src/sys/personality/gcc.rs
-@@ -204,7 +204,7 @@ cfg_if::cfg_if! {
+@@ -204,7 +204,7 @@ fn __gnu_unwind_frame(
          }
      } else {
          /// Default personality routine, which is used directly on most targets
@@ -174,7 +174,7 @@ index 1111111..2222222 100644
          unsafe extern "C" fn rust_eh_personality_impl(
              version: c_int,
              actions: uw::_Unwind_Action,
-@@ -248,10 +248,10 @@ cfg_if::cfg_if! {
+@@ -248,10 +248,10 @@ fn __gnu_unwind_frame(
          }
  
          cfg_if::cfg_if! {
@@ -191,7 +191,7 @@ diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -284,7 +284,7 @@ if #[cfg(all(target_vendor = "apple", not(target_os = "watchos"), target_arch =
+@@ -284,7 +284,7 @@ pub fn _Unwind_Backtrace(trace: _Unwind_Trace_Fn,
  } // cfg_if!
  
  cfg_if::cfg_if! {
@@ -214,16 +214,16 @@ diff --git a/library/std/src/sys/pal/windows/c.rs b/library/std/src/sys/pal/wind
 index 1111111..2222222 100644
 --- a/library/std/src/sys/pal/windows/c.rs
 +++ b/library/std/src/sys/pal/windows/c.rs
-@@ -110,7 +110,7 @@ pub struct MOUNT_POINT_REPARSE_BUFFER {
+@@ -109,7 +109,7 @@ pub struct MOUNT_POINT_REPARSE_BUFFER {
+ }
  
  // Use raw-dylib to import ProcessPrng as we can't rely on there being an import library.
- cfg_if::cfg_if! {
--if #[cfg(not(target_vendor = "win7"))] {
-+if #[cfg(any())] {
-     #[cfg(target_arch = "x86")]
-     #[link(name = "bcryptprimitives", kind = "raw-dylib", import_name_type = "undecorated")]
-     extern "system" {
-@@ -155,19 +155,7 @@ pub fn GetTempPath2W(bufferlength: u32, buffer: PWSTR) -> u32 {
+-#[cfg(not(target_vendor = "win7"))]
++#[cfg(any())]
+ #[cfg_attr(
+     target_arch = "x86",
+     link(name = "bcryptprimitives", kind = "raw-dylib", import_name_type = "undecorated")
+@@ -151,19 +151,7 @@ pub fn GetTempPath2W(bufferlength: u32, buffer: PWSTR) -> u32 {
  }
  
  #[cfg(not(target_vendor = "win7"))]

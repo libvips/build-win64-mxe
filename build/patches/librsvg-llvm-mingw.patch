@@ -46,7 +46,7 @@ diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/build.rs
 +++ b/vendor/compiler_builtins/build.rs
-@@ -502,7 +502,7 @@ mod c {
+@@ -427,7 +427,7 @@ mod c {
              }
          }
  

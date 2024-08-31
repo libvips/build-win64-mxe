@@ -17,7 +17,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.9.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.10.0    | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.0    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.4.1     | MIT Licence                                                  |
 | [expat]         | 2.6.2     | MIT Licence                                                  |
