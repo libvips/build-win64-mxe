@@ -1,0 +1,155 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 31 Aug 2024 11:16:40 +0200
+Subject: [PATCH 1/1] [DEBUG] semaphore: print stacktrace on timeout
+
+Context: https://github.com/libvips/libvips/discussions/4069
+
+diff --git a/libvips/iofuncs/meson.build b/libvips/iofuncs/meson.build
+index 1111111..2222222 100644
+--- a/libvips/iofuncs/meson.build
++++ b/libvips/iofuncs/meson.build
+@@ -42,6 +42,7 @@ iofuncs_sources = files(
+ 
+ iofuncs_headers = files(
+     'sink.h',
++    'stacktrace.h',
+ )
+ 
+ vipsmarshal = gnome.genmarshal(
+diff --git a/libvips/iofuncs/semaphore.c b/libvips/iofuncs/semaphore.c
+index 1111111..2222222 100644
+--- a/libvips/iofuncs/semaphore.c
++++ b/libvips/iofuncs/semaphore.c
+@@ -54,6 +54,8 @@
+ #include <vips/vips.h>
+ #include <vips/thread.h>
+ 
++#include "stacktrace.h"
++
+ void
+ vips_semaphore_init(VipsSemaphore *s, int v, char *name)
+ {
+@@ -121,14 +123,24 @@ vips__semaphore_downn_until(VipsSemaphore *s, int n, gint64 end_time)
+ 
+ 	g_mutex_lock(s->mutex);
+ 
++	gboolean fail_print = FALSE;
++
+ 	while (s->v < n) {
+-		if (end_time == -1)
+-			g_cond_wait(s->cond, s->mutex);
+-		else if (!g_cond_wait_until(s->cond, s->mutex, end_time)) {
++		if (end_time == -1) {
++			end_time = g_get_monotonic_time() + 30 * G_TIME_SPAN_SECOND;
++			fail_print = TRUE;
++		}
++
++		if (!g_cond_wait_until(s->cond, s->mutex, end_time)) {
+ 			/* timeout has passed.
+ 			 */
+ 			g_mutex_unlock(s->mutex);
+ 
++			if (fail_print) {
++				printf("timed out after 30 seconds ... possible deadlock\n");
++				print_stacktrace();
++			}
++
+ 			VIPS_GATE_STOP("vips__semaphore_downn_until: wait");
+ 			return -1;
+ 		}
+diff --git a/libvips/iofuncs/stacktrace.h b/libvips/iofuncs/stacktrace.h
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/libvips/iofuncs/stacktrace.h
+@@ -0,0 +1,64 @@
++#ifndef VIPS_STACKTRACE_H
++#define VIPS_STACKTRACE_H
++
++#include <glib.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif /*__cplusplus*/
++
++#include <stdio.h>
++
++#ifdef G_OS_UNIX
++#include <execinfo.h>
++#endif
++
++#ifdef G_OS_WIN32
++#define WIN32_LEAN_AND_MEAN
++#define NOGDI
++#include <windows.h>
++#include <dbghelp.h>
++#endif
++
++#ifndef G_ALWAYS_INLINE
++#define G_ALWAYS_INLINE /* empty */
++#endif
++
++G_ALWAYS_INLINE static inline void
++print_stacktrace()
++{
++#ifdef G_OS_UNIX
++	void *stack[42];
++	int frames = backtrace(stack, 42);
++	char **strs = backtrace_symbols(stack, frames);
++
++	for (int i = 0; i < frames; ++i)
++		printf("%i: %s\n", frames - i - 1, strs[i]);
++	free(strs);
++#elif defined(G_OS_WIN32)
++	// From: https://stackoverflow.com/a/5699483
++	void *stack[42];
++	HANDLE process = GetCurrentProcess();
++	SymInitialize(process, NULL, TRUE);
++
++	USHORT frames = CaptureStackBackTrace(0, 42, stack, NULL);
++	PSYMBOL_INFO symbol =
++		(PSYMBOL_INFO) calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(TCHAR), 1);
++	symbol->MaxNameLen = 255;
++	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
++
++	for (USHORT i = 0; i < frames; i++) {
++		SymFromAddr(process, (DWORD64) (stack[i]), 0, symbol);
++
++		printf("%i: %s - 0x%0llX\n", frames - i - 1, symbol->Name,
++			symbol->Address);
++	}
++	free(symbol);
++#endif
++}
++
++#ifdef __cplusplus
++}
++#endif /*__cplusplus*/
++
++#endif /*VIPS_STACKTRACE_H*/
+diff --git a/libvips/meson.build b/libvips/meson.build
+index 1111111..2222222 100644
+--- a/libvips/meson.build
++++ b/libvips/meson.build
+@@ -26,7 +26,7 @@ libvips_lib = library('vips',
+     darwin_versions: darwin_versions,
+     gnu_symbol_visibility: 'hidden',
+     install: true,
+-    link_args: nodelete_link_args,
++    link_args: [nodelete_link_args, dbghelp_link_args],
+ )
+ 
+ libvips_dep = declare_dependency(
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -72,6 +72,7 @@ libvips_deps = [
+     m_dep,
+ ]
+ nodelete_link_args = cc.get_supported_link_arguments('-Wl,-z,nodelete')
++dbghelp_link_args = host_os == 'windows' ? cc.get_supported_link_arguments('-ldbghelp') : []
+ 
+ prefix_dir = get_option('prefix')
+ lib_dir = prefix_dir / get_option('libdir')
