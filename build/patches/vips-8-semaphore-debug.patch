@@ -3,6 +3,7 @@ From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 31 Aug 2024 11:16:40 +0200
 Subject: [PATCH 1/1] [DEBUG] semaphore: print stacktrace on timeout
 
+Context: https://github.com/libvips/libvips/discussions/4069
 
 diff --git a/libvips/iofuncs/meson.build b/libvips/iofuncs/meson.build
 index 1111111..2222222 100644

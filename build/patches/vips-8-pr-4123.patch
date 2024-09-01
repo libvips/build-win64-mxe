@@ -1,22 +1,18 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Thu, 29 Aug 2024 12:56:57 +0200
-Subject: [PATCH 1/1] threadpool: fix a race condition during downsizing
+Date: Tue, 27 Aug 2024 11:11:48 +0200
+Subject: [PATCH 1/1] threadpool: prefer use of dedicated GLib atomic operations
 
-Upstream-Status: Submitted [https://github.com/libvips/libvips/pull/4129]
+That is:
+`g_atomic_int_add(..., 1)` -> `g_atomic_int_inc(...)`
+`g_atomic_int_add(..., -1)` -> `g_atomic_int_dec_and_test(...)`
 
-diff --git a/ChangeLog b/ChangeLog
-index 1111111..2222222 100644
---- a/ChangeLog
-+++ b/ChangeLog
-@@ -5,6 +5,7 @@
- - webpsave: fix memory leak on error [dloebl]
- - heifsave: ensure NCLX profile is freed in lossless mode [kleisauke]
- - threadpool: fix a race condition in error handling [kleisauke]
-+- threadpool: fix a race condition during downsizing [kleisauke]
- 
- 11/8/24 8.15.3
- 
+Additionally, turn the exit count into a proper flag, enabling the
+use of a single atomic compare-and-exchange operation that resets
+the flag only when it is set.
+
+Upstream-Status: Submitted [https://github.com/libvips/libvips/pull/4123]
+
 diff --git a/libvips/iofuncs/threadpool.c b/libvips/iofuncs/threadpool.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/threadpool.c
@@ -61,6 +57,19 @@ index 1111111..2222222 100644
  
  	if (vips_worker_allocate(worker)) {
  		pool->error = TRUE;
+@@ -459,10 +453,10 @@ vips__worker_lock(GMutex *mutex)
+ 	VipsWorker *worker = (VipsWorker *) g_private_get(&worker_key);
+ 
+ 	if (worker)
+-		g_atomic_int_add(&worker->pool->n_waiting, 1);
++		g_atomic_int_inc(&worker->pool->n_waiting);
+ 	g_mutex_lock(mutex);
+ 	if (worker)
+-		g_atomic_int_add(&worker->pool->n_waiting, -1);
++		g_atomic_int_dec_and_test(&worker->pool->n_waiting);
+ }
+ 
+ static void
 @@ -510,7 +504,7 @@ vips_threadpool_new(VipsImage *im)
  	vips_semaphore_init(&pool->tick, 0, "tick");
  	pool->error = FALSE;
