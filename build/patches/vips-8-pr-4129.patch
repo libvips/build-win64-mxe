@@ -21,7 +21,7 @@ diff --git a/libvips/iofuncs/threadpool.c b/libvips/iofuncs/threadpool.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/threadpool.c
 +++ b/libvips/iofuncs/threadpool.c
-@@ -272,7 +272,7 @@ typedef struct _VipsThreadpool {
+@@ -268,7 +268,7 @@ typedef struct _VipsThreadpool {
  	/* The number of workers queueing up on allocate_lock. Use this to
  	 * grow and shrink the threadpool.
  	 */
@@ -30,7 +30,7 @@ index 1111111..2222222 100644
  
  	/* Set this to abort evaluation early with an error.
  	 */
-@@ -285,7 +285,7 @@ typedef struct _VipsThreadpool {
+@@ -281,7 +281,7 @@ typedef struct _VipsThreadpool {
  	/* Set this and the next worker to see it will clear the flag and exit
  	 * (used to downsize the threadpool).
  	 */
@@ -39,7 +39,7 @@ index 1111111..2222222 100644
  } VipsThreadpool;
  
  static int
-@@ -332,7 +332,7 @@ vips_worker_work_unit(VipsWorker *worker)
+@@ -328,7 +328,7 @@ vips_worker_work_unit(VipsWorker *worker)
  
  	/* Has a thread been asked to exit? Volunteer if yes.
  	 */
@@ -48,7 +48,7 @@ index 1111111..2222222 100644
  		/* A thread had been asked to exit, and we've grabbed the
  		 * flag.
  		 */
-@@ -340,12 +340,6 @@ vips_worker_work_unit(VipsWorker *worker)
+@@ -336,12 +336,6 @@ vips_worker_work_unit(VipsWorker *worker)
  		g_mutex_unlock(pool->allocate_lock);
  		return;
  	}
@@ -61,7 +61,7 @@ index 1111111..2222222 100644
  
  	if (vips_worker_allocate(worker)) {
  		pool->error = TRUE;
-@@ -514,7 +508,7 @@ vips_threadpool_new(VipsImage *im)
+@@ -510,7 +504,7 @@ vips_threadpool_new(VipsImage *im)
  	vips_semaphore_init(&pool->tick, 0, "tick");
  	pool->error = FALSE;
  	pool->stop = FALSE;
@@ -70,7 +70,7 @@ index 1111111..2222222 100644
  
  	/* If this is a tiny image, we won't need all max_workers threads.
  	 * Guess how
-@@ -697,7 +691,7 @@ vips_threadpool_run(VipsImage *im,
+@@ -693,7 +687,7 @@ vips_threadpool_run(VipsImage *im,
  		if (n_waiting > 3 &&
  			n_working > 1) {
  			VIPS_DEBUG_MSG("shrinking thread pool\n");
