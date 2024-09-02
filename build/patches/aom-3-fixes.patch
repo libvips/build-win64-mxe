@@ -25,8 +25,8 @@ index 1111111..2222222 100644
  
  #if _WIN32_WINNT < 0x0600
  #error _WIN32_WINNT must target Windows Vista / Server 2008 or newer.
-@@ -118,26 +120,27 @@ static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
- static INLINE int pthread_mutex_init(pthread_mutex_t *const mutex,
+@@ -118,26 +120,27 @@ static inline int pthread_join(pthread_t thread, void **value_ptr) {
+ static inline int pthread_mutex_init(pthread_mutex_t *const mutex,
                                       void *mutexattr) {
    (void)mutexattr;
 -  InitializeCriticalSectionEx(mutex, 0 /*dwSpinCount*/, 0 /*Flags*/);
@@ -34,32 +34,32 @@ index 1111111..2222222 100644
    return 0;
  }
  
- static INLINE int pthread_mutex_trylock(pthread_mutex_t *const mutex) {
+ static inline int pthread_mutex_trylock(pthread_mutex_t *const mutex) {
 -  return TryEnterCriticalSection(mutex) ? 0 : EBUSY;
 +  return TryAcquireSRWLockExclusive(mutex) ? 0 : EBUSY;
  }
  
- static INLINE int pthread_mutex_lock(pthread_mutex_t *const mutex) {
+ static inline int pthread_mutex_lock(pthread_mutex_t *const mutex) {
 -  EnterCriticalSection(mutex);
 +  AcquireSRWLockExclusive(mutex);
    return 0;
  }
  
- static INLINE int pthread_mutex_unlock(pthread_mutex_t *const mutex) {
+ static inline int pthread_mutex_unlock(pthread_mutex_t *const mutex) {
 -  LeaveCriticalSection(mutex);
 +  ReleaseSRWLockExclusive(mutex);
    return 0;
  }
  
- static INLINE int pthread_mutex_destroy(pthread_mutex_t *const mutex) {
+ static inline int pthread_mutex_destroy(pthread_mutex_t *const mutex) {
 -  DeleteCriticalSection(mutex);
 +  (void)mutex;
 +  // Unlocked SWR locks does not use resources
    return 0;
  }
  
-@@ -167,7 +170,7 @@ static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
- static INLINE int pthread_cond_wait(pthread_cond_t *const condition,
+@@ -167,7 +170,7 @@ static inline int pthread_cond_broadcast(pthread_cond_t *const condition) {
+ static inline int pthread_cond_wait(pthread_cond_t *const condition,
                                      pthread_mutex_t *const mutex) {
    int ok;
 -  ok = SleepConditionVariableCS(condition, mutex, INFINITE);

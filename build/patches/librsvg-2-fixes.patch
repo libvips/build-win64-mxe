@@ -13,7 +13,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -336,13 +336,9 @@ if host_system == 'windows'
+@@ -338,13 +338,9 @@ if host_system == 'windows'
    native_libs = run_command(
      rustc_query_native_static_libs_args,
      capture: true,
@@ -76,9 +76,9 @@ diff --git a/Cargo.lock b/Cargo.lock
 index 1111111..2222222 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -408,12 +408,6 @@ version = "0.7.1"
+@@ -387,12 +387,6 @@ version = "0.7.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "4b82cf0babdbd58558212896d1a4272303a57bdb245c2bf1147185fb45640e70"
+ checksum = "1462739cb27611015575c0c11df5df7601141071f07518d56fcc1be504cbec97"
  
 -[[package]]
 -name = "color_quant"
@@ -88,8 +88,8 @@ index 1111111..2222222 100644
 -
  [[package]]
  name = "colorchoice"
- version = "1.0.1"
-@@ -815,16 +809,6 @@ dependencies = [
+ version = "1.0.2"
+@@ -835,16 +829,6 @@ dependencies = [
   "wasi",
  ]
  
@@ -106,17 +106,19 @@ index 1111111..2222222 100644
  [[package]]
  name = "gio"
  version = "0.20.0"
-@@ -981,9 +965,6 @@ checksum = "99314c8a2152b8ddb211f924cdae532d8c5e4c8bb54728e12fff1b0cd5963a10"
+@@ -1010,11 +994,8 @@ checksum = "99314c8a2152b8ddb211f924cdae532d8c5e4c8bb54728e12fff1b0cd5963a10"
  dependencies = [
   "bytemuck",
   "byteorder-lite",
 - "color_quant",
+  "dav1d",
+  "dcv-color-primitives",
 - "gif",
 - "image-webp",
+  "mp4parse",
   "num-traits",
   "png",
-  "ravif",
-@@ -992,16 +973,6 @@ dependencies = [
+@@ -1022,16 +1003,6 @@ dependencies = [
   "zune-jpeg",
  ]
  
@@ -131,8 +133,8 @@ index 1111111..2222222 100644
 -]
 -
  [[package]]
- name = "imgref"
- version = "1.10.1"
+ name = "indexmap"
+ version = "2.3.0"
 diff --git a/rsvg/Cargo.toml b/rsvg/Cargo.toml
 index 1111111..2222222 100644
 --- a/rsvg/Cargo.toml

@@ -53,8 +53,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.58.93
-librsvg_CHECKSUM := f116eaf8196fc8261b0bbbdf996a4fe1bc97dc25664f953b328194d049a0dada
+librsvg_VERSION  := 2.58.94
+librsvg_CHECKSUM := 05adf6dc58b3cfb319c2efb02b2bbdff5c75ca47cc941d48098839f20496abed
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -69,8 +69,8 @@ pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 2.80.2
-glib_VERSION  := 2.81.2
-glib_CHECKSUM := ce84b241b84750a3d42c78c456976fac57f2d2726a110f2ba059c052a4349d1c
+glib_VERSION  := 2.82.0
+glib_CHECKSUM := f4c82ada51366bddace49d7ba54b33b4e4d6067afa3008e4847f41cb9b5c38d3
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -91,6 +91,14 @@ libexif_VERSION  := 0.6.24
 libexif_CHECKSUM := d47564c433b733d83b6704c70477e0a4067811d184ec565258ac563d8223f6ae
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.bz2
+
+# upstream version is 1.18.0
+cairo_VERSION  := 1.18.2
+cairo_CHECKSUM := a62b9bb42425e844cc3d6ddde043ff39dbabedd1542eba57a2eb79f85889d45a
+cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
+cairo_SUBDIR   := cairo-$(cairo_VERSION)
+cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
+cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -136,8 +144,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 24.08.0
-poppler_CHECKSUM := 97453fbddf0c9a9eafa0ea45ac710d3d49bcf23a62e864585385d3c0b4403174
+poppler_VERSION  := 24.09.0
+poppler_CHECKSUM := ebd857987e2395608c69fdc44009692d5906f13b612c5280beff65a0b75dc255
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -582,9 +590,9 @@ define librsvg_BUILD
         (cd '$(BUILD_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(librsvg_PATCHES))))/librsvg-llvm-mingw.patch \
         # Update expected Cargo SHA256 hashes for the vendored files we have patched
         $(SED) -i 's/ddb4a16b289d368cc5c02080e67e2fd66091eed0b8478dfdb05006469494f6b0/42daa223b23e5df3f03e9da95e1e61411bfe507cba5a403bb6b8867892a95db0/' '$(BUILD_DIR)/vendor/cfg-expr/.cargo-checksum.json'; \
-        $(SED) -i 's/d30364448703ab32cd2464745f9bbba314a7cee09c48f51027e532655b91b27b/58c03e8aea8836fabb019ede1e532e4839252e5194cc21abade4206786f986da/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
+        $(SED) -i 's/b279dc902e1c7763dd212f44194307a93a23dac83003f2a45c784803dc0af72d/ea38c16e227c390dbc0064f98e19c29ca4d1e031147a36618a829e76e20a04ad/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
         $(SED) -i 's/a7be2be8ecb1feaafd2c22847d27f1a86d1090e771bd7097af831b1c94ba5bb4/ad4a2305fce53f883715d22d6f1f7b5f2175bc4790fcd541a4b7059d74781fc0/' '$(BUILD_DIR)/vendor/compiler_builtins/.cargo-checksum.json'; \
-        $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(BUILD_DIR)/vendor/windows-sys/.cargo-checksum.json'; \
+        $(SED) -i 's/204bc39a8213167dcab8dd273c57e5fae3afbac8fa3887dbe43ad082d55446e4/0e8c4e6440c5377f487918f16a8ea80aae53fa4d47e495a9e9c0119b575db0ab/' '$(BUILD_DIR)/vendor/windows-sys-0.52.0/.cargo-checksum.json'; \
         # Install Cargo config
         $(INSTALL) -d '$(BUILD_DIR)/.cargo'
         (echo '[source.crates-io]'; \
@@ -805,8 +813,9 @@ define glib_BUILD
         $(if $(findstring .ffi,$(TARGET)), --default-library=shared) \
         --force-fallback-for=gvdb \
         -Dsysprof=disabled \
-        -Dnls=disabled \
         -Dtests=false \
+        -Dnls=disabled \
+        -Dglib_debug=disabled \
         -Dglib_assert=false \
         -Dglib_checks=false \
         '$(SOURCE_DIR)' \

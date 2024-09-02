@@ -46,7 +46,7 @@ diff --git a/vendor/compiler_builtins/build.rs b/vendor/compiler_builtins/build.
 index 1111111..2222222 100644
 --- a/vendor/compiler_builtins/build.rs
 +++ b/vendor/compiler_builtins/build.rs
-@@ -502,7 +502,7 @@ mod c {
+@@ -427,7 +427,7 @@ mod c {
              }
          }
  
@@ -178,7 +178,7 @@ Subject: [PATCH 4/4] Fix build errors on `armv7-pc-windows-gnullvm`
 
 Details:
 error[E0412]: cannot find type `WSADATA` in this scope
-    --> vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs:198:104
+    --> vendor/windows-sys-0.52.0/src/Windows/Win32/Networking/WinSock/mod.rs:198:104
      |
 198  | ::windows_targets::link!("ws2_32.dll" "system" fn WSAStartup(wversionrequested : u16, lpwsadata : *mut WSADATA) -> i32);
      |                                                                                                        ^^^^^^^ help: a struct with a similar name exists: `WSPDATA`
@@ -187,23 +187,23 @@ error[E0412]: cannot find type `WSADATA` in this scope
      | ------------------ similarly named struct `WSPDATA` defined here
 
 error[E0412]: cannot find type `SERVENT` in this scope
-   --> vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs:272:144
+   --> vendor/windows-sys-0.52.0/src/Windows/Win32/Networking/WinSock/mod.rs:272:144
     |
 272 | ...PCSTR, proto : ::windows_sys::core::PCSTR) -> *mut SERVENT);
     |                                                       ^^^^^^^ not found in this scope
 
 error[E0412]: cannot find type `SERVENT` in this scope
-   --> vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs:273:121
+   --> vendor/windows-sys-0.52.0/src/Windows/Win32/Networking/WinSock/mod.rs:273:121
     |
 273 | ::windows_targets::link!("ws2_32.dll" "system" fn getservbyport(port : i32, proto : ::windows_sys::core::PCSTR) -> *mut SERVENT);
     |                                                                                                                         ^^^^^^^ not found in this scope
 
 Upstream-Status: Pending
 
-diff --git a/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs b/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs
+diff --git a/vendor/windows-sys-0.52.0/src/Windows/Win32/Networking/WinSock/mod.rs b/vendor/windows-sys-0.52.0/src/Windows/Win32/Networking/WinSock/mod.rs
 index 1111111..2222222 100644
---- a/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs
-+++ b/vendor/windows-sys/src/Windows/Win32/Networking/WinSock/mod.rs
+--- a/vendor/windows-sys-0.52.0/src/Windows/Win32/Networking/WinSock/mod.rs
++++ b/vendor/windows-sys-0.52.0/src/Windows/Win32/Networking/WinSock/mod.rs
 @@ -4762,16 +4762,16 @@ impl ::core::clone::Clone for SERVENT {
      }
  }
