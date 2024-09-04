@@ -2,7 +2,7 @@
 
 PKG             := compiler-rt-sanitizers
 $(PKG)_WEBSITE  := https://compiler-rt.llvm.org/
-$(PKG)_VERSION  := 19.1.0-rc3
+$(PKG)_VERSION  := 19.1.0-rc4
 $(PKG)_DEPS     := cc
 $(PKG)_TYPE     := meta
 
@@ -29,8 +29,7 @@ define $(PKG)_BUILD
         -DCOMPILER_RT_BUILD_PROFILE=FALSE \
         -DCOMPILER_RT_BUILD_MEMPROF=FALSE \
         -DCOMPILER_RT_BUILD_ORC=FALSE \
-        -DSANITIZER_CXX_ABI=libc++ \
-        $(if $(BUILD_STATIC), -DCMAKE_REQUIRED_LIBRARIES='unwind')
+        -DSANITIZER_CXX_ABI=libc++
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
 
