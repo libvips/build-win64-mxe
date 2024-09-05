@@ -121,9 +121,6 @@ whitelist+=(ntdll.dll)
 # See: https://github.com/rust-lang/rust/pull/121317
 whitelist+=(api-ms-win-core-synch-l1-2-0.dll)
 
-# Whitelist DbgHelp
-whitelist+=(dbghelp.dll)
-
 # Copy libvips and dependencies with pe-util
 binaries=$(peldd $bin_dir/$target_dll --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
 for dll in $binaries; do
