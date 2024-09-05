@@ -1,0 +1,117 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 5 Sep 2024 14:12:18 +0200
+Subject: [PATCH 1/1] threadset: fix a race condition during thread exit
+
+Under certain conditions, particularly with short-lived pipelines
+and high thread concurrency, a race condition could occur between
+the time an idle thread is stopped and when it is popped from the
+free list for reuse. This could potentially lead to an attempt to
+increment a semaphore on a thread that is in the process of exiting.
+
+Fix this race by setting the exit flag when a semaphore timeout
+occurs. This flag is checked before reusing an idle thread to ensure
+that no operations are performed on threads marked for exit.
+
+This regression was introduced in commit 848a119 (PR #3253).
+
+Upstream-Status: Submitted [https://github.com/libvips/libvips/pull/4137]
+
+diff --git a/ChangeLog b/ChangeLog
+index 1111111..2222222 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -5,6 +5,7 @@
+ - webpsave: fix memory leak on error [dloebl]
+ - heifsave: ensure NCLX profile is freed in lossless mode [kleisauke]
+ - threadpool: fix a race condition in error handling [kleisauke]
++- threadset: fix a race condition during thread exit [kleisauke]
+ 
+ 11/8/24 8.15.3
+ 
+diff --git a/libvips/iofuncs/threadset.c b/libvips/iofuncs/threadset.c
+index 1111111..2222222 100644
+--- a/libvips/iofuncs/threadset.c
++++ b/libvips/iofuncs/threadset.c
+@@ -74,7 +74,7 @@ typedef struct _VipsThreadsetMember {
+ 
+ 	/* Set by our controller to request exit.
+ 	 */
+-	gboolean kill;
++	gboolean exit;
+ } VipsThreadsetMember;
+ 
+ struct _VipsThreadset {
+@@ -116,11 +116,11 @@ vips_threadset_work(void *pointer)
+ 		 */
+ 		if (vips_semaphore_down_timeout(&member->idle,
+ 				max_idle_time) == -1)
+-			break;
++			member->exit = TRUE;
+ 
+-		/* Killed or no task available? Leave this thread.
++		/* Request to exit or no task available? Leave this thread.
+ 		 */
+-		if (member->kill ||
++		if (member->exit ||
+ 			!member->func)
+ 			break;
+ 
+@@ -150,7 +150,7 @@ vips_threadset_work(void *pointer)
+ 		g_mutex_unlock(set->lock);
+ 	}
+ 
+-	/* Timed-out or kill has been requested ... remove from both free
++	/* Timed-out or exit has been requested ... remove from both free
+ 	 * and member list.
+ 	 */
+ 	g_mutex_lock(set->lock);
+@@ -271,7 +271,7 @@ vips_threadset_run(VipsThreadset *set,
+ 
+ 	member = NULL;
+ 
+-	/* Try to get an idle thread.
++	/* Attempt to pop an idle thread from the free list.
+ 	 */
+ 	g_mutex_lock(set->lock);
+ 	if (set->free) {
+@@ -280,9 +280,9 @@ vips_threadset_run(VipsThreadset *set,
+ 	}
+ 	g_mutex_unlock(set->lock);
+ 
+-	/* None? Make a new idle but not free member.
++	/* None or exiting? Make a new idle but not free member.
+ 	 */
+-	if (!member)
++	if (!member || member->exit)
+ 		member = vips_threadset_add(set);
+ 
+ 	/* Still nothing? Thread create has failed.
+@@ -301,15 +301,15 @@ vips_threadset_run(VipsThreadset *set,
+ 	return 0;
+ }
+ 
+-/* Kill a member.
++/* Exit a member gracefully.
+  */
+ static void
+-vips_threadset_kill_member(VipsThreadsetMember *member)
++vips_threadset_exit_member(VipsThreadsetMember *member)
+ {
+ 	GThread *thread;
+ 
+ 	thread = g_thread_ref(member->thread);
+-	member->kill = TRUE;
++	member->exit = TRUE;
+ 
+ 	vips_semaphore_up(&member->idle);
+ 
+@@ -345,7 +345,7 @@ vips_threadset_free(VipsThreadset *set)
+ 		if (!member)
+ 			break;
+ 
+-		vips_threadset_kill_member(member);
++		vips_threadset_exit_member(member);
+ 	}
+ 
+ 	if (vips__leak)
