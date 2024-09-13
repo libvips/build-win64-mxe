@@ -13,32 +13,10 @@ index 1111111..2222222 100644
  path = "src/bin/ctest.rs"
  
  [dependencies]
--cargo = "0.81.0"
+-cargo = "0.82.0"
 -cargo-util = "0.2"
 +cargo = { git = "https://github.com/rust-lang/cargo.git", rev = "50237f4" }
 +cargo-util = { git = "https://github.com/rust-lang/cargo.git", rev = "50237f4" }
  semver = "1.0.3"
  log = "0.4"
  clap = { version = "4.0.29", features = ["color", "derive", "cargo", "string"] }
-diff --git a/src/build.rs b/src/build.rs
-index 1111111..2222222 100644
---- a/src/build.rs
-+++ b/src/build.rs
-@@ -1071,7 +1071,7 @@ pub fn cbuild(
-     let only_staticlib = !libkinds.contains(&"cdylib");
-     let only_cdylib = !libkinds.contains(&"staticlib");
- 
--    let profile = args.get_profile_name(config, default_profile, ProfileChecking::Custom)?;
-+    let profile = args.get_profile_name(default_profile, ProfileChecking::Custom)?;
- 
-     let profiles = Profiles::new(ws, profile)?;
- 
-@@ -1258,7 +1258,7 @@ pub fn ctest(
-     mut compile_opts: CompileOptions,
- ) -> CliResult {
-     compile_opts.build_config.requested_profile =
--        args.get_profile_name(config, "test", ProfileChecking::Custom)?;
-+        args.get_profile_name("test", ProfileChecking::Custom)?;
-     compile_opts.build_config.mode = CompileMode::Test;
- 
-     compile_opts.filter = ops::CompileFilter::new(

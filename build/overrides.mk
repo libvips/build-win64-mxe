@@ -39,22 +39,22 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-14
-imagemagick_CHECKSUM := 8bbb7de36546c60f4ebd37f9dce53e713a78efeee2a4246d534733e32a8cf149
+imagemagick_VERSION  := 6.9.13-16
+imagemagick_CHECKSUM := ab04edc1b0b6ee39fd7f568125c1b1ec12bbdb41f97a6888f5cde8622610ae30
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # alternatively, one could build libvips with GraphicsMagick
 # upstream version is 1.3.38
-graphicsmagick_VERSION  := 1.3.40
-graphicsmagick_CHECKSUM := 45e4da103e8106f1b751d73526ce41173db418bd56508a1c48fbb0ca139c9441
+graphicsmagick_VERSION  := 1.3.45
+graphicsmagick_CHECKSUM := dcea5167414f7c805557de2d7a47a9b3147bcbf617b91f5f0f4afe5e6543026b
 graphicsmagick_SUBDIR   := GraphicsMagick-$(graphicsmagick_VERSION)
-graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.lz
+graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.58.94
-librsvg_CHECKSUM := 05adf6dc58b3cfb319c2efb02b2bbdff5c75ca47cc941d48098839f20496abed
+librsvg_VERSION  := 2.59.0
+librsvg_CHECKSUM := 370d6ada5cf0de91ceb70d849ed069523ce5de2b33b4c7e86bc640673ad65483
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -67,14 +67,6 @@ pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
-
-# upstream version is 2.80.2
-glib_VERSION  := 2.82.0
-glib_CHECKSUM := f4c82ada51366bddace49d7ba54b33b4e4d6067afa3008e4847f41cb9b5c38d3
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
-glib_SUBDIR   := glib-$(glib_VERSION)
-glib_FILE     := glib-$(glib_VERSION).tar.xz
-glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 1.0.13
 # cannot use GH_CONF:
@@ -92,13 +84,13 @@ libexif_CHECKSUM := d47564c433b733d83b6704c70477e0a4067811d184ec565258ac563d8223
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.bz2
 
-# upstream version is 1.18.0
-cairo_VERSION  := 1.18.2
-cairo_CHECKSUM := a62b9bb42425e844cc3d6ddde043ff39dbabedd1542eba57a2eb79f85889d45a
-cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
-cairo_SUBDIR   := cairo-$(cairo_VERSION)
-cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
-cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
+# upstream version is 4.4.0
+cfitsio_VERSION  := 4.5.0
+cfitsio_CHECKSUM := e4854fc3365c1462e493aa586bfaa2f3d0bb8c20b75a524955db64c27427ce09
+cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
+cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
+cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
+cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -110,22 +102,6 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
-
-# upstream version is 2.13.2
-freetype_VERSION  := 2.13.3
-freetype_CHECKSUM := 0550350666d427c74daeb85d5ac7bb353acba5f76956395995311a9c6f063289
-freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
-freetype_SUBDIR   := freetype-$(freetype_VERSION)
-freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
-freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
-
-# upstream version is 2.13.2
-freetype-bootstrap_VERSION  := $(freetype_VERSION)
-freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
-freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
-freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
-freetype-bootstrap_FILE     := $(freetype_FILE)
-freetype-bootstrap_URL      := $(freetype_URL)
 
 # upstream version is 2.14.2
 fontconfig_VERSION  := 2.15.0

@@ -20,7 +20,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.10.0    | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.2    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.4.1     | MIT Licence                                                  |
-| [expat]         | 2.6.2     | MIT Licence                                                  |
+| [expat]         | 2.6.3     | MIT Licence                                                  |
 | [fontconfig]    | 2.15.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.15    | LGPLv3                                                       |
@@ -34,7 +34,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.18.2    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.43    | [libpng License version 2]                                   |
-| [librsvg]       | 2.58.94   | LGPLv3                                                       |
+| [librsvg]       | 2.59.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.3    | LGPLv3                                                       |
@@ -91,20 +91,20 @@ Same as libvips-web + these extra dependencies:
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
-| [cfitsio]       | 4.4.0     | BSD-like                                                     |
+| [cfitsio]       | 4.5.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.42.12   | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-14 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-16 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
-| [libjxl]        | 0.10.3    | BSD 3-Clause                                                 |
+| [libjxl]        | 0.11.0    | BSD 3-Clause                                                 |
 | [matio]         | 1.5.27    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.2     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
 | [poppler]       | 24.09.0   | GPLv2                                                        |
-| [sqlite]        | 3.46.0    | Public domain                                                |
+| [sqlite]        | 3.46.1    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -160,9 +160,11 @@ In that case, the following version of jpegli is built:
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [jpegli]        | 0.10.2    | BSD 3-Clause                                                 |
+| [jpegli]        | [be525a4] | BSD 3-Clause                                                 |
 
-[jpegli]: https://github.com/libjxl/libjxl/tree/main/lib/jpegli
+[be525a4]: https://github.com/google/jpegli/commit/be525a452e8b989de886118f049ab1440870e447
+
+[jpegli]: https://github.com/google/jpegli
 
 ## zlib
 
