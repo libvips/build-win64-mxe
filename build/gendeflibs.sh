@@ -43,7 +43,11 @@ dlltool=$target.$deps-dlltool
 
 cd $repackage_dir
 
-for dllfile in bin/*.dll; do
+dlls=(bin/*.dll)
+
+[ -f "${dlls[0]}" ] || { echo "WARNING: No DLLs found" >&2 ; exit 0; }
+
+for dllfile in "${dlls[@]}"; do
   base=$(basename $dllfile .dll)
 
   # dll names can have extra versioning in ... remove any trailing

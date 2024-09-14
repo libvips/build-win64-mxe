@@ -51,8 +51,29 @@ rm -rf $repackage_dir $pdb_dir
 mkdir -p $repackage_dir/bin
 mkdir $pdb_dir
 
-# Copy libvips-cpp-42.dll
-target_dll="libvips-cpp-42.dll"
+# Utilities
+strip=$target.$deps-strip
+
+# Directories
+install_dir=$mxe_prefix/$target.$deps
+bin_dir=$install_dir/bin
+lib_dir=$install_dir/lib
+
+# Ensure module_dir is set correctly when building nightly versions
+if [ -n "$GIT_COMMIT" ]; then
+  module_dir=$(printf '%s\n' $lib_dir/vips-modules-* | sort -n | tail -1)
+else
+  module_dir=$lib_dir/vips-modules-$vips_version
+fi
+module_dir_base=$(basename $module_dir)
+
+# List of PE targets that need to be copied, including their transitive dependencies and PDBs
+pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{vips,vipsedit,vipsheader,vipsthumbnail}.exe)
+
+if [ -d "$module_dir" ]; then
+  mkdir -p $repackage_dir/bin/$module_dir_base
+  pe_targets+=($module_dir/*.dll)
+fi
 
 zip_suffix="${vips_pre_version:+-$vips_pre_version}"
 
@@ -84,22 +105,6 @@ if [ "$ZLIB_NG" = "false" ]; then
   zip_suffix+="-zlib-vanilla"
 fi
 
-# Utilities
-strip=$target.$deps-strip
-
-# Directories
-install_dir=$mxe_prefix/$target.$deps
-bin_dir=$install_dir/bin
-lib_dir=$install_dir/lib
-
-# Ensure module_dir is set correctly when building nightly versions
-if [ -n "$GIT_COMMIT" ]; then
-  module_dir=$(printf '%s\n' $lib_dir/vips-modules-* | sort -n | tail -1)
-else
-  module_dir=$lib_dir/vips-modules-$vips_version
-fi
-module_dir_base=${module_dir##*/}
-
 echo "Copying libvips and dependencies"
 
 # Whitelist the API set DLLs
@@ -119,30 +124,22 @@ whitelist+=(ntdll.dll)
 whitelist+=(api-ms-win-core-synch-l1-2-0.dll)
 
 # Copy libvips and dependencies with pe-util
-binaries=$(peldd $bin_dir/$target_dll --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
-for dll in $binaries; do
-  base=$(basename $dll .dll)
-  cp $dll $repackage_dir/bin
-  [ -f $lib_dir/$base.pdb ] && cp $lib_dir/$base.pdb $pdb_dir
-done
+for pe_target in "${pe_targets[@]}"; do
+  [ -f "$pe_target" ] || { echo "WARNING: $pe_target doesn't exist." >&2 ; continue; }
 
-# Copy the transitive dependencies of the modules
-# which are not yet present in the bin directory.
-if [ -d "$module_dir" ]; then
-  mkdir -p $repackage_dir/bin/$module_dir_base
-  for module in $module_dir/*.dll; do
-    base=$(basename $module .dll)
-    cp $module $repackage_dir/bin/$module_dir_base
-    [ -f $lib_dir/$base.pdb ] && cp $lib_dir/$base.pdb $pdb_dir
+  pe_deps=$(peldd $pe_target --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
+  for pe_dep in $pe_deps; do
+    dir=$(dirname $pe_dep)
+    base=$(basename $pe_dep .${pe_dep##*.})
+    target_dir="$repackage_dir/bin"
+    [ "$dir" = "$module_dir" ] && target_dir+="/$module_dir_base"
 
-    binaries=$(peldd $module --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --transitive)
-    for dll in $binaries; do
-      base=$(basename $dll .dll)
-      cp -n $dll $repackage_dir/bin
-      [ -f $lib_dir/$base.pdb ] && cp -n $lib_dir/$base.pdb $pdb_dir
-    done
+    cp -n $pe_dep $target_dir
+
+    # Copy PDB files
+    [ -f $lib_dir/$base.pdb ] && cp -n $lib_dir/$base.pdb $pdb_dir
   done
-fi
+done
 
 echo "Copying install area $install_dir/"
 
@@ -183,11 +180,6 @@ rm $repackage_dir/{share,lib,include}/.gitkeep
 sed -i -e 's|#define GLIB_STATIC_COMPILATION 1|/* #undef GLIB_STATIC_COMPILATION */|' \
        -e 's|#define GOBJECT_STATIC_COMPILATION 1|/* #undef GOBJECT_STATIC_COMPILATION */|' \
        $repackage_dir/lib/glib-2.0/include/glibconfig.h
-
-echo "Copying vips executables"
-
-# We still need to copy the vips executables
-cp $install_dir/bin/{vips,vipsedit,vipsheader,vipsthumbnail}.exe $repackage_dir/bin/
 
 echo "Strip unneeded symbols"
 
