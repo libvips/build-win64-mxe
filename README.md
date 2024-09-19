@@ -28,23 +28,23 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [harfbuzz]      | 9.0.0     | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.16      | MIT Licence                                                  |
-| [libarchive]    | 3.7.4     | BSD 2-Clause                                                 |
+| [libarchive]    | 3.7.5     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.6     | MIT Licence                                                  |
 | [libheif]       | 1.18.2    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.43    | [libpng License version 2]                                   |
+| [libpng]        | 1.6.44    | [libpng License version 2]                                   |
 | [librsvg]       | 2.59.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
-| [libtiff]       | 4.6.0     | [libtiff License] (BSD-like)                                 |
+| [libtiff]       | 4.7.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.3    | LGPLv3                                                       |
 | [libwebp]       | 1.4.0     | New BSD License                                              |
-| [libxml2]       | 2.13.3    | MIT Licence                                                  |
+| [libxml2]       | 2.13.4    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.54.0    | LGPLv3                                                       |
 | [pixman]        | 0.43.4    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
-| [zlib-ng]       | 2.2.1     | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.2.2     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 
