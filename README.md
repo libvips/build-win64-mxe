@@ -23,18 +23,18 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [expat]         | 2.6.3     | MIT Licence                                                  |
 | [fontconfig]    | 2.15.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
-| [fribidi]       | 1.0.15    | LGPLv3                                                       |
-| [glib]          | 2.82.0    | LGPLv3                                                       |
-| [harfbuzz]      | 9.0.0     | MIT Licence                                                  |
+| [fribidi]       | 1.0.16    | LGPLv3                                                       |
+| [glib]          | 2.82.1    | LGPLv3                                                       |
+| [harfbuzz]      | 10.0.1    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.16      | MIT Licence                                                  |
-| [libarchive]    | 3.7.5     | BSD 2-Clause                                                 |
+| [libarchive]    | 3.7.6     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.6     | MIT Licence                                                  |
 | [libheif]       | 1.18.2    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.44    | [libpng License version 2]                                   |
-| [librsvg]       | 2.59.0    | LGPLv3                                                       |
+| [librsvg]       | 2.59.1    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.7.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.15.3    | LGPLv3                                                       |

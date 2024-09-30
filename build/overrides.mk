@@ -11,15 +11,6 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
-# no longer needed by libvips, but some of the deps need it
-# upstream version is 2.11.1
-libxml2_VERSION  := 2.13.4
-libxml2_CHECKSUM := 65d042e1c8010243e617efb02afda20b85c2160acdbfbcb5b26b80cec6515650
-libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
-libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
-libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
-libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
-
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -31,8 +22,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.7.5
-libarchive_CHECKSUM := ca74ff8f99dd40ab8a8274424d10a12a7ec3f4428dd35aee9fdda8bdb861b570
+libarchive_VERSION  := 3.7.6
+libarchive_CHECKSUM := 0a2efdcb185da2eb1e7cd8421434cb9a6119f72417a13335cca378d476fd3ba0
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
@@ -53,8 +44,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.59.0
-librsvg_CHECKSUM := 370d6ada5cf0de91ceb70d849ed069523ce5de2b33b4c7e86bc640673ad65483
+librsvg_VERSION  := 2.59.1
+librsvg_CHECKSUM := 6116267c7ddabfd4daaf1c341326da0a773139a7223e885ae40ee09bd6986ef6
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -71,8 +62,8 @@ pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERS
 # upstream version is 1.0.13
 # cannot use GH_CONF:
 # fribidi_GH_CONF  := fribidi/fribidi/releases,v
-fribidi_VERSION  := 1.0.15
-fribidi_CHECKSUM := 0bbc7ff633bfa208ae32d7e369cf5a7d20d5d2557a0b067c9aa98bcbf9967587
+fribidi_VERSION  := 1.0.16
+fribidi_CHECKSUM := 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9ea05c
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
@@ -102,14 +93,6 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
-
-# upstream version is 2.14.2
-fontconfig_VERSION  := 2.15.0
-fontconfig_CHECKSUM := 63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
-fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
-fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
-fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
-fontconfig_URL      := https://www.freedesktop.org/software/fontconfig/release/$(fontconfig_FILE)
 
 # upstream version is 3.0.1
 libjpeg-turbo_VERSION  := 3.0.3
@@ -569,7 +552,7 @@ define librsvg_BUILD
         -Dvala=disabled \
         -Dtests=false \
         -Dtriplet='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
-        $(if $(IS_LLVM), -Dc_link_args='$(LDFLAGS) -lntdll -luserenv -lsynchronization') \
+        $(if $(IS_LLVM), -Dc_link_args='$(LDFLAGS) -lntdll -luserenv -lsynchronization -lbcryptprimitives') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -579,7 +562,7 @@ define librsvg_BUILD
     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
     # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
     $(if $(and $(IS_LLVM),$(BUILD_STATIC)), \
-        $(SED) -i "/^Libs:/s/$$/ -lntdll -luserenv -lsynchronization/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
+        $(SED) -i "/^Libs:/s/$$/ -lntdll -luserenv -lsynchronization -lbcryptprimitives/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
 endef
 
 # compile with CMake

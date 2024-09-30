@@ -8,7 +8,7 @@ diff --git a/mesonbuild/compilers/mixins/clike.py b/mesonbuild/compilers/mixins/
 index 1111111..2222222 100644
 --- a/mesonbuild/compilers/mixins/clike.py
 +++ b/mesonbuild/compilers/mixins/clike.py
-@@ -1252,7 +1252,7 @@ class CLikeCompiler:
+@@ -1253,7 +1253,7 @@ class CLikeCompiler:
      def thread_flags(self, env: 'Environment') -> T.List[str]:
          # TODO: does this belong here or in GnuLike or maybe PosixLike?
          host_m = env.machines[self.for_machine]

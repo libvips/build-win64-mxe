@@ -3,38 +3,47 @@ This file is part of MXE. See LICENSE.md for licensing information.
 Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Tue, 30 Aug 2022 23:20:27 +0200
-Subject: [PATCH 1/3] windows-gnullvm: Avoid linking to libunwind statically
+From: =?UTF-8?q?Mateusz=20Miku=C5=82a?= <mati865@gmail.com>
+Date: Sat, 28 Sep 2024 11:05:03 +0200
+Subject: [PATCH 1/2] control libunwind linkage mode via `crt-static` on gnullvm
+ targets
 
-Avoid linking against the static variant of libunwind, which is not
-always available. Instead, prefer to use the unwind library from the
-toolchain, which the linker will automatically include, depending
-on what's available.
+Co-authored-by: Kleis Auke Wolthuizen <github@kleisauke.nl>
 
-Upstream-Status: Submitted [https://github.com/rust-lang/rust/pull/121794]
+Upstream-Status: Submitted [https://github.com/rust-lang/rust/pull/122003]
 
 diff --git a/compiler/rustc_target/src/spec/base/windows_gnullvm.rs b/compiler/rustc_target/src/spec/base/windows_gnullvm.rs
 index 1111111..2222222 100644
 --- a/compiler/rustc_target/src/spec/base/windows_gnullvm.rs
 +++ b/compiler/rustc_target/src/spec/base/windows_gnullvm.rs
-@@ -7,10 +7,7 @@ pub fn opts() -> TargetOptions {
-     // as a path since it's not added to linker search path by the default.
-     // There were attempts to make it behave like libgcc (so one can just use -l<name>)
-     // but LLVM maintainers rejected it: https://reviews.llvm.org/D51440
--    let pre_link_args = TargetOptions::link_args(
--        LinkerFlavor::Gnu(Cc::Yes, Lld::No),
--        &["-nolibc", "--unwindlib=none"],
--    );
-+    let pre_link_args = TargetOptions::link_args(LinkerFlavor::Gnu(Cc::Yes, Lld::No), &["-nolibc"]);
-     // Order of `late_link_args*` does not matter with LLD.
-     let late_link_args = TargetOptions::link_args(
-         LinkerFlavor::Gnu(Cc::Yes, Lld::No),
+@@ -42,6 +42,9 @@ pub(crate) fn opts() -> TargetOptions {
+         eh_frame_header: false,
+         no_default_libraries: false,
+         has_thread_local: true,
++        crt_static_allows_dylibs: true,
++        crt_static_default: true,
++        crt_static_respected: true,
+         // FIXME(davidtwco): Support Split DWARF on Windows GNU - may require LLVM changes to
+         // output DWO, despite using DWARF, doesn't use ELF..
+         debuginfo_kind: DebuginfoKind::Pdb,
+diff --git a/library/unwind/src/lib.rs b/library/unwind/src/lib.rs
+index 1111111..2222222 100644
+--- a/library/unwind/src/lib.rs
++++ b/library/unwind/src/lib.rs
+@@ -180,3 +180,8 @@ cfg_if::cfg_if! {
+ #[cfg(target_os = "hurd")]
+ #[link(name = "gcc_s")]
+ extern "C" {}
++
++#[cfg(all(target_os = "windows", target_env = "gnu", target_abi = "llvm"))]
++#[link(name = "unwind", kind = "static", modifiers = "-bundle", cfg(target_feature = "crt-static"))]
++#[link(name = "unwind", cfg(not(target_feature = "crt-static")))]
++extern "C" {}
 diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/libunwind.rs
 +++ b/library/unwind/src/libunwind.rs
-@@ -102,12 +102,9 @@ pub enum _Unwind_Context {}
+@@ -102,12 +102,9 @@ pub type _Unwind_Exception_Cleanup_Fn =
  // rustc_codegen_ssa::src::back::symbol_export, rustc_middle::middle::exported_symbols
  // and RFC 2841
  #[cfg_attr(
@@ -54,7 +63,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 16 Apr 2024 15:51:34 +0000
-Subject: [PATCH 2/3] std: revert use of `raw-dylib`
+Subject: [PATCH 2/2] std: revert use of `raw-dylib`
 
 See:
 https://github.com/msys2/MINGW-packages/issues/21017
@@ -64,16 +73,22 @@ diff --git a/library/std/src/sys/pal/windows/c.rs b/library/std/src/sys/pal/wind
 index 1111111..2222222 100644
 --- a/library/std/src/sys/pal/windows/c.rs
 +++ b/library/std/src/sys/pal/windows/c.rs
-@@ -109,7 +109,7 @@ pub struct MOUNT_POINT_REPARSE_BUFFER {
+@@ -108,13 +108,8 @@ if #[cfg(not(target_vendor = "uwp"))] {
+ }
  }
  
- // Use raw-dylib to import ProcessPrng as we can't rely on there being an import library.
--#[cfg(not(target_vendor = "win7"))]
-+#[cfg(any())]
- #[cfg_attr(
-     target_arch = "x86",
-     link(name = "bcryptprimitives", kind = "raw-dylib", import_name_type = "undecorated")
-@@ -151,19 +151,7 @@ pub fn GetTempPath2W(bufferlength: u32, buffer: PWSTR) -> u32 {
+-// Use raw-dylib to import ProcessPrng as we can't rely on there being an import library.
+ #[cfg(not(target_vendor = "win7"))]
+-#[cfg_attr(
+-    target_arch = "x86",
+-    link(name = "bcryptprimitives", kind = "raw-dylib", import_name_type = "undecorated")
+-)]
+-#[cfg_attr(not(target_arch = "x86"), link(name = "bcryptprimitives", kind = "raw-dylib"))]
++#[link(name = "bcryptprimitives")]
+ extern "system" {
+     pub fn ProcessPrng(pbdata: *mut u8, cbdata: usize) -> BOOL;
+ }
+@@ -151,19 +146,7 @@ compat_fn_with_fallback! {
  }
  
  #[cfg(not(target_vendor = "win7"))]
@@ -94,48 +109,3 @@ index 1111111..2222222 100644
  extern "system" {
      pub fn WaitOnAddress(
          address: *const c_void,
-diff --git a/library/std/src/sys/pal/windows/rand.rs b/library/std/src/sys/pal/windows/rand.rs
-index 1111111..2222222 100644
---- a/library/std/src/sys/pal/windows/rand.rs
-+++ b/library/std/src/sys/pal/windows/rand.rs
-@@ -2,7 +2,7 @@
- 
- use crate::sys::c;
- 
--#[cfg(not(target_vendor = "win7"))]
-+#[cfg(any())]
- #[inline]
- pub fn hashmap_random_keys() -> (u64, u64) {
-     let mut v = (0, 0);
-@@ -13,7 +13,6 @@ pub fn hashmap_random_keys() -> (u64, u64) {
-     v
- }
- 
--#[cfg(target_vendor = "win7")]
- pub fn hashmap_random_keys() -> (u64, u64) {
-     use crate::ffi::c_void;
-     use crate::io;
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sat, 10 Aug 2024 14:26:26 +0200
-Subject: [PATCH 3/3] library: update cc crate to v1.1.10
-
-Resolves: https://github.com/rust-lang/cc-rs/issues/1167
-
-diff --git a/library/Cargo.lock b/library/Cargo.lock
-index 1111111..2222222 100644
---- a/library/Cargo.lock
-+++ b/library/Cargo.lock
-@@ -42,9 +42,9 @@ checksum = "5c6cb57a04249c6480766f7f7cef5467412af1490f8d1e243141daddada3264f"
- 
- [[package]]
- name = "cc"
--version = "1.0.99"
-+version = "1.1.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "96c51067fd44124faa7f870b4b1c969379ad32b2ba805aa959430ceaa384f695"
-+checksum = "e9e8aabfac534be767c909e0690571677d49f41bd8465ae876fe043d52ba5292"
- 
- [[package]]
- name = "cfg-if"
