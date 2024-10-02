@@ -59,16 +59,18 @@ install_dir=$mxe_prefix/$target.$deps
 bin_dir=$install_dir/bin
 lib_dir=$install_dir/lib
 
-# Ensure module_dir is set correctly when building nightly versions
+# Ensure module_dir and cpp_binding is set correctly when building nightly versions
 if [ -n "$GIT_COMMIT" ]; then
   module_dir=$(printf '%s\n' $lib_dir/vips-modules-* | sort -n | tail -1)
+  cpp_binding=$(printf '%s\n' $bin_dir/libvips-cpp-42.*.dll | sort -n | tail -1)
 else
   module_dir=$lib_dir/vips-modules-$vips_version
+  cpp_binding=$bin_dir/libvips-cpp-42.$vips_version.$vips_patch_version.dll
 fi
 module_dir_base=$(basename $module_dir)
 
 # List of PE targets that need to be copied, including their transitive dependencies and PDBs
-pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{vips,vipsedit,vipsheader,vipsthumbnail}.exe)
+pe_targets=($cpp_binding $bin_dir/{vips,vipsedit,vipsheader,vipsthumbnail}.exe)
 
 if [ -d "$module_dir" ]; then
   mkdir -p $repackage_dir/bin/$module_dir_base

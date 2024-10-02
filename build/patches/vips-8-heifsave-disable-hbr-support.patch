@@ -18,27 +18,30 @@ diff --git a/libvips/foreign/heifsave.c b/libvips/foreign/heifsave.c
 index 1111111..2222222 100644
 --- a/libvips/foreign/heifsave.c
 +++ b/libvips/foreign/heifsave.c
-@@ -525,15 +525,10 @@ vips_foreign_save_heif_build(VipsObject *object)
+@@ -532,20 +532,9 @@ vips_foreign_save_heif_build(VipsObject *object)
  		!vips_object_argument_isset(object, "subsample_mode"))
  		heif->subsample_mode = VIPS_FOREIGN_SUBSAMPLE_OFF;
  
--	/* Default 12 bit save for 16-bit images. HEIC (for example) implements
--	 * 8 / 10 / 12.
--	 */
+-	/* Default 12 bit save for 16-bit images.
++	/* Prebuilt binaries support a bitdepth of 8 only.
+ 	 */
 -	if (!vips_object_argument_isset(object, "bitdepth"))
 -		heif->bitdepth =
 -			save->ready->Type == VIPS_INTERPRETATION_RGB16 ||
 -				save->ready->Type == VIPS_INTERPRETATION_GREY16
 -			? 12
 -			: 8;
+-
+-	/* HEIC and AVIF only implements 8 / 10 / 12 bit depth.
+-	 */
+-	if (heif->bitdepth != 12 &&
+-		heif->bitdepth != 10 &&
+-		heif->bitdepth != 8) {
 +	if (heif->bitdepth != 8) {
-+		g_warning("heifsave: prebuilt binaries support a bitdepth of 8 only");
-+		heif->bitdepth = 8;
-+	}
- 
- 	/* Try to find the selected encoder.
- 	 */
-@@ -675,14 +670,10 @@ vips_foreign_save_heif_build(VipsObject *object)
+ 		vips_error("heifsave", _("%d-bit colour depth not supported"),
+ 			heif->bitdepth);
+ 		return -1;
+@@ -691,14 +680,10 @@ vips_foreign_save_heif_build(VipsObject *object)
  }
  
  #define UC VIPS_FORMAT_UCHAR
@@ -54,16 +57,16 @@ index 1111111..2222222 100644
  };
  
  static void
-@@ -717,7 +708,7 @@ vips_foreign_save_heif_class_init(VipsForeignSaveHeifClass *class)
+@@ -733,7 +718,7 @@ vips_foreign_save_heif_class_init(VipsForeignSaveHeifClass *class)
  		_("Number of bits per pixel"),
  		VIPS_ARGUMENT_OPTIONAL_INPUT,
  		G_STRUCT_OFFSET(VipsForeignSaveHeif, bitdepth),
--		1, 16, 12);
-+		1, 16, 8);
+-		8, 12, 12);
++		8, 12, 8);
  
  	VIPS_ARG_BOOL(class, "lossless", 13,
  		_("Lossless"),
-@@ -770,7 +761,7 @@ vips_foreign_save_heif_init(VipsForeignSaveHeif *heif)
+@@ -786,7 +771,7 @@ vips_foreign_save_heif_init(VipsForeignSaveHeif *heif)
  {
  	heif->ctx = heif_context_alloc();
  	heif->Q = 50;
