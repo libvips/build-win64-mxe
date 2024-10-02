@@ -5,8 +5,8 @@ $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
 # This version needs to be in-sync with the compiler-rt-sanitizers package
-$(PKG)_VERSION  := 19.1.0
-$(PKG)_CHECKSUM := 5042522b49945bc560ff9206f25fb87980a9b89b914193ca00d961511ff0673c
+$(PKG)_VERSION  := 19.1.1
+$(PKG)_CHECKSUM := d40e933e2a208ee142898f85d886423a217e991abbcd42dd8211f507c93e1266
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-project-$($(PKG)_VERSION).src
