@@ -162,6 +162,10 @@ if [ "$with_ffi_compat" = "true" ]; then
   target+=".ffi"
 fi
 
+if [ "$with_disp" = "true" ]; then
+  target+=".disp"
+fi
+
 if [ "$with_debug" = "true" ]; then
   target+=".debug"
 fi
