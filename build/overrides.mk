@@ -22,16 +22,16 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.7.6
-libarchive_CHECKSUM := 0a2efdcb185da2eb1e7cd8421434cb9a6119f72417a13335cca378d476fd3ba0
+libarchive_VERSION  := 3.7.7
+libarchive_CHECKSUM := 879acd83c3399c7caaee73fe5f7418e06087ab2aaf40af3e99b9e29beb29faee
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-16
-imagemagick_CHECKSUM := ab04edc1b0b6ee39fd7f568125c1b1ec12bbdb41f97a6888f5cde8622610ae30
+imagemagick_VERSION  := 6.9.13-17
+imagemagick_CHECKSUM := e47682c10a730304fd78d3497314581c0bdc9bffe6d103201beca7b2e1d5d086
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -103,8 +103,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 24.09.0
-poppler_CHECKSUM := ebd857987e2395608c69fdc44009692d5906f13b612c5280beff65a0b75dc255
+poppler_VERSION  := 24.10.0
+poppler_CHECKSUM := 58ed1849810f04a10b37c7ff6f3e411845c8a57d731d599d0045acc7a7fff09d
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
