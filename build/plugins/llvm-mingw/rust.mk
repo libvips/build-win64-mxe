@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2024-10-02/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2024-10-16/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := ca6051de8426585ef88d8594feb33e26607a5a9e1fb8ae02f473d52e0cb97015
+$(PKG)_CHECKSUM := 6bfddf15640d040ced97d696b619f34ae74d352b82e7a414719df5f87d14e428
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2024-10-02/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2024-10-16/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -95,6 +95,6 @@ define $(PKG)_BUILD
      echo '[target.$(TARGET_RUST)]'; \
      echo 'ar = "$(PREFIX)/$(BUILD)/bin/llvm-ar"'; \
      echo 'linker = "$(TARGET)-clang"'; \
-     $(if $(BUILD_SHARED), echo 'rustflags = ["-Ctarget-feature=-crt-static"]';)) \
+     $(if $(BUILD_STATIC), echo 'rustflags = ["-Ctarget-feature=+crt-static"]';)) \
              > '$(PREFIX)/$(TARGET)/.cargo/config.toml'
 endef
