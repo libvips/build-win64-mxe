@@ -21,7 +21,7 @@ diff --git a/libvips/iofuncs/init.c b/libvips/iofuncs/init.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/init.c
 +++ b/libvips/iofuncs/init.c
-@@ -1211,6 +1211,12 @@ vips_guess_prefix(const char *argv0, const char *env_name)
+@@ -1207,6 +1207,12 @@ vips_guess_prefix(const char *argv0, const char *env_name)
  const char *
  vips_guess_libdir(const char *argv0, const char *env_name)
  {
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
  	const char *prefix = vips_guess_prefix(argv0, env_name);
  	static char *libdir = NULL;
  
-@@ -1235,6 +1241,7 @@ vips_guess_libdir(const char *argv0, const char *env_name)
+@@ -1231,6 +1237,7 @@ vips_guess_libdir(const char *argv0, const char *env_name)
  		libdir = g_strdup_printf("%s/lib", prefix);
  
  	return libdir;
