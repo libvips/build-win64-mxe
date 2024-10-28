@@ -29,7 +29,7 @@ diff --git a/library/unwind/src/lib.rs b/library/unwind/src/lib.rs
 index 1111111..2222222 100644
 --- a/library/unwind/src/lib.rs
 +++ b/library/unwind/src/lib.rs
-@@ -179,3 +179,8 @@ cfg_if::cfg_if! {
+@@ -178,3 +178,8 @@ cfg_if::cfg_if! {
  #[cfg(target_os = "hurd")]
  #[link(name = "gcc_s")]
  extern "C" {}

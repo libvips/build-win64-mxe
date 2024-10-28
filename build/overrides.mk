@@ -59,14 +59,6 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 2.82.1
-glib_VERSION  := 2.82.2
-glib_CHECKSUM := ab45f5a323048b1659ee0fbda5cecd94b099ab3e4b9abf26ae06aeb3e781fd63
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
-glib_SUBDIR   := glib-$(glib_VERSION)
-glib_FILE     := glib-$(glib_VERSION).tar.xz
-glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
-
 # upstream version is 1.0.13
 # cannot use GH_CONF:
 # fribidi_GH_CONF  := fribidi/fribidi/releases,v

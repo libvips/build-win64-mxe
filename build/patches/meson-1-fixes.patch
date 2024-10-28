@@ -21,7 +21,7 @@ diff --git a/mesonbuild/linkers/linkers.py b/mesonbuild/linkers/linkers.py
 index 1111111..2222222 100644
 --- a/mesonbuild/linkers/linkers.py
 +++ b/mesonbuild/linkers/linkers.py
-@@ -641,7 +641,8 @@ class GnuLikeDynamicLinkerMixin:
+@@ -644,7 +644,8 @@ class GnuLikeDynamicLinkerMixin:
          return self._apply_prefix('--out-implib=' + implibname)
  
      def thread_flags(self, env: 'Environment') -> T.List[str]:
