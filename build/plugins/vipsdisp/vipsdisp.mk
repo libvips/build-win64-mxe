@@ -2,11 +2,10 @@ PKG             := vipsdisp
 $(PKG)_WEBSITE  := https://github.com/jcupitt/vipsdisp
 $(PKG)_DESCR    := Tiny libvips / gtk+4 image viewer
 $(PKG)_IGNORE   :=
-# https://github.com/jcupitt/vipsdisp/tarball/5638e7018bc41102abed0fac059e56960c6f3d60
-$(PKG)_VERSION  := 5638e70
-$(PKG)_CHECKSUM := 65ba9ba6448b105489132ed4b53cfa11efd3f3ab0f8018adb86b716d1d9d7f31
+$(PKG)_VERSION  := 3.1.0
+$(PKG)_CHECKSUM := 53c9dc008b2f6ace62dc2a985cebf1958205d4d5c6df32392d2f98ed96b6453e
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := jcupitt/vipsdisp/branches/master
+$(PKG)_GH_CONF  := jcupitt/vipsdisp/tags,v
 $(PKG)_DEPS     := cc meson-wrapper gtk4 $(foreach TARGET,$(MXE_TARGETS),vips-$(lastword $(call split,.,$(TARGET))))
 
 define $(PKG)_PRE_CONFIGURE

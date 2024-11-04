@@ -14,8 +14,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.27
-matio_CHECKSUM := 0a6aa00b18c4512b63a8d27906b079c8c6ed41d4b2844f7a4ae598e18d22d3b3
+matio_VERSION  := 1.5.28
+matio_CHECKSUM := 9da698934a21569af058e6348564666f45029e6c2b0878ca0d8f9609bf77b8d8
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
@@ -44,8 +44,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.59.1
-librsvg_CHECKSUM := 6116267c7ddabfd4daaf1c341326da0a773139a7223e885ae40ee09bd6986ef6
+librsvg_VERSION  := 2.59.2
+librsvg_CHECKSUM := ecd293fb0cc338c170171bbc7bcfbea6725d041c95f31385dc935409933e4597
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -103,8 +103,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 24.10.0
-poppler_CHECKSUM := 58ed1849810f04a10b37c7ff6f3e411845c8a57d731d599d0045acc7a7fff09d
+poppler_VERSION  := 24.11.0
+poppler_CHECKSUM := 7723d880565211740c13649d24a300257b86ddd7fa2d208187ff7e5cc8dfbd58
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
