@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/7851e99345a782a836612aa6e06fdd23350034b5
-$(PKG)_VERSION  := 7851e99
-$(PKG)_CHECKSUM := bda1b92870a5dd1ab4b067050db99aff670a9ef1d763418645506c4448fa909c
+# https://github.com/mstorsjo/llvm-mingw/tarball/0ebb52ae0ef9d58f26dcb87d0807808615b722dd
+$(PKG)_VERSION  := 0ebb52a
+$(PKG)_CHECKSUM := ba0763b68c80988da97c07c32cb363d8cb95bb1df9318e7801eb5ca9a7de5319
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := mingw-w64
