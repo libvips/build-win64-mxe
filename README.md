@@ -20,18 +20,18 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.10.0    | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.2    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.4.1     | MIT Licence                                                  |
-| [expat]         | 2.6.3     | MIT Licence                                                  |
+| [expat]         | 2.6.4     | MIT Licence                                                  |
 | [fontconfig]    | 2.15.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16    | LGPLv3                                                       |
-| [glib]          | 2.82.2    | LGPLv3                                                       |
-| [harfbuzz]      | 10.0.1    | MIT Licence                                                  |
+| [glib]          | 2.83.0    | LGPLv3                                                       |
+| [harfbuzz]      | 10.1.0    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.16      | MIT Licence                                                  |
 | [libarchive]    | 3.7.7     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.6     | MIT Licence                                                  |
-| [libheif]       | 1.19.1    | LGPLv3                                                       |
+| [libheif]       | 1.19.2    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.44    | [libpng License version 2]                                   |
 | [librsvg]       | 2.59.2    | LGPLv3                                                       |
@@ -42,7 +42,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.13.4    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.54.0    | LGPLv3                                                       |
-| [pixman]        | 0.43.4    | MIT Licence                                                  |
+| [pixman]        | 0.44.0    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.2.2     | [zlib-ng Licence]                                            |
 

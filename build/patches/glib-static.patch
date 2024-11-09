@@ -12,7 +12,7 @@ diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -842,12 +842,9 @@ else
+@@ -860,12 +860,9 @@ else
    gio_dtrace_hdr = []
  endif
  
@@ -30,7 +30,7 @@ diff --git a/gmodule/meson.build b/gmodule/meson.build
 index 1111111..2222222 100644
 --- a/gmodule/meson.build
 +++ b/gmodule/meson.build
-@@ -90,11 +90,8 @@ if host_system == 'windows'
+@@ -88,11 +88,8 @@ if host_system == 'windows'
    gmodule_sources += [gmodule_win_res]
  endif
  
@@ -47,7 +47,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -319,13 +319,14 @@ endif
+@@ -324,13 +324,14 @@ endif
  if glib_build_static_only
    glibconfig_conf.set('GLIB_STATIC_COMPILATION', '1')
    glibconfig_conf.set('GOBJECT_STATIC_COMPILATION', '1')

@@ -105,7 +105,7 @@ diff --git a/glib/meson.build b/glib/meson.build
 index 1111111..2222222 100644
 --- a/glib/meson.build
 +++ b/glib/meson.build
-@@ -220,7 +220,6 @@ glib_sub_headers = files(
+@@ -216,7 +216,6 @@ glib_sub_headers = files(
    'grcbox.h',
    'grefcount.h',
    'grefstring.h',
@@ -113,7 +113,7 @@ index 1111111..2222222 100644
    'gscanner.h',
    'gsequence.h',
    'gshell.h',
-@@ -314,7 +313,6 @@ glib_sources += files(
+@@ -310,7 +309,6 @@ glib_sources += files(
    'grcbox.c',
    'grefcount.c',
    'grefstring.c',
@@ -121,7 +121,7 @@ index 1111111..2222222 100644
    'gscanner.c',
    'gsequence.c',
    'gshell.c',
-@@ -399,13 +397,7 @@ else
+@@ -395,13 +393,7 @@ else
    glib_dtrace_hdr = []
  endif
  
@@ -136,7 +136,7 @@ index 1111111..2222222 100644
  libglib = library('glib-2.0',
    glib_dtrace_obj, glib_dtrace_hdr,
    sources : [glib_deprecated_sources, glib_sources],
-@@ -425,7 +417,6 @@ libglib = library('glib-2.0',
+@@ -421,7 +413,6 @@ libglib = library('glib-2.0',
      libm,
      librt,
      libsysprof_capture_dep,
@@ -182,7 +182,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2199,46 +2199,6 @@ else
+@@ -2210,46 +2210,6 @@ else
    libiconv = dependency('iconv')
  endif
  
@@ -227,5 +227,5 @@ index 1111111..2222222 100644
 -endif
 -
  # Import the gvdb sources as a subproject to avoid having the copylib in-tree
- subproject('gvdb')
+ subproject('gvdb', default_options: {'tests': false})
  gvdb_dep = dependency('gvdb')

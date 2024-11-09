@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 9 Nov 2024 13:29:41 +0100
+Subject: [PATCH 1/1] Only use `dllexport`/`dllimport` on MSVC
+
+This reverts commit fefce85ca9057a31167d16d17aea9fee9bf95869 and
+26050190264a1c70d27963712a083ac284267c06.
+
+Whereas GCC exports all symbols when the `dllexport`/`dllimport`
+attributes are not specified, Clang natively supports
+`-fvisibility=hidden` for Windows targets.
+
+This ensures that nothing is exported for static builds, see:
+https://github.com/strukturag/libheif/issues/513
+https://github.com/strukturag/libheif/issues/902
+
+Upstream-Status: Inappropriate [other]
+Upstream may still use GCC.
+
+diff --git a/libheif/api/libheif/heif.h b/libheif/api/libheif/heif.h
+index 1111111..2222222 100644
+--- a/libheif/api/libheif/heif.h
++++ b/libheif/api/libheif/heif.h
+@@ -55,7 +55,7 @@ extern "C" {
+ //  1.18           5            7             1             1            1            1
+ //  1.19           6            7             2             1            1            1
+ 
+-#if (defined(_WIN32) || defined __CYGWIN__) && !defined(LIBHEIF_STATIC_BUILD)
++#if defined(_MSC_VER) && !defined(LIBHEIF_STATIC_BUILD)
+ #ifdef LIBHEIF_EXPORTS
+ #define LIBHEIF_API __declspec(dllexport)
+ #else
