@@ -11,6 +11,15 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
+# no longer needed by libvips, but some of the deps need it
+# upstream version is 2.13.4
+libxml2_VERSION  := 2.13.5
+libxml2_CHECKSUM := 74fc163217a3964257d3be39af943e08861263c4231f9ef5b496b6f6d4c7b2b6
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
+libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
+libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
+
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -30,8 +39,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-17
-imagemagick_CHECKSUM := e47682c10a730304fd78d3497314581c0bdc9bffe6d103201beca7b2e1d5d086
+imagemagick_VERSION  := 6.9.13-19
+imagemagick_CHECKSUM := d567088005307e6231fcc28f114a1a29d70482ad474b5e31100a4c41ca9f739b
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -76,14 +85,6 @@ glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
-
-# upstream version is 2.6.3
-expat_VERSION  := 2.6.4
-expat_CHECKSUM := a695629dae047055b37d50a0ff4776d1d45d0a4c842cf4ccee158441f55ff7ee
-expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
-expat_SUBDIR   := expat-$(expat_VERSION)
-expat_FILE     := expat-$(expat_VERSION).tar.xz
-expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
 
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.24
@@ -425,14 +426,12 @@ define gdk-pixbuf_BUILD
 endef
 
 # build pixman with the Meson build system
-# build with -Da64-neon=disabled, see:
-# https://gitlab.freedesktop.org/pixman/pixman/-/issues/66
 define pixman_BUILD
     $(MXE_MESON_WRAPPER) \
         -Dopenmp=disabled \
         -Dgtk=disabled \
         -Dtests=disabled \
-        -Da64-neon=disabled \
+        -Ddemos=disabled \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
