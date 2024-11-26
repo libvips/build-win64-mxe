@@ -4,9 +4,9 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/0ebb52ae0ef9d58f26dcb87d0807808615b722dd
-$(PKG)_VERSION  := 0ebb52a
-$(PKG)_CHECKSUM := ba0763b68c80988da97c07c32cb363d8cb95bb1df9318e7801eb5ca9a7de5319
+# https://github.com/mstorsjo/llvm-mingw/tarball/9128fa8dbaea64ded0bae9edd1ca06e10b0d19f4
+$(PKG)_VERSION  := 9128fa8
+$(PKG)_CHECKSUM := a0494240b75a8bc9c884e8ea548f36d645fa80a133c4f8565d3a315dd65c36e4
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
 $(PKG)_DEPS     := mingw-w64
@@ -76,6 +76,9 @@ define $(PKG)_PRE_BUILD
                   -e 's|^DIR=.*|DIR="$(PREFIX)/$(BUILD)/bin"|' \
                   -e 's|$$FLAGS "$$@"|$$FLAGS --sysroot="$(PREFIX)/$(TARGET)" "$$@"|' '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh'; \
         $(INSTALL) -m755 '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh' '$(PREFIX)/$(TARGET)/bin';)
+
+    $(INSTALL) -m644 '$(SOURCE_DIR)/wrappers/mingw32-common.cfg' '$(PREFIX)/$(BUILD)/bin'
+    $(INSTALL) -m644 '$(SOURCE_DIR)/wrappers/$(PROCESSOR)-w64-windows-gnu.cfg' '$(PREFIX)/$(BUILD)/bin'
 
     $(foreach EXEC, clang clang++ gcc g++ c++, \
         ln -sf '$(PREFIX)/$(TARGET)/bin/clang-target-wrapper.sh' '$(PREFIX)/bin/$(TARGET)-$(EXEC)';)

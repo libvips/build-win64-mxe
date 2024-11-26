@@ -34,6 +34,34 @@ index 1111111..2222222 100644
  build-only-$(1)_$(3): BUILD_TYPE = $(if $(findstring debug,$(3) $($(1)_CONFIGURE_OPTS)),debug,release)
  build-only-$(1)_$(3): BUILD_TYPE_SUFFIX = $(if $(findstring debug,$(3) $($(1)_CONFIGURE_OPTS)),d)
  build-only-$(1)_$(3): INSTALL_STRIP_TOOLCHAIN = install$(if $(STRIP_TOOLCHAIN),-strip)
+diff --git a/src/cmake-conf.mk b/src/cmake-conf.mk
+index 1111111..2222222 100644
+--- a/src/cmake-conf.mk
++++ b/src/cmake-conf.mk
+@@ -24,6 +24,8 @@ define $(PKG)_BUILD
+         -DCMAKE_STATIC_BOOL=$(CMAKE_STATIC_BOOL) \
+         -DLIBTYPE=$(if $(BUILD_SHARED),SHARED,STATIC) \
+         -DPROCESSOR=$(PROCESSOR) \
++        -DCC=$(if $(IS_LLVM),clang,gcc) \
++        -DCXX=$(if $(IS_LLVM),clang++,g++) \
+         -DPREFIX=$(PREFIX) \
+         -DTARGET=$(TARGET) \
+         -DBUILD=$(BUILD) \
+diff --git a/src/cmake/conf/mxe-conf.cmake.in b/src/cmake/conf/mxe-conf.cmake.in
+index 1111111..2222222 100644
+--- a/src/cmake/conf/mxe-conf.cmake.in
++++ b/src/cmake/conf/mxe-conf.cmake.in
+@@ -81,8 +81,8 @@ set(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES @PREFIX@/@TARGET@/include)
+ 
+ 
+ ## Programs
+-set(CMAKE_C_COMPILER @PREFIX@/bin/@TARGET@-gcc)
+-set(CMAKE_CXX_COMPILER @PREFIX@/bin/@TARGET@-g++)
++set(CMAKE_C_COMPILER @PREFIX@/bin/@TARGET@-@CC@)
++set(CMAKE_CXX_COMPILER @PREFIX@/bin/@TARGET@-@CXX@)
+ set(CMAKE_Fortran_COMPILER @PREFIX@/bin/@TARGET@-gfortran)
+ set(CMAKE_RC_COMPILER @PREFIX@/bin/@TARGET@-windres)
+ # CMAKE_RC_COMPILE_OBJECT is defined in:
 diff --git a/src/meson-wrapper.mk b/src/meson-wrapper.mk
 index 1111111..2222222 100644
 --- a/src/meson-wrapper.mk
@@ -84,7 +112,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 17 Jul 2021 15:00:00 +0200
-Subject: [PATCH 2/9] Improve meson wrapper
+Subject: [PATCH 2/9] Improve Meson wrapper
 
 
 diff --git a/src/meson-wrapper.mk b/src/meson-wrapper.mk
