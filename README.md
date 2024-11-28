@@ -31,7 +31,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libarchive]    | 3.7.7     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.24    | LGPLv3                                                       |
 | [libffi]        | 3.4.6     | MIT Licence                                                  |
-| [libheif]       | 1.19.3    | LGPLv3                                                       |
+| [libheif]       | 1.19.5    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.44    | [libpng License version 2]                                   |
 | [librsvg]       | 2.59.2    | LGPLv3                                                       |
@@ -41,7 +41,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libwebp]       | 1.4.0     | New BSD License                                              |
 | [libxml2]       | 2.13.5    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
-| [pango]         | 1.54.0    | LGPLv3                                                       |
+| [pango]         | 1.55.0    | LGPLv3                                                       |
 | [pixman]        | 0.44.0    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.2.2     | [zlib-ng Licence]                                            |
@@ -97,14 +97,14 @@ Same as libvips-web + these extra dependencies:
 | [imagemagick]   | 6.9.13-19 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.0.5     | MIT Licence                                                  |
-| [libjxl]        | 0.11.0    | BSD 3-Clause                                                 |
+| [libjxl]        | 0.11.1    | BSD 3-Clause                                                 |
 | [matio]         | 1.5.28    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.2     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
 | [poppler]       | 24.11.0   | GPLv2                                                        |
-| [sqlite]        | 3.47.0    | Public domain                                                |
+| [sqlite]        | 3.47.1    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
@@ -200,7 +200,7 @@ prebuilt binaries while it is patent-encumbered.
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
 | [libde265]      | 1.0.15    | LGPLv3                                                       |
-| [x265]          | 4.0       | GPLv2                                                        |
+| [x265]          | 4.1       | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265
 [x265]: https://bitbucket.org/multicoreware/x265_git/wiki/Home

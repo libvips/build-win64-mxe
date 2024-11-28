@@ -61,8 +61,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
-pango_VERSION  := 1.54.0
-pango_CHECKSUM := 8a9eed75021ee734d7fc0fdf3a65c3bba51dfefe4ae51a9b414a60c70b2d1ed8
+pango_VERSION  := 1.55.0
+pango_CHECKSUM := a2c17a8dc459a7267b8b167bb149d23ff473b6ff9d5972bee047807ee2220ccf
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -555,9 +555,6 @@ define pango_BUILD
         '$(BUILD_DIR)'
 
     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
-
-    # pangowin32-dwrite-utils-legacy.cpp depends upon the C++ standard library
-    echo 'Libs.private: -lc++' >> '$(PREFIX)/$(TARGET)/lib/pkgconfig/pangowin32.pc'
 endef
 
 # compile with the Rust toolchain
@@ -650,7 +647,8 @@ define tiff_BUILD
         --disable-old-jpeg \
         --disable-cxx \
         --disable-lzma \
-        --disable-zstd
+        --disable-zstd \
+        $(if $(and $(IS_JPEGLI),$(BUILD_STATIC)), LIBS="`'$(TARGET)-pkg-config' --libs libjpeg`")
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
 endef
