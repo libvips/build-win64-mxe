@@ -42,7 +42,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libxml2]       | 2.13.5    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.55.0    | LGPLv3                                                       |
-| [pixman]        | 0.44.0    | MIT Licence                                                  |
+| [pixman]        | 0.44.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.2.2     | [zlib-ng Licence]                                            |
 
@@ -103,7 +103,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.2     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 24.11.0   | GPLv2                                                        |
+| [poppler]       | 24.12.0   | GPLv2                                                        |
 | [sqlite]        | 3.47.1    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
