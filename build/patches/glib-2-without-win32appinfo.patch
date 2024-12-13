@@ -16,7 +16,7 @@ diff --git a/gio/giomodule.c b/gio/giomodule.c
 index 1111111..2222222 100644
 --- a/gio/giomodule.c
 +++ b/gio/giomodule.c
-@@ -1123,7 +1123,6 @@ DllMain (HINSTANCE hinstDLL,
+@@ -1120,7 +1120,6 @@ DllMain (HINSTANCE hinstDLL,
    if (fdwReason == DLL_PROCESS_ATTACH)
      {
        gio_dll = hinstDLL;
@@ -24,7 +24,7 @@ index 1111111..2222222 100644
      }
  
    return TRUE;
-@@ -1164,7 +1163,6 @@ giomodule_init_ctor (void)
+@@ -1161,7 +1160,6 @@ giomodule_init_ctor (void)
  #ifdef GOBJECT_STATIC_COMPILATION
    gobject_win32_init ();
  #endif /* GOBJECT_STATIC_COMPILATION */

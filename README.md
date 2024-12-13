@@ -24,7 +24,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.15.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16    | LGPLv3                                                       |
-| [glib]          | 2.83.0    | LGPLv3                                                       |
+| [glib]          | 2.83.2    | LGPLv3                                                       |
 | [harfbuzz]      | 10.1.0    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.16      | MIT Licence                                                  |
@@ -41,7 +41,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libwebp]       | 1.4.0     | New BSD License                                              |
 | [libxml2]       | 2.13.5    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
-| [pango]         | 1.55.0    | LGPLv3                                                       |
+| [pango]         | 1.55.5    | LGPLv3                                                       |
 | [pixman]        | 0.44.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.2.2     | [zlib-ng Licence]                                            |
@@ -96,15 +96,15 @@ Same as libvips-web + these extra dependencies:
 | [gdk-pixbuf]    | 2.42.12   | LGPLv3                                                       |
 | [imagemagick]   | 6.9.13-19 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
-| [libdicom]      | 1.0.5     | MIT Licence                                                  |
+| [libdicom]      | 1.1.0     | MIT Licence                                                  |
 | [libjxl]        | 0.11.1    | BSD 3-Clause                                                 |
 | [matio]         | 1.5.28    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
-| [openjpeg]      | 2.5.2     | BSD 2-Clause                                                 |
+| [openjpeg]      | 2.5.3     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
 | [poppler]       | 24.12.0   | GPLv2                                                        |
-| [sqlite]        | 3.47.1    | Public domain                                                |
+| [sqlite]        | 3.47.2    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/

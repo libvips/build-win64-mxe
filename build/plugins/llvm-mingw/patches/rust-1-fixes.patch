@@ -3,66 +3,9 @@ This file is part of MXE. See LICENSE.md for licensing information.
 Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Mateusz=20Miku=C5=82a?= <mati865@gmail.com>
-Date: Sat, 28 Sep 2024 11:05:03 +0200
-Subject: [PATCH 1/2] control libunwind linkage mode via `crt-static` on gnullvm
- targets
-
-Co-authored-by: Kleis Auke Wolthuizen <github@kleisauke.nl>
-
-Upstream-Status: Submitted [https://github.com/rust-lang/rust/pull/122003]
-
-diff --git a/compiler/rustc_target/src/spec/base/windows_gnullvm.rs b/compiler/rustc_target/src/spec/base/windows_gnullvm.rs
-index 1111111..2222222 100644
---- a/compiler/rustc_target/src/spec/base/windows_gnullvm.rs
-+++ b/compiler/rustc_target/src/spec/base/windows_gnullvm.rs
-@@ -42,6 +42,8 @@ pub(crate) fn opts() -> TargetOptions {
-         eh_frame_header: false,
-         no_default_libraries: false,
-         has_thread_local: true,
-+        crt_static_allows_dylibs: true,
-+        crt_static_respected: true,
-         // FIXME(davidtwco): Support Split DWARF on Windows GNU - may require LLVM changes to
-         // output DWO, despite using DWARF, doesn't use ELF..
-         debuginfo_kind: DebuginfoKind::Pdb,
-diff --git a/library/unwind/src/lib.rs b/library/unwind/src/lib.rs
-index 1111111..2222222 100644
---- a/library/unwind/src/lib.rs
-+++ b/library/unwind/src/lib.rs
-@@ -178,3 +178,8 @@ cfg_if::cfg_if! {
- #[cfg(target_os = "hurd")]
- #[link(name = "gcc_s")]
- extern "C" {}
-+
-+#[cfg(all(target_os = "windows", target_env = "gnu", target_abi = "llvm"))]
-+#[link(name = "unwind", kind = "static", modifiers = "-bundle", cfg(target_feature = "crt-static"))]
-+#[link(name = "unwind", cfg(not(target_feature = "crt-static")))]
-+extern "C" {}
-diff --git a/library/unwind/src/libunwind.rs b/library/unwind/src/libunwind.rs
-index 1111111..2222222 100644
---- a/library/unwind/src/libunwind.rs
-+++ b/library/unwind/src/libunwind.rs
-@@ -102,12 +102,9 @@ pub type _Unwind_Exception_Cleanup_Fn =
- // rustc_codegen_ssa::src::back::symbol_export, rustc_middle::middle::exported_symbols
- // and RFC 2841
- #[cfg_attr(
--    any(
--        all(
--            feature = "llvm-libunwind",
--            any(target_os = "fuchsia", target_os = "linux", target_os = "xous")
--        ),
--        all(target_os = "windows", target_env = "gnu", target_abi = "llvm")
-+    all(
-+        feature = "llvm-libunwind",
-+        any(target_os = "fuchsia", target_os = "linux", target_os = "xous")
-     ),
-     link(name = "unwind", kind = "static", modifiers = "-bundle")
- )]
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Tue, 16 Apr 2024 15:51:34 +0000
-Subject: [PATCH 2/2] std: revert use of `raw-dylib`
+Subject: [PATCH 1/1] std: revert use of `raw-dylib`
 
 See:
 https://github.com/msys2/MINGW-packages/issues/21017
