@@ -30,8 +30,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-19
-imagemagick_CHECKSUM := d567088005307e6231fcc28f114a1a29d70482ad474b5e31100a4c41ca9f739b
+imagemagick_VERSION  := 6.9.13-21
+imagemagick_CHECKSUM := 36a7205c73db9107acec5bb7594e3afbde3cc08a89f0a22a15eead387244fa05
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -75,14 +75,6 @@ libexif_CHECKSUM := d47564c433b733d83b6704c70477e0a4067811d184ec565258ac563d8223
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.bz2
 
-# upstream version is 4.4.0
-cfitsio_VERSION  := 4.5.0
-cfitsio_CHECKSUM := e4854fc3365c1462e493aa586bfaa2f3d0bb8c20b75a524955db64c27427ce09
-cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
-cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
-cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
-cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
-
 # upstream version is 0.43.4
 pixman_VERSION  := 0.44.2
 pixman_CHECKSUM := 50baf820dde0c5ff9714d03d2df4970f606a3d3b1024f5404c0398a9821cc4b0
@@ -103,8 +95,8 @@ openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 3.0.1
-libjpeg-turbo_VERSION  := 3.0.4
-libjpeg-turbo_CHECKSUM := 99130559e7d62e8d695f2c0eaeef912c5828d5b84a0537dcb24c9678c9d5b76b
+libjpeg-turbo_VERSION  := 3.1.0
+libjpeg-turbo_CHECKSUM := 9564c72b1dfd1d6fe6274c5f95a8d989b59854575d4bbee44ade7bc17aa9bc93
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
@@ -140,6 +132,7 @@ mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64
 ## Patches that we override with our own
 
 cairo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
+cfitsio_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 fftw_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fftw-[0-9]*.patch)))
 fontconfig_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 freetype_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
@@ -781,9 +774,8 @@ define openexr_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef
 
-define cfitsio_BUILD_SHARED
+define cfitsio_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-        -DBUILD_SHARED_LIBS=ON \
         -DUSE_CURL=OFF \
         '$(SOURCE_DIR)'
 

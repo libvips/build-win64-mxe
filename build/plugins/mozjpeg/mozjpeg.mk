@@ -4,8 +4,7 @@ $(PKG)_DESCR    := A JPEG codec that provides increased compression for JPEG ima
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 4.1.5
 $(PKG)_CHECKSUM := 9fcbb7171f6ac383f5b391175d6fb3acde5e64c4c4727274eade84ed0998fcc1
-# Avoid duplicated patches
-$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/../../patches/libjpeg-turbo-[0-9]*.patch)))
+$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := mozilla/mozjpeg/tags,v
 $(PKG)_DEPS     := cc $(BUILD)~nasm
 
