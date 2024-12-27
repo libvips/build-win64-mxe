@@ -598,7 +598,7 @@ endef
 # the zlib configure is a bit basic, so we'll use cmake
 define zlib_BUILD
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
-        -DSKIP_BUILD_EXAMPLES=ON \
+        -DZLIB_BUILD_EXAMPLES=OFF \
         -DINSTALL_PKGCONFIG_DIR='$(PREFIX)/$(TARGET)/lib/pkgconfig' \
         '$(SOURCE_DIR)'
 
