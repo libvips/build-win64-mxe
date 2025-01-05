@@ -25,6 +25,7 @@ From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Lovell Fuller <github@lovell.info>
 Date: Mon, 9 Dec 2024 13:40:30 +0000
 Subject: [PATCH 2/2] data: skip invalid tags rather than abort when not recursing
+ (#183)
 
 Commit cdf1e32 fixed a vulnerability by aborting early, however the
 problem it addressed was able to occur only when parsing nested
@@ -37,7 +38,7 @@ offsets/lengths.
 With this change, the vulnerability remains fixed and EXIF metadata
 from Samsung devices can be parsed (with invalid tags skipped).
 
-Upstream-Status: Submitted [https://github.com/libexif/libexif/pull/183]
+Upstream-Status: Backport [https://github.com/libexif/libexif/commit/180c1201dc494a06335b3b42bce5d4e07e6ae38c]
 
 diff --git a/libexif/exif-data.c b/libexif/exif-data.c
 index 1111111..2222222 100644

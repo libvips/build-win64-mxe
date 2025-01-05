@@ -103,8 +103,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 24.12.0
-poppler_CHECKSUM := 1cf374c3146f3f685d9257701bf0c2866c61d6c202c14d1f5c01a1f3a089028a
+poppler_VERSION  := 25.01.0
+poppler_CHECKSUM := 7eefc122207bbbd72a303c5e0743f4941e8ae861e24dcf0501e18ce1d1414112
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -604,6 +604,10 @@ define zlib_BUILD
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
+endef
+
+define zlib_BUILD_SHARED
+    $($(PKG)_BUILD)
 endef
 
 # avoid building unnecessary things

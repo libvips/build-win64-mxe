@@ -44,7 +44,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [pango]         | 1.55.5    | LGPLv3                                                       |
 | [pixman]        | 0.44.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
-| [zlib-ng]       | 2.2.2     | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.2.3     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 
@@ -103,7 +103,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.3     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 24.12.0   | GPLv2                                                        |
+| [poppler]       | 25.01.0   | GPLv2                                                        |
 | [sqlite]        | 3.47.2    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli

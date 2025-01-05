@@ -8,6 +8,8 @@ Subject: [PATCH 1/2] Do not build more things than needed
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
 @@ -179,7 +179,15 @@ elseif(BUILD_SHARED_LIBS AND WIN32)
  endif()
  
@@ -36,7 +38,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -199,6 +199,11 @@ if(NOT CYGWIN)
+@@ -167,6 +167,11 @@ if(NOT CYGWIN)
      set_target_properties(zlib PROPERTIES VERSION ${ZLIB_FULL_VERSION})
  endif()
  
@@ -66,7 +68,7 @@ diff --git a/inflate.c b/inflate.c
 index 1111111..2222222 100644
 --- a/inflate.c
 +++ b/inflate.c
-@@ -228,6 +228,7 @@ int stream_size;
+@@ -207,6 +207,7 @@ int stream_size;
      state->strm = strm;
      state->window = Z_NULL;
      state->mode = HEAD;     /* to pass state test in inflateReset2() */
