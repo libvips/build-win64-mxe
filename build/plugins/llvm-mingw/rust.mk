@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2024-12-27/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2025-01-05/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := a47e2b1817d7c20954c289f4333f6d7edf8710939a34f654b543ad80f7ead09f
+$(PKG)_CHECKSUM := 92ac6b5a93973fb275a28673e6aba48f8ada83f4e9d7267eab8c19c11169e9bd
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2024-12-27/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2025-01-05/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
@@ -61,7 +61,7 @@ define $(PKG)_BUILD_$(BUILD)
     # Build and install Rust
     # Note: we are only interested in the stage1 compiler
     cd '$(BUILD_DIR)' && \
-        $(PYTHON3) $(SOURCE_DIR)/x.py install --stage 1 -j '$(JOBS)' -v
+        $(PYTHON3) $(SOURCE_DIR)/x.py install --stage 1 -j '$(JOBS)'
 
     # `c` feature of the `compiler-builtins` crate needs the
     # compiler-rt sources from LLVM
@@ -72,15 +72,6 @@ endef
 
 define $(PKG)_BUILD
     $(eval TARGET_RUST := $(PROCESSOR)-pc-windows-gnullvm)
-
-    # Build and prepare startup objects like rsbegin.o and rsend.o
-    $(foreach FILE, rsbegin rsend, \
-        $(PREFIX)/$(BUILD)/bin/rustc --target='$(TARGET_RUST)' --emit=obj -o '$(BUILD_DIR)/$(FILE).o' \
-            '$(PREFIX)/$(BUILD)/lib/rustlib/src/rust/library/rtstartup/$(FILE).rs';)
-
-    # Install the startup objects
-    $(INSTALL) -d '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
-    mv -vf '$(BUILD_DIR)/'rs{begin,end}.o '$(PREFIX)/$(BUILD)/lib/rustlib/$(TARGET_RUST)/lib'
 
     # Install Cargo config
     $(INSTALL) -d '$(PREFIX)/$(TARGET)/.cargo'
