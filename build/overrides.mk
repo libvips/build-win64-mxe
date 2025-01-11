@@ -52,8 +52,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
-pango_VERSION  := 1.55.5
-pango_CHECKSUM := e396126ea08203cbd8ef12638e6222e2e1fd8aa9cac6743072fedc5f2d820dd8
+pango_VERSION  := 1.56.0
+pango_CHECKSUM := 1fb98b338ee6f7cf8ef96153b7d242f4568fe60f9b7434524eca630a57bd538b
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -542,6 +542,10 @@ define librsvg_BUILD
 
     # Disable tools
     $(SED) -i "/subdir('rsvg_convert')/d" '$(SOURCE_DIR)/meson.build'
+
+    # Update and regenerate the lockfile for zune-jpeg
+    # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1071
+    cargo update zune-jpeg --manifest-path='$(SOURCE_DIR)/Cargo.toml'
 
     $(MXE_MESON_WRAPPER) \
         -Dintrospection=disabled \

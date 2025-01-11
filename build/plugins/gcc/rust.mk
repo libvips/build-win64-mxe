@@ -2,9 +2,9 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/rust-1.78.0-x86_64-unknown-linux-gnu.tar.xz.sha256
-$(PKG)_VERSION  := 1.78.0
-$(PKG)_CHECKSUM := ea144a052c0980dfbc6c84b3eda21e9f61b02b7b171787c7de80d7a8ad344ab3
+# https://static.rust-lang.org/dist/rust-1.84.0-x86_64-unknown-linux-gnu.tar.xz.sha256
+$(PKG)_VERSION  := 1.84.0
+$(PKG)_CHECKSUM := 73aca7e08720b7bf28beee8f2370c6aef961aa87e9674989f5ce62ec2f95dcfd
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)-x86_64-unknown-linux-gnu
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION)-x86_64-unknown-linux-gnu.tar.xz
 $(PKG)_URL      := https://static.rust-lang.org/dist/$($(PKG)_FILE)
@@ -40,4 +40,9 @@ define $(PKG)_BUILD
     # mingw-w64 to avoid any compatibility issues.
     $(foreach FILE, crt2.o dllcrt2.o, \
         cp -f '$(PREFIX)/$(TARGET)/mingw/lib/$(FILE)' '$(PREFIX)/$(BUILD)/lib/rustlib/$(PROCESSOR)-pc-windows-gnu/lib';)
+
+    # Create empty dummy archive for libpthread.a, to avoid failing when
+    # Rust will link with "-l:libpthread.a".
+    # https://github.com/rust-lang/rust/blob/1.84.0/compiler/rustc_target/src/spec/base/windows_gnu.rs#L63
+    $(TARGET)-ar rcs '$(PREFIX)/$(TARGET)/mingw/lib/libpthread.a'
 endef
