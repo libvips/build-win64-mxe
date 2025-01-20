@@ -52,8 +52,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
-pango_VERSION  := 1.56.0
-pango_CHECKSUM := 1fb98b338ee6f7cf8ef96153b7d242f4568fe60f9b7434524eca630a57bd538b
+pango_VERSION  := 1.56.1
+pango_CHECKSUM := 426be66460c98b8378573e7f6b0b2ab450f6bb6d2ec7cecc33ae81178f246480
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -70,10 +70,10 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 0.6.22
-libexif_VERSION  := 0.6.24
-libexif_CHECKSUM := d47564c433b733d83b6704c70477e0a4067811d184ec565258ac563d8223f6ae
+libexif_VERSION  := 0.6.25
+libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
-libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.bz2
+libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
 
 # upstream version is 0.43.4
 pixman_VERSION  := 0.44.2
@@ -82,12 +82,6 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.xz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
-
-# upstream version is 10.1.0
-harfbuzz_VERSION  := 10.2.0
-harfbuzz_CHECKSUM := 620e3468faec2ea8685d32c46a58469b850ef63040b3565cde05959825b48227
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
