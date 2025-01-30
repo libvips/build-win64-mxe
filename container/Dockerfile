@@ -1,30 +1,48 @@
-FROM docker.io/library/buildpack-deps:bookworm
+ARG BASE_IMAGE=ghcr.io/libvips/build-win64-mxe:latest
+FROM $BASE_IMAGE
 
-RUN \
-  apt-get update && \
-  apt-get install -qqy --no-install-recommends \
-    # http://mxe.cc/#requirements-debian
-    autopoint bison build-essential flex gettext gperf \
-    intltool libtool-bin libxml-parser-perl lzip p7zip-full \
-    python-is-python3 python3-mako python3-packaging python3-tomli \
-    ruby zip
-
-WORKDIR /usr/local
-RUN git clone https://github.com/kleisauke/mxe.git
-
+# Copy the contents of this repository to the container
+COPY . /data
 WORKDIR /usr/local/mxe
 
-# Bootstrap compilers and utilities
+ARG DEPS
+ARG TARGET
+ARG DEBUG
+ARG GIT_COMMIT
+ARG PLUGIN_DIRS
+
+RUN \
+  if [ "$DEBUG" = "true" ]; then \
+    cp -f /data/settings/debug.mk settings.mk; \
+  else \
+    cp -f /data/settings/release.mk settings.mk; \
+  fi
+
+# Build gendef (a tool for generating def files from DLLs)
+# and libvips (+ dependencies)
 RUN --mount=type=cache,id=mxe-download,target=/usr/local/mxe/pkg \
-  echo "MXE_TARGETS := x86_64-pc-linux-gnu" > settings.mk && \
-  make autotools cargo-c cc meson nasm pe-util \
-    MXE_VERBOSE=true \
-    MXE_TMP="/var/tmp" \
-    MXE_PLUGIN_DIRS="plugins/llvm-mingw" \
-    MXE_USE_CCACHE=
+  make gendef vips-$DEPS \
+    MXE_PLUGIN_DIRS="$PLUGIN_DIRS" \
+    MXE_TARGETS=$TARGET.$DEPS \
+    GIT_COMMIT=$GIT_COMMIT
 
-# The build dir is mounted at /data, so this runs the build script in that
-ENTRYPOINT ["/bin/bash", "/data/build.sh"]
+# Build GTK4 apps if requested
+RUN --mount=type=cache,id=mxe-download,target=/usr/local/mxe/pkg \
+  if [ "${TARGET#*.gtk4}" != "$TARGET" ]; then \
+    make vipsdisp nip4 \
+      MXE_PLUGIN_DIRS="$PLUGIN_DIRS" \
+      MXE_TARGETS=$TARGET.$DEPS; \
+  fi
 
-# The build dir is mounted here
-WORKDIR /data
+# Build and bundle llvm-mingw tests when debugging
+RUN --mount=type=cache,id=mxe-download,target=/usr/local/mxe/pkg \
+  if [ "$DEBUG" = "true" ]; then \
+    make test-llvm-mingw \
+      MXE_PLUGIN_DIRS="$PLUGIN_DIRS" \
+      MXE_TARGETS=$TARGET.$DEPS; \
+  fi
+
+# The packaging dir is mounted here
+WORKDIR /data/packaging
+
+ENTRYPOINT ["/bin/bash", "package.sh"]

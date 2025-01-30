@@ -1,4 +1,4 @@
-# included by all scripts
+# included by packaging scripts
 
 vips_package=vips
 vips_version=8.16
@@ -11,7 +11,7 @@ if [ -n "$GIT_COMMIT" ]; then
   vips_pre_version=
 fi
 
-# build-win64-mxe/build dir we are building
+# build-win64-mxe/packaging dir we are building
 work_dir=$(pwd)
 
 # MXE specific

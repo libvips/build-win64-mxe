@@ -10,7 +10,6 @@ OPTIONS:
 	--help			Show the help and exit
 	-c, --commit <COMMIT>	The commit to build libvips from
 	-r, --ref <REF>		The branch or tag to build libvips from
-	--tmpdir <DIR>		Where intermediate files should be stored (default in /var/tmp/mxe)
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
 	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
 	--with-disp		Build vipsdisp image viewer
@@ -18,6 +17,7 @@ OPTIONS:
 	--with-debug		Build binaries without optimizations to improve debuggability
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
 	--with-jpeg-turbo	Build binaries with libjpeg-turbo instead of mozjpeg
+	--without-prebuilt	Avoid using a prebuilt OCI image from GitHub Container Registry
 	--without-zlib-ng	Build binaries with vanilla zlib
 
 DEPS:
@@ -48,17 +48,15 @@ EOF
   fi
 }
 
-. $PWD/build/variables.sh
-
 # Default arguments
 git_commit=""
 git_ref=""
-tmpdir="/var/tmp/mxe"
 jpeg_impl="mozjpeg"
 with_ffi_compat=false
 with_disp=false
 with_hevc=false
 with_debug=false
+with_prebuilt=true
 with_zlib_ng=true
 
 # Parse arguments
@@ -69,7 +67,6 @@ while [ $# -gt 0 ]; do
     -h|--help) usage 0 ;;
     -c|--commit) git_commit="$2"; shift ;;
     -r|--ref) git_ref="$2"; shift ;;
-    --tmpdir) tmpdir="$2"; shift ;;
     --nightly) git_ref="master" ;;
     --with-ffi-compat) with_ffi_compat=true ;;
     --with-disp) with_disp=true ;;
@@ -78,6 +75,7 @@ while [ $# -gt 0 ]; do
     --with-jpegli) jpeg_impl="jpegli" ;;
     --with-jpeg-turbo) jpeg_impl="libjpeg-turbo" ;;
     --without-mozjpeg) jpeg_impl="libjpeg-turbo" ;; # For compat
+    --without-prebuilt) with_prebuilt=false ;;
     --without-zlib-ng) with_zlib_ng=false ;;
     -*)
       echo "ERROR: Unknown option $1" >&2
@@ -155,41 +153,78 @@ else
   exit 1
 fi
 
-# Ensure temporary dir exists
-mkdir -p $tmpdir
+image="ghcr.io/libvips/build-win64-mxe:latest"
 
-# Ensure latest Debian stable base image
-$oci_runtime pull docker.io/library/buildpack-deps:bookworm
+if [ "$with_prebuilt" = "false" ]; then
+  image="libvips-build-win-mxe-base"
 
-# Create a machine image with all the required build tools pre-installed
-$oci_runtime build -t libvips-build-win-mxe container
+  # Ensure latest Debian stable base image
+  $oci_runtime pull docker.io/library/buildpack-deps:bookworm
 
-# Run build scripts inside a container with the:
-# - current UID and GID inherited
-# - build dir mounted at /data
-# - temporary dir mounted at /var/tmp
+  # Bootstrap the compilers and utilities
+  $oci_runtime build -t $image -f container/base.Dockerfile .
+fi
+
+# The 'plugins' variable controls which plugins are in use
+plugin_dirs="plugins/llvm-mingw /data"
+
+if [ -n "$git_commit" ]; then
+  plugin_dirs+=" /data/plugins/nightly"
+fi
+
+if [ "$jpeg_impl" != "libjpeg-turbo" ]; then
+  plugin_dirs+=" /data/plugins/$jpeg_impl"
+fi
+
+if [ "$with_disp" = "true" ]; then
+  plugin_dirs+=" /data/plugins/vipsdisp"
+fi
+
+if [ "$with_hevc" = "true" ]; then
+  plugin_dirs+=" /data/plugins/hevc"
+fi
+
+if [ "$with_zlib_ng" = "true" ]; then
+  plugin_dirs+=" /data/plugins/zlib-ng"
+fi
+
+# Avoid shipping the gettext DLL (libintl-8.dll),
+# use a statically build dummy implementation instead.
+# This intentionally disables the i18n features of (GNU)
+# gettext, which are probably not needed within Windows.
+# See:
+# https://github.com/frida/proxy-libintl
+# https://github.com/libvips/libvips/issues/1637
+plugin_dirs+=" /data/plugins/proxy-libintl"
+
+# Build libvips (+ dependencies) and optional GTK4 apps
+$oci_runtime build \
+  -t libvips-build-win-mxe \
+  -f container/Dockerfile \
+  --build-arg BASE_IMAGE="$image" \
+  --build-arg DEPS="$deps" \
+  --build-arg TARGET="$target" \
+  --build-arg DEBUG="$with_debug" \
+  --build-arg PLUGIN_DIRS="$plugin_dirs" \
+  --build-arg GIT_COMMIT="$git_commit" \
+  build
+
+# Debug logs
+# docker run --rm -it --entrypoint "/bin/bash" libvips-build-win-mxe
+# grep -r "with fuzz" /usr/local/mxe/log
+# grep -r "(offset" /usr/local/mxe/log
+
+# Run packaging script inside a container with the
+# packaging dir mounted at /data/packaging.
 $oci_runtime run --rm -t \
-  -u $(id -u):$(id -g) \
-  -v $PWD/build:/data \
-  -v $tmpdir:/var/tmp:z \
-  -e "GIT_COMMIT=$git_commit" \
-  -e "FFI_COMPAT=$with_ffi_compat" \
-  -e "JPEG_IMPL=$jpeg_impl" \
-  -e "DISP=$with_disp" \
-  -e "HEVC=$with_hevc" \
-  -e "DEBUG=$with_debug" \
-  -e "ZLIB_NG=$with_zlib_ng" \
+  -v $PWD/packaging:/data/packaging \
+  -e GIT_COMMIT="$git_commit" \
+  -e FFI_COMPAT="$with_ffi_compat" \
+  -e JPEG_IMPL="$jpeg_impl" \
+  -e DISP="$with_disp" \
+  -e HEVC="$with_hevc" \
+  -e DEBUG="$with_debug" \
+  -e ZLIB_NG="$with_zlib_ng" \
   libvips-build-win-mxe \
   $deps \
   $target
-
-# Test vips utility outside the container
-if [ -x "$(command -v wine)" ]; then
-  echo -n "testing build ... "
-  wine $PWD/build/$repackage_dir/bin/vips.exe --help > /dev/null
-  if [ "$?" -ne "0" ]; then
-    echo "WARNING: vips.exe failed to run"
-  else
-    echo "OK"
-  fi
-fi

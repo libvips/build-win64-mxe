@@ -2,6 +2,9 @@
 # cores. This variable can limit this.
 #JOBS := 4
 
+# Print the complete log if the build or download fails.
+MXE_VERBOSE := true
+
 # MXE stores intermediate files in the current directory by
 # default. Store them in /var/tmp instead to ensure git commands
 # are no-op.

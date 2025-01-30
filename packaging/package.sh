@@ -3,7 +3,7 @@
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
 Usage: $(basename "$0") [OPTIONS] [DEPS] [TARGET]
-Package libvips in mxe/usr/TARGET/
+Package libvips in /usr/local/mxe/usr/TARGET/
 
 OPTIONS:
 	--help	Show the help and exit
@@ -48,7 +48,7 @@ esac
 
 # Make sure that the repackaging dir is empty
 rm -rf $repackage_dir $pdb_dir
-mkdir -p $repackage_dir/bin
+mkdir -p $repackage_dir/{bin,include,lib}
 mkdir $pdb_dir
 
 # Utilities
@@ -156,8 +156,10 @@ done
 
 echo "Copying install area $install_dir/"
 
-# Follow symlinks when copying /share, /etc, /lib and /include
-cp -Lr $install_dir/{share,etc,lib,include} $repackage_dir
+# Follow symlinks when copying /share, /etc and include directories
+cp -Lr $install_dir/{share,etc} $repackage_dir
+cp -Lr $install_dir/include/{glib-2.0,vips} $repackage_dir/include
+cp -Lr $install_dir/lib/{glib-2.0,pkgconfig} $repackage_dir/lib
 
 echo "Generating import files"
 ./gendeflibs.sh $deps $target
@@ -179,18 +181,12 @@ rm -f $repackage_dir/lib/pkgconfig/{gl,glu}.pc
 rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
 rm -rf $repackage_dir/etc/bash_completion.d
 
-# Remove dynamic modules
-rm -rf $repackage_dir/lib/{gdk-pixbuf-2.0,gio,vips-modules-*}
-
-find $repackage_dir/lib -name "*.a" -and ! -name "*.dll.a" -exec rm -f {} \;
-find $repackage_dir/lib \( -name "*.la" -o -name "*.pdb" \) -exec rm -f {} \;
-
 # We intentionally disabled the i18n features of (GNU) gettext,
 # so the locales are not needed.
 rm -rf $repackage_dir/share/locale
 
-# Remove those .gitkeep files
-rm $repackage_dir/{share,lib,include}/.gitkeep
+# Remove .gitkeep files
+rm -f $repackage_dir/share/.gitkeep
 
 # Allow sharp to import GLib symbols from libvips-42.dll
 sed -i -e 's|#define GLIB_STATIC_COMPILATION 1|/* #undef GLIB_STATIC_COMPILATION */|' \
