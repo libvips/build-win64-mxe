@@ -2,6 +2,7 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
+# Keep in-sync with prebuilt.Dockerfile
 # https://static.rust-lang.org/dist/2025-02-13/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
 $(PKG)_CHECKSUM := f860c16e3cc5ab0ce7b601a2c3c5847c1e8f84cc5715a8af64a89e52d7967cf5

@@ -106,7 +106,9 @@ if [ "$ZLIB_NG" = "true" ]; then
   plugins+=" $work_dir/plugins/zlib-ng"
 fi
 
-if [ "$LLVM" = "true" ]; then
+if [ "$PREBUILT" = "true" ]; then
+  plugins+=" $work_dir/plugins/llvm-mingw-prebuilt"
+elif [ "$LLVM" = "true" ]; then
   plugins+=" $work_dir/plugins/llvm-mingw"
 else
   plugins+=" plugins/gcc14 $work_dir/plugins/gcc"
