@@ -72,10 +72,10 @@ define $(PKG)_PRE_BUILD
     chmod 0755 '$(PREFIX)/bin/$(TARGET)-windres'
 
     $(foreach EXEC, clang-target ld objdump, \
+        $(INSTALL) -m755 '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh' '$(PREFIX)/$(TARGET)/bin'; \
         $(SED) -i -e 's|^DEFAULT_TARGET=.*|DEFAULT_TARGET=$(PROCESSOR)-w64-mingw32|' \
                   -e 's|^DIR=.*|DIR="$(PREFIX)/$(BUILD)/bin"|' \
-                  -e 's|$$FLAGS "$$@"|$$FLAGS --sysroot="$(PREFIX)/$(TARGET)" "$$@"|' '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh'; \
-        $(INSTALL) -m755 '$(SOURCE_DIR)/wrappers/$(EXEC)-wrapper.sh' '$(PREFIX)/$(TARGET)/bin';)
+                  -e 's|$$FLAGS "$$@"|$$FLAGS --sysroot="$(PREFIX)/$(TARGET)" "$$@"|' '$(PREFIX)/$(TARGET)/bin/$(EXEC)-wrapper.sh';)
 
     $(INSTALL) -m644 '$(SOURCE_DIR)/wrappers/mingw32-common.cfg' '$(PREFIX)/$(BUILD)/bin'
     $(INSTALL) -m644 '$(SOURCE_DIR)/wrappers/$(PROCESSOR)-w64-windows-gnu.cfg' '$(PREFIX)/$(BUILD)/bin'

@@ -122,6 +122,8 @@ nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 # upstream version is 12.0.0
 # Update MinGW-w64 to be91da6
 # https://github.com/mingw-w64/mingw-w64/tarball/be91da60c4ae62a76099279500810c8ffbef4da1
+# Keep-in sync with:
+# https://github.com/mstorsjo/llvm-mingw/blob/20250114/build-mingw-w64.sh#L21
 mingw-w64_VERSION  := be91da6
 mingw-w64_CHECKSUM := c175db6f2b3978bed492a36438df176d69cf7f2e3dd0a1e21ddf65cc11d171c8
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
@@ -535,6 +537,7 @@ endef
 
 # compile with the Rust toolchain
 define librsvg_BUILD
+    $(eval export RUSTUP_HOME := /usr/local/rustup)
     $(eval export CARGO_HOME := $(PREFIX)/$(TARGET)/.cargo)
 
     # Enable networking while we build librsvg

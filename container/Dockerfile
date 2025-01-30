@@ -1,7 +1,8 @@
 FROM docker.io/library/buildpack-deps:bookworm
 
-RUN apt-get update \
-  && apt-get install -y \
+RUN \
+  apt-get update && \
+  apt-get install -qqy --no-install-recommends \
     # http://mxe.cc/#requirements-debian
     autopoint bison flex gettext gperf g++-multilib intltool \
     libc6-dev-i386 libtool-bin libxml-parser-perl lzip p7zip-full \
