@@ -1,0 +1,52 @@
+name: Publish OCI image to ghcr.io
+
+on: workflow_dispatch
+
+permissions: {}
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: OCI metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          # Add short SHA as OCI tag
+          tags: type=sha
+          # Set latest tag for default branch
+          flavor: type=raw,value=latest,enable={{is_default_branch}}
+          # Overwrite some generated OCI labels
+          labels: |
+            org.opencontainers.image.authors=libvips team and contributors
+            org.opencontainers.image.url=https://libvips.org
+            org.opencontainers.image.documentation=https://github.com/${{ github.repository }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.vendor=libvips
+            org.opencontainers.image.title=OCI image for ${{ github.repository }}
+            org.opencontainers.image.description=OCI image for cross-compiling Windows binaries
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./container/base.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
