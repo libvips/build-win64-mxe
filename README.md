@@ -24,7 +24,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.16.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16    | LGPLv3                                                       |
-| [glib]          | 2.83.2    | LGPLv3                                                       |
+| [glib]          | 2.83.3    | LGPLv3                                                       |
 | [harfbuzz]      | 10.2.0    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.16      | MIT Licence                                                  |
@@ -33,7 +33,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libffi]        | 3.4.6     | MIT Licence                                                  |
 | [libheif]       | 1.19.5    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.45    | [libpng License version 2]                                   |
+| [libpng]        | 1.6.46    | [libpng License version 2]                                   |
 | [librsvg]       | 2.59.2    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.7.0     | [libtiff License] (BSD-like)                                 |
