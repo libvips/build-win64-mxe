@@ -568,6 +568,7 @@ endef
 
 # compile with the Rust toolchain
 define librsvg_BUILD
+    $(eval export RUSTUP_HOME := /usr/local/rustup)
     $(eval export CARGO_HOME := $(PREFIX)/$(TARGET)/.cargo)
 
     # Enable networking while we build librsvg

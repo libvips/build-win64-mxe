@@ -4,6 +4,7 @@ PKG             := llvm
 $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
+# Keep in-sync with prebuilt.Dockerfile
 $(PKG)_VERSION  := 20.1.0
 $(PKG)_CHECKSUM := 4579051e3c255fb4bb795d54324f5a7f3ef79bd9181e44293d7ee9a7f62aad9a
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))

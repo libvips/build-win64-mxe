@@ -18,6 +18,7 @@ OPTIONS:
 	--with-debug		Build binaries without optimizations to improve debuggability
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
 	--with-jpeg-turbo	Build binaries with libjpeg-turbo instead of mozjpeg
+	--with-prebuilt		Avoid building LLVM and Rust from source
 	--without-llvm		Build binaries with GCC
 	--without-zlib-ng	Build binaries with vanilla zlib
 
@@ -60,6 +61,7 @@ with_ffi_compat=false
 with_disp=false
 with_hevc=false
 with_debug=false
+with_prebuilt=false
 with_llvm=true
 with_zlib_ng=true
 
@@ -77,6 +79,7 @@ while [ $# -gt 0 ]; do
     --with-disp) with_disp=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
+    --with-prebuilt) with_prebuilt=true ;;
     --without-llvm) with_llvm=false ;;
     --with-jpegli) jpeg_impl="jpegli" ;;
     --with-jpeg-turbo) jpeg_impl="libjpeg-turbo" ;;
@@ -140,6 +143,11 @@ if [ "$type" = "shared" ] && [ "$with_ffi_compat" = "true" ]; then
   with_ffi_compat=false
 fi
 
+if [ "$with_prebuilt" = "true" ] && [ "$with_llvm" = "false" ]; then
+  echo "ERROR: The --with-prebuilt and --without-llvm options are mutually exclusive." >&2
+  exit 1
+fi
+
 if [ -n "$git_commit" ] && [ -n "$git_ref" ]; then
   echo "ERROR: The --commit and --ref options are mutually exclusive." >&2
   exit 1
@@ -180,6 +188,12 @@ else
   exit 1
 fi
 
+dockerfile="Dockerfile"
+
+if [ "$with_prebuilt" = "true" ]; then
+  dockerfile="prebuilt.Dockerfile"
+fi
+
 # Ensure temporary dir exists
 mkdir -p $tmpdir
 
@@ -187,7 +201,7 @@ mkdir -p $tmpdir
 $oci_runtime pull docker.io/library/buildpack-deps:bookworm
 
 # Create a machine image with all the required build tools pre-installed
-$oci_runtime build -t libvips-build-win-mxe container
+$oci_runtime build -t libvips-build-win-mxe -f $dockerfile container
 
 # Run build scripts inside a container with the:
 # - current UID and GID inherited
@@ -203,6 +217,7 @@ $oci_runtime run --rm -t \
   -e "DISP=$with_disp" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
+  -e "PREBUILT=$with_prebuilt" \
   -e "LLVM=$with_llvm" \
   -e "ZLIB_NG=$with_zlib_ng" \
   libvips-build-win-mxe \
