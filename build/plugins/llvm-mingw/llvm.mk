@@ -4,7 +4,6 @@ PKG             := llvm
 $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
-# This version needs to be in-sync with the compiler-rt-sanitizers package
 $(PKG)_VERSION  := 19.1.7
 $(PKG)_CHECKSUM := 82401fea7b79d0078043f7598b835284d6650a75b93e64b6f761ea7b63097501
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
@@ -30,7 +29,7 @@ define $(PKG)_BUILD_$(BUILD)
         -DLLVM_ENABLE_ASSERTIONS=OFF \
         -DLLVM_ENABLE_PROJECTS='clang;lld;lldb' \
         -DLLVM_TARGETS_TO_BUILD='AArch64;X86' \
-        -DLLVM_TOOLCHAIN_TOOLS='llvm-ar;llvm-config;llvm-ranlib;llvm-objdump;llvm-rc;llvm-cvtres;llvm-nm;llvm-strings;llvm-readobj;llvm-dlltool;llvm-pdbutil;llvm-objcopy;llvm-strip;llvm-cov;llvm-profdata;llvm-addr2line;llvm-symbolizer;llvm-windres' \
+        -DLLVM_TOOLCHAIN_TOOLS='llvm-ar;llvm-ranlib;llvm-objdump;llvm-rc;llvm-cvtres;llvm-nm;llvm-strings;llvm-readobj;llvm-dlltool;llvm-pdbutil;llvm-objcopy;llvm-strip;llvm-cov;llvm-profdata;llvm-addr2line;llvm-symbolizer;llvm-windres' \
         -DLLVM_BUILD_DOCS=OFF \
         -DLLVM_BUILD_EXAMPLES=OFF \
         -DLLVM_BUILD_TESTS=OFF \

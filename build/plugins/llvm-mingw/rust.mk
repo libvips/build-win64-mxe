@@ -2,21 +2,18 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2025-01-20/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2025-02-01/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 3655b93464e7d2a34abcf2c3cf52a454d83db14e42dabdc573d0cc9615fb5a96
+$(PKG)_CHECKSUM := 77c8be92286d56bcb22286097cab680df83bd4f179066e5af7d3bace7960c5da
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2025-01-20/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2025-02-01/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
 $(PKG)_DEPS_$(BUILD) := $(BUILD)~llvm
 
-# Build Rust from source to support to ensure that it links
-# against UCRT (the prebuilt Rust binaries are built with
-# --with-default-msvcrt=msvcrt)
 define $(PKG)_BUILD_$(BUILD)
     # x86_64-pc-linux-gnu -> x86_64-unknown-linux-gnu
     $(eval BUILD_RUST := $(firstword $(subst -, ,$(BUILD)))-unknown-linux-gnu)
