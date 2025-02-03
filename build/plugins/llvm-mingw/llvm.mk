@@ -4,8 +4,8 @@ PKG             := llvm
 $(PKG)_WEBSITE  := https://llvm.org/
 $(PKG)_DESCR    := A collection of modular and reusable compiler and toolchain technologies
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 19.1.7
-$(PKG)_CHECKSUM := 82401fea7b79d0078043f7598b835284d6650a75b93e64b6f761ea7b63097501
+$(PKG)_VERSION  := 20.1.0-rc1
+$(PKG)_CHECKSUM := 5f8653a2ffb59febd07d816778efe0dfc7a3d55f65b4213399608535d7bdc9a2
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-[0-9]*.patch)))
 $(PKG)_GH_CONF  := llvm/llvm-project/releases/latest,llvmorg-,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-project-$($(PKG)_VERSION).src
@@ -71,6 +71,7 @@ endef
 define $(PKG)_BUILD_RUNTIMES
     mkdir '$(BUILD_DIR).runtimes'
     cd '$(BUILD_DIR).runtimes' && $(TARGET)-cmake '$(SOURCE_DIR)/runtimes' \
+        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32' \
         -DCMAKE_CXX_COMPILER_TARGET='$(PROCESSOR)-w64-windows-gnu' \
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \

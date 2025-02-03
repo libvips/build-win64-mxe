@@ -32,7 +32,7 @@ define $(PKG)_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_TOOLCHAIN))
 
-    mv -v '$(CLANG_RESOURCE_DIR)/lib/windows/'*.dll '$(PREFIX)/$(TARGET)/bin/'
+    mv -v '$(CLANG_RESOURCE_DIR)/lib/windows/'*.dll '$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/bin/'
 endef
 
 # Sanitizers on windows only support x86.

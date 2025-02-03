@@ -555,7 +555,7 @@ define librsvg_BUILD
         -Dvala=disabled \
         -Dtests=false \
         -Dtriplet='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
-        $(if $(IS_LLVM), -Dc_link_args='$(LDFLAGS) -lntdll -luserenv -lsynchronization -lbcryptprimitives') \
+        $(if $(IS_LLVM), -Dc_link_args='$(LDFLAGS) -lntdll -luserenv') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -564,8 +564,8 @@ define librsvg_BUILD
     # Add native libraries needed for static linking to .pc file.
     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
     # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
-    $(if $(and $(IS_LLVM),$(BUILD_STATIC)), \
-        $(SED) -i "/^Libs:/s/$$/ -lntdll -luserenv -lsynchronization -lbcryptprimitives/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
+    $(if $(IS_LLVM), \
+        $(SED) -i "/^Libs.private:/s/$$/ -lntdll -luserenv/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
 endef
 
 # compile with CMake
