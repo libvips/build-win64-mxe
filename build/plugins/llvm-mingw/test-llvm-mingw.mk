@@ -22,7 +22,7 @@ define $(PKG)_BUILD
         HAVE_UWP= \
         HAVE_OPENMP= \
         HAVE_CFGUARD= \
-        $(if $(IS_X86), HAVE_SANITIZERS=1) \
+        $(if $(IS_X86), HAVE_ASAN=1) \
         $(if $(BUILD_SHARED), TESTS_CPP_STATIC=) \
         RUNTIMES_SRC='$(PREFIX)/$(TARGET)/bin' \
         NATIVE= \
