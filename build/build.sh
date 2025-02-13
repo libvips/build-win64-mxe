@@ -98,6 +98,10 @@ if [ "$DISP" = "true" ]; then
   plugins+=" $work_dir/plugins/vipsdisp"
 fi
 
+if [ "$NIP4" = "true" ]; then
+  plugins+=" $work_dir/plugins/nip4"
+fi
+
 if [ "$HEVC" = "true" ]; then
   plugins+=" $work_dir/plugins/hevc"
 fi
@@ -143,6 +147,13 @@ make gendef vips-$deps \
 # Build vipsdisp, if requested
 if [ "$DISP" = "true" ]; then
   make vipsdisp \
+    MXE_PLUGIN_DIRS="$plugins" \
+    MXE_TARGETS=$target.$deps
+fi
+  
+# Build nip4, if requested
+if [ "$NIP4" = "true" ]; then
+  make nip4 \
     MXE_PLUGIN_DIRS="$plugins" \
     MXE_TARGETS=$target.$deps
 fi
