@@ -1,0 +1,178 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: stephan <stephan@noemail.net>
+Date: Mon, 10 Feb 2025 15:01:14 +0000
+Subject: [PATCH 1/3] configure: when dlopen() is not found, only fail fatally if
+ --enable-loadable-module is explicitly provided, else warn instead. Based on
+ discussion around [forum:2efe9c33bd9021ca|forum post 2efe9c33bd9021ca].
+ Update proj-indented-notice to behave like its docs say it should when the
+ -error flag is used.
+
+FossilOrigin-Name: f28e52cbf9e80cb5a1cde7cba099e2c2b6787a77263796e4f9febf3f30bc99dc
+
+Upstream-Status: Backport [https://github.com/sqlite/sqlite/commit/3ea05b5b4f219a0cadb5d573bf73c0818cee02cf]
+
+diff --git a/autosetup/proj.tcl b/autosetup/proj.tcl
+index 1111111..2222222 100644
+--- a/autosetup/proj.tcl
++++ b/autosetup/proj.tcl
+@@ -114,11 +114,13 @@ proc proj-bold {str} {
+ #
+ # If the -notice flag it used then it emits using [user-notice], which
+ # means its rendering will (A) go to stderr and (B) be delayed until
+-# the next time autosetup goes to output a message. If -notice
+-# is not used, it will send the message to stdout without delay.
++# the next time autosetup goes to output a message.
+ #
+ # If the -error flag is provided then it renders the message
+ # immediately to stderr and then exits.
++#
++# If neither -notice nor -error are used, the message will be sent to
++# stdout without delay.
+ proc proj-indented-notice {args} {
+   set fErr ""
+   set outFunc "puts"
+@@ -126,6 +128,7 @@ proc proj-indented-notice {args} {
+     switch -exact -- [lindex $args 0] {
+       -error  {
+         set args [lassign $args fErr]
++        set outFunc "user-notice"
+       }
+       -notice {
+         set args [lassign $args -]
+diff --git a/autosetup/sqlite-config.tcl b/autosetup/sqlite-config.tcl
+index 1111111..2222222 100644
+--- a/autosetup/sqlite-config.tcl
++++ b/autosetup/sqlite-config.tcl
+@@ -828,20 +828,53 @@ proc sqlite-handle-icu {} {
+ 
+ 
+ ########################################################################
+-# Handles the --enable-load-extension flag.
++# Handles the --enable-load-extension flag. Returns 1 if the support
++# is enabled, else 0. If support for that feature is not found, a
++# fatal error is triggered if --enable-load-extension is explicitly
++# provided, else a loud warning is instead emited. If
++# --disable-load-extension is used, no check is performed.
++#
++# Makes the following environment changes:
++#
++# - defines LDFLAGS_DLOPEN to any linker flags needed for this
++#   feature.  It may legally be empty on some systems where dlopen()
++#   is in libc.
++#
++# - If the feature is not available, adds
++#   -DSQLITE_OMIT_LOAD_EXTENSION=1 to the feature flags list.
+ proc sqlite-handle-load-extension {} {
++  define LDFLAGS_DLOPEN ""
++  set found 0
+   proj-if-opt-truthy load-extension {
+-    if {[proj-check-function-in-lib dlopen dl]} {
++    set found [proj-check-function-in-lib dlopen dl]
++    if {$found} {
+       define LDFLAGS_DLOPEN [get-define lib_dlopen]
+       undefine lib_dlopen
+     } else {
+-      user-error "dlopen() not found. Use --disable-load-extension to bypass this check."
++      if {[proj-opt-was-provided load-extension]} {
++        # Explicit --enable-load-extension: fail if not found
++        proj-indented-notice -error {
++          --enable-load-extension was provided but dlopen()
++          not found. Use --disable-load-extension to bypass this
++          check.
++        }
++      } else {
++        # It was implicitly enabled: warn if not found
++        proj-indented-notice {
++          WARNING: dlopen() not found, so loadable module support will
++          be disabled. Use --disable-load-extension to bypass this
++          check.
++        }
++      }
+     }
+-  } {
+-    define LDFLAGS_DLOPEN ""
++  }
++  if {$found} {
++    msg-result "Loadable extension support enabled."
++  } else {
++    msg-result "Disabling loadable extension support. Use --enable-load-extensions to enable them."
+     sqlite-add-feature-flag {-DSQLITE_OMIT_LOAD_EXTENSION=1}
+-    msg-result "Disabling loadable extensions."
+   }
++  return $found
+ }
+ 
+ ########################################################################
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Mark Brand <mabrand@mabrand.nl>
+Date: Fri, 7 Feb 2025 11:00:29 +0100
+Subject: [PATCH 2/3] fix library extension for mingw
+
+Upstream-Status: Submitted [https://sqlite.org/forum/forumpost/6bcf90e1d2d52d00]
+
+diff --git a/autosetup/proj.tcl b/autosetup/proj.tcl
+index 1111111..2222222 100644
+--- a/autosetup/proj.tcl
++++ b/autosetup/proj.tcl
+@@ -790,7 +790,7 @@ proc proj-lib-extension {} {
+   proc inner {key} {
+     switch -glob -- [get-define $key] {
+       *-*-ming* - *-*-cygwin - *-*-msys {
+-        return ".lib"
++        return ".a"
+       }
+       default {
+         return ".a"
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Fri, 14 Feb 2025 17:20:40 +0100
+Subject: [PATCH 3/3] configure: make pthread bits optional
+
+Specifically Windows does not require this.
+
+Regressed since the migration of the build system to autosetup.
+
+Upstream-Status: Submitted [https://sqlite.org/forum/forumpost/8e0fdb8c0d3985d5]
+
+diff --git a/autosetup/sqlite-config.tcl b/autosetup/sqlite-config.tcl
+index 1111111..2222222 100644
+--- a/autosetup/sqlite-config.tcl
++++ b/autosetup/sqlite-config.tcl
+@@ -383,7 +383,7 @@ proc sqlite-handle-soname {} {
+ }
+ 
+ ########################################################################
+-# If --enable-thresafe is set, this adds -DSQLITE_THREADSAFE=1 to
++# If --enable-threadsafe is set, this adds -DSQLITE_THREADSAFE=1 to
+ # OPT_FEATURE_FLAGS and sets LDFLAGS_PTHREAD to the linker flags
+ # needed for linking pthread. If --enable-threadsafe is not set, adds
+ # -DSQLITE_THREADSAFE=0 to OPT_FEATURE_FLAGS and sets LDFLAGS_PTHREAD
+@@ -393,14 +393,15 @@ proc sqlite-handle-threadsafe {} {
+   proj-if-opt-truthy threadsafe {
+     msg-result yes
+     sqlite-add-feature-flag -DSQLITE_THREADSAFE=1
+-    if {![proj-check-function-in-lib pthread_create pthread]
+-        || ![proj-check-function-in-lib pthread_mutexattr_init pthread]} {
+-      user-error "Missing required pthread bits"
++    proj-check-function-in-lib pthread_mutexattr_init pthread
++    if {[proj-check-function-in-lib pthread_create pthread]} {
++      define LDFLAGS_PTHREAD [get-define lib_pthread_create]
++      undefine lib_pthread_create
++      # Recall that LDFLAGS_PTHREAD might be empty even if pthreads if
++      # found because it's in -lc on some platforms.
++    } else {
++      define LDFLAGS_PTHREAD ""
+     }
+-    define LDFLAGS_PTHREAD [get-define lib_pthread_create]
+-    undefine lib_pthread_create
+-    # Recall that LDFLAGS_PTHREAD might be empty even if pthreads if
+-    # found because it's in -lc on some platforms.
+   } {
+     msg-result no
+     sqlite-add-feature-flag -DSQLITE_THREADSAFE=0

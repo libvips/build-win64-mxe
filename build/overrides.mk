@@ -2,6 +2,14 @@ $(info == General overrides: $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
+# upstream version is 3.4.6
+libffi_VERSION  := 3.4.7
+libffi_CHECKSUM := 138607dee268bdecf374adf9144c00e839e38541f75f24a1fcf18b78fda48b2d
+libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
+libffi_SUBDIR   := libffi-$(libffi_VERSION)
+libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
+libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
+
 # upstream version is 2.42.10
 # gdk-pixbuf is still used by OpenSlide
 gdk-pixbuf_VERSION  := 2.42.12
@@ -103,8 +111,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 25.01.0
-poppler_CHECKSUM := 7eefc122207bbbd72a303c5e0743f4941e8ae861e24dcf0501e18ce1d1414112
+poppler_VERSION  := 25.02.0
+poppler_CHECKSUM := 21234cb2a9647d73c752ce4031e65a79d11a511a835f2798284c2497b8701dee
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -145,6 +153,7 @@ libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 meson_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/meson-[0-9]*.patch)))
 mingw-w64_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+sqlite_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/sqlite-[0-9]*.patch)))
 tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 
 # zlib will make libzlib.dll, but we want libz.dll so we must
@@ -197,6 +206,9 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: brotli, icu4c
 # libarchive:
 #  Removed: bzip2, libiconv, libxml2, nettle, openssl, xz
+# SQLite:
+#  Added: zlib
+#  Removed: dlfcn-win32
 
 freetype_DEPS           := $(subst brotli bzip2,meson-wrapper,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(subst brotli bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
@@ -217,6 +229,7 @@ fontconfig_DEPS         := cc meson-wrapper expat freetype-bootstrap
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 harfbuzz_DEPS           := cc meson-wrapper cairo freetype-bootstrap glib
 libarchive_DEPS         := cc zlib
+sqlite_DEPS             := cc zlib
 
 ## Override build scripts
 
@@ -433,6 +446,7 @@ define lcms_BUILD
     $(eval export CFLAGS += -O3)
 
     $(MXE_MESON_WRAPPER) \
+        -Dtests=disabled \
         -Djpeg=disabled \
         -Dtiff=disabled \
         -Dc_args='$(CFLAGS) -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT' \
@@ -555,7 +569,7 @@ define librsvg_BUILD
         -Dvala=disabled \
         -Dtests=false \
         -Dtriplet='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
-        $(if $(IS_LLVM), -Dc_link_args='$(LDFLAGS) -lntdll -luserenv -lsynchronization -lbcryptprimitives') \
+        $(if $(IS_LLVM), -Dc_link_args='$(LDFLAGS) -lntdll -luserenv') \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -564,8 +578,8 @@ define librsvg_BUILD
     # Add native libraries needed for static linking to .pc file.
     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
     # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
-    $(if $(and $(IS_LLVM),$(BUILD_STATIC)), \
-        $(SED) -i "/^Libs:/s/$$/ -lntdll -luserenv -lsynchronization -lbcryptprimitives/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
+    $(if $(IS_LLVM), \
+        $(SED) -i "/^Libs.private:/s/$$/ -lntdll -luserenv/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
 endef
 
 # compile with CMake
@@ -804,4 +818,31 @@ define brotli_BUILD
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
+endef
+
+# install DLL in /bin
+# generate missing import library
+define sqlite_BUILD
+    cd '$(1)' && $(SOURCE_DIR)/configure \
+        --host='$(TARGET)' \
+        --build='$(BUILD)' \
+        --prefix='$(PREFIX)/$(TARGET)' \
+        $(if $(BUILD_STATIC), \
+            --enable-static \
+            --disable-shared \
+        $(else), \
+            --disable-static \
+            --enable-shared) \
+        --disable-readline
+    $(MAKE) -C '$(1)' -j 1 install
+
+    # https://sqlite.org/forum/forumpost/4b68a3b892dfb9a1
+    # TODO(kleisauke): Switch to `--out-implib` configure flag for the next release.
+    $(if $(BUILD_SHARED), \
+        cp -L '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll' '$(PREFIX)/$(TARGET)/bin'; \
+        rm -v '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll'*; \
+        '$(PREFIX)/$(TARGET)/bin/gendef' '$(PREFIX)/$(TARGET)/bin/libsqlite3.dll'; \
+        $(TARGET)-dlltool -D '$(PREFIX)/$(TARGET)/bin/libsqlite3.dll' \
+            -l '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll.a' \
+            -d 'libsqlite3.def';)
 endef

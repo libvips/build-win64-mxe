@@ -17,6 +17,7 @@ openexr_DEPS            := $(subst zlib,zlib-ng,$(openexr_DEPS))
 openjpeg_DEPS           := $(subst zlib,zlib-ng,$(openjpeg_DEPS))
 openslide_DEPS          := $(subst zlib,zlib-ng,$(openslide_DEPS))
 poppler_DEPS            := $(subst zlib,zlib-ng,$(poppler_DEPS))
+sqlite_DEPS             := $(subst zlib,zlib-ng,$(sqlite_DEPS))
 tiff_DEPS               := $(subst zlib,zlib-ng,$(tiff_DEPS))
 
 # Disable the zlib build, just to be sure

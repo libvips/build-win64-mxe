@@ -70,6 +70,13 @@ module_dir_base=$(basename $module_dir)
 # List of PE targets that need to be copied, including their transitive dependencies and PDBs
 pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{vips,vipsedit,vipsheader,vipsthumbnail}.exe)
 
+# DLL search paths
+search_paths=($bin_dir)
+
+if [ "$type" = "shared" ]; then
+  search_paths+=($install_dir/${target%%.*}/bin)
+fi
+
 if [ -d "$module_dir" ]; then
   mkdir -p $repackage_dir/bin/$module_dir_base
   pe_targets+=($module_dir/*.dll)
@@ -137,7 +144,7 @@ fi
 for pe_target in "${pe_targets[@]}"; do
   [ -f "$pe_target" ] || { echo "WARNING: $pe_target doesn't exist." >&2 ; continue; }
 
-  pe_deps=$(peldd $pe_target --clear-path --path $bin_dir ${whitelist[@]/#/--wlist } --all)
+  pe_deps=$(peldd $pe_target --clear-path ${search_paths[@]/#/--path } ${whitelist[@]/#/--wlist } --all)
   for pe_dep in $pe_deps; do
     dir=$(dirname $pe_dep)
     base=$(basename $pe_dep .${pe_dep##*.})
@@ -161,11 +168,7 @@ echo "Generating import files"
 
 echo "Cleaning unnecessary files / directories"
 
-if [ "$LLVM" = "true" ]; then
-  # Ensure that the header files of libc++/libunwind are not distributed
-  rm -rf $repackage_dir/include/c++
-  rm -rf $repackage_dir/include/{*unwind*,mach-o}
-else
+if [ "$LLVM" = "false" ]; then
   # Remove native build files of Rust
   rm -rf $repackage_dir/lib/{*.so*,ldscripts,rustlib}
 fi
@@ -179,11 +182,14 @@ else
   rm -rf $repackage_dir/share/glib-2.0
 fi
 
+# pkg-config files for OpenGL/GLU are not needed
+rm -f $repackage_dir/lib/pkgconfig/{gl,glu}.pc
+
 rm -rf $repackage_dir/share/{aclocal,bash-completion,cmake,config.site,doc,gdb,gtk-2.0,gtk-doc,installed-tests,man,meson,thumbnailers,xml,zsh}
 rm -rf $repackage_dir/etc/bash_completion.d
 
 # Remove dynamic modules
-rm -rf $repackage_dir/lib/{gdk-pixbuf-2.0,vips-modules-*}
+rm -rf $repackage_dir/lib/{gdk-pixbuf-2.0,gio,vips-modules-*}
 
 find $repackage_dir/lib -name "*.a" -and ! -name "*.dll.a" -exec rm -f {} \;
 find $repackage_dir/lib \( -name "*.la" -o -name "*.pdb" \) -exec rm -f {} \;

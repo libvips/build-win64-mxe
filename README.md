@@ -17,9 +17,9 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.11.0    | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.12.0    | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.2    | Mozilla Public License 2.0                                   |
-| [cgif]          | 0.4.1     | MIT Licence                                                  |
+| [cgif]          | 0.5.0     | MIT Licence                                                  |
 | [expat]         | 2.6.4     | MIT Licence                                                  |
 | [fontconfig]    | 2.16.0    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
@@ -27,10 +27,10 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [glib]          | 2.83.3    | LGPLv3                                                       |
 | [harfbuzz]      | 10.2.0    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
-| [lcms]          | 2.16      | MIT Licence                                                  |
+| [lcms]          | 2.17      | MIT Licence                                                  |
 | [libarchive]    | 3.7.7     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.25    | LGPLv3                                                       |
-| [libffi]        | 3.4.6     | MIT Licence                                                  |
+| [libffi]        | 3.4.7     | MIT Licence                                                  |
 | [libheif]       | 1.19.5    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.46    | [libpng License version 2]                                   |
@@ -44,7 +44,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [pango]         | 1.56.1    | LGPLv3                                                       |
 | [pixman]        | 0.44.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
-| [zlib-ng]       | 2.2.3     | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.2.4     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
 
@@ -103,8 +103,8 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.3     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 25.01.0   | GPLv2                                                        |
-| [sqlite]        | 3.48.0    | Public domain                                                |
+| [poppler]       | 25.02.0   | GPLv2                                                        |
+| [sqlite]        | 3.49.0    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/

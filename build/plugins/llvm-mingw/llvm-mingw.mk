@@ -50,8 +50,8 @@ define $(PKG)_BUILD_mingw-w64
 
     # Create empty dummy archives, to avoid failing when the compiler
     # driver adds "-lssp -lssp_nonshared" when linking.
-    $(PREFIX)/$(BUILD)/bin/llvm-ar rcs $(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/lib/libssp.a
-    $(PREFIX)/$(BUILD)/bin/llvm-ar rcs $(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/lib/libssp_nonshared.a
+    '$(PREFIX)/$(BUILD)/bin/llvm-ar' rcs '$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/lib/libssp.a'
+    '$(PREFIX)/$(BUILD)/bin/llvm-ar' rcs '$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/lib/libssp_nonshared.a'
 endef
 
 define $(PKG)_PRE_BUILD
