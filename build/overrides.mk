@@ -127,6 +127,16 @@ nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
 nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
+# upstream version is 3490000
+# git clone -b branch-3.49 https://github.com/sqlite/sqlite.git
+# cd sqlite
+# ./configure && make amalgamation-tarball
+sqlite_VERSION  := 3490100
+sqlite_CHECKSUM := 6fb0b95722d8516df74951dc3479cc2ad64f98562ae43accdde75a05aabcad80
+sqlite_SUBDIR   := sqlite-autoconf-$(sqlite_VERSION)
+sqlite_FILE     := sqlite-autoconf-$(sqlite_VERSION).tar.gz
+sqlite_URL      := https://rpms.wsrv.nl/sources/$(sqlite_FILE)
+
 # upstream version is 12.0.0
 # Update MinGW-w64 to be91da6
 # https://github.com/mingw-w64/mingw-w64/tarball/be91da60c4ae62a76099279500810c8ffbef4da1
@@ -822,27 +832,24 @@ endef
 
 # install DLL in /bin
 # generate missing import library
+# build with --disable-load-extension
 define sqlite_BUILD
-    cd '$(1)' && $(SOURCE_DIR)/configure \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --host='$(TARGET)' \
         --build='$(BUILD)' \
         --prefix='$(PREFIX)/$(TARGET)' \
-        $(if $(BUILD_STATIC), \
-            --enable-static \
-            --disable-shared \
-        $(else), \
+        $(if $(BUILD_SHARED), \
+            --out-implib \
+            --enable-shared \
             --disable-static \
-            --enable-shared) \
-        --disable-readline
-    $(MAKE) -C '$(1)' -j 1 install
+        $(else), \
+            --enable-static \
+            --disable-shared) \
+        --disable-readline \
+        --disable-load-extension
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 
     # https://sqlite.org/forum/forumpost/4b68a3b892dfb9a1
-    # TODO(kleisauke): Switch to `--out-implib` configure flag for the next release.
     $(if $(BUILD_SHARED), \
-        cp -L '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll' '$(PREFIX)/$(TARGET)/bin'; \
-        rm -v '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll'*; \
-        '$(PREFIX)/$(TARGET)/bin/gendef' '$(PREFIX)/$(TARGET)/bin/libsqlite3.dll'; \
-        $(TARGET)-dlltool -D '$(PREFIX)/$(TARGET)/bin/libsqlite3.dll' \
-            -l '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll.a' \
-            -d 'libsqlite3.def';)
+        mv -vf '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll' '$(PREFIX)/$(TARGET)/bin')
 endef
