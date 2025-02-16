@@ -5,14 +5,14 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sat, 15 Feb 2025 14:21:30 +0100
-Subject: [PATCH 1/2] configure: avoid disabling thread safety if pthreads is
+Subject: [PATCH 1/1] configure: avoid disabling thread safety if pthreads is
  unavailable
 
 Specifically, Windows does not require pthreads.
 
 Regressed since the migration of the build system to autosetup.
 
-Upstream-Status: Submitted [https://sqlite.org/forum/forumpost/8e0fdb8c0d3985d5]
+Upstream-Status: Inappropriate [libvips specific - https://sqlite.org/forum/forumpost/93bedd58e5c4e6ea]
 
 diff --git a/autosetup/sqlite-config.tcl b/autosetup/sqlite-config.tcl
 index 1111111..2222222 100644
@@ -30,26 +30,3 @@ index 1111111..2222222 100644
        define LDFLAGS_PTHREAD [get-define lib_pthread_create]
        undefine lib_pthread_create
        undefine lib_pthread_mutexattr_init
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Sat, 15 Feb 2025 15:16:23 +0100
-Subject: [PATCH 2/2] Avoid creating symlinks for `*.dll` files
-
-Upstream-Status: Submitted [https://sqlite.org/forum/forumpost/8e0fdb8c0d3985d5]
-
-diff --git a/Makefile.in b/Makefile.in
-index 1111111..2222222 100644
---- a/Makefile.in
-+++ b/Makefile.in
-@@ -162,7 +162,9 @@ install-so-1: $(install-dir.lib) $(libsqlite3.SO)
- 	fi
- 	@echo "Setting up $(libsqlite3.SO) version symlinks..."; \
- 	cd "$(install-dir.lib)" || exit $$?; \
--	if [ x.dylib = x$(T.dll) ]; then \
-+	if [ x.dll = x$(T.dll) ]; then \
-+		echo "... none needed"; \
-+	elif [ x.dylib = x$(T.dll) ]; then \
- 		rm -f libsqlite3.0$(T.dll) libsqlite3.$(PACKAGE_VERSION)$(T.dll) || exit $$?; \
- 		dllname=libsqlite3.$(PACKAGE_VERSION)$(T.dll); \
- 		mv $(libsqlite3.SO) $$dllname || exit $$?; \

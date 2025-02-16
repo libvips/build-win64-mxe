@@ -132,7 +132,7 @@ nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 # cd sqlite
 # ./configure && make amalgamation-tarball
 sqlite_VERSION  := 3490100
-sqlite_CHECKSUM := 6fb0b95722d8516df74951dc3479cc2ad64f98562ae43accdde75a05aabcad80
+sqlite_CHECKSUM := 50b082652ab0e96c09535ead3f7b9ac2f1b93379c69c4dc51a4b8155dd6d6492
 sqlite_SUBDIR   := sqlite-autoconf-$(sqlite_VERSION)
 sqlite_FILE     := sqlite-autoconf-$(sqlite_VERSION).tar.gz
 sqlite_URL      := https://rpms.wsrv.nl/sources/$(sqlite_FILE)
