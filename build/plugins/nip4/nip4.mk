@@ -1,0 +1,32 @@
+PKG             := nip4
+$(PKG)_WEBSITE  := https://github.com/jcupitt/nip4
+$(PKG)_DESCR    := Image processing spreadsheet
+$(PKG)_IGNORE   :=
+$(PKG)_VERSION  := 9.0.0-10
+$(PKG)_CHECKSUM := 7c1573b63fd12ace42dfc4ffd24519610a8b8c9672088100d9b1cd4f25c11624
+$(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
+$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
+$(PKG)_URL      := $($(PKG)_WEBSITE)/releases/download/v$($(PKG)_VERSION)/$($(PKG)_FILE)
+$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
+$(PKG)_DEPS     := cc meson-wrapper gtk4 gsl $(foreach TARGET,$(MXE_TARGETS),vips-$(lastword $(call split,.,$(TARGET))))
+
+define $(PKG)_PRE_CONFIGURE
+    (printf '{\n'; \
+     printf '  "epoxy": "$(libepoxy_VERSION)",\n'; \
+     printf '  "graphene": "$(graphene_VERSION)",\n'; \
+     printf '  "gtk": "$(gtk4_VERSION)",\n'; \
+     printf '  "gsl": "$(gsl_VERSION)",\n'; \
+     printf '  "nip4": "$(nip4_VERSION)",\n'; \
+     printf '}';) \
+     > '$(PREFIX)/$(TARGET)/vips-packaging/versions-nip4.json'
+endef
+
+define $(PKG)_BUILD
+    $($(PKG)_PRE_CONFIGURE)
+
+    $(eval export CFLAGS += -O3)
+
+    $(MXE_MESON_WRAPPER) '$(SOURCE_DIR)' '$(BUILD_DIR)'
+
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+endef
