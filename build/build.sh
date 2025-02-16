@@ -150,7 +150,7 @@ if [ "$DISP" = "true" ]; then
     MXE_PLUGIN_DIRS="$plugins" \
     MXE_TARGETS=$target.$deps
 fi
-  
+
 # Build nip4, if requested
 if [ "$NIP4" = "true" ]; then
   make nip4 \

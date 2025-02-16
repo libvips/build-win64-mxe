@@ -697,12 +697,14 @@ endef
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
 # OpenSlide needs --with-tree --with-xpath
 # ImageMagick's internal MSVG parser needs --with-push --with-sax1
+# nip4 needs --with-output
 define libxml2_BUILD
     $(SED) -i 's,`uname`,MinGW,g' '$(1)/xml2-config.in'
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-minimum \
+        --with-output \
         $(if $(findstring .all,$(TARGET)), \
             --with-tree \
             --with-xpath \

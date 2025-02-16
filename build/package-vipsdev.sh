@@ -129,7 +129,7 @@ whitelist+=(ntdll.dll)
 whitelist+=(api-ms-win-core-synch-l1-2-0.dll)
 
 # Whitelist dwrite.dll, hid.dll and opengl32.dll for GTK
-if [ "$DISP" = "true" ]; then
+if [ "$DISP" = "true" -o "$NIP4" = "true" ]; then
    whitelist+=(dwrite.dll hid.dll opengl32.dll)
 fi
 
