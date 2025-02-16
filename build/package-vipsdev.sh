@@ -90,6 +90,11 @@ if [ "$DISP" = "true" ]; then
   pe_targets+=($bin_dir/vipsdisp.exe $bin_dir/gdbus.exe)
 fi
 
+if [ "$NIP4" = "true" ]; then
+  zip_suffix+="-nip4"
+  pe_targets+=($bin_dir/nip4.exe $bin_dir/gdbus.exe)
+fi
+
 if [ "$HEVC" = "true" ]; then
   zip_suffix+="-hevc"
 fi
@@ -170,8 +175,8 @@ else
   rm -rf $repackage_dir/lib/{*.so*,ldscripts,rustlib}
 fi
 
-if [ "$DISP" = "true" ]; then
-  # We need to distribute share/glib-2.0/schemas/* for vipsdisp
+if [ "$DISP" = "true" -o "$NIP4" = "true" ]; then
+  # We need to distribute share/glib-2.0/schemas/* for gtk apps
   # Note: you may also need to set the XDG_DATA_DIRS env variable, see:
   # https://stackoverflow.com/a/28962391
   rm -rf $repackage_dir/share/glib-2.0/{codegen,dtds,gdb}
@@ -212,6 +217,7 @@ echo "Copying packaging files"
 
 cp $install_dir/vips-packaging/{ChangeLog,LICENSE,README.md,versions.json} $repackage_dir
 [ "$DISP" = "true" ] && cp $install_dir/vips-packaging/versions-disp.json $repackage_dir
+[ "$NIP4" = "true" ] && cp $install_dir/vips-packaging/versions-nip4.json $repackage_dir
 
 zipfile=$vips_package-dev-$arch-$deps-$vips_version${vips_patch_version:+.$vips_patch_version}$zip_suffix.zip
 
