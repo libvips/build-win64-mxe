@@ -59,12 +59,12 @@ fi
 curr_revision=$(git rev-parse HEAD)
 
 # Is our branch up-to-date?
-if [ ! "$curr_revision" = "$revision" ]; then
+if [ "$curr_revision" != "$revision" ]; then
   git pull && git reset --hard $revision
   initialize=true
 fi
 
-if [ "$initialize" = true ]; then
+if [ "$initialize" = "true" ]; then
   # Patch MXE to support the ARM64 target
   git apply $work_dir/patches/mxe-fixes.patch
 fi
