@@ -4,10 +4,8 @@ $(PKG)_DESCR    := Image processing spreadsheet
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 9.0.0-10
 $(PKG)_CHECKSUM := 7c1573b63fd12ace42dfc4ffd24519610a8b8c9672088100d9b1cd4f25c11624
-$(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
-$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
-$(PKG)_URL      := $($(PKG)_WEBSITE)/releases/download/v$($(PKG)_VERSION)/$($(PKG)_FILE)
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
+$(PKG)_GH_CONF  := jcupitt/nip4/releases,v,,,,.tar.xz
 $(PKG)_DEPS     := cc meson-wrapper gtk4 gsl $(foreach TARGET,$(MXE_TARGETS),vips-$(lastword $(call split,.,$(TARGET))))
 
 define $(PKG)_PRE_CONFIGURE

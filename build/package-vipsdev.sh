@@ -134,7 +134,7 @@ whitelist+=(ntdll.dll)
 whitelist+=(api-ms-win-core-synch-l1-2-0.dll)
 
 # Whitelist dwrite.dll, hid.dll and opengl32.dll for GTK
-if [ "$DISP" = "true" -o "$NIP4" = "true" ]; then
+if [ "$DISP" = "true" ] || [ "$NIP4" = "true" ]; then
    whitelist+=(dwrite.dll hid.dll opengl32.dll)
 fi
 
@@ -175,7 +175,7 @@ else
   rm -rf $repackage_dir/lib/{*.so*,ldscripts,rustlib}
 fi
 
-if [ "$DISP" = "true" -o "$NIP4" = "true" ]; then
+if [ "$DISP" = "true" ] || [ "$NIP4" = "true" ]; then
   # We need to distribute share/glib-2.0/schemas/* for gtk apps
   # Note: you may also need to set the XDG_DATA_DIRS env variable, see:
   # https://stackoverflow.com/a/28962391

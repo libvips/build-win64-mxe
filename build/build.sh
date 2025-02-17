@@ -94,12 +94,8 @@ if [ "$JPEG_IMPL" != "libjpeg-turbo" ]; then
   plugins+=" $work_dir/plugins/$JPEG_IMPL"
 fi
 
-if [ "$DISP" = "true" ]; then
-  plugins+=" $work_dir/plugins/vipsdisp"
-fi
-
-if [ "$NIP4" = "true" ]; then
-  plugins+=" $work_dir/plugins/nip4"
+if [ "$DISP" = "true" ] || [ "$NIP4" = "true" ]; then
+  plugins+=" $work_dir/plugins/gtk4"
 fi
 
 if [ "$HEVC" = "true" ]; then

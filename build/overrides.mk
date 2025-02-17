@@ -129,6 +129,16 @@ mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
 mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
 
+# upstream version is 2.7.1
+# needed by nip4
+gsl_VERSION  := 2.8
+gsl_CHECKSUM := 6a99eeed15632c6354895b1dd542ed5a855c0f15d9ad1326c6fe2b2c9e423190
+gsl_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gsl-[0-9]*.patch)))
+gsl_SUBDIR   := gsl-$(gsl_VERSION)
+gsl_FILE     := gsl-$(gsl_VERSION).tar.gz
+gsl_URL      := https://ftp.gnu.org/gnu/gsl/$(gsl_FILE)
+gsl_URL_2    := https://ftp.snt.utwente.nl/pub/software/gnu/gsl/$(gsl_FILE)
+
 ## Patches that we override with our own
 
 cairo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
@@ -704,7 +714,7 @@ define libxml2_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-minimum \
-        --with-output \
+        $(if $(findstring .gtk4,$(TARGET)), --with-output) \
         $(if $(findstring .all,$(TARGET)), \
             --with-tree \
             --with-xpath \

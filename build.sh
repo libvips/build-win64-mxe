@@ -133,12 +133,7 @@ if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
   exit 1
 fi
 
-if [ "$type" = "static" ] && [ "$with_disp" = "true" ]; then
-  echo "ERROR: GTK cannot be built as a statically linked library on Windows." >&2
-  exit 1
-fi
-
-if [ "$type" = "static" ] && [ "$with_nip4" = "true" ]; then
+if [ "$type" = "static" ] && ([ "$with_disp" = "true" ] || [ "$with_nip4" = "true" ]); then
   echo "ERROR: GTK cannot be built as a statically linked library on Windows." >&2
   exit 1
 fi
@@ -170,12 +165,8 @@ if [ "$with_ffi_compat" = "true" ]; then
   target+=".ffi"
 fi
 
-if [ "$with_disp" = "true" ]; then
-  target+=".disp"
-fi
-
-if [ "$with_nip4" = "true" ]; then
-  target+=".nip4"
+if [ "$with_disp" = "true" ] || [ "$with_nip4" = "true" ]; then
+  target+=".gtk4"
 fi
 
 if [ "$with_debug" = "true" ]; then
