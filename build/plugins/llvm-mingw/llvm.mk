@@ -71,6 +71,7 @@ endef
 define $(PKG)_BUILD_RUNTIMES
     mkdir '$(BUILD_DIR).runtimes'
     cd '$(BUILD_DIR).runtimes' && $(TARGET)-cmake '$(SOURCE_DIR)/runtimes' \
+        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32' \
         -DCMAKE_CXX_COMPILER_TARGET='$(PROCESSOR)-w64-windows-gnu' \
         -DCMAKE_C_COMPILER_WORKS=TRUE \
         -DCMAKE_CXX_COMPILER_WORKS=TRUE \
