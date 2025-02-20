@@ -151,10 +151,15 @@ index 1111111..2222222 100644
  cmake = '@PREFIX@/bin/@TARGET@-cmake'
  glib-mkenums = '@PREFIX@/@TARGET@/bin/glib-mkenums'
  glib-genmarshal = '@PREFIX@/@TARGET@/bin/glib-genmarshal'
-@@ -23,6 +23,16 @@ needs_exe_wrapper = true
+@@ -22,6 +22,20 @@ glib-compile-resources = '/usr/bin/glib-compile-resources'
+ needs_exe_wrapper = true
  sys_root = '@PREFIX@/@TARGET@'
  pkg_config_libdir = '@PREFIX@/@TARGET@/lib/pkgconfig'
- 
++# https://docs.gtk.org/glib/cross-compiling.html#cross-properties
++have_c99_vsnprintf = true
++have_c99_snprintf = true
++have_unix98_printf = true
++
 +[built-in options]
 +bindir = 'bin'
 +includedir = 'include'
@@ -164,10 +169,9 @@ index 1111111..2222222 100644
 +buildtype = 'release'
 +default_library = '@LIBTYPE@'
 +strip = @STRIP@
-+
+ 
  [host_machine]
  system = 'windows'
- cpu_family = '@CPU_FAMILY@'
 diff --git a/src/meson-wrapper/conf/target-meson.in b/src/meson-wrapper/conf/target-meson.in
 index 1111111..2222222 100644
 --- a/src/meson-wrapper/conf/target-meson.in

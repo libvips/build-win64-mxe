@@ -19,6 +19,23 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
+# no longer needed by libvips, but some of the deps need it
+# upstream version is 2.13.5
+libxml2_VERSION  := 2.13.6
+libxml2_CHECKSUM := f453480307524968f7a04ec65e64f2a83a825973bcd260a2e7691be82ae70c96
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
+libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
+libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
+
+# upstream version is 1.6.46
+libpng_VERSION  := 1.6.47
+libpng_CHECKSUM := b213cb381fbb1175327bd708a77aab708a05adde7b471bc267bd15ac99893631
+libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
+libpng_SUBDIR   := libpng-$(libpng_VERSION)
+libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
+libpng_URL      := https://$(SOURCEFORGE_MIRROR)/project/libpng/libpng16/$(libpng_VERSION)/$(libpng_FILE)
+
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -52,8 +69,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.59.2
-librsvg_CHECKSUM := ecd293fb0cc338c170171bbc7bcfbea6725d041c95f31385dc935409933e4597
+librsvg_VERSION  := 2.59.90
+librsvg_CHECKSUM := d3d623a9839d2b7eb76a5b0b621c15d02abc4d9a886376c3a53b568206ebf545
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -557,10 +574,6 @@ define librsvg_BUILD
     # Disable tools
     $(SED) -i "/subdir('rsvg_convert')/d" '$(SOURCE_DIR)/meson.build'
 
-    # Update and regenerate the lockfile for zune-jpeg
-    # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1071
-    cargo update zune-jpeg --manifest-path='$(SOURCE_DIR)/Cargo.toml'
-
     $(MXE_MESON_WRAPPER) \
         -Dintrospection=disabled \
         -Dpixbuf=disabled \
@@ -822,27 +835,24 @@ endef
 
 # install DLL in /bin
 # generate missing import library
+# build with --disable-load-extension
 define sqlite_BUILD
-    cd '$(1)' && $(SOURCE_DIR)/configure \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --host='$(TARGET)' \
         --build='$(BUILD)' \
         --prefix='$(PREFIX)/$(TARGET)' \
-        $(if $(BUILD_STATIC), \
-            --enable-static \
-            --disable-shared \
-        $(else), \
+        $(if $(BUILD_SHARED), \
+            --out-implib \
+            --enable-shared \
             --disable-static \
-            --enable-shared) \
-        --disable-readline
-    $(MAKE) -C '$(1)' -j 1 install
+        $(else), \
+            --enable-static \
+            --disable-shared) \
+        --disable-readline \
+        --disable-load-extension
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 
     # https://sqlite.org/forum/forumpost/4b68a3b892dfb9a1
-    # TODO(kleisauke): Switch to `--out-implib` configure flag for the next release.
     $(if $(BUILD_SHARED), \
-        cp -L '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll' '$(PREFIX)/$(TARGET)/bin'; \
-        rm -v '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll'*; \
-        '$(PREFIX)/$(TARGET)/bin/gendef' '$(PREFIX)/$(TARGET)/bin/libsqlite3.dll'; \
-        $(TARGET)-dlltool -D '$(PREFIX)/$(TARGET)/bin/libsqlite3.dll' \
-            -l '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll.a' \
-            -d 'libsqlite3.def';)
+        mv -vf '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll' '$(PREFIX)/$(TARGET)/bin')
 endef
