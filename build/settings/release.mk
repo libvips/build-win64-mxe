@@ -9,10 +9,10 @@ MXE_TMP := /var/tmp
 
 # Special flags for compiler.
 # Default optimisation level is for binary size (-Os).
-# Overriden to performance (-O3) for select dependencies that benefit.
-export CFLAGS   := -Os -g -gcodeview -fdata-sections -ffunction-sections
-export CXXFLAGS := -Os -g -gcodeview -fdata-sections -ffunction-sections
-export LDFLAGS  := -Wl,--pdb= -Wl,--gc-sections -Wl,-s
+# Overridden to performance (-O3) for select dependencies that benefit.
+TARGET_CFLAGS   := -Os -g -gcodeview -fdata-sections -ffunction-sections
+TARGET_CXXFLAGS := -Os -g -gcodeview -fdata-sections -ffunction-sections
+TARGET_LDFLAGS  := -Wl,--pdb= -Wl,--gc-sections -Wl,-s
 
 # Special flags for Rust.
 export CARGO_PROFILE_RELEASE_DEBUG         := false
@@ -22,9 +22,12 @@ export CARGO_PROFILE_RELEASE_LTO           := true
 export CARGO_PROFILE_RELEASE_OPT_LEVEL     := z
 export CARGO_PROFILE_RELEASE_PANIC         := abort
 
+# Install the various PDBs.
+INSTALL_PDB := $(true)
+
 # Debug info should be stored in the various PDBs, ensure we strip
 # any residual debug info from the libs.
 STRIP_LIB := $(true)
 
-# Disable ccache
+# Disable ccache.
 MXE_USE_CCACHE := $(false)

@@ -42,41 +42,16 @@ if [[ "$target" == *.static* ]] && [ "$deps" = "all" ]; then
   exit 1
 fi
 
-# Always checkout a particular revision which will successfully build.
-# This ensures that it will not suddenly break a build.
-# Note: Must be regularly updated.
-revision="d8aaa42070904230cfddb7d62f6ce03e295e74ae"
-initialize=false
-
-if [ -f "$mxe_dir/Makefile" ]; then
-  echo "Skip cloning, MXE already exists at $mxe_dir"
-  cd $mxe_dir && git fetch
-else
-  git clone https://github.com/mxe/mxe && cd $mxe_dir
-  initialize=true
-fi
-
-curr_revision=$(git rev-parse HEAD)
-
-# Is our branch up-to-date?
-if [ "$curr_revision" != "$revision" ]; then
-  git pull && git reset --hard $revision
-  initialize=true
-fi
-
-if [ "$initialize" = "true" ]; then
-  # Patch MXE to support the ARM64 target
-  git apply $work_dir/patches/mxe-fixes.patch
-fi
+cd $mxe_dir
 
 if [ "$DEBUG" = "true" ]; then
-  cp -f $work_dir/settings/debug.mk $mxe_dir/settings.mk
+  cp -f $work_dir/settings/debug.mk settings.mk
 else
-  cp -f $work_dir/settings/release.mk $mxe_dir/settings.mk
+  cp -f $work_dir/settings/release.mk settings.mk
 fi
 
 # The 'plugins' variable controls which plugins are in use
-plugins="$work_dir"
+plugins="plugins/llvm-mingw $work_dir"
 
 if [ -n "$GIT_COMMIT" ]; then
   plugins+=" $work_dir/plugins/nightly"
@@ -98,8 +73,6 @@ if [ "$ZLIB_NG" = "true" ]; then
   plugins+=" $work_dir/plugins/zlib-ng"
 fi
 
-plugins+=" $work_dir/plugins/llvm-mingw"
-
 # Avoid shipping the gettext DLL (libintl-8.dll),
 # use a statically build dummy implementation instead.
 # This intentionally disables the i18n features of (GNU)
@@ -109,25 +82,18 @@ plugins+=" $work_dir/plugins/llvm-mingw"
 # https://github.com/libvips/libvips/issues/1637
 plugins+=" $work_dir/plugins/proxy-libintl"
 
-# Build pe-util, handy for copying DLL dependencies.
-make pe-util \
-  IGNORE_SETTINGS=yes \
-  MXE_TMP="/var/tmp" \
-  MXE_TARGETS=`$mxe_dir/ext/config.guess` \
-  MXE_USE_CCACHE=
-
 if [ -n "$GIT_COMMIT" ]; then
   # Invalidate build cache, if exists
-  rm -f $mxe_dir/usr/$target.$deps/installed/vips-$deps
+  rm -f usr/$target.$deps/installed/vips-$deps
 fi
 
-# Build gendef (a tool for generating def files from DLLs) 
+# Build gendef (a tool for generating def files from DLLs)
 # and libvips (+ dependencies)
 make gendef vips-$deps \
   MXE_PLUGIN_DIRS="$plugins" \
   MXE_TARGETS=$target.$deps \
   GIT_COMMIT=$GIT_COMMIT
-  
+
 # Build vipsdisp, if requested
 if [ "$DISP" = "true" ]; then
   make vipsdisp \
