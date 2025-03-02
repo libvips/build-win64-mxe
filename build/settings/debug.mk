@@ -8,9 +8,9 @@
 MXE_TMP := /var/tmp
 
 # Disable optimizations to improve debuggability.
-export CFLAGS   := -g -gcodeview -Og -fdata-sections -ffunction-sections
-export CXXFLAGS := -g -gcodeview -Og -fdata-sections -ffunction-sections
-export LDFLAGS  := -Wl,--pdb= -Wl,--gc-sections
+TARGET_CFLAGS   := -g -gcodeview -Og -fdata-sections -ffunction-sections
+TARGET_CXXFLAGS := -g -gcodeview -Og -fdata-sections -ffunction-sections
+TARGET_LDFLAGS  := -Wl,--pdb= -Wl,--gc-sections
 
 # Special flags for Rust.
 export CARGO_PROFILE_RELEASE_DEBUG         := true
@@ -20,10 +20,13 @@ export CARGO_PROFILE_RELEASE_LTO           := true
 export CARGO_PROFILE_RELEASE_OPT_LEVEL     := 1
 export CARGO_PROFILE_RELEASE_PANIC         := abort
 
+# Install the various PDBs.
+INSTALL_PDB := $(true)
+
 # Avoid stripping.
 STRIP_TOOLCHAIN := $(false)
 STRIP_LIB       := $(false)
 STRIP_EXE       := $(false)
 
-# Disable ccache
+# Disable ccache.
 MXE_USE_CCACHE := $(false)

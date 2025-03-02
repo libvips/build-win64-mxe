@@ -15,7 +15,7 @@ fi
 work_dir=$(pwd)
 
 # MXE specific
-mxe_dir=$work_dir/mxe
+mxe_dir=/usr/local/mxe
 mxe_prefix=$mxe_dir/usr
 
 repackage_dir=$vips_package-dev-$vips_version

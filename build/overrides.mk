@@ -144,18 +144,6 @@ nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
 nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
-# upstream version is 12.0.0
-# Update mingw-w64 to 2be9e0f
-# https://github.com/mingw-w64/mingw-w64/tarball/2be9e0f319990e48bfb0b2dd7b9e7045791b465f
-# Keep-in sync with:
-# https://github.com/mstorsjo/llvm-mingw/blob/$(llvm-mingw_VERSION)/build-mingw-w64.sh#L21
-mingw-w64_VERSION  := 2be9e0f
-mingw-w64_CHECKSUM := 1eab853ae15f1ecf0ca7d87918d9482b3e4389fe778fb756c8ce071852ce3829
-mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
-mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
-mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
-mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
-
 ## Patches that we override with our own
 
 cairo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
@@ -251,78 +239,6 @@ libarchive_DEPS         := cc zlib
 sqlite_DEPS             := cc zlib
 
 ## Override build scripts
-
-# Unexport target specific compiler / linker flags
-define gendef_BUILD
-    $(eval unexport CFLAGS)
-    $(eval unexport CXXFLAGS)
-    $(eval unexport LDFLAGS)
-
-    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/mingw-w64-tools/gendef/configure' \
-        CFLAGS='-Wno-implicit-fallthrough' \
-        --host='$(BUILD)' \
-        --build='$(BUILD)' \
-        --prefix='$(PREFIX)/$(TARGET)' \
-        --target='$(TARGET)'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
-endef
-
-define pkgconf_BUILD_$(BUILD)
-    $(eval unexport CFLAGS)
-    $(eval unexport CXXFLAGS)
-    $(eval unexport LDFLAGS)
-
-    cd '$(SOURCE_DIR)' && ./autogen.sh
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        --prefix='$(PREFIX)/$(TARGET)'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-endef
-
-define nasm_BUILD_$(BUILD)
-    $(eval unexport CFLAGS)
-    $(eval unexport CXXFLAGS)
-    $(eval unexport LDFLAGS)
-
-    # build nasm compiler
-    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/configure' \
-        $(MXE_CONFIGURE_OPTS)
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-endef
-
-define ninja_BUILD_$(BUILD)
-    $(eval unexport CFLAGS)
-    $(eval unexport CXXFLAGS)
-    $(eval unexport LDFLAGS)
-
-    '$(TARGET)-cmake' -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
-        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(TARGET)' \
-        -DBUILD_TESTING=OFF
-    '$(TARGET)-cmake' --build '$(BUILD_DIR)' -j '$(JOBS)'
-    '$(TARGET)-cmake' --install '$(BUILD_DIR)'
-endef
-
-define widl_BUILD
-    $(eval unexport CFLAGS)
-    $(eval unexport CXXFLAGS)
-    $(eval unexport LDFLAGS)
-
-    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/mingw-w64-tools/widl/configure' \
-        --host='$(BUILD)' \
-        --build='$(BUILD)' \
-        --prefix='$(PREFIX)' \
-        --target='$(TARGET)' \
-        --with-widl-includedir='$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/include'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
-
-    # create cmake file
-    mkdir -p '$(CMAKE_TOOLCHAIN_DIR)'
-    echo 'set(CMAKE_WIDL $(PREFIX)/bin/$(TARGET)-$(PKG) CACHE PATH "widl executable")' \
-    > '$(CMAKE_TOOLCHAIN_DIR)/$(PKG).cmake'
-endef
 
 # libasprintf isn't needed, so build with --disable-libasprintf
 # this definition is for reference purposes only, we use the
