@@ -145,10 +145,12 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 12.0.0
-# Update MinGW-w64 to be91da6
-# https://github.com/mingw-w64/mingw-w64/tarball/be91da60c4ae62a76099279500810c8ffbef4da1
-mingw-w64_VERSION  := be91da6
-mingw-w64_CHECKSUM := c175db6f2b3978bed492a36438df176d69cf7f2e3dd0a1e21ddf65cc11d171c8
+# Update mingw-w64 to 2be9e0f
+# https://github.com/mingw-w64/mingw-w64/tarball/2be9e0f319990e48bfb0b2dd7b9e7045791b465f
+# Keep-in sync with:
+# https://github.com/mstorsjo/llvm-mingw/blob/$(llvm-mingw_VERSION)/build-mingw-w64.sh#L21
+mingw-w64_VERSION  := 2be9e0f
+mingw-w64_CHECKSUM := 1eab853ae15f1ecf0ca7d87918d9482b3e4389fe778fb756c8ce071852ce3829
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
