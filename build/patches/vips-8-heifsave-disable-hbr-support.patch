@@ -18,8 +18,8 @@ diff --git a/libvips/foreign/heifsave.c b/libvips/foreign/heifsave.c
 index 1111111..2222222 100644
 --- a/libvips/foreign/heifsave.c
 +++ b/libvips/foreign/heifsave.c
-@@ -533,20 +533,9 @@ vips_foreign_save_heif_build(VipsObject *object)
- 		!vips_object_argument_isset(object, "subsample_mode"))
+@@ -539,20 +539,9 @@ vips_foreign_save_heif_build(VipsObject *object)
+ 	if (heif->lossless)
  		heif->subsample_mode = VIPS_FOREIGN_SUBSAMPLE_OFF;
  
 -	/* Default 12 bit save for 16-bit images.
@@ -41,7 +41,7 @@ index 1111111..2222222 100644
  		vips_error("heifsave", _("%d-bit colour depth not supported"),
  			heif->bitdepth);
  		return -1;
-@@ -730,14 +719,10 @@ vips_foreign_save_heif_build(VipsObject *object)
+@@ -756,14 +745,10 @@ vips_foreign_save_heif_build(VipsObject *object)
  }
  
  #define UC VIPS_FORMAT_UCHAR
@@ -57,7 +57,7 @@ index 1111111..2222222 100644
  };
  
  static void
-@@ -772,7 +757,7 @@ vips_foreign_save_heif_class_init(VipsForeignSaveHeifClass *class)
+@@ -798,7 +783,7 @@ vips_foreign_save_heif_class_init(VipsForeignSaveHeifClass *class)
  		_("Number of bits per pixel"),
  		VIPS_ARGUMENT_OPTIONAL_INPUT,
  		G_STRUCT_OFFSET(VipsForeignSaveHeif, bitdepth),
@@ -66,7 +66,7 @@ index 1111111..2222222 100644
  
  	VIPS_ARG_BOOL(class, "lossless", 13,
  		_("Lossless"),
-@@ -825,7 +810,7 @@ vips_foreign_save_heif_init(VipsForeignSaveHeif *heif)
+@@ -851,7 +836,7 @@ vips_foreign_save_heif_init(VipsForeignSaveHeif *heif)
  {
  	heif->ctx = heif_context_alloc();
  	heif->Q = 50;
