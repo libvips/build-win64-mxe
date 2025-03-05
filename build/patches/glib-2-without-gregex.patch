@@ -182,14 +182,18 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2211,46 +2211,6 @@ else
+@@ -2224,50 +2224,6 @@ else
    libiconv = dependency('iconv')
  endif
  
 -pcre2_req = '>=10.32'
+-pcre2_options = [
+-  'default_library=static',
+-  'test=false',
+-]
 -
 -# Pick up pcre from the system, or if "--force-fallback-for libpcre2-8" was specified
--pcre2 = dependency('libpcre2-8', version: pcre2_req, required: false, default_options: ['default_library=static'])
+-pcre2 = dependency('libpcre2-8', version: pcre2_req, required: false, default_options: pcre2_options)
 -if not pcre2.found()
 -  if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
 -  # MSVC: Search for the PCRE2 library by the configuration, which corresponds
@@ -205,7 +209,7 @@ index 1111111..2222222 100644
 -
 -# Try again with the fallback
 -if not pcre2.found()
--  pcre2 = dependency('libpcre2-8', version: pcre2_req, allow_fallback: true, default_options: ['default_library=static'])
+-  pcre2 = dependency('libpcre2-8', version: pcre2_req, allow_fallback: true, default_options: pcre2_options)
 -  assert(pcre2.type_name() == 'internal')
 -  # static flags are automatically enabled by the subproject if it's built
 -  # with default_library=static

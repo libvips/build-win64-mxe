@@ -28,14 +28,6 @@ libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
-# upstream version is 1.6.46
-libpng_VERSION  := 1.6.47
-libpng_CHECKSUM := b213cb381fbb1175327bd708a77aab708a05adde7b471bc267bd15ac99893631
-libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
-libpng_SUBDIR   := libpng-$(libpng_VERSION)
-libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
-libpng_URL      := https://$(SOURCEFORGE_MIRROR)/project/libpng/libpng16/$(libpng_VERSION)/$(libpng_FILE)
-
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -55,8 +47,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-21
-imagemagick_CHECKSUM := 36a7205c73db9107acec5bb7594e3afbde3cc08a89f0a22a15eead387244fa05
+imagemagick_VERSION  := 6.9.13-22
+imagemagick_CHECKSUM := 5cadcf46363a44ee0f81b87043e39a37621cf637c8feddef73b960a1563cf8b5
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -94,6 +86,14 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
+# upstream version is 2.83.4
+glib_VERSION  := 2.83.5
+glib_CHECKSUM := f8342c4f2b713c926db1b34b8bd93dd4cb2515a1102d8419686fe93942c6071c
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
@@ -128,8 +128,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 25.02.0
-poppler_CHECKSUM := 21234cb2a9647d73c752ce4031e65a79d11a511a835f2798284c2497b8701dee
+poppler_VERSION  := 25.03.0
+poppler_CHECKSUM := 97da4ff88517a6bbd729529f195f85c8d7a0c3bb4a3d57cb0c685cbb052fe837
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -846,7 +846,6 @@ define brotli_BUILD
 endef
 
 # install DLL in /bin
-# generate missing import library
 # build with --disable-load-extension
 define sqlite_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
