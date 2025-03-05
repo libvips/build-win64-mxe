@@ -2,10 +2,10 @@ PKG             := nip4
 $(PKG)_WEBSITE  := https://github.com/jcupitt/nip4
 $(PKG)_DESCR    := Image processing spreadsheet
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 9.0.1-4
-$(PKG)_CHECKSUM := 54e3309f5109668321a874c6d798112599495e9ce2a2092d259b41c57185b0a2
+$(PKG)_VERSION  := 9.0.1-5
+$(PKG)_CHECKSUM := 007a8c2e11d7b019fcb987bba909a51523d1e91876799cc3d9743d3d7ced8cde
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := jcupitt/nip4/tags,v
+$(PKG)_GH_CONF  := jcupitt/nip4/releases,v,,,,.tar.xz
 $(PKG)_DEPS     := cc meson-wrapper gtk4 gsl $(foreach TARGET,$(MXE_TARGETS),vips-$(lastword $(call split,.,$(TARGET))))
 
 define $(PKG)_PRE_CONFIGURE
