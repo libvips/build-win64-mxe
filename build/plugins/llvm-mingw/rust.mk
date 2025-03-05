@@ -2,13 +2,13 @@ PKG             := rust
 $(PKG)_WEBSITE  := https://www.rust-lang.org/
 $(PKG)_DESCR    := A systems programming language focused on safety, speed and concurrency.
 $(PKG)_IGNORE   :=
-# https://static.rust-lang.org/dist/2025-02-27/rustc-nightly-src.tar.xz.sha256
+# https://static.rust-lang.org/dist/2025-03-05/rustc-nightly-src.tar.xz.sha256
 $(PKG)_VERSION  := nightly
-$(PKG)_CHECKSUM := 1c681fbad97b0dfbb7930d2fc5178b9a3212dd5c2dd16ed6d021cff959d742e6
+$(PKG)_CHECKSUM := 91724890f2affa47b7e8e9891c8808764beff007bdb47054aedb0d2ad2c6c8c5
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_SUBDIR   := $(PKG)c-$($(PKG)_VERSION)-src
 $(PKG)_FILE     := $(PKG)c-$($(PKG)_VERSION)-src.tar.xz
-$(PKG)_URL      := https://static.rust-lang.org/dist/2025-02-27/$($(PKG)_FILE)
+$(PKG)_URL      := https://static.rust-lang.org/dist/2025-03-05/$($(PKG)_FILE)
 $(PKG)_DEPS     := $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 
