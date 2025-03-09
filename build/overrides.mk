@@ -690,12 +690,13 @@ define libwebp_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef
 
+# Disable the DWrite font backend for non-GTK4 builds to ensure compat with Windows Nano Server.
 # node-canvas needs a Cairo with SVG support, so compile with -Dpng=enabled
 # ensure the FontConfig backend is enabled
 # build with -Dzlib=disabled to disable the script, PostScript and PDF surfaces
 define cairo_BUILD
     $(MXE_MESON_WRAPPER) \
-        -Ddwrite=disabled \
+        $(if $(findstring .gtk4,$(TARGET)),, -Ddwrite=disabled) \
         -Dfontconfig=enabled \
         -Dfreetype=enabled \
         -Dpng=enabled \

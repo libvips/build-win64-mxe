@@ -6,6 +6,8 @@ glib_CONFIGURE_OPTS = --force-fallback-for=libpcre2-8
 
 # GTK requires cairo-win32, cairo-ps and cairo-pdf
 # https://gitlab.gnome.org/GNOME/gtk/-/issues/5072
+# Also enable the DWrite font backend in Cairo
+# https://gitlab.gnome.org/GNOME/gtk/-/issues/7144
 cairo_PATCHES := $(filter-out $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/../../patches/cairo-1-nanoserver-compat.patch))),$(cairo_PATCHES))
 cairo_CONFIGURE_OPTS = -Dzlib=enabled
 
