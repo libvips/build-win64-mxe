@@ -14,6 +14,7 @@ OPTIONS:
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
 	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
 	--with-disp		Build vipsdisp image viewer
+	--with-nip4		Build nip4 image processing spreadsheet
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaries without optimizations to improve debuggability
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
@@ -58,6 +59,7 @@ tmpdir="/var/tmp/mxe"
 jpeg_impl="mozjpeg"
 with_ffi_compat=false
 with_disp=false
+with_nip4=false
 with_hevc=false
 with_debug=false
 with_llvm=true
@@ -75,6 +77,7 @@ while [ $# -gt 0 ]; do
     --nightly) git_ref="master" ;;
     --with-ffi-compat) with_ffi_compat=true ;;
     --with-disp) with_disp=true ;;
+    --with-nip4) with_nip4=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --without-llvm) with_llvm=false ;;
@@ -130,7 +133,7 @@ if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
   exit 1
 fi
 
-if [ "$type" = "static" ] && [ "$with_disp" = "true" ]; then
+if [ "$type" = "static" ] && ([ "$with_disp" = "true" ] || [ "$with_nip4" = "true" ]); then
   echo "ERROR: GTK cannot be built as a statically linked library on Windows." >&2
   exit 1
 fi
@@ -162,8 +165,8 @@ if [ "$with_ffi_compat" = "true" ]; then
   target+=".ffi"
 fi
 
-if [ "$with_disp" = "true" ]; then
-  target+=".disp"
+if [ "$with_disp" = "true" ] || [ "$with_nip4" = "true" ]; then
+  target+=".gtk4"
 fi
 
 if [ "$with_debug" = "true" ]; then
@@ -201,6 +204,7 @@ $oci_runtime run --rm -t \
   -e "FFI_COMPAT=$with_ffi_compat" \
   -e "JPEG_IMPL=$jpeg_impl" \
   -e "DISP=$with_disp" \
+  -e "NIP4=$with_nip4" \
   -e "HEVC=$with_hevc" \
   -e "DEBUG=$with_debug" \
   -e "LLVM=$with_llvm" \

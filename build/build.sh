@@ -94,8 +94,8 @@ if [ "$JPEG_IMPL" != "libjpeg-turbo" ]; then
   plugins+=" $work_dir/plugins/$JPEG_IMPL"
 fi
 
-if [ "$DISP" = "true" ]; then
-  plugins+=" $work_dir/plugins/vipsdisp"
+if [ "$DISP" = "true" ] || [ "$NIP4" = "true" ]; then
+  plugins+=" $work_dir/plugins/gtk4"
 fi
 
 if [ "$HEVC" = "true" ]; then
@@ -143,6 +143,13 @@ make gendef vips-$deps \
 # Build vipsdisp, if requested
 if [ "$DISP" = "true" ]; then
   make vipsdisp \
+    MXE_PLUGIN_DIRS="$plugins" \
+    MXE_TARGETS=$target.$deps
+fi
+
+# Build nip4, if requested
+if [ "$NIP4" = "true" ]; then
+  make nip4 \
     MXE_PLUGIN_DIRS="$plugins" \
     MXE_TARGETS=$target.$deps
 fi

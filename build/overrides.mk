@@ -100,6 +100,14 @@ libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25d
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
 
+# upstream version is 1.18.2
+cairo_VERSION  := 1.18.4
+cairo_CHECKSUM := 445ed8208a6e4823de1226a74ca319d3600e83f6369f99b14265006599c32ccb
+cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
+cairo_SUBDIR   := cairo-$(cairo_VERSION)
+cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
+cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
+
 # upstream version is 0.43.4
 pixman_VERSION  := 0.44.2
 pixman_CHECKSUM := 50baf820dde0c5ff9714d03d2df4970f606a3d3b1024f5404c0398a9821cc4b0
@@ -155,6 +163,16 @@ mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_L
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
 mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
+
+# upstream version is 2.7.1
+# needed by nip4
+gsl_VERSION  := 2.8
+gsl_CHECKSUM := 6a99eeed15632c6354895b1dd542ed5a855c0f15d9ad1326c6fe2b2c9e423190
+gsl_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gsl-[0-9]*.patch)))
+gsl_SUBDIR   := gsl-$(gsl_VERSION)
+gsl_FILE     := gsl-$(gsl_VERSION).tar.gz
+gsl_URL      := https://ftp.gnu.org/gnu/gsl/$(gsl_FILE)
+gsl_URL_2    := https://ftp.snt.utwente.nl/pub/software/gnu/gsl/$(gsl_FILE)
 
 ## Patches that we override with our own
 
@@ -682,6 +700,7 @@ define libwebp_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef
 
+# Disable the DWrite font backend to ensure compat with Windows Nano Server
 # node-canvas needs a Cairo with SVG support, so compile with -Dpng=enabled
 # ensure the FontConfig backend is enabled
 # build with -Dzlib=disabled to disable the script, PostScript and PDF surfaces
@@ -726,12 +745,14 @@ endef
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
 # OpenSlide needs --with-tree --with-xpath
 # ImageMagick's internal MSVG parser needs --with-push --with-sax1
+# nip4 needs --with-output
 define libxml2_BUILD
     $(SED) -i 's,`uname`,MinGW,g' '$(1)/xml2-config.in'
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-minimum \
+        $(if $(findstring .gtk4,$(TARGET)), --with-output) \
         $(if $(findstring .all,$(TARGET)), \
             --with-tree \
             --with-xpath \
