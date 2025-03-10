@@ -10,7 +10,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -483,29 +483,6 @@ if host_machine.system() == 'windows'
+@@ -485,29 +485,6 @@ if host_machine.system() == 'windows'
  
    add_project_arguments('-DWIN32_LEAN_AND_MEAN', '-DNOMINMAX', language: ['c', 'cpp'])
  
