@@ -15,7 +15,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -70,10 +70,6 @@ if cc.get_id() != 'msvc'
+@@ -71,10 +71,6 @@ if cc.get_id() != 'msvc'
      '-fno-common'
    ]
  
