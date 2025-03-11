@@ -4,11 +4,10 @@ PKG             := llvm-mingw
 $(PKG)_WEBSITE  := https://github.com/mstorsjo/llvm-mingw
 $(PKG)_DESCR    := An LLVM/Clang/LLD based mingw-w64 toolchain
 $(PKG)_IGNORE   :=
-# https://github.com/mstorsjo/llvm-mingw/tarball/0087c59c17cbf02066abf71bed3300ce68babc19
-$(PKG)_VERSION  := 0087c59
-$(PKG)_CHECKSUM := 31f1edd73858fb9ca8e51572f2f536c1e514a04d0825793d12fe543078f1179f
+$(PKG)_VERSION  := 20250305
+$(PKG)_CHECKSUM := a4d1a78a6b84304942e2cea22a9510d32e4795dcc56a335d38901dacfc35be10
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/llvm-mingw-[0-9]*.patch)))
-$(PKG)_GH_CONF  := mstorsjo/llvm-mingw/branches/master
+$(PKG)_GH_CONF  := mstorsjo/llvm-mingw/tags
 $(PKG)_DEPS     := mingw-w64
 
 # The minimum Windows version we support is Windows 7, as libc++ uses

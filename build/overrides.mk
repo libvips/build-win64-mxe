@@ -47,8 +47,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-22
-imagemagick_CHECKSUM := 5cadcf46363a44ee0f81b87043e39a37621cf637c8feddef73b960a1563cf8b5
+imagemagick_VERSION  := 6.9.13-23
+imagemagick_CHECKSUM := 4447407b87be9825c5607738afd5b0dc55cce9ef0c3ebc5677a0c5f20685ad5e
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -61,8 +61,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.59.90
-librsvg_CHECKSUM := d3d623a9839d2b7eb76a5b0b621c15d02abc4d9a886376c3a53b568206ebf545
+librsvg_VERSION  := 2.59.91
+librsvg_CHECKSUM := b1ff70d5b04441ba2ba3f80404b7d98127128fba1020211e3d99b7bf400e4f83
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -85,14 +85,6 @@ fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
-
-# upstream version is 2.83.4
-glib_VERSION  := 2.83.5
-glib_CHECKSUM := f8342c4f2b713c926db1b34b8bd93dd4cb2515a1102d8419686fe93942c6071c
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
-glib_SUBDIR   := glib-$(glib_VERSION)
-glib_FILE     := glib-$(glib_VERSION).tar.xz
-glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
@@ -153,10 +145,12 @@ nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(na
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
 
 # upstream version is 12.0.0
-# Update MinGW-w64 to be91da6
-# https://github.com/mingw-w64/mingw-w64/tarball/be91da60c4ae62a76099279500810c8ffbef4da1
-mingw-w64_VERSION  := be91da6
-mingw-w64_CHECKSUM := c175db6f2b3978bed492a36438df176d69cf7f2e3dd0a1e21ddf65cc11d171c8
+# Update mingw-w64 to 2be9e0f
+# https://github.com/mingw-w64/mingw-w64/tarball/2be9e0f319990e48bfb0b2dd7b9e7045791b465f
+# Keep-in sync with:
+# https://github.com/mstorsjo/llvm-mingw/blob/$(llvm-mingw_VERSION)/build-mingw-w64.sh#L21
+mingw-w64_VERSION  := 2be9e0f
+mingw-w64_CHECKSUM := 1eab853ae15f1ecf0ca7d87918d9482b3e4389fe778fb756c8ce071852ce3829
 mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
 mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
 mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz

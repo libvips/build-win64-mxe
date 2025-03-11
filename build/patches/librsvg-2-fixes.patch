@@ -13,7 +13,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -339,13 +339,9 @@ if host_system in ['windows', 'linux']
+@@ -350,13 +350,9 @@ if host_system in ['windows', 'linux']
    native_libs = run_command(
      rustc_query_native_static_libs_args,
      capture: true,
