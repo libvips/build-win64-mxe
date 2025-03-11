@@ -2,12 +2,13 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.16.0
-$(PKG)_CHECKSUM := 6eca46c6ba5fac86224fd69007741012b0ea1f9aa1fcb9256b0cbc2faf768563
+$(PKG)_VERSION  := 8.17.0
+$(PKG)_CHECKSUM := a77fabb7617acde080992e81a94c678cdcf9a14110f1f3ef6797df272f5f1b1d
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
+# $(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
+$(PKG)_URL  	:= https://github.com/libvips/libvips/releases/download/v8.17.0-test1/vips-8.17.0-test1.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
+$(PKG)_FILE     := vips-$($(PKG)_VERSION)-test1.tar.xz
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libpng \
                    libspng libimagequant highway imagemagick matio openexr \
