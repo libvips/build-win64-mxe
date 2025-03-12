@@ -24,9 +24,8 @@ define $(PKG)_BUILD
 
     $(eval export CFLAGS += -O3)
 
-    # set the stack size to 16mb ... default is 1mb, which is too small for
-    # nip4
-    $(eval export CFLAGS += -Wl,--stack,16777216)
+    # Increase the stack size to 16MiB, as 1MiB is too small for nip4
+    $(eval export LDFLAGS += -Wl,--stack,16777216)
 
     $(MXE_MESON_WRAPPER) '$(SOURCE_DIR)' '$(BUILD_DIR)'
 
