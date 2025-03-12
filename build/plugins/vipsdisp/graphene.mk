@@ -1,6 +1,6 @@
 PKG             := graphene
 $(PKG)_WEBSITE  := https://github.com/ebassi/graphene
-$(PKG)_DESCR    := A thin layer of graphic data types 
+$(PKG)_DESCR    := A thin layer of graphic data types
 $(PKG)_IGNORE   :=
 # https://github.com/ebassi/graphene/tarball/0cfa05ff62f244e4d5e7ac35a1979a23f25c5151
 $(PKG)_VERSION  := 0cfa05f

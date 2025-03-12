@@ -9,12 +9,12 @@ $(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
 $(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
-                   libjpeg-turbo tiff lcms libexif libheif libpng \
-                   libspng libimagequant highway cgif
+                   libjpeg-turbo tiff lcms libexif libheif libspng \
+                   libimagequant highway cgif
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
-    mkdir -p $(PREFIX)/$(TARGET)/vips-packaging
+    mkdir -p '$(PREFIX)/$(TARGET)/vips-packaging'
     $(foreach f, ChangeLog LICENSE README.md, \
         cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
 

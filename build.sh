@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
 
+# exit on error
+set -e
+
 function usage()
 {
   cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [DEPS] [ARCH] [TYPE]
+Usage: $(basename "$0") [OPTIONS] [PKGS...]
 Build Windows binaries for libvips in a container
 
 OPTIONS:
 	--help			Show the help and exit
+	-t, --target <MXE_TARGET>	The binary target (this can be specified multiple times)
 	-c, --commit <COMMIT>	The commit to build libvips from
 	-r, --ref <REF>		The branch or tag to build libvips from
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
 	--with-ffi-compat	Ensure compatibility with the FFI-bindings when building static binaries
-	--with-disp		Build vipsdisp image viewer
 	--with-hevc		Build libheif with the HEVC-related dependencies
 	--with-debug		Build binaries without optimizations to improve debuggability
 	--with-jpegli		Build binaries with jpegli instead of mozjpeg
@@ -20,27 +23,20 @@ OPTIONS:
 	--without-prebuilt	Avoid using a prebuilt OCI image from GitHub Container Registry
 	--without-zlib-ng	Build binaries with vanilla zlib
 
-DEPS:
-	The group of dependencies to build libvips with,
-	    defaults to 'web'
-	Possible values are:
-	    - web
-	    - all
+PKGS:
+	The packages and their dependencies to build,
+	    defaults to 'vips-web'
 
-ARCH:
-	The Windows architecture to target,
-	    defaults to 'x86_64'
+MXE_TARGET:
+	The binary target,
+	    defaults to building for all possible targets
 	Possible values are:
-	    - x86_64
-	    - i686
-	    - aarch64
-
-TYPE:
-	Specifies the type of binary to be created,
-	    defaults to 'shared'
-	Possible values are:
-	    - shared
-	    - static
+	    - x86_64-w64-mingw32.shared
+	    - x86_64-w64-mingw32.static
+	    - i686-w64-mingw32.shared
+	    - i686-w64-mingw32.static
+	    - aarch64-w64-mingw32.shared
+	    - aarch64-w64-mingw32.static
 EOF
 
   if [ -n "$1" ]; then
@@ -49,11 +45,11 @@ EOF
 }
 
 # Default arguments
+mxe_targets=()
 git_commit=""
 git_ref=""
 jpeg_impl="mozjpeg"
 with_ffi_compat=false
-with_disp=false
 with_hevc=false
 with_debug=false
 with_prebuilt=true
@@ -65,11 +61,11 @@ POSITIONAL=()
 while [ $# -gt 0 ]; do
   case $1 in
     -h|--help) usage 0 ;;
+    -t|--target) mxe_targets+=("$2"); shift ;;
     -c|--commit) git_commit="$2"; shift ;;
     -r|--ref) git_ref="$2"; shift ;;
     --nightly) git_ref="master" ;;
     --with-ffi-compat) with_ffi_compat=true ;;
-    --with-disp) with_disp=true ;;
     --with-hevc) with_hevc=true ;;
     --with-debug) with_debug=true ;;
     --with-jpegli) jpeg_impl="jpegli" ;;
@@ -89,26 +85,54 @@ done
 # Restore positional parameters
 set -- "${POSITIONAL[@]}"
 
-deps="${1:-web}"
-arch="${2:-x86_64}"
-type="${3:-shared}"
+pkgs=("$@")
 
-if [ "$with_hevc" = "true" ] && [ "$deps" = "web" ]; then
+if [ ${#pkgs[@]} -eq 0 ]; then
+  pkgs=(vips-web)
+fi
+
+# Note: vipsdisp depends on vips-all
+[[ ${pkgs[*]} =~ "vipsdisp" ]] && build_vipsdisp=true || build_vipsdisp=false
+[[ ${pkgs[*]} =~ "vips-all" ]] && build_all_variant=true || build_all_variant=$build_vipsdisp
+[[ ${pkgs[*]} =~ "vips-web" ]] && build_web_variant=true || build_web_variant=false
+
+if [ ${#mxe_targets[@]} -eq 0 ]; then
+  if [ "$build_all_variant" = true ]; then
+    # Omit static builds by default for the "all" variant
+    mxe_targets=({x86_64,i686,aarch64}-w64-mingw32.shared)
+  elif [ "$with_ffi_compat" = true ]; then
+    # Omit shared builds by default for the --with-ffi-compat option
+    mxe_targets=({x86_64,i686,aarch64}-w64-mingw32.static)
+  else
+    # Default to all possible targets otherwise
+    mxe_targets=({x86_64,i686,aarch64}-w64-mingw32.{shared,static})
+  fi
+fi
+
+[[ ${mxe_targets[*]} =~ ".static" ]] && targets_static=true || targets_static=false
+[[ ${mxe_targets[*]} =~ ".shared" ]] && targets_shared=true || targets_shared=false
+
+if [ "$with_hevc" = true ] && [ "$build_web_variant" = true ]; then
   echo "ERROR: The HEVC-related dependencies can only be built for the \"all\" variant." >&2
   exit 1
 fi
 
-if [ "$type" = "static" ] && [ "$deps" = "all" ]; then
+if [ "$build_web_variant" = true ] && [ "$build_all_variant" = true ]; then
+  echo "ERROR: Cannot build both vips-web and vips-all simultaneously." >&2
+  exit 1
+fi
+
+if [ "$targets_static" = true ] && [ "$build_all_variant" = true ]; then
   echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
   exit 1
 fi
 
-if [ "$type" = "static" ] && [ "$with_disp" = "true" ]; then
+if [ "$targets_static" = true ] && [ "$build_vipsdisp" = true ]; then
   echo "ERROR: GTK cannot be built as a statically linked library on Windows." >&2
   exit 1
 fi
 
-if [ "$type" = "shared" ] && [ "$with_ffi_compat" = "true" ]; then
+if [ "$targets_shared" = true ] && [ "$with_ffi_compat" = true ]; then
   echo "WARNING: The --with-ffi-compat option makes only sense when building static binaries." >&2
   with_ffi_compat=false
 fi
@@ -129,18 +153,17 @@ fi
 # GitHub's tarball API requires the short SHA commit as the directory name
 git_commit="${git_commit:0:7}"
 
-target="$arch-w64-mingw32.$type"
-
-if [ "$with_ffi_compat" = "true" ]; then
-  target+=".ffi"
+# Ensure separate build targets
+if [ "$build_all_variant" = true ]; then
+  mxe_targets=("${mxe_targets[@]/%/.all}")
 fi
 
-if [ "$with_disp" = "true" ]; then
-  target+=".disp"
+if [ "$with_ffi_compat" = true ]; then
+  mxe_targets=("${mxe_targets[@]/%/.ffi}")
 fi
 
-if [ "$with_debug" = "true" ]; then
-  target+=".debug"
+if [ "$with_debug" = true ]; then
+  mxe_targets=("${mxe_targets[@]/%/.debug}")
 fi
 
 # Check whether we can build and run OCI-compliant containers
@@ -155,7 +178,7 @@ fi
 
 image="ghcr.io/libvips/build-win64-mxe:latest"
 
-if [ "$with_prebuilt" = "false" ]; then
+if [ "$with_prebuilt" = false ]; then
   image="libvips-build-win-mxe-base"
 
   # Ensure latest Debian stable base image
@@ -176,15 +199,15 @@ if [ "$jpeg_impl" != "libjpeg-turbo" ]; then
   plugin_dirs+=" /data/plugins/$jpeg_impl"
 fi
 
-if [ "$with_disp" = "true" ]; then
+if [ "$build_vipsdisp" = true ]; then
   plugin_dirs+=" /data/plugins/vipsdisp"
 fi
 
-if [ "$with_hevc" = "true" ]; then
+if [ "$with_hevc" = true ]; then
   plugin_dirs+=" /data/plugins/hevc"
 fi
 
-if [ "$with_zlib_ng" = "true" ]; then
+if [ "$with_zlib_ng" = true ]; then
   plugin_dirs+=" /data/plugins/zlib-ng"
 fi
 
@@ -197,13 +220,13 @@ fi
 # https://github.com/libvips/libvips/issues/1637
 plugin_dirs+=" /data/plugins/proxy-libintl"
 
-# Build libvips (+ dependencies) and optional GTK4 apps
+# Build requested packages
 $oci_runtime build \
   -t libvips-build-win-mxe \
   -f container/Dockerfile \
   --build-arg BASE_IMAGE="$image" \
-  --build-arg DEPS="$deps" \
-  --build-arg TARGET="$target" \
+  --build-arg PKGS="${pkgs[*]}" \
+  --build-arg MXE_TARGETS="${mxe_targets[*]}" \
   --build-arg DEBUG="$with_debug" \
   --build-arg PLUGIN_DIRS="$plugin_dirs" \
   --build-arg GIT_COMMIT="$git_commit" \
@@ -218,13 +241,11 @@ $oci_runtime build \
 # packaging dir mounted at /data/packaging.
 $oci_runtime run --rm -t \
   -v $PWD/packaging:/data/packaging \
-  -e GIT_COMMIT="$git_commit" \
+  -e PKGS="${pkgs[*]}" \
+  -e MXE_TARGETS="${mxe_targets[*]}" \
   -e FFI_COMPAT="$with_ffi_compat" \
   -e JPEG_IMPL="$jpeg_impl" \
-  -e DISP="$with_disp" \
   -e HEVC="$with_hevc" \
   -e DEBUG="$with_debug" \
   -e ZLIB_NG="$with_zlib_ng" \
-  libvips-build-win-mxe \
-  $deps \
-  $target
+  libvips-build-win-mxe

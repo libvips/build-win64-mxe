@@ -1,16 +1,5 @@
 # included by packaging scripts
 
-vips_package=vips
-vips_version=8.16
-vips_patch_version=1
-#vips_pre_version=rc2
-
-if [ -n "$GIT_COMMIT" ]; then
-  vips_version=$GIT_COMMIT
-  vips_patch_version=
-  vips_pre_version=
-fi
-
 # build-win64-mxe/packaging dir we are building
 work_dir=$(pwd)
 
@@ -18,5 +7,23 @@ work_dir=$(pwd)
 mxe_dir=/usr/local/mxe
 mxe_prefix=$mxe_dir/usr
 
-repackage_dir=$vips_package-dev-$vips_version
-pdb_dir=$vips_package-pdb-$vips_version
+# Remove patch version component
+without_patch() {
+  echo "${1%.[[:digit:]]*}"
+}
+
+# Whitelist the API set DLLs
+# Can't do api-ms-win-crt-*-l1-1-0.dll, unfortunately
+whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
+
+# Whitelist bcryptprimitives.dll for Rust
+# See: https://github.com/rust-lang/rust/pull/84096
+whitelist+=(bcryptprimitives.dll)
+
+# Whitelist ntdll.dll for Rust
+# See: https://github.com/rust-lang/rust/pull/108262
+whitelist+=(ntdll.dll)
+
+# Whitelist api-ms-win-core-synch-l1-2-0.dll for Rust
+# See: https://github.com/rust-lang/rust/pull/121317
+whitelist+=(api-ms-win-core-synch-l1-2-0.dll)

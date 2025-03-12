@@ -1,4 +1,9 @@
+# Build output
+packaging/vips*
+packaging/vipsdisp*
+
+# VIM swap files
 .*.swp
-vips-dev-*
-vips-pdb-*
+
+# Wine
 .update-timestamp

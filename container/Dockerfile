@@ -5,41 +5,32 @@ FROM $BASE_IMAGE
 COPY . /data
 WORKDIR /usr/local/mxe
 
-ARG DEPS
-ARG TARGET
+ARG PKGS
+ARG MXE_TARGETS
 ARG DEBUG
 ARG GIT_COMMIT
 ARG PLUGIN_DIRS
 
 RUN \
-  if [ "$DEBUG" = "true" ]; then \
+  if [ "$DEBUG" = true ]; then \
     cp -f /data/settings/debug.mk settings.mk; \
   else \
     cp -f /data/settings/release.mk settings.mk; \
   fi
 
-# Build gendef (a tool for generating def files from DLLs)
-# and libvips (+ dependencies)
+# Build requested packages and gendef (a tool for generating def files from DLLs)
 RUN --mount=type=cache,id=mxe-download,target=/usr/local/mxe/pkg \
-  make gendef vips-$DEPS \
+  make gendef $PKGS \
     MXE_PLUGIN_DIRS="$PLUGIN_DIRS" \
-    MXE_TARGETS=$TARGET.$DEPS \
+    MXE_TARGETS="$MXE_TARGETS" \
     GIT_COMMIT=$GIT_COMMIT
-
-# Build GTK4 apps if requested
-RUN --mount=type=cache,id=mxe-download,target=/usr/local/mxe/pkg \
-  if [ "${TARGET#*.gtk4}" != "$TARGET" ]; then \
-    make vipsdisp nip4 \
-      MXE_PLUGIN_DIRS="$PLUGIN_DIRS" \
-      MXE_TARGETS=$TARGET.$DEPS; \
-  fi
 
 # Build and bundle llvm-mingw tests when debugging
 RUN --mount=type=cache,id=mxe-download,target=/usr/local/mxe/pkg \
-  if [ "$DEBUG" = "true" ]; then \
+  if [ "$DEBUG" = true ]; then \
     make test-llvm-mingw \
       MXE_PLUGIN_DIRS="$PLUGIN_DIRS" \
-      MXE_TARGETS=$TARGET.$DEPS; \
+      MXE_TARGETS="$MXE_TARGETS"; \
   fi
 
 # The packaging dir is mounted here

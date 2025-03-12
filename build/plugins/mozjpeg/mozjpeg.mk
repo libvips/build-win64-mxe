@@ -13,6 +13,7 @@ $(PKG)_DEPS     := cc $(BUILD)~nasm
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DWITH_TURBOJPEG=OFF \
+        -DPNG_SUPPORTED=OFF \
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
         -DENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
         -DCMAKE_ASM_NASM_COMPILER='$(PREFIX)/$(BUILD)/bin/nasm' \

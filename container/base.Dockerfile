@@ -5,7 +5,7 @@ RUN \
   apt-get install -qqy --no-install-recommends \
     # http://mxe.cc/#requirements-debian
     autopoint bison build-essential flex gettext gperf \
-    intltool libtool-bin libxml-parser-perl lzip p7zip-full \
+    intltool jq libtool-bin libxml-parser-perl lzip p7zip-full \
     python-is-python3 python3-mako python3-packaging python3-tomli \
     ruby zip
 
