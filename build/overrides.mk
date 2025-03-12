@@ -69,8 +69,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
-pango_VERSION  := 1.56.1
-pango_CHECKSUM := 426be66460c98b8378573e7f6b0b2ab450f6bb6d2ec7cecc33ae81178f246480
+pango_VERSION  := 1.56.2
+pango_CHECKSUM := 03b7afd7ed730bef651155cbfb5320556b8ef92b0dc04abbb9784dcd4057afe7
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
