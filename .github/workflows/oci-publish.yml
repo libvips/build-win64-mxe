@@ -20,10 +20,11 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
-          # Add short SHA as OCI tag
-          tags: type=sha
-          # Set latest tag for default branch
-          flavor: type=raw,value=latest,enable={{is_default_branch}}
+          tags: |
+            # Add short SHA as OCI tag
+            type=sha
+            # Set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
           # Overwrite some generated OCI labels
           labels: |
             org.opencontainers.image.authors=libvips team and contributors
