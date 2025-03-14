@@ -2,21 +2,20 @@ PKG             := vips-all
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.17.0
-$(PKG)_CHECKSUM := a77fabb7617acde080992e81a94c678cdcf9a14110f1f3ef6797df272f5f1b1d
+$(PKG)_VERSION  := 8.16.1
+$(PKG)_CHECKSUM := d114d7c132ec5b45f116d654e17bb4af84561e3041183cd4bfd79abfb85cf724
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-# $(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
-$(PKG)_URL  	:= https://github.com/libvips/libvips/releases/download/v8.17.0-test1/vips-8.17.0-test1.tar.xz
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
 $(PKG)_SUBDIR   := vips-$($(PKG)_VERSION)
-$(PKG)_FILE     := vips-$($(PKG)_VERSION)-test1.tar.xz
+$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
-                   libjpeg-turbo tiff lcms libexif libheif libpng \
-                   libspng libimagequant highway imagemagick matio openexr \
+                   libjpeg-turbo tiff lcms libexif libheif libspng \
+                   libimagequant highway imagemagick matio openexr \
                    cfitsio nifticlib poppler fftw openslide libjxl cgif
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
-    mkdir -p $(PREFIX)/$(TARGET)/vips-packaging
+    mkdir -p '$(PREFIX)/$(TARGET)/vips-packaging'
     $(foreach f, ChangeLog LICENSE README.md, \
         cp '$(SOURCE_DIR)/$(f)' '$(PREFIX)/$(TARGET)/vips-packaging';)
 

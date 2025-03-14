@@ -1,6 +1,10 @@
-# MXE directory
-mxe
+# Build output
+packaging/vips*
+packaging/nip4*
+packaging/vipsdisp*
+
+# VIM swap files
 .*.swp
-vips-dev-*
-vips-pdb-*
+
+# Wine
 .update-timestamp

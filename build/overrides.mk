@@ -1,4 +1,4 @@
-$(info == General overrides: $(lastword $(MAKEFILE_LIST)))
+$(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
@@ -69,8 +69,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
-pango_VERSION  := 1.56.1
-pango_CHECKSUM := 426be66460c98b8378573e7f6b0b2ab450f6bb6d2ec7cecc33ae81178f246480
+pango_VERSION  := 1.56.2
+pango_CHECKSUM := 03b7afd7ed730bef651155cbfb5320556b8ef92b0dc04abbb9784dcd4057afe7
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -143,18 +143,6 @@ nasm_SUBDIR   := nasm-$(nasm_VERSION)
 nasm_FILE     := nasm-$(nasm_VERSION).tar.xz
 nasm_URL      := https://www.nasm.us/pub/nasm/releasebuilds/$(nasm_VERSION)/$(nasm_FILE)
 nasm_URL_2    := https://sources.voidlinux.org/nasm-$(nasm_VERSION)/$(nasm_FILE)
-
-# upstream version is 12.0.0
-# Update mingw-w64 to 2be9e0f
-# https://github.com/mingw-w64/mingw-w64/tarball/2be9e0f319990e48bfb0b2dd7b9e7045791b465f
-# Keep-in sync with:
-# https://github.com/mstorsjo/llvm-mingw/blob/$(llvm-mingw_VERSION)/build-mingw-w64.sh#L21
-mingw-w64_VERSION  := 2be9e0f
-mingw-w64_CHECKSUM := 1eab853ae15f1ecf0ca7d87918d9482b3e4389fe778fb756c8ce071852ce3829
-mingw-w64_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
-mingw-w64_SUBDIR   := mingw-w64-mingw-w64-$(mingw-w64_VERSION)
-mingw-w64_FILE     := mingw-w64-mingw-w64-$(mingw-w64_VERSION).tar.gz
-mingw-w64_URL      := https://github.com/mingw-w64/mingw-w64/tarball/$(mingw-w64_VERSION)/$(mingw-w64_FILE)
 
 # upstream version is 2.7.1
 # needed by nip4
@@ -262,78 +250,6 @@ sqlite_DEPS             := cc zlib
 
 ## Override build scripts
 
-# Unexport target specific compiler / linker flags
-define gendef_BUILD
-    $(eval unexport CFLAGS)
-    $(eval unexport CXXFLAGS)
-    $(eval unexport LDFLAGS)
-
-    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/mingw-w64-tools/gendef/configure' \
-        CFLAGS='-Wno-implicit-fallthrough' \
-        --host='$(BUILD)' \
-        --build='$(BUILD)' \
-        --prefix='$(PREFIX)/$(TARGET)' \
-        --target='$(TARGET)'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
-endef
-
-define pkgconf_BUILD_$(BUILD)
-    $(eval unexport CFLAGS)
-    $(eval unexport CXXFLAGS)
-    $(eval unexport LDFLAGS)
-
-    cd '$(SOURCE_DIR)' && ./autogen.sh
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        --prefix='$(PREFIX)/$(TARGET)'
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-endef
-
-define nasm_BUILD_$(BUILD)
-    $(eval unexport CFLAGS)
-    $(eval unexport CXXFLAGS)
-    $(eval unexport LDFLAGS)
-
-    # build nasm compiler
-    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/configure' \
-        $(MXE_CONFIGURE_OPTS)
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-endef
-
-define ninja_BUILD_$(BUILD)
-    $(eval unexport CFLAGS)
-    $(eval unexport CXXFLAGS)
-    $(eval unexport LDFLAGS)
-
-    '$(TARGET)-cmake' -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
-        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(TARGET)' \
-        -DBUILD_TESTING=OFF
-    '$(TARGET)-cmake' --build '$(BUILD_DIR)' -j '$(JOBS)'
-    '$(TARGET)-cmake' --install '$(BUILD_DIR)'
-endef
-
-define widl_BUILD
-    $(eval unexport CFLAGS)
-    $(eval unexport CXXFLAGS)
-    $(eval unexport LDFLAGS)
-
-    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/mingw-w64-tools/widl/configure' \
-        --host='$(BUILD)' \
-        --build='$(BUILD)' \
-        --prefix='$(PREFIX)' \
-        --target='$(TARGET)' \
-        $(if $(IS_LLVM), --with-widl-includedir='$(PREFIX)/$(TARGET)/$(PROCESSOR)-w64-mingw32/include')
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_TOOLCHAIN)
-
-    # create cmake file
-    mkdir -p '$(CMAKE_TOOLCHAIN_DIR)'
-    echo 'set(CMAKE_WIDL $(PREFIX)/bin/$(TARGET)-$(PKG) CACHE PATH "widl executable")' \
-    > '$(CMAKE_TOOLCHAIN_DIR)/$(PKG).cmake'
-endef
-
 # libasprintf isn't needed, so build with --disable-libasprintf
 # this definition is for reference purposes only, we use the
 # proxy-libintl plugin instead.
@@ -365,7 +281,7 @@ define libffi_BUILD
         $(if $(BUILD_STATIC), \
             --disable-structs \
             --disable-raw-api) \
-        $(if $(IS_LLVM), --disable-symvers)
+        --disable-symvers
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
@@ -518,8 +434,7 @@ define imagemagick_BUILD
         --disable-largefile \
         --disable-opencl \
         --disable-openmp \
-        --disable-deprecated \
-        $(if $(IS_GCC), CFLAGS='$(CFLAGS) -Wno-incompatible-pointer-types')
+        --disable-deprecated
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
 endef
@@ -535,6 +450,7 @@ endef
 define libjpeg-turbo_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DWITH_TURBOJPEG=OFF \
+        -DPNG_SUPPORTED=OFF \
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
         -DENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
         -DCMAKE_ASM_NASM_COMPILER='$(PREFIX)/$(BUILD)/bin/nasm' \
@@ -593,8 +509,8 @@ define librsvg_BUILD
         -Ddocs=disabled \
         -Dvala=disabled \
         -Dtests=false \
-        -Dtriplet='$(PROCESSOR)-pc-windows-gnu$(if $(IS_LLVM),llvm)' \
-        $(if $(IS_LLVM), -Dc_link_args='$(LDFLAGS) -lntdll -luserenv') \
+        -Dtriplet='$(PROCESSOR)-pc-windows-gnullvm' \
+        -Dc_link_args='$(LDFLAGS) -lntdll -luserenv' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -603,8 +519,7 @@ define librsvg_BUILD
     # Add native libraries needed for static linking to .pc file.
     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
     # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
-    $(if $(IS_LLVM), \
-        $(SED) -i "/^Libs.private:/s/$$/ -lntdll -luserenv/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc')
+    $(SED) -i "/^Libs.private:/s/$$/ -lntdll -luserenv/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc'
 endef
 
 # compile with CMake
@@ -737,14 +652,12 @@ endef
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
 # OpenSlide needs --with-tree --with-xpath
 # ImageMagick's internal MSVG parser needs --with-push --with-sax1
-# nip4 needs --with-output
 define libxml2_BUILD
     $(SED) -i 's,`uname`,MinGW,g' '$(1)/xml2-config.in'
 
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --with-minimum \
-        $(if $(findstring .gtk4,$(TARGET)), --with-output) \
         $(if $(findstring .all,$(TARGET)), \
             --with-tree \
             --with-xpath \
@@ -755,7 +668,8 @@ define libxml2_BUILD
         --without-debug \
         --without-iconv \
         --without-python \
-        --without-threads
+        --without-threads \
+        $(libxml2_CONFIGURE_OPTS)
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
     ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
@@ -818,7 +732,6 @@ define openexr_BUILD
         -DOPENEXR_INSTALL_TOOLS=OFF \
         -DOPENEXR_BUILD_TOOLS=OFF \
         -DBUILD_TESTING=OFF \
-        $(if $(IS_GCC), -DCMAKE_C_FLAGS='$(CFLAGS) -Wno-incompatible-pointer-types') \
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
