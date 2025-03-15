@@ -11,6 +11,9 @@ glib_CONFIGURE_OPTS = --force-fallback-for=libpcre2-8
 cairo_PATCHES := $(filter-out $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/../../patches/cairo-1-nanoserver-compat.patch))),$(cairo_PATCHES))
 cairo_CONFIGURE_OPTS = -Dzlib=enabled -Ddwrite=enabled
 
+# nip4 needs --with-output
+libxml2_CONFIGURE_OPTS = --with-output
+
 # Override sub-dependencies
 libepoxy_DEPS := $(filter-out  xorg-macros,$(libepoxy_DEPS))
 

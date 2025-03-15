@@ -1,5 +1,6 @@
 # Build output
 packaging/vips*
+packaging/nip4*
 packaging/vipsdisp*
 
 # VIM swap files
