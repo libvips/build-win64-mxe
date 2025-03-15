@@ -67,12 +67,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [libffi]: https://github.com/libffi/libffi
 [libheif]: https://github.com/strukturag/libheif
 [libimagequant]: https://github.com/lovell/libimagequant
-[libpng]: https://github.com/glennrp/libpng
-[libpng License version 2]: https://github.com/glennrp/libpng/blob/master/LICENSE
+[libpng]: https://github.com/pnggroup/libpng
+[libpng License version 2]: https://github.com/pnggroup/libpng/blob/master/LICENSE
 [librsvg]: https://gitlab.gnome.org/GNOME/librsvg
 [libspng]: https://github.com/randy408/libspng
 [libtiff]: https://gitlab.com/libtiff/libtiff
-[libtiff License]: https://libtiff.gitlab.io/libtiff/project/license.html
+[libtiff License]: https://gitlab.com/libtiff/libtiff/blob/master/LICENSE.md
 [libvips]: https://github.com/libvips/libvips
 [libwebp]: https://github.com/webmproject/libwebp
 [libxml2]: https://gitlab.gnome.org/GNOME/libxml2
@@ -107,11 +107,11 @@ Same as libvips-web + these extra dependencies:
 | [sqlite]        | 3.49.1    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
-[cfitsio]: https://heasarc.gsfc.nasa.gov/fitsio/
+[cfitsio]: https://github.com/HEASARC/cfitsio
 [fftw]: https://github.com/FFTW/fftw3
 [gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [imagemagick]: https://github.com/ImageMagick/ImageMagick6
-[ImageMagick License]: https://imagemagick.org/script/license.php
+[ImageMagick License]: https://github.com/ImageMagick/ImageMagick6/blob/main/LICENSE
 [imath]: https://github.com/AcademySoftwareFoundation/Imath
 [libdicom]: https://github.com/ImagingDataCommons/libdicom
 [libjxl]: https://github.com/libjxl/libjxl
@@ -182,8 +182,8 @@ In that case, the following version of zlib is built:
 |-----------------|-----------|--------------------------------------------------------------|
 | [zlib]          | 1.3.1     | [zlib Licence]                                               |
 
-[zlib]: https://zlib.net/
-[zlib Licence]: https://github.com/madler/zlib/blob/master/zlib.h
+[zlib]: https://github.com/madler/zlib
+[zlib Licence]: https://github.com/madler/zlib/blob/develop/LICENSE
 
 ## HEVC-related dependencies
 
