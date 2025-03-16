@@ -5,7 +5,7 @@ set -e
 
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [DEPS] [MXE_TARGET]
+Usage: $(basename "$0") [OPTIONS] [DEPS] [TARGET]
 Package libvips in /usr/local/mxe/usr/TARGET/
 
 OPTIONS:
@@ -18,7 +18,7 @@ DEPS:
 	    - web
 	    - all
 
-MXE_TARGET:
+TARGET:
 	The binary target,
 	    defaults to 'x86_64-w64-mingw32.shared'
 	Possible values are:
@@ -56,8 +56,8 @@ strip=$target-strip
 vips_version=$(jq -r ".vips" $mxe_prefix/$target/vips-packaging/versions.json)
 
 # Directories
-repackage_dir=vips-dev-$(without_patch $vips_version)
-pdb_dir=vips-pdb-$(without_patch $vips_version)
+repackage_dir=/var/tmp/vips-dev-$(without_patch $vips_version)
+pdb_dir=/var/tmp/vips-pdb-$(without_patch $vips_version)
 install_dir=$mxe_prefix/$target
 bin_dir=$install_dir/bin
 lib_dir=$install_dir/lib

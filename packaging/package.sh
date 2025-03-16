@@ -12,6 +12,10 @@ for pkg in $PKGS; do
     for target in $MXE_TARGETS; do
       ./package-gtk.sh $pkg $target
     done
+  elif [ "$pkg" = "test-llvm-mingw" ]; then
+    for target in $MXE_TARGETS; do
+      cp /usr/local/mxe/usr/$target/bin/test-llvm-mingw.zip test-llvm-mingw-$target.zip
+    done
   else
     echo "WARNING: Skipping packaging script for '$pkg'." >&2
   fi

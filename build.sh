@@ -11,7 +11,7 @@ Build Windows binaries for libvips in a container
 
 OPTIONS:
 	--help			Show the help and exit
-	-t, --target <MXE_TARGET>	The binary target (this can be specified multiple times)
+	-t, --target <TARGET>	The binary target (this can be specified multiple times)
 	-c, --commit <COMMIT>	The commit to build libvips from
 	-r, --ref <REF>		The branch or tag to build libvips from
 	--nightly		Build libvips from tip-of-tree (alias of -r master)
@@ -27,7 +27,7 @@ PKGS:
 	The packages and their dependencies to build,
 	    defaults to 'vips-web'
 
-MXE_TARGET:
+TARGET:
 	The binary target,
 	    defaults to building for all possible targets
 	Possible values are:

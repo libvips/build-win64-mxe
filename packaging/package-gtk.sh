@@ -5,7 +5,7 @@ set -e
 
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [PKG] [MXE_TARGET]
+Usage: $(basename "$0") [OPTIONS] [PKG] [TARGET]
 Package GTK apps in /usr/local/mxe/usr/TARGET/
 
 OPTIONS:
@@ -18,7 +18,7 @@ PKG:
 	    - nip4
 	    - vipsdisp
 
-MXE_TARGET:
+TARGET:
 	The binary target,
 	    defaults to 'x86_64-w64-mingw32.shared'
 	Possible values are:
@@ -48,8 +48,8 @@ strip=$target-strip
 package_version=$(jq -r ".$package" $mxe_prefix/$target/vips-packaging/versions-$package.json)
 
 # Directories
-repackage_dir=$package
-pdb_dir=$package-pdb
+repackage_dir=/var/tmp/$package
+pdb_dir=/var/tmp/$package-pdb
 install_dir=$mxe_prefix/$target
 bin_dir=$install_dir/bin
 lib_dir=$install_dir/lib

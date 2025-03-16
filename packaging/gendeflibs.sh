@@ -5,13 +5,13 @@ set -e
 
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [MXE_TARGET]
+Usage: $(basename "$0") [OPTIONS] [TARGET]
 Make .def and .lib files for all the DLLs we've built
 
 OPTIONS:
 	--help	Show the help and exit
 
-MXE_TARGET:
+TARGET:
 	The binary target,
 	    defaults to 'x86_64-w64-mingw32.shared'
 	Possible values are:

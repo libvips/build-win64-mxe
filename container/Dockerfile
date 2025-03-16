@@ -25,14 +25,6 @@ RUN --mount=type=cache,id=mxe-download,target=/usr/local/mxe/pkg \
     MXE_TARGETS="$MXE_TARGETS" \
     GIT_COMMIT=$GIT_COMMIT
 
-# Build and bundle llvm-mingw tests when debugging
-RUN --mount=type=cache,id=mxe-download,target=/usr/local/mxe/pkg \
-  if [ "$DEBUG" = true ]; then \
-    make test-llvm-mingw \
-      MXE_PLUGIN_DIRS="$PLUGIN_DIRS" \
-      MXE_TARGETS="$MXE_TARGETS"; \
-  fi
-
 # The packaging dir is mounted here
 WORKDIR /data/packaging
 
