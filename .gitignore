@@ -1,6 +1,5 @@
 # Build output
-packaging/vips*
-packaging/vipsdisp*
+*.zip
 
 # VIM swap files
 .*.swp

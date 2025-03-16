@@ -5,13 +5,13 @@ set -e
 
 if [[ "$*" == *--help* ]]; then
   cat <<EOF
-Usage: $(basename "$0") [OPTIONS] [MXE_TARGET]
+Usage: $(basename "$0") [OPTIONS] [TARGET]
 Package vipsdisp in /usr/local/mxe/usr/TARGET/
 
 OPTIONS:
 	--help	Show the help and exit
 
-MXE_TARGET:
+TARGET:
 	The binary target,
 	    defaults to 'x86_64-w64-mingw32.shared'
 	Possible values are:
@@ -40,8 +40,8 @@ strip=$target-strip
 package_version=$(jq -r ".vipsdisp" $mxe_prefix/$target/vips-packaging/versions-vipsdisp.json)
 
 # Directories
-repackage_dir=vipsdisp
-pdb_dir=vipsdisp-pdb
+repackage_dir=/var/tmp/vipsdisp
+pdb_dir=/var/tmp/vipsdisp-pdb
 install_dir=$mxe_prefix/$target
 bin_dir=$install_dir/bin
 lib_dir=$install_dir/lib
