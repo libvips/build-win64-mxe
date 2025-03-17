@@ -183,11 +183,11 @@ zipfile=vips-dev-$arch-$deps-$zip_suffix.zip
 echo "Creating $zipfile"
 
 rm -f $zipfile
-zip -r -qq $zipfile $repackage_dir
+(cd /var/tmp && zip -r -qq $work_dir/$zipfile $(basename $repackage_dir))
 
 zipfile=vips-pdb-$arch-$deps-$zip_suffix.zip
 
 echo "Creating $zipfile"
 
 rm -f $zipfile
-zip -r -qq $zipfile $pdb_dir
+(cd /var/tmp && zip -r -qq $work_dir/$zipfile $(basename $pdb_dir))

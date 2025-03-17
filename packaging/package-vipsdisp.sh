@@ -149,11 +149,11 @@ zipfile=vipsdisp-$arch-$zip_suffix.zip
 echo "Creating $zipfile"
 
 rm -f $zipfile
-zip -r -qq $zipfile $repackage_dir
+(cd $repackage_dir && zip -r -qq $work_dir/$zipfile .)
 
 zipfile=vipsdisp-pdb-$arch-$zip_suffix.zip
 
 echo "Creating $zipfile"
 
 rm -f $zipfile
-zip -r -qq $zipfile $pdb_dir
+(cd $pdb_dir && zip -r -qq $work_dir/$zipfile .)
