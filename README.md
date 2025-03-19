@@ -34,14 +34,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.19.7    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.47    | [libpng License version 2]                                   |
-| [librsvg]       | 2.59.91   | LGPLv3                                                       |
+| [librsvg]       | 2.60.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.7.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.16.1    | LGPLv3                                                       |
 | [libwebp]       | 1.5.0     | New BSD License                                              |
 | [libxml2]       | 2.13.6    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
-| [pango]         | 1.56.2    | LGPLv3                                                       |
+| [pango]         | 1.56.3    | LGPLv3                                                       |
 | [pixman]        | 0.44.2    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.2.4     | [zlib-ng Licence]                                            |
@@ -91,10 +91,10 @@ Same as libvips-web + these extra dependencies:
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
-| [cfitsio]       | 4.5.0     | BSD-like                                                     |
+| [cfitsio]       | 4.6.0     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.42.12   | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-23 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-24 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.1.0     | MIT Licence                                                  |
 | [libjxl]        | 0.11.1    | BSD 3-Clause                                                 |

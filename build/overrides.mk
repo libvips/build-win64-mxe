@@ -47,8 +47,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-23
-imagemagick_CHECKSUM := 4447407b87be9825c5607738afd5b0dc55cce9ef0c3ebc5677a0c5f20685ad5e
+imagemagick_VERSION  := 6.9.13-24
+imagemagick_CHECKSUM := f14e831e9d70d440065025be56b039948a2f5a93bc00ddd2913dacb736ff91fa
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -61,16 +61,16 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.59.91
-librsvg_CHECKSUM := b1ff70d5b04441ba2ba3f80404b7d98127128fba1020211e3d99b7bf400e4f83
+librsvg_VERSION  := 2.60.0
+librsvg_CHECKSUM := 0b6ffccdf6e70afc9876882f5d2ce9ffcf2c713cbaaf1ad90170daa752e1eec3
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
-pango_VERSION  := 1.56.2
-pango_CHECKSUM := 03b7afd7ed730bef651155cbfb5320556b8ef92b0dc04abbb9784dcd4057afe7
+pango_VERSION  := 1.56.3
+pango_CHECKSUM := 2606252bc25cd8d24e1b7f7e92c3a272b37acd6734347b73b47a482834ba2491
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -91,6 +91,14 @@ libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
+
+# upstream version is 4.5.0
+cfitsio_VERSION  := 4.6.0
+cfitsio_CHECKSUM := 7c372fdb4e6cf530fc12294ae0b7f1fdd0ed85062790277a60aea56c97b0d3e7
+cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
+cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
+cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
+cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 0.43.4
 pixman_VERSION  := 0.44.2
@@ -721,6 +729,8 @@ endef
 define cfitsio_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DUSE_CURL=OFF \
+        -DTESTS=OFF \
+        -DUTILS=OFF \
         '$(SOURCE_DIR)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
