@@ -92,14 +92,6 @@ libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25d
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
 
-# upstream version is 1.18.2
-cairo_VERSION  := 1.18.4
-cairo_CHECKSUM := 445ed8208a6e4823de1226a74ca319d3600e83f6369f99b14265006599c32ccb
-cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
-cairo_SUBDIR   := cairo-$(cairo_VERSION)
-cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
-cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
-
 # upstream version is 0.43.4
 pixman_VERSION  := 0.44.2
 pixman_CHECKSUM := 50baf820dde0c5ff9714d03d2df4970f606a3d3b1024f5404c0398a9821cc4b0
