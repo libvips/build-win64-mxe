@@ -5,7 +5,7 @@ $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 9.0.4-1
 $(PKG)_CHECKSUM := 06a55c5ce9118e20bfa2a5b3e84f94d97187b05e92513a7f3d5756e78f5ff901
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := jcupitt/nip4/tags,v
+$(PKG)_GH_CONF  := jcupitt/nip4/releases,v,,,,.tar.xz
 $(PKG)_DEPS     := cc meson-wrapper gtk4 gsl vips-all
 
 define $(PKG)_PRE_CONFIGURE
