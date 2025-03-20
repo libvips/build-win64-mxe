@@ -8,9 +8,9 @@ for pkg in $PKGS; do
     for target in $MXE_TARGETS; do
       ./package-vips.sh ${pkg/#vips-} $target
     done
-  elif [ "$pkg" = "vipsdisp" ]; then
+  elif [ "$pkg" = "nip4" ] || [ "$pkg" = "vipsdisp" ]; then
     for target in $MXE_TARGETS; do
-      ./package-vispdisp.sh $target
+      ./package-gtk.sh $pkg $target
     done
   elif [ "$pkg" = "test-llvm-mingw" ]; then
     for target in $MXE_TARGETS; do

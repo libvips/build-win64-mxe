@@ -91,9 +91,9 @@ if [ ${#pkgs[@]} -eq 0 ]; then
   pkgs=(vips-web)
 fi
 
-# Note: vipsdisp depends on vips-all
-[[ ${pkgs[*]} =~ "vipsdisp" ]] && build_vipsdisp=true || build_vipsdisp=false
-[[ ${pkgs[*]} =~ "vips-all" ]] && build_all_variant=true || build_all_variant=$build_vipsdisp
+# Note: GTK apps depends on vips-all
+{ [[ ${pkgs[*]} =~ "nip4" ]] || [[ ${pkgs[*]} =~ "vipsdisp" ]]; } && build_gtk=true || build_gtk=false
+[[ ${pkgs[*]} =~ "vips-all" ]] && build_all_variant=true || build_all_variant=$build_gtk
 [[ ${pkgs[*]} =~ "vips-web" ]] && build_web_variant=true || build_web_variant=false
 
 if [ ${#mxe_targets[@]} -eq 0 ]; then
@@ -127,7 +127,7 @@ if [ "$targets_static" = true ] && [ "$build_all_variant" = true ]; then
   exit 1
 fi
 
-if [ "$targets_static" = true ] && [ "$build_vipsdisp" = true ]; then
+if [ "$targets_static" = true ] && [ "$build_gtk" = true ]; then
   echo "ERROR: GTK cannot be built as a statically linked library on Windows." >&2
   exit 1
 fi
@@ -199,8 +199,8 @@ if [ "$jpeg_impl" != "libjpeg-turbo" ]; then
   plugin_dirs+=" /data/plugins/$jpeg_impl"
 fi
 
-if [ "$build_vipsdisp" = true ]; then
-  plugin_dirs+=" /data/plugins/vipsdisp"
+if [ "$build_gtk" = true ]; then
+  plugin_dirs+=" /data/plugins/gtk4"
 fi
 
 if [ "$with_hevc" = true ]; then
