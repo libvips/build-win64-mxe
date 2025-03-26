@@ -95,10 +95,11 @@ fi
 { [[ ${pkgs[*]} =~ "nip4" ]] || [[ ${pkgs[*]} =~ "vipsdisp" ]]; } && build_gtk=true || build_gtk=false
 [[ ${pkgs[*]} =~ "vips-all" ]] && build_all_variant=true || build_all_variant=$build_gtk
 [[ ${pkgs[*]} =~ "vips-web" ]] && build_web_variant=true || build_web_variant=false
+[ "$with_hevc" = true ] && contains_gpl_libs=true || contains_gpl_libs=$build_all_variant
 
 if [ ${#mxe_targets[@]} -eq 0 ]; then
-  if [ "$build_all_variant" = true ]; then
-    # Omit static builds by default for the "all" variant
+  if [ "$contains_gpl_libs" = true ]; then
+    # Omit static builds by default when building GPL-licensed libraries
     mxe_targets=({x86_64,i686,aarch64}-w64-mingw32.shared)
   elif [ "$with_ffi_compat" = true ]; then
     # Omit shared builds by default for the --with-ffi-compat option
@@ -112,23 +113,13 @@ fi
 [[ ${mxe_targets[*]} =~ ".static" ]] && targets_static=true || targets_static=false
 [[ ${mxe_targets[*]} =~ ".shared" ]] && targets_shared=true || targets_shared=false
 
-if [ "$with_hevc" = true ] && [ "$build_web_variant" = true ]; then
-  echo "ERROR: The HEVC-related dependencies can only be built for the \"all\" variant." >&2
-  exit 1
-fi
-
 if [ "$build_web_variant" = true ] && [ "$build_all_variant" = true ]; then
   echo "ERROR: Cannot build both vips-web and vips-all simultaneously." >&2
   exit 1
 fi
 
-if [ "$targets_static" = true ] && [ "$build_all_variant" = true ]; then
+if [ "$targets_static" = true ] && [ "$contains_gpl_libs" = true ]; then
   echo "ERROR: Distributing a statically linked library against GPL libraries, without releasing the code as GPL, violates the GPL license." >&2
-  exit 1
-fi
-
-if [ "$targets_static" = true ] && [ "$build_gtk" = true ]; then
-  echo "ERROR: GTK cannot be built as a statically linked library on Windows." >&2
   exit 1
 fi
 
