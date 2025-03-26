@@ -25,10 +25,10 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16    | LGPLv3                                                       |
 | [glib]          | 2.84.0    | LGPLv3                                                       |
-| [harfbuzz]      | 10.4.0    | MIT Licence                                                  |
+| [harfbuzz]      | 11.0.0    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17      | MIT Licence                                                  |
-| [libarchive]    | 3.7.7     | BSD 2-Clause                                                 |
+| [libarchive]    | 3.7.8     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.25    | LGPLv3                                                       |
 | [libffi]        | 3.4.7     | MIT Licence                                                  |
 | [libheif]       | 1.19.7    | LGPLv3                                                       |

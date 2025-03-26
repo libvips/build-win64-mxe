@@ -39,8 +39,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.7.7
-libarchive_CHECKSUM := 879acd83c3399c7caaee73fe5f7418e06087ab2aaf40af3e99b9e29beb29faee
+libarchive_VERSION  := 3.7.8
+libarchive_CHECKSUM := 32a51747527e01f50d0e06abad0fe0b95b6fa40b8fc173c48b8bd97d0f743330
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
@@ -107,6 +107,12 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.xz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
+
+# upstream version is 10.4.0
+harfbuzz_VERSION  := 11.0.0
+harfbuzz_CHECKSUM := f16351bafe214725fe2c1d5b59f0d93e49905a4b247899fb90d70cff953a2b9b
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:

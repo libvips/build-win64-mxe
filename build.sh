@@ -236,6 +236,7 @@ $oci_runtime build \
 # docker run --rm -it --entrypoint "/bin/bash" libvips-build-win-mxe
 # grep -r "with fuzz" /usr/local/mxe/log
 # grep -r "(offset" /usr/local/mxe/log
+# cat /usr/local/mxe/log/vips-*
 
 # Run packaging script inside a container with the
 # packaging dir mounted at /data/packaging.

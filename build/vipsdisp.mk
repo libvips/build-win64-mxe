@@ -3,9 +3,9 @@ $(PKG)_WEBSITE  := https://github.com/jcupitt/vipsdisp
 $(PKG)_DESCR    := Tiny libvips / gtk+4 image viewer
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 3.1.0
-$(PKG)_CHECKSUM := 53c9dc008b2f6ace62dc2a985cebf1958205d4d5c6df32392d2f98ed96b6453e
+$(PKG)_CHECKSUM := 5c40e71c9c60232dcbf2e1c389295a4a102a27603bce994dbb2e35ff4f1844db
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := jcupitt/vipsdisp/tags,v
+$(PKG)_GH_CONF  := jcupitt/vipsdisp/releases,v,,,,.tar.xz
 $(PKG)_DEPS     := cc meson-wrapper gtk4 vips-all
 
 define $(PKG)_PRE_CONFIGURE
