@@ -187,11 +187,11 @@ In that case, the following version of zlib is built:
 
 ## HEVC-related dependencies
 
-The above "all" variant can optionally be built with [libde265] and [x265] to process
+The above variants can optionally be built with [libde265] and [x265] to process
 HEIC images. This can be turned on with the `--with-hevc` argument. For example:
 
 ```bash
-./build.sh vips-all --with-hevc
+./build.sh --with-hevc
 ```
 
 These dependencies include HEVC-related logic and are therefore not included in the
