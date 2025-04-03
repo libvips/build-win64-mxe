@@ -2,14 +2,6 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
-# upstream version is 3.4.6
-libffi_VERSION  := 3.4.7
-libffi_CHECKSUM := 138607dee268bdecf374adf9144c00e839e38541f75f24a1fcf18b78fda48b2d
-libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
-libffi_SUBDIR   := libffi-$(libffi_VERSION)
-libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
-libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
-
 # upstream version is 2.42.10
 # gdk-pixbuf is still used by OpenSlide
 gdk-pixbuf_VERSION  := 2.42.12
@@ -18,15 +10,6 @@ gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
-
-# no longer needed by libvips, but some of the deps need it
-# upstream version is 2.13.5
-libxml2_VERSION  := 2.13.6
-libxml2_CHECKSUM := f453480307524968f7a04ec65e64f2a83a825973bcd260a2e7691be82ae70c96
-libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
-libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
-libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
-libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 1.5.23
 # cannot use GH_CONF:
@@ -107,12 +90,6 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.xz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
-
-# upstream version is 10.4.0
-harfbuzz_VERSION  := 11.0.0
-harfbuzz_CHECKSUM := f16351bafe214725fe2c1d5b59f0d93e49905a4b247899fb90d70cff953a2b9b
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
