@@ -632,30 +632,22 @@ define matio_BUILD_SHARED
     $($(PKG)_BUILD)
 endef
 
+# build with the Meson build system
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
-# OpenSlide needs --with-tree --with-xpath
-# ImageMagick's internal MSVG parser needs --with-push --with-sax1
+# OpenSlide needs -Dxpath=enabled
+# ImageMagick's internal MSVG parser needs -Dpush=enabled -Dsax1=enabled
 define libxml2_BUILD
-    $(SED) -i 's,`uname`,MinGW,g' '$(1)/xml2-config.in'
-
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --with-minimum \
+    $(MXE_MESON_WRAPPER) \
+        -Dminimum=true \
         $(if $(findstring .all,$(TARGET)), \
-            --with-tree \
-            --with-xpath \
-            --with-push \
-            --with-sax1) \
-        --without-zlib \
-        --without-lzma \
-        --without-debug \
-        --without-iconv \
-        --without-python \
-        --without-threads \
-        $(libxml2_CONFIGURE_OPTS)
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
-    ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
+            -Dxpath=enabled \
+            -Dpush=enabled \
+            -Dsax1=enabled) \
+        $(libxml2_MESON_OPTS) \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
 # Only build libarchive with zlib support
