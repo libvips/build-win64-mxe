@@ -22,16 +22,16 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.7.8
-libarchive_CHECKSUM := 32a51747527e01f50d0e06abad0fe0b95b6fa40b8fc173c48b8bd97d0f743330
+libarchive_VERSION  := 3.7.9
+libarchive_CHECKSUM := ed8b5732e4cd6e30fae909fb945cad8ff9cb7be5c6cdaa3944ec96e4a200c04c
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-24
-imagemagick_CHECKSUM := f14e831e9d70d440065025be56b039948a2f5a93bc00ddd2913dacb736ff91fa
+imagemagick_VERSION  := 6.9.13-25
+imagemagick_CHECKSUM := 182872ab0a7dbb9b40b676f13a4f45d7931d313a66b3c983dfb2be40997b4041
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -76,8 +76,8 @@ libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
 
 # upstream version is 4.5.0
-cfitsio_VERSION  := 4.6.0
-cfitsio_CHECKSUM := 7c372fdb4e6cf530fc12294ae0b7f1fdd0ed85062790277a60aea56c97b0d3e7
+cfitsio_VERSION  := 4.6.2
+cfitsio_CHECKSUM := 66fd078cc0bea896b0d44b120d46d6805421a5361d3a5ad84d9f397b1b5de2cb
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
@@ -111,8 +111,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 25.03.0
-poppler_CHECKSUM := 97da4ff88517a6bbd729529f195f85c8d7a0c3bb4a3d57cb0c685cbb052fe837
+poppler_VERSION  := 25.04.0
+poppler_CHECKSUM := b010c596dce127fba88532fd2f1043e55ea30601767952d0f2c0a80e7dc0da3d
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
