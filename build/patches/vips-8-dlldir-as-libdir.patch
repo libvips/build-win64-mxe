@@ -5,11 +5,11 @@ Subject: [PATCH 1/1] Support for using the DLL directory as libdir
 
 Upstream-Status: Pending [https://github.com/libvips/build-win64-mxe/issues/34]
 
-diff --git a/libvips/include/vips/util.h b/libvips/include/vips/util.h
+diff --git a/libvips/include/vips/internal.h b/libvips/include/vips/internal.h
 index 1111111..2222222 100644
---- a/libvips/include/vips/util.h
-+++ b/libvips/include/vips/util.h
-@@ -418,6 +418,7 @@ guint32 vips__random(guint32 seed);
+--- a/libvips/include/vips/internal.h
++++ b/libvips/include/vips/internal.h
+@@ -426,6 +426,7 @@ guint32 vips__random(guint32 seed);
  guint32 vips__random_add(guint32 seed, int value);
  
  const char *vips__icc_dir(void);
@@ -21,7 +21,7 @@ diff --git a/libvips/iofuncs/init.c b/libvips/iofuncs/init.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/init.c
 +++ b/libvips/iofuncs/init.c
-@@ -1200,6 +1200,12 @@ vips_guess_prefix(const char *argv0, const char *env_name)
+@@ -1201,6 +1201,12 @@ vips_guess_prefix(const char *argv0, const char *env_name)
  const char *
  vips_guess_libdir(const char *argv0, const char *env_name)
  {
@@ -34,7 +34,7 @@ index 1111111..2222222 100644
  	const char *prefix = vips_guess_prefix(argv0, env_name);
  	static char *libdir = NULL;
  
-@@ -1224,6 +1230,7 @@ vips_guess_libdir(const char *argv0, const char *env_name)
+@@ -1225,6 +1231,7 @@ vips_guess_libdir(const char *argv0, const char *env_name)
  		libdir = g_strdup_printf("%s/lib", prefix);
  
  	return libdir;
@@ -46,7 +46,7 @@ diff --git a/libvips/iofuncs/util.c b/libvips/iofuncs/util.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/util.c
 +++ b/libvips/iofuncs/util.c
-@@ -1894,6 +1894,54 @@ DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+@@ -1986,6 +1986,53 @@ DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
  	return TRUE;
  }
  #endif
@@ -94,8 +94,7 @@ index 1111111..2222222 100644
 +{
 +	static GOnce once = G_ONCE_INIT;
 +
-+	return (const char *) g_once(&once,
-+		vips__dll_dir_once, NULL);
++	return (const char *) g_once(&once, vips__dll_dir_once, NULL);
 +}
 +#endif /*VIPS_DLLDIR_AS_LIBDIR*/
  #endif /*G_OS_WIN32*/
