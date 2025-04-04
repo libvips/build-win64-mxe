@@ -179,7 +179,7 @@ if [ "$with_prebuilt" = false ]; then
   $oci_runtime build -t $image -f container/base.Dockerfile .
 fi
 
-# The 'plugins' variable controls which plugins are in use
+# The 'plugin_dirs' variable controls which plugins are in use
 plugin_dirs="plugins/llvm-mingw /data"
 
 if [ -n "$git_commit" ]; then

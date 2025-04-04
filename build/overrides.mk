@@ -11,6 +11,15 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
+# no longer needed by libvips, but some of the deps need it
+# upstream version is 2.14.0
+libxml2_VERSION  := 2.14.1
+libxml2_CHECKSUM := 310df85878b65fa717e5e28e0d9e8f6205fd29d883929303a70a4f2fc4f6f1f2
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
+libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
+libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
+
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -69,6 +78,14 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
+# upstream version is 2.84.0
+glib_VERSION  := 2.84.1
+glib_CHECKSUM := 2b4bc2ec49611a5fc35f86aca855f2ed0196e69e53092bab6bb73396bf30789a
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
@@ -90,6 +107,14 @@ pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 pixman_SUBDIR   := pixman-$(pixman_VERSION)
 pixman_FILE     := pixman-$(pixman_VERSION).tar.xz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
+
+# upstream version is 2.16.0
+fontconfig_VERSION  := 2.16.1
+fontconfig_CHECKSUM := f4577b62f3a909597c9fb032c6a7a2ae39649ed8ce7048b615a48f32abc0d53a
+fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
+fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
+fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
+fontconfig_URL      := https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/$(fontconfig_VERSION)/$(fontconfig_FILE)
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -632,30 +657,22 @@ define matio_BUILD_SHARED
     $($(PKG)_BUILD)
 endef
 
+# build with the Meson build system
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
-# OpenSlide needs --with-tree --with-xpath
-# ImageMagick's internal MSVG parser needs --with-push --with-sax1
+# OpenSlide needs -Dxpath=enabled
+# ImageMagick's internal MSVG parser needs -Dpush=enabled -Dsax1=enabled
 define libxml2_BUILD
-    $(SED) -i 's,`uname`,MinGW,g' '$(1)/xml2-config.in'
-
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --with-minimum \
+    $(MXE_MESON_WRAPPER) \
+        -Dminimum=true \
         $(if $(findstring .all,$(TARGET)), \
-            --with-tree \
-            --with-xpath \
-            --with-push \
-            --with-sax1) \
-        --without-zlib \
-        --without-lzma \
-        --without-debug \
-        --without-iconv \
-        --without-python \
-        --without-threads \
-        $(libxml2_CONFIGURE_OPTS)
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
-    ln -sf '$(PREFIX)/$(TARGET)/bin/xml2-config' '$(PREFIX)/bin/$(TARGET)-xml2-config'
+            -Dxpath=enabled \
+            -Dpush=enabled \
+            -Dsax1=enabled) \
+        $(libxml2_MESON_OPTS) \
+        '$(SOURCE_DIR)' \
+        '$(BUILD_DIR)'
+
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
 # Only build libarchive with zlib support

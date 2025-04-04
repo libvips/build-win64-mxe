@@ -1,0 +1,20 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Lovell Fuller <github@lovell.info>
+Date: Fri, 4 Apr 2025 11:26:10 +0100
+Subject: [PATCH 1/1] meson: ensure relaxng option supports minimum option
+
+Upstream-Status: Backport [https://gitlab.gnome.org/GNOME/libxml2/-/commit/88732cae7d6031b2fa216faa3dd542681b385117]
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -185,7 +185,7 @@ feature = get_option('schemas') \
+     .require(want_pattern, error_message: 'schemas requires pattern') \
+     .require(want_regexps, error_message: 'schemas requires regexps')
+ want_schemas = not want_minimum \
+-    or get_option('relaxng') ? \
++    or get_option('relaxng').enabled() ? \
+     feature.allowed() : feature.enabled()
+ 
+ feature = get_option('relaxng') \

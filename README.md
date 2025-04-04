@@ -21,10 +21,10 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [cairo]         | 1.18.4    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.0     | MIT Licence                                                  |
 | [expat]         | 2.7.1     | MIT Licence                                                  |
-| [fontconfig]    | 2.16.0    | [fontconfig Licence] (BSD-like)                              |
+| [fontconfig]    | 2.16.1    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16    | LGPLv3                                                       |
-| [glib]          | 2.84.0    | LGPLv3                                                       |
+| [glib]          | 2.84.1    | LGPLv3                                                       |
 | [harfbuzz]      | 11.0.0    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17      | MIT Licence                                                  |
@@ -39,7 +39,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libtiff]       | 4.7.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.16.1    | LGPLv3                                                       |
 | [libwebp]       | 1.5.0     | New BSD License                                              |
-| [libxml2]       | 2.14.0    | MIT Licence                                                  |
+| [libxml2]       | 2.14.1    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.56.3    | LGPLv3                                                       |
 | [pixman]        | 0.44.2    | MIT Licence                                                  |
