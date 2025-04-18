@@ -25,7 +25,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16    | LGPLv3                                                       |
 | [glib]          | 2.84.1    | LGPLv3                                                       |
-| [harfbuzz]      | 11.0.0    | MIT Licence                                                  |
+| [harfbuzz]      | 11.0.1    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17      | MIT Licence                                                  |
 | [libarchive]    | 3.7.9     | BSD 2-Clause                                                 |
