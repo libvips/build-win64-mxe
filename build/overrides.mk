@@ -2,32 +2,6 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
-# upstream version is 3.4.7
-libffi_VERSION  := 3.4.8
-libffi_CHECKSUM := bc9842a18898bfacb0ed1252c4febcc7e78fa139fd27fdc7a3e30d9d9356119b
-libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
-libffi_SUBDIR   := libffi-$(libffi_VERSION)
-libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
-libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
-
-# upstream version is 2.42.10
-# gdk-pixbuf is still used by OpenSlide
-gdk-pixbuf_VERSION  := 2.42.12
-gdk-pixbuf_CHECKSUM := b9505b3445b9a7e48ced34760c3bcb73e966df3ac94c95a148cb669ab748e3c7
-gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
-gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
-gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
-gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
-
-# no longer needed by libvips, but some of the deps need it
-# upstream version is 2.14.1
-libxml2_VERSION  := 2.14.2
-libxml2_CHECKSUM := 353f3c83535d4224a4e5f1e88c90b5d4563ea8fec11f6407df640fd28fc8b8c6
-libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
-libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
-libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
-libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
-
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -100,12 +74,6 @@ cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
-# upstream version is 11.0.1
-harfbuzz_VERSION  := 11.1.0
-harfbuzz_CHECKSUM := 477f0d48c34dc32093b45304178eb9733361ca1832b5159879c99e6d40227969
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
-
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.16.2
 fontconfig_CHECKSUM := 165b8fd2a119864c87464b233986c4a1bc09efb09c65de1ca40cc1e85ffb77e2
@@ -159,6 +127,7 @@ fftw_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 fontconfig_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 freetype_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
 freetype-bootstrap_PATCHES := $(freetype_PATCHES)
+gdk-pixbuf_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 glib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 harfbuzz_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
