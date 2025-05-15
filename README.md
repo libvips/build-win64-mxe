@@ -103,7 +103,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.3     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 25.04.0   | GPLv2                                                        |
+| [poppler]       | 25.05.0   | GPLv2                                                        |
 | [sqlite]        | 3.49.2    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
@@ -199,7 +199,7 @@ prebuilt binaries while it is patent-encumbered.
 
 | Dependency      | Version   | Used under the terms of                                      |
 |-----------------|-----------|--------------------------------------------------------------|
-| [libde265]      | 1.0.15    | LGPLv3                                                       |
+| [libde265]      | 1.0.16    | LGPLv3                                                       |
 | [x265]          | 4.1       | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265

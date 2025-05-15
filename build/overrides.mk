@@ -102,8 +102,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 25.04.0
-poppler_CHECKSUM := b010c596dce127fba88532fd2f1043e55ea30601767952d0f2c0a80e7dc0da3d
+poppler_VERSION  := 25.05.0
+poppler_CHECKSUM := 9b1627c5b76816ac5e4052a03f5b605ba40b45cf06b02cadd0479620b499ab38
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
