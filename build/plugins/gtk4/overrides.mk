@@ -16,9 +16,3 @@ libxml2_MESON_OPTS = -Doutput=enabled
 
 # Override sub-dependencies
 libepoxy_DEPS := $(filter-out  xorg-macros,$(libepoxy_DEPS))
-
-# upstream version is 1.5.9
-libepoxy_VERSION  := 1.5.10
-libepoxy_CHECKSUM := 072cda4b59dd098bba8c2363a6247299db1fa89411dc221c8b81b8ee8192e623
-libepoxy_FILE     := libepoxy-$(libepoxy_VERSION).tar.xz
-libepoxy_URL      := https://download.gnome.org/sources/libepoxy/$(call SHORT_PKG_VERSION,libepoxy)/$(libepoxy_FILE)

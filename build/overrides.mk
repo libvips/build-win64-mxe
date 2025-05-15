@@ -722,7 +722,6 @@ define brotli_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef
 
-# install DLL in /bin
 # build with --disable-load-extension
 define sqlite_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
@@ -739,8 +738,4 @@ define sqlite_BUILD
         --disable-readline \
         --disable-load-extension
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-
-    # https://sqlite.org/forum/forumpost/4b68a3b892dfb9a1
-    $(if $(BUILD_SHARED), \
-        mv -vf '$(PREFIX)/$(TARGET)/lib/libsqlite3.dll' '$(PREFIX)/$(TARGET)/bin')
 endef
