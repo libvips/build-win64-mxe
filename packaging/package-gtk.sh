@@ -68,7 +68,7 @@ pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{$package,gdbus}.exe)
 search_paths=($bin_dir $install_dir/${target%%.*}/bin)
 
 if [ -d "$module_dir" ]; then
-  mkdir -p $repackage_dir/bin/$module_dir_base
+  mkdir -p $repackage_dir/lib/$module_dir_base
   pe_targets+=($module_dir/*.dll)
 fi
 
@@ -103,8 +103,11 @@ for pe_target in "${pe_targets[@]}"; do
   for pe_dep in $pe_deps; do
     dir=$(dirname $pe_dep)
     base=$(basename $pe_dep .${pe_dep##*.})
-    target_dir="$repackage_dir/bin"
-    [ "$dir" = "$module_dir" ] && target_dir+="/$module_dir_base" || true
+    if [ "$dir" = "$module_dir" ]; then
+      target_dir="$repackage_dir/lib/$module_dir_base"
+    else
+      target_dir="$repackage_dir/bin"
+    fi
 
     cp -n $pe_dep $target_dir
 
@@ -142,7 +145,7 @@ echo "Strip unneeded symbols"
 # Remove all symbols that are not needed
 if [ "$DEBUG" = false ]; then
   $strip --strip-unneeded bin/*.{exe,dll}
-  [ -d "$module_dir" ] && $strip --strip-unneeded bin/$module_dir_base/*.dll || true
+  [ -d "$module_dir" ] && $strip --strip-unneeded lib/$module_dir_base/*.dll || true
 fi
 
 echo "Copying packaging files"
