@@ -167,9 +167,12 @@ else
   exit 1
 fi
 
-image="ghcr.io/libvips/build-win64-mxe:latest"
+if [ "$with_prebuilt" = true ]; then
+  image="ghcr.io/libvips/build-win64-mxe:latest"
 
-if [ "$with_prebuilt" = false ]; then
+  # Ensure latest prebuilt base image
+  $oci_runtime pull $image
+else
   image="libvips-build-win-mxe-base"
 
   # Ensure latest Debian stable base image

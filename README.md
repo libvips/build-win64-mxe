@@ -28,7 +28,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [harfbuzz]      | 11.2.1    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17      | MIT Licence                                                  |
-| [libarchive]    | 3.7.9     | BSD 2-Clause                                                 |
+| [libarchive]    | 3.8.0     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.25    | LGPLv3                                                       |
 | [libffi]        | 3.4.8     | MIT Licence                                                  |
 | [libheif]       | 1.19.8    | LGPLv3                                                       |
