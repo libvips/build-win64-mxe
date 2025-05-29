@@ -148,7 +148,7 @@ diff --git a/gobject/gboxed.c b/gobject/gboxed.c
 index 1111111..2222222 100644
 --- a/gobject/gboxed.c
 +++ b/gobject/gboxed.c
-@@ -121,9 +121,6 @@ G_DEFINE_BOXED_TYPE (GByteArray, g_byte_array, g_byte_array_ref, g_byte_array_un
+@@ -115,9 +115,6 @@ G_DEFINE_BOXED_TYPE (GByteArray, g_byte_array, g_byte_array_ref, g_byte_array_un
  G_DEFINE_BOXED_TYPE (GBytes, g_bytes, g_bytes_ref, g_bytes_unref)
  G_DEFINE_BOXED_TYPE (GTree, g_tree, g_tree_ref, g_tree_unref)
  
@@ -182,7 +182,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2226,50 +2226,6 @@ else
+@@ -2234,50 +2234,6 @@ else
    libiconv = dependency('iconv')
  endif
  
