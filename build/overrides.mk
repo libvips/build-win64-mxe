@@ -13,8 +13,8 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.8.0
-libarchive_CHECKSUM := 67bfac3798a778143f4b1cadcdb3792b4269486f8e1b70ca5c0ee5841398bfdf
+libarchive_VERSION  := 3.8.1
+libarchive_CHECKSUM := 19f917d42d530f98815ac824d90c7eaf648e9d9a50e4f309c812457ffa5496b5
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
@@ -102,8 +102,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 23.09.0
-poppler_VERSION  := 25.05.0
-poppler_CHECKSUM := 9b1627c5b76816ac5e4052a03f5b605ba40b45cf06b02cadd0479620b499ab38
+poppler_VERSION  := 25.06.0
+poppler_CHECKSUM := 8199532d38984fab46dbd0020ec9c40f20e928e33e9b4cc6043572603a821d83
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
@@ -180,7 +180,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # libjpeg-turbo:
 #  Replaced: yasm with $(BUILD)~nasm
 # libxml2:
-#  Removed: xz, zlib
+#  Removed: libiconv, xz, zlib
 # Fontconfig:
 #  Added: meson-wrapper
 #  Removed: gettext
