@@ -67,7 +67,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "vips": "$(vips-all_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
      $(if $(IS_HEVC),printf '  "x265": "$(x265_VERSION)"$(comma)\n';) \
-     printf '  "xml": "$(libxml2_VERSION)",\n'; \
+     printf '  "xml2": "$(libxml2_VERSION)",\n'; \
      $(if $(IS_ZLIB_NG), \
           printf '  "zlib-ng": "$(zlib-ng_VERSION)"\n';, \
           printf '  "zlib": "$(zlib_VERSION)"\n';) \

@@ -155,7 +155,7 @@ Subject: [PATCH 4/4] text: verify pango/fontconfig found a suitable font
 
 Helps prevent panic when no fonts are installed
 
-Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1106]
+Upstream-Status: Backport [https://gitlab.gnome.org/GNOME/librsvg/-/commit/c925b9e7b62322fc253486fbcd50bea797234ad3]
 
 diff --git a/rsvg/src/text.rs b/rsvg/src/text.rs
 index 1111111..2222222 100644

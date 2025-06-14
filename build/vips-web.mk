@@ -49,7 +49,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
      printf '  "vips": "$(vips-web_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
-     printf '  "xml": "$(libxml2_VERSION)",\n'; \
+     printf '  "xml2": "$(libxml2_VERSION)",\n'; \
      $(if $(IS_ZLIB_NG), \
           printf '  "zlib-ng": "$(zlib-ng_VERSION)"\n';, \
           printf '  "zlib": "$(zlib_VERSION)"\n';) \

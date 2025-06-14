@@ -144,6 +144,14 @@ index 1111111..2222222 100644
      platform_deps,
      thread_dep,
    ],
+@@ -448,7 +439,6 @@ libglib_static_dep = declare_dependency(
+     libm,
+     librt,
+     libsysprof_capture_dep,
+-    pcre2,
+     platform_deps,
+     thread_dep,
+   ],
 diff --git a/gobject/gboxed.c b/gobject/gboxed.c
 index 1111111..2222222 100644
 --- a/gobject/gboxed.c
@@ -182,7 +190,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2234,50 +2234,6 @@ else
+@@ -2235,50 +2235,6 @@ else
    libiconv = dependency('iconv')
  endif
  

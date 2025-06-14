@@ -47,7 +47,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -335,13 +335,14 @@ endif
+@@ -336,13 +336,14 @@ endif
  if glib_build_static_only
    glibconfig_conf.set('GLIB_STATIC_COMPILATION', '1')
    glibconfig_conf.set('GOBJECT_STATIC_COMPILATION', '1')

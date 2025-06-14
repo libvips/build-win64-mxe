@@ -21,7 +21,6 @@ define $(PKG)_BUILD
         -DCONFIG_AV1_HIGHBITDEPTH=0 \
         -DCONFIG_WEBM_IO=0 \
         $(if $(call seq,i686,$(PROCESSOR)), -DAOM_TARGET_CPU='x86') \
-        $(if $(call seq,aarch64,$(PROCESSOR)), -DCONFIG_RUNTIME_CPU_DETECT=0) \
         '$(SOURCE_DIR)'
 
     # parallel build sometimes doesn't work; fallback to -j 1.

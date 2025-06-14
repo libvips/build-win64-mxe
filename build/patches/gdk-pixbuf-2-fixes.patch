@@ -13,7 +13,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -356,15 +356,8 @@ if not tiff_opt.disabled() and not native_windows_loaders
+@@ -371,15 +371,8 @@ if not tiff_opt.disabled() and not native_windows_loaders
    endif
  endif
  
@@ -31,15 +31,16 @@ index 1111111..2222222 100644
    add_project_arguments([ '-DGDK_PIXBUF_RELOCATABLE' ], language: 'c')
  endif
  
-@@ -424,7 +417,7 @@ summary('MediaLib', use_medialib, section: 'Build')
- summary('Introspection', build_gir, section: 'Build')
- summary('Documentation', build_docs, section: 'Build')
- summary('Manual pages', get_option('man'), section: 'Build')
--summary('Relocatable', relocatable, section: 'Build')
-+summary('Relocatable', get_option('relocatable'), section: 'Build')
- summary('Build tests', get_option('tests'), section: 'Build')
- summary('Installed tests', get_option('installed_tests'), section: 'Build')
- 
+@@ -457,7 +450,7 @@ summary({
+     'Introspection': build_gir,
+     'Documentation': build_docs,
+     'Manual pages': get_option('man'),
+-    'Relocatable': relocatable,
++    'Relocatable': get_option('relocatable'),
+     'Build tests': get_option('tests'),
+     'Installed tests': get_option('installed_tests'),
+   },
+
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 7 Oct 2019 11:30:00 +0200
@@ -51,7 +52,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -272,6 +272,9 @@ if not png_opt.disabled()
+@@ -277,6 +277,9 @@ if not png_opt.disabled()
    if png_dep.found()
      enabled_loaders += 'png'
      loaders_deps += png_dep
@@ -61,7 +62,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -307,9 +310,13 @@ else
+@@ -322,9 +325,13 @@ else
  endif
  
  if native_windows_loaders
@@ -77,7 +78,7 @@ index 1111111..2222222 100644
  endif
  
  # Don't check and build the jpeg loader if native_windows_loaders is true
-@@ -340,6 +347,9 @@ if not jpeg_opt.disabled() and not native_windows_loaders
+@@ -355,6 +362,9 @@ if not jpeg_opt.disabled() and not native_windows_loaders
      if has_destroy_decompress and has_simple_progression
        gdk_pixbuf_conf.set('HAVE_PROGRESSIVE_JPEG', has_simple_progression)
      endif
@@ -87,7 +88,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -353,6 +363,9 @@ if not tiff_opt.disabled() and not native_windows_loaders
+@@ -368,6 +378,9 @@ if not tiff_opt.disabled() and not native_windows_loaders
    if tiff_dep.found()
      enabled_loaders += 'tiff'
      loaders_deps += tiff_dep

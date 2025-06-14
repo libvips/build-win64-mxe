@@ -2,6 +2,31 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
+# upstream version is 3.4.8
+libffi_VERSION  := 3.5.1
+libffi_CHECKSUM := f99eb68a67c7d54866b7706af245e87ba060d419a062474b456d3bc8d4abdbd1
+libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
+libffi_SUBDIR   := libffi-$(libffi_VERSION)
+libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
+libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
+
+# upstream version is 2.42.12
+# gdk-pixbuf is still used by OpenSlide
+gdk-pixbuf_VERSION  := 2.43.2
+gdk-pixbuf_CHECKSUM := a386a85c74021fa62d22297db122d231cc68fdd342761fb978c446f73f2606dc
+gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
+gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
+gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
+gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
+
+# upstream version is 1.6.48
+libpng_VERSION  := 1.6.49
+libpng_CHECKSUM := 43182aa48e39d64b1ab4ec6b71ab3e910b67eed3a0fff3777cf8cf40d6ef7024
+libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
+libpng_SUBDIR   := libpng-$(libpng_VERSION)
+libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
+libpng_URL      := https://$(SOURCEFORGE_MIRROR)/project/libpng/libpng16/$(libpng_VERSION)/$(libpng_FILE)
+
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -60,6 +85,14 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
+# upstream version is 2.85.0
+glib_VERSION  := 2.85.1
+glib_CHECKSUM := d3f57bcd4202d93aa547ffa1d2a5dbd380a05dbaac04cc291bd7dfce93b4a8e5
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
@@ -73,6 +106,14 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
+
+# upstream version is 0.46.0
+pixman_VERSION  := 0.46.2
+pixman_CHECKSUM := d075209d18728b1ca5d0bb864aa047a262a1fde206da8a677d6af75b2ee1ae98
+pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pixman-[0-9]*.patch)))
+pixman_SUBDIR   := pixman-$(pixman_VERSION)
+pixman_FILE     := pixman-$(pixman_VERSION).tar.xz
+pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.16.2
@@ -315,9 +356,12 @@ define gdk-pixbuf_BUILD
         -Dtiff=disabled \
         -Dgif=disabled \
         -Dothers=disabled \
+        -Dglycin=disabled \
+        -Dthumbnailer=disabled \
         -Dintrospection=disabled \
         -Dtests=false \
         -Dinstalled_tests=false \
+        -Ddocumentation=false \
         -Dman=false \
         -Dbuiltin_loaders='png,jpeg' \
         '$(SOURCE_DIR)' \
