@@ -10,7 +10,7 @@ RUN \
     ruby zip
 
 WORKDIR /usr/local
-RUN git clone -b llvm-mingw-20250529 --single-branch https://github.com/kleisauke/mxe.git
+RUN git clone -b llvm-mingw-20250614 --single-branch https://github.com/kleisauke/mxe.git
 
 WORKDIR /usr/local/mxe
 

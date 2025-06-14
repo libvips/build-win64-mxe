@@ -18,7 +18,7 @@ diff --git a/autosetup/sqlite-config.tcl b/autosetup/sqlite-config.tcl
 index 1111111..2222222 100644
 --- a/autosetup/sqlite-config.tcl
 +++ b/autosetup/sqlite-config.tcl
-@@ -820,10 +820,10 @@ proc sqlite-handle-threadsafe {} {
+@@ -897,10 +897,10 @@ proc sqlite-handle-threadsafe {} {
    define LDFLAGS_PTHREAD ""
    set enable 0
    proj-if-opt-truthy threadsafe {

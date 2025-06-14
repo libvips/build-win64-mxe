@@ -167,19 +167,13 @@ else
   exit 1
 fi
 
-if [ "$with_prebuilt" = true ]; then
-  image="ghcr.io/libvips/build-win64-mxe:latest"
+image="ghcr.io/libvips/build-win64-mxe:latest"
 
-  # Ensure latest prebuilt base image
-  $oci_runtime pull $image
-else
+if [ "$with_prebuilt" = false ]; then
   image="libvips-build-win-mxe-base"
 
-  # Ensure latest Debian stable base image
-  $oci_runtime pull docker.io/library/buildpack-deps:bookworm
-
   # Bootstrap the compilers and utilities
-  $oci_runtime build -t $image -f container/base.Dockerfile .
+  $oci_runtime build --pull -t $image -f container/base.Dockerfile .
 fi
 
 # The 'plugin_dirs' variable controls which plugins are in use
@@ -216,6 +210,7 @@ plugin_dirs+=" /data/plugins/proxy-libintl"
 
 # Build requested packages
 $oci_runtime build \
+  --pull \
   -t libvips-build-win-mxe \
   -f container/Dockerfile \
   --build-arg BASE_IMAGE="$image" \
