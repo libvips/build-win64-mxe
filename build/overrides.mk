@@ -19,6 +19,15 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
+# no longer needed by libvips, but some of the deps need it
+# upstream version is 2.14.3
+libxml2_VERSION  := 2.14.4
+libxml2_CHECKSUM := 24175ec30a97cfa86bdf9befb7ccf4613f8f4b2713c5103e0dd0bc9c711a2773
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
+libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
+libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
+
 # upstream version is 1.6.48
 libpng_VERSION  := 1.6.49
 libpng_CHECKSUM := 43182aa48e39d64b1ab4ec6b71ab3e910b67eed3a0fff3777cf8cf40d6ef7024
@@ -68,8 +77,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
-pango_VERSION  := 1.56.3
-pango_CHECKSUM := 2606252bc25cd8d24e1b7f7e92c3a272b37acd6734347b73b47a482834ba2491
+pango_VERSION  := 1.56.4
+pango_CHECKSUM := 17065e2fcc5f5a5bdbffc884c956bfc7c451a96e8c4fb2f8ad837c6413cb5a01
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -116,8 +125,8 @@ pixman_FILE     := pixman-$(pixman_VERSION).tar.xz
 pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # upstream version is 2.16.0
-fontconfig_VERSION  := 2.16.2
-fontconfig_CHECKSUM := 165b8fd2a119864c87464b233986c4a1bc09efb09c65de1ca40cc1e85ffb77e2
+fontconfig_VERSION  := 2.17.0
+fontconfig_CHECKSUM := 6caea32b8076ef313b9b77747daa9afd24b71bcd525447b2a3c585c4542a083b
 fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
