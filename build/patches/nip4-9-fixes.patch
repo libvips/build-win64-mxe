@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 26 Jun 2025 14:30:22 +0200
+Subject: [PATCH 1/1] Remove 1 pixel tile stretch
+
+Upstream-Status: Pending [https://github.com/jcupitt/nip4/issues/17]
+
+diff --git a/src/tilecache.c b/src/tilecache.c
+index 1111111..2222222 100644
+--- a/src/tilecache.c
++++ b/src/tilecache.c
+@@ -1023,11 +1023,10 @@ tilecache_snapshot(Tilecache *tilecache, GtkSnapshot *snapshot,
+ 
+ 			graphene_rect_t bounds;
+ 
+-			// +1 to hide tile boundaries
+ 			bounds.origin.x = tile->bounds.left * scale - x + paint->origin.x;
+ 			bounds.origin.y = tile->bounds.top * scale - y + paint->origin.y;
+-			bounds.size.width = tile->bounds.width * scale + 1;
+-			bounds.size.height = tile->bounds.height * scale + 1;
++			bounds.size.width = tile->bounds.width * scale;
++			bounds.size.height = tile->bounds.height * scale;
+ 
+ 			gtk_snapshot_append_scaled_texture(snapshot,
+ 				tile_get_texture(tile), filter, &bounds);
