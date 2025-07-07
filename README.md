@@ -21,7 +21,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [cairo]         | 1.18.4    | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.0     | MIT Licence                                                  |
 | [expat]         | 2.7.1     | MIT Licence                                                  |
-| [fontconfig]    | 2.17.0    | [fontconfig Licence] (BSD-like)                              |
+| [fontconfig]    | 2.17.1    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16    | LGPLv3                                                       |
 | [glib]          | 2.85.1    | LGPLv3                                                       |
@@ -31,13 +31,13 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libarchive]    | 3.8.1     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.25    | LGPLv3                                                       |
 | [libffi]        | 3.5.1     | MIT Licence                                                  |
-| [libheif]       | 1.19.8    | LGPLv3                                                       |
+| [libheif]       | 1.20.1    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.49    | [libpng License version 2]                                   |
+| [libpng]        | 1.6.50    | [libpng License version 2]                                   |
 | [librsvg]       | 2.60.0    | LGPLv3                                                       |
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.7.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.17.0    | LGPLv3                                                       |
+| [libvips]       | 8.17.1    | LGPLv3                                                       |
 | [libwebp]       | 1.5.0     | New BSD License                                              |
 | [libxml2]       | 2.14.4    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
@@ -93,7 +93,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.6.2     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [gdk-pixbuf]    | 2.43.2    | LGPLv3                                                       |
+| [gdk-pixbuf]    | 2.43.3    | LGPLv3                                                       |
 | [imagemagick]   | 6.9.13-25 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0     | MIT Licence                                                  |
@@ -103,7 +103,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.3     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 25.06.0   | GPLv2                                                        |
+| [poppler]       | 25.07.0   | GPLv2                                                        |
 | [sqlite]        | 3.50.1    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli

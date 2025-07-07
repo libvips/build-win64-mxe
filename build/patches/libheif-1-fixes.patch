@@ -17,13 +17,13 @@ https://github.com/strukturag/libheif/issues/902
 Upstream-Status: Inappropriate [other]
 Upstream may still use GCC.
 
-diff --git a/libheif/api/libheif/heif.h b/libheif/api/libheif/heif.h
+diff --git a/libheif/api/libheif/heif_library.h b/libheif/api/libheif/heif_library.h
 index 1111111..2222222 100644
---- a/libheif/api/libheif/heif.h
-+++ b/libheif/api/libheif/heif.h
-@@ -55,7 +55,7 @@ extern "C" {
- //  1.18           5            7             1             1            1            1
+--- a/libheif/api/libheif/heif_library.h
++++ b/libheif/api/libheif/heif_library.h
+@@ -49,7 +49,7 @@ extern "C" {
  //  1.19           6            7             2             1            1            1
+ //  1.20           7            7             2             1            1            1
  
 -#if (defined(_WIN32) || defined __CYGWIN__) && !defined(LIBHEIF_STATIC_BUILD)
 +#if defined(_MSC_VER) && !defined(LIBHEIF_STATIC_BUILD)

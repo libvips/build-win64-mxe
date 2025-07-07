@@ -13,7 +13,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -371,15 +371,8 @@ if not tiff_opt.disabled() and not native_windows_loaders
+@@ -388,15 +388,8 @@ if not tiff_opt.disabled() and not native_windows_loaders
    endif
  endif
  
@@ -31,7 +31,7 @@ index 1111111..2222222 100644
    add_project_arguments([ '-DGDK_PIXBUF_RELOCATABLE' ], language: 'c')
  endif
  
-@@ -457,7 +450,7 @@ summary({
+@@ -474,7 +467,7 @@ summary({
      'Introspection': build_gir,
      'Documentation': build_docs,
      'Manual pages': get_option('man'),
@@ -52,7 +52,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -277,6 +277,9 @@ if not png_opt.disabled()
+@@ -297,6 +297,9 @@ if not png_opt.disabled()
    if png_dep.found()
      enabled_loaders += 'png'
      loaders_deps += png_dep
@@ -62,7 +62,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -322,9 +325,13 @@ else
+@@ -339,9 +342,13 @@ else
  endif
  
  if native_windows_loaders
@@ -78,7 +78,7 @@ index 1111111..2222222 100644
  endif
  
  # Don't check and build the jpeg loader if native_windows_loaders is true
-@@ -355,6 +362,9 @@ if not jpeg_opt.disabled() and not native_windows_loaders
+@@ -372,6 +379,9 @@ if not jpeg_opt.disabled() and not native_windows_loaders
      if has_destroy_decompress and has_simple_progression
        gdk_pixbuf_conf.set('HAVE_PROGRESSIVE_JPEG', has_simple_progression)
      endif
@@ -88,7 +88,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -368,6 +378,9 @@ if not tiff_opt.disabled() and not native_windows_loaders
+@@ -385,6 +395,9 @@ if not tiff_opt.disabled() and not native_windows_loaders
    if tiff_dep.found()
      enabled_loaders += 'tiff'
      loaders_deps += tiff_dep
