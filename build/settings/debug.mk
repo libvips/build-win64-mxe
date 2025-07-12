@@ -22,6 +22,7 @@ export CARGO_PROFILE_RELEASE_INCREMENTAL   := false
 export CARGO_PROFILE_RELEASE_LTO           := true
 export CARGO_PROFILE_RELEASE_OPT_LEVEL     := 1
 export CARGO_PROFILE_RELEASE_PANIC         := abort
+export CARGO_PROFILE_RELEASE_TRIM_PATHS    := false
 
 # Install the various PDBs.
 INSTALL_PDB := $(true)
