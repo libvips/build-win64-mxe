@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=ghcr.io/libvips/build-win64-mxe:latest
+ARG BASE_IMAGE=ghcr.io/libvips/build-win64-mxe:rc
 FROM $BASE_IMAGE
 
 # Copy the contents of this repository to the container

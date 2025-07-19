@@ -25,6 +25,8 @@ jobs:
             type=sha
             # Set latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
+            # Set rc tag for llvm-21 branch
+            type=raw,value=rc,enable=${{ github.ref == 'refs/heads/llvm-21' }}
           # Overwrite some generated OCI labels
           labels: |
             org.opencontainers.image.authors=libvips team and contributors
