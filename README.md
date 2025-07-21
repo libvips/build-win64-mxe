@@ -25,7 +25,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16    | LGPLv3                                                       |
 | [glib]          | 2.85.1    | LGPLv3                                                       |
-| [harfbuzz]      | 11.2.1    | MIT Licence                                                  |
+| [harfbuzz]      | 11.3.2    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17      | MIT Licence                                                  |
 | [libarchive]    | 3.8.1     | BSD 2-Clause                                                 |
@@ -38,11 +38,11 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
 | [libtiff]       | 4.7.0     | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.17.1    | LGPLv3                                                       |
-| [libwebp]       | 1.5.0     | New BSD License                                              |
-| [libxml2]       | 2.14.4    | MIT Licence                                                  |
+| [libwebp]       | 1.6.0     | New BSD License                                              |
+| [libxml2]       | 2.14.5    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
 | [pango]         | 1.56.4    | LGPLv3                                                       |
-| [pixman]        | 0.46.2    | MIT Licence                                                  |
+| [pixman]        | 0.46.4    | MIT Licence                                                  |
 | [proxy-libintl] | 0.4       | LGPLv3                                                       |
 | [zlib-ng]       | 2.2.4     | [zlib-ng Licence]                                            |
 
@@ -94,7 +94,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.6.2     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.43.3    | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-25 | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-26 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0     | MIT Licence                                                  |
 | [libjxl]        | 0.11.1    | BSD 3-Clause                                                 |

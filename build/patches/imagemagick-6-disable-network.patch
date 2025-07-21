@@ -9,7 +9,7 @@ diff --git a/Makefile.in b/Makefile.in
 index 1111111..2222222 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -258,11 +258,10 @@ bin_PROGRAMS = $(am__EXEEXT_1)
+@@ -260,11 +260,10 @@ bin_PROGRAMS = $(am__EXEEXT_1)
  TESTS = $(TESTS_TESTS) $(am__EXEEXT_5)
  XFAIL_TESTS = $(am__EXEEXT_6) $(am__EXEEXT_6)
  check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_4)
@@ -24,7 +24,7 @@ index 1111111..2222222 100644
  subdir = .
  ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
  am__aclocal_m4_deps = $(top_srcdir)/m4/ax_c___attribute__.m4 \
-@@ -1270,7 +1269,7 @@ coders_uil_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+@@ -1271,7 +1270,7 @@ coders_uil_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
  @WITH_MODULES_TRUE@am_coders_uil_la_rpath = -rpath $(codersdir)
  coders_url_la_DEPENDENCIES = $(MAGICKCORE_LIBS) $(am__DEPENDENCIES_1) \
  	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -33,7 +33,7 @@ index 1111111..2222222 100644
  am_coders_url_la_OBJECTS = coders/url_la-url.lo
  coders_url_la_OBJECTS = $(am_coders_url_la_OBJECTS)
  coders_url_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-@@ -3409,7 +3408,7 @@ MODULECOMMONCPPFLAGS = $(AM_CPPFLAGS)
+@@ -3420,7 +3419,7 @@ MODULECOMMONCPPFLAGS = $(AM_CPPFLAGS)
  DISTCHECK_CONFIGURE_FLAGS = $(DISTCHECK_CONFIG_FLAGS)
  DISTCLEANFILES = _configs.sed magick/magick-baseconfig.h
  CLEANFILES = $(WAND_CLEANFILES) $(MAGICKPP_CLEANFILES) \
@@ -42,7 +42,7 @@ index 1111111..2222222 100644
  
  # Binary scripts
  bin_SCRIPTS = \
-@@ -4520,8 +4519,7 @@ coders_uil_la_LIBADD = $(MAGICKCORE_LIBS)
+@@ -4531,8 +4530,7 @@ coders_uil_la_LIBADD = $(MAGICKCORE_LIBS)
  coders_url_la_SOURCES = coders/url.c
  coders_url_la_CPPFLAGS = $(MAGICK_CODER_CPPFLAGS)
  coders_url_la_LDFLAGS = $(MODULECOMMONFLAGS)
@@ -52,7 +52,7 @@ index 1111111..2222222 100644
  
  # UYVY coder module
  coders_uyvy_la_SOURCES = coders/uyvy.c
-@@ -4664,13 +4662,13 @@ MAGICKCORE_LIBS = magick/libMagickCore-@MAGICK_MAJOR_VERSION@.@MAGICK_ABI_SUFFIX
+@@ -4675,13 +4673,13 @@ MAGICKCORE_LIBS = magick/libMagickCore-@MAGICK_MAJOR_VERSION@.@MAGICK_ABI_SUFFIX
  @WITH_MODULES_FALSE@magick_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES = $(MAGICK_BASE_SRCS) $(MAGICK_PLATFORM_SRCS) $(MAGICK_CODER_SRCS) $(MAGICK_FILTER_SRCS)
  @WITH_MODULES_TRUE@magick_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES = $(MAGICK_BASE_SRCS) $(MAGICK_PLATFORM_SRCS)
  @WITH_MODULES_FALSE@magick_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_LIBADD =  \
@@ -89,7 +89,7 @@ diff --git a/coders/url.c b/coders/url.c
 index 1111111..2222222 100644
 --- a/coders/url.c
 +++ b/coders/url.c
-@@ -74,7 +74,8 @@
+@@ -69,7 +69,8 @@
  #  include <libxml/nanohttp.h>
  #endif
  #endif
@@ -99,7 +99,7 @@ index 1111111..2222222 100644
  #  include <urlmon.h>
  #  pragma comment(lib, "urlmon.lib")
  #endif
-@@ -158,7 +159,7 @@ static Image *ReadURLImage(const ImageInfo *image_info,ExceptionInfo *exception)
+@@ -153,7 +154,7 @@ static Image *ReadURLImage(const ImageInfo *image_info,ExceptionInfo *exception)
    image=AcquireImage(image_info);
    read_info=CloneImageInfo(image_info);
    SetImageInfoBlob(read_info,(void *) NULL,0);
@@ -108,7 +108,7 @@ index 1111111..2222222 100644
    if (LocaleCompare(read_info->magick,"https") == 0)
      {
        MagickBooleanType
-@@ -212,7 +213,7 @@ static Image *ReadURLImage(const ImageInfo *image_info,ExceptionInfo *exception)
+@@ -207,7 +208,7 @@ static Image *ReadURLImage(const ImageInfo *image_info,ExceptionInfo *exception)
    (void) ConcatenateMagickString(filename,":",MaxTextExtent);
    LocaleLower(filename);
    (void) ConcatenateMagickString(filename,image_info->filename,MaxTextExtent);
@@ -117,7 +117,7 @@ index 1111111..2222222 100644
    (void) fclose(file);
    if (URLDownloadToFile(NULL,filename,read_info->filename,0,NULL) != S_OK)
      {
-@@ -321,7 +322,8 @@ ModuleExport size_t RegisterURLImage(void)
+@@ -316,7 +317,8 @@ ModuleExport size_t RegisterURLImage(void)
      *entry;
  
    entry=SetMagickInfo("HTTP");
@@ -127,7 +127,7 @@ index 1111111..2222222 100644
      (defined(MAGICKCORE_XML_DELEGATE) && defined(LIBXML_HTTP_ENABLED))
    entry->decoder=(DecodeImageHandler *) ReadURLImage;
  #endif
-@@ -336,7 +338,8 @@ ModuleExport size_t RegisterURLImage(void)
+@@ -331,7 +333,8 @@ ModuleExport size_t RegisterURLImage(void)
    entry->format_type=ImplicitFormatType;
    (void) RegisterMagickInfo(entry);
    entry=SetMagickInfo("FTP");
