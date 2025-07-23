@@ -2,10 +2,11 @@ PKG             := nip4
 $(PKG)_WEBSITE  := https://github.com/jcupitt/nip4
 $(PKG)_DESCR    := Image processing spreadsheet
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 9.0.11
-$(PKG)_CHECKSUM := 6a4ea40987fbb79fe21207c0945114214d235995ed80d50ac54b479eaf0959e9
+# https://github.com/jcupitt/nip4/tarball/654c580fe25dcfad68e7a5a88a3181f63b880f11
+$(PKG)_VERSION  := 654c580
+$(PKG)_CHECKSUM := 3811c998a11dfa44ec97b007cfc32755b8b5f6d7416bc72de47d1792de590d69
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := jcupitt/nip4/releases,v,,,,.tar.xz
+$(PKG)_GH_CONF  := jcupitt/nip4/branches/main
 $(PKG)_DEPS     := cc meson-wrapper gtk4 gsl vips-all
 
 define $(PKG)_PRE_CONFIGURE
