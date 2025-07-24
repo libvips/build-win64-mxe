@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 26 Oct 2023 17:00:00 +0200
-Subject: [PATCH 1/3] Make gtk4-builder-tool optional
+Subject: [PATCH 1/2] Make gtk4-builder-tool optional
 
 
 diff --git a/docs/reference/gtk/images/meson.build b/docs/reference/gtk/images/meson.build
@@ -24,7 +24,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Christoph Reiter <reiter.christoph@gmail.com>
 Date: Sat, 7 Sep 2024 13:39:22 +0200
-Subject: [PATCH 2/3] Disable automatic font rendering settings
+Subject: [PATCH 2/2] Disable automatic font rendering settings
 
 To restore the old code taking Windows settings into account.
 
@@ -44,83 +44,3 @@ index 1111111..2222222 100644
                                                     GTK_PARAM_READWRITE);
  
    g_object_class_install_properties (gobject_class, NUM_PROPERTIES, pspecs);
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Thu, 26 Jun 2025 14:50:16 +0200
-Subject: [PATCH 3/3] gpu: Snap texture scale nodes to grid
-
-Upstream-Status: Inappropriate [other]
-This patch is effectively equivalent to calling
-`gtk_snapshot_set_snap(snapshot, GSK_RECT_SNAP_ROUND)` when
-https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494 lands.
-
-diff --git a/gsk/gpu/gskgpunodeprocessor.c b/gsk/gpu/gskgpunodeprocessor.c
-index 1111111..2222222 100644
---- a/gsk/gpu/gskgpunodeprocessor.c
-+++ b/gsk/gpu/gskgpunodeprocessor.c
-@@ -2289,6 +2289,7 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
-   GdkColorState *image_cs;
-   GskScalingFilter scaling_filter;
-   gboolean need_mipmap, need_offscreen;
-+  graphene_rect_t bounds;
- 
-   texture = gsk_texture_scale_node_get_texture (node);
-   scaling_filter = gsk_texture_scale_node_get_filter (node);
-@@ -2352,6 +2353,8 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
-       return;
-     }
- 
-+  gsk_rect_snap_to_grid_round (&node->bounds, &self->scale, &self->offset, &bounds);
-+
-   if ((gsk_gpu_image_get_flags (image) & GSK_GPU_IMAGE_STRAIGHT_ALPHA) ||
-       (need_mipmap && !(gsk_gpu_image_get_flags (image) & GSK_GPU_IMAGE_CAN_MIPMAP)) ||
-       !gdk_color_state_equal (image_cs, self->ccs))
-@@ -2368,13 +2371,13 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
-     gsk_gpu_mipmap_op (self->frame, image);
- 
-   gsk_gpu_texture_op (self->frame,
--                      gsk_gpu_clip_get_shader_clip (&self->clip, &self->offset, &node->bounds),
-+                      gsk_gpu_clip_get_shader_clip (&self->clip, &self->offset, &bounds),
-                       &self->offset,
-                       &(GskGpuShaderImage) {
-                           image,
-                           gsk_gpu_sampler_for_scaling_filter (scaling_filter),
--                          &node->bounds,
--                          &node->bounds,
-+                          &bounds,
-+                          &bounds,
-                       });
- 
-   g_object_unref (image);
-diff --git a/gsk/gskrectprivate.h b/gsk/gskrectprivate.h
-index 1111111..2222222 100644
---- a/gsk/gskrectprivate.h
-+++ b/gsk/gskrectprivate.h
-@@ -199,6 +199,26 @@ gsk_rect_snap_to_grid (const graphene_rect_t  *src,
-       (ceilf ((src->origin.y + grid_offset->y + src->size.height) * yscale) - y) / yscale);
- }
- 
-+static inline void
-+gsk_rect_snap_to_grid_round (const graphene_rect_t *src,
-+                             const graphene_vec2_t  *grid_scale,
-+                             const graphene_point_t *grid_offset,
-+                             graphene_rect_t        *dest)
-+{
-+  float x, y, xscale, yscale;
-+
-+  xscale = graphene_vec2_get_x (grid_scale);
-+  yscale = graphene_vec2_get_y (grid_scale);
-+
-+  x = round ((src->origin.x + grid_offset->x) * xscale);
-+  y = round ((src->origin.y + grid_offset->y) * yscale);
-+  *dest = GRAPHENE_RECT_INIT (
-+      x / xscale - grid_offset->x,
-+      y / yscale - grid_offset->y,
-+      (round ((src->origin.x + grid_offset->x + src->size.width) * xscale) - x) / xscale,
-+      (round ((src->origin.y + grid_offset->y + src->size.height) * yscale) - y) / yscale);
-+}
-+
- static inline gboolean G_GNUC_PURE
- gsk_rect_is_empty (const graphene_rect_t *rect)
- {

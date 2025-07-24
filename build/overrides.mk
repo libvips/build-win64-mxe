@@ -94,6 +94,14 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
+# upstream version is 2.85.1
+glib_VERSION  := 2.85.2
+glib_CHECKSUM := 833b97c0f0a1bfdba1d0fbfc36cd368b855c5afd9f02b8ffb24129114ad051b2
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
