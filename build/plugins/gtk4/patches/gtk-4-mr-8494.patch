@@ -1,0 +1,1400 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Benjamin Otte <otte@redhat.com>
+Date: Tue, 1 Oct 2024 20:18:58 +0200
+Subject: [PATCH 01/10] gsk: Add gsk_rect_snap_to_grid_shrink()
+
+And rename gsk_rect_snap_to_grid() to gsk_rect_snap_to_grid_grow().
+
+There are cases coming up where I want to use a different way to snap
+the pixels, so I need two functions.
+And because this is similar to the to_cairo() functions, reuse the names
+from there.
+
+(cherry picked from commit e3866f07fdc5b1eabe8f965b47d4984df1ee7099)
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
+
+diff --git a/gsk/gpu/gskgpunodeprocessor.c b/gsk/gpu/gskgpunodeprocessor.c
+index 1111111..2222222 100644
+--- a/gsk/gpu/gskgpunodeprocessor.c
++++ b/gsk/gpu/gskgpunodeprocessor.c
+@@ -845,7 +845,8 @@ gsk_gpu_node_processor_get_node_as_image (GskGpuNodeProcessor   *self,
+           if (!gsk_rect_intersection (clip_bounds, &node->bounds, &clip))
+             return NULL;
+         }
+-      gsk_rect_snap_to_grid (&clip, &self->scale, &self->offset, &clip);
++
++      gsk_rect_snap_to_grid_grow (&clip, &self->scale, &self->offset, &clip);
+     }
+ 
+   return gsk_gpu_get_node_as_image (self->frame,
+@@ -884,7 +885,7 @@ gsk_gpu_node_processor_blur_op (GskGpuNodeProcessor       *self,
+   if (!gsk_rect_intersection (rect, &clip_rect, &intermediate_rect))
+     return;
+ 
+-  gsk_rect_snap_to_grid (&intermediate_rect, &self->scale, &self->offset, &intermediate_rect);
++  gsk_rect_snap_to_grid_grow (&intermediate_rect, &self->scale, &self->offset, &intermediate_rect);
+ 
+   intermediate = gsk_gpu_node_processor_init_draw (&other,
+                                                    self->frame,
+@@ -959,7 +960,7 @@ gsk_gpu_node_processor_add_cairo_node (GskGpuNodeProcessor *self,
+   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &clipped_bounds))
+     return;
+ 
+-  gsk_rect_snap_to_grid (&clipped_bounds, &self->scale, &self->offset, &clipped_bounds);
++  gsk_rect_snap_to_grid_grow (&clipped_bounds, &self->scale, &self->offset, &clipped_bounds);
+ 
+   if (graphene_rect_get_height (&clipped_bounds) <= 0.0 || graphene_rect_get_width (&clipped_bounds) <= 0.0)
+     return;
+@@ -1297,7 +1298,7 @@ gsk_gpu_node_processor_add_rounded_clip_node_with_mask (GskGpuNodeProcessor *sel
+ 
+   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &clip_bounds))
+     return;
+-  gsk_rect_snap_to_grid (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
++  gsk_rect_snap_to_grid_grow (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
+ 
+   child_image = gsk_gpu_node_processor_get_node_as_image (self,
+                                                           0,
+@@ -2148,7 +2149,8 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
+ 
+       if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &clip))
+         return;
+-      gsk_rect_snap_to_grid (&clip, &self->scale, &self->offset, &rounded_clip);
++
++      gsk_rect_snap_to_grid_grow (&clip, &self->scale, &self->offset, &rounded_clip);
+ 
+       image = gsk_gpu_get_texture_tiles_as_image (self->frame,
+                                                   self->ccs,
+@@ -2306,7 +2308,7 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
+ 
+       gsk_gpu_node_processor_get_clip_bounds (self, &clip_bounds);
+       /* first round to pixel boundaries, so we make sure the full pixels are covered */
+-      gsk_rect_snap_to_grid (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
++      gsk_rect_snap_to_grid_grow (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
+       /* then expand by half a pixel so that pixels needed for eventual linear
+        * filtering are available */
+       graphene_rect_inset (&clip_bounds, -0.5, -0.5);
+@@ -2538,7 +2540,7 @@ gsk_gpu_node_processor_add_gradient_node (GskGpuNodeProcessor *self,
+ 
+   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &bounds))
+     return;
+-  gsk_rect_snap_to_grid (&bounds, &self->scale, &self->offset, &bounds);
++  gsk_rect_snap_to_grid_grow (&bounds, &self->scale, &self->offset, &bounds);
+ 
+   image = gsk_gpu_node_processor_init_draw (&other,
+                                             self->frame,
+@@ -3005,7 +3007,7 @@ gsk_gpu_node_processor_add_mask_node (GskGpuNodeProcessor *self,
+ 
+   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &bounds))
+     return;
+-  gsk_rect_snap_to_grid (&bounds, &self->scale, &self->offset, &bounds);
++  gsk_rect_snap_to_grid_grow (&bounds, &self->scale, &self->offset, &bounds);
+ 
+   mask_image = gsk_gpu_node_processor_get_node_as_image (self,
+                                                          0,
+@@ -3482,7 +3484,7 @@ gsk_gpu_node_processor_add_fill_node (GskGpuNodeProcessor *self,
+ 
+   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &clip_bounds))
+     return;
+-  gsk_rect_snap_to_grid (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
++  gsk_rect_snap_to_grid_grow (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
+ 
+   child = gsk_fill_node_get_child (node);
+ 
+@@ -3585,7 +3587,7 @@ gsk_gpu_node_processor_add_stroke_node (GskGpuNodeProcessor *self,
+ 
+   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &clip_bounds))
+     return;
+-  gsk_rect_snap_to_grid (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
++  gsk_rect_snap_to_grid_grow (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
+ 
+   child = gsk_stroke_node_get_child (node);
+ 
+@@ -4465,7 +4467,7 @@ gsk_gpu_node_processor_process (GskGpuFrame           *frame,
+           if (!gsk_gpu_node_processor_clip_node_bounds (&self, node, &clip_bounds))
+             continue;
+ 
+-          gsk_rect_snap_to_grid (&clip_bounds, &self.scale, &self.offset, &clip_bounds);
++          gsk_rect_snap_to_grid_grow (&clip_bounds, &self.scale, &self.offset, &clip_bounds);
+           image = gsk_gpu_get_node_as_image (self.frame,
+                                              0,
+                                              ccs,
+diff --git a/gsk/gskrectprivate.h b/gsk/gskrectprivate.h
+index 1111111..2222222 100644
+--- a/gsk/gskrectprivate.h
++++ b/gsk/gskrectprivate.h
+@@ -161,7 +161,7 @@ gsk_rect_coverage (const graphene_rect_t *r1,
+ }
+ 
+ /**
+- * gsk_rect_snap_to_grid:
++ * gsk_rect_snap_to_grid_grow:
+  * @src: rectangle to snap
+  * @grid_scale: the scale of the grid
+  * @grid_offset: the offset of the grid
+@@ -180,10 +180,10 @@ gsk_rect_coverage (const graphene_rect_t *r1,
+  * in the snapping not being perfectly exact.
+  **/
+ static inline void
+-gsk_rect_snap_to_grid (const graphene_rect_t  *src,
+-                       const graphene_vec2_t  *grid_scale,
+-                       const graphene_point_t *grid_offset,
+-                       graphene_rect_t        *dest)
++gsk_rect_snap_to_grid_grow (const graphene_rect_t  *src,
++                            const graphene_vec2_t  *grid_scale,
++                            const graphene_point_t *grid_offset,
++                            graphene_rect_t        *dest)
+ {
+   float x, y, xscale, yscale;
+ 
+@@ -199,6 +199,26 @@ gsk_rect_snap_to_grid (const graphene_rect_t  *src,
+       (ceilf ((src->origin.y + grid_offset->y + src->size.height) * yscale) - y) / yscale);
+ }
+ 
++static inline void
++gsk_rect_snap_to_grid_shrink (const graphene_rect_t  *src,
++                              const graphene_vec2_t  *grid_scale,
++                              const graphene_point_t *grid_offset,
++                              graphene_rect_t        *dest)
++{
++  float x, y, xscale, yscale;
++
++  xscale = graphene_vec2_get_x (grid_scale);
++  yscale = graphene_vec2_get_y (grid_scale);
++
++  x = ceilf ((src->origin.x + grid_offset->x) * xscale);
++  y = ceilf ((src->origin.y + grid_offset->y) * yscale);
++  *dest = GRAPHENE_RECT_INIT (
++      x / xscale - grid_offset->x,
++      y / yscale - grid_offset->y,
++      (floorf ((src->origin.x + grid_offset->x + src->size.width) * xscale) - x) / xscale,
++      (floorf ((src->origin.y + grid_offset->y + src->size.height) * yscale) - y) / yscale);
++}
++
+ static inline gboolean G_GNUC_PURE
+ gsk_rect_is_empty (const graphene_rect_t *rect)
+ {
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Benjamin Otte <otte@redhat.com>
+Date: Wed, 19 Mar 2025 05:10:37 +0100
+Subject: [PATCH 02/10] API: Add GskRectSnap
+
+A flags property to snap rectangles
+
+And gsk_rect_snap() and gsk_rect_snap_to_grid(), functions to do just
+that - snap to an integer and to the pixel grid according to the gpu
+renderer, respectively.
+
+(cherry picked from commit a025d90127d1bf07ffffc1a81c50a252f2f996ed)
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
+
+[Fix: s/GDK_AVAILABLE_IN_4_20/GDK_AVAILABLE_IN_4_18/]
+Signed-off-by: Kleis Auke Wolthuizen <github@kleisauke.nl>
+
+diff --git a/gsk/gsk.h b/gsk/gsk.h
+index 1111111..2222222 100644
+--- a/gsk/gsk.h
++++ b/gsk/gsk.h
+@@ -24,6 +24,7 @@
+ #include <gsk/gskpathbuilder.h>
+ #include <gsk/gskpathmeasure.h>
+ #include <gsk/gskpathpoint.h>
++#include <gsk/gskrectsnap.h>
+ #include <gsk/gskrenderer.h>
+ #include <gsk/gskrendernode.h>
+ #include <gsk/gskroundedrect.h>
+diff --git a/gsk/gskenums.h b/gsk/gskenums.h
+index 1111111..2222222 100644
+--- a/gsk/gskenums.h
++++ b/gsk/gskenums.h
+@@ -474,3 +474,26 @@ typedef enum
+   GSK_MASK_MODE_LUMINANCE,
+   GSK_MASK_MODE_INVERTED_LUMINANCE
+ } GskMaskMode;
++
++/**
++ * GskSnapDirection:
++ * @GSK_SNAP_NONE: Don't snap the value
++ * @GSK_SNAP_FLOOR: Use floor() to snap
++ * @GSK_SNAP_CEIL: Use ceil() to snap
++ * @GSK_SNAP_ROUND: Use round() to snap
++ *
++ * Specifies how a coordinate should be snapped to the pixel grid.
++ *
++ * Note that the top and left sides of rectangles need to be snapped
++ * in the opposite direction from the bottom and right sides to make
++ * the rectangle grow or shrink.
++ *
++ * Since: 4.18
++ */
++typedef enum {
++  GSK_SNAP_NONE,
++  GSK_SNAP_FLOOR,
++  GSK_SNAP_CEIL,
++  GSK_SNAP_ROUND
++} GskSnapDirection;
++
+diff --git a/gsk/gskrectprivate.h b/gsk/gskrectprivate.h
+index 1111111..2222222 100644
+--- a/gsk/gskrectprivate.h
++++ b/gsk/gskrectprivate.h
+@@ -1,6 +1,8 @@
+ #pragma once
+ 
+ #include "gdk/gdkdihedralprivate.h"
++#include "gsk/gskenums.h"
++#include "gsk/gskrectsnap.h"
+ 
+ #include <graphene.h>
+ #include <math.h>
+@@ -160,6 +162,83 @@ gsk_rect_coverage (const graphene_rect_t *r1,
+   *res = r;
+ }
+ 
++static inline float
++gsk_rect_snap_direction (float            value,
++                         GskSnapDirection snap)
++{
++  switch (snap)
++    {
++    case GSK_SNAP_FLOOR:
++      return floorf (value);
++    case GSK_SNAP_CEIL:
++      return ceilf (value);
++    case GSK_SNAP_ROUND:
++      return round (value);
++    case GSK_SNAP_NONE:
++    default:
++      return value;
++    }
++}
++
++static inline void
++gsk_rect_snap (const graphene_rect_t  *src,
++               GskRectSnap             snap,
++               graphene_rect_t        *dest)
++{
++  float x, y;
++
++  if (snap == 0)
++    {
++      if (src != dest)
++        *dest = *src;
++      return;
++    }
++
++  x = gsk_rect_snap_direction (src->origin.x, gsk_rect_snap_get_direction (snap, 3));
++  y = gsk_rect_snap_direction (src->origin.y, gsk_rect_snap_get_direction (snap, 0));
++
++  *dest = GRAPHENE_RECT_INIT (
++      x,
++      y,
++      gsk_rect_snap_direction (src->origin.x + src->size.width,  gsk_rect_snap_get_direction (snap, 1)) - x,
++      gsk_rect_snap_direction (src->origin.y + src->size.height, gsk_rect_snap_get_direction (snap, 2)) - y);
++}
++
++static inline void
++gsk_rect_snap_to_grid (const graphene_rect_t  *src,
++                       GskRectSnap             snap,
++                       const graphene_vec2_t  *grid_scale,
++                       const graphene_point_t *grid_offset,
++                       graphene_rect_t        *dest)
++{
++  float xscale, yscale;
++
++  if (snap == 0)
++    {
++      if (src != dest)
++        *dest = *src;
++      return;
++    }
++
++
++  xscale = graphene_vec2_get_x (grid_scale);
++  yscale = graphene_vec2_get_y (grid_scale);
++
++  *dest = GRAPHENE_RECT_INIT (
++      (src->origin.x + grid_offset->x) * xscale,
++      (src->origin.y + grid_offset->y) * yscale,
++      src->size.width * xscale,
++      src->size.height * yscale);
++
++  gsk_rect_snap (dest, snap, dest);
++
++  *dest = GRAPHENE_RECT_INIT (
++      dest->origin.x / xscale - grid_offset->x,
++      dest->origin.y / yscale - grid_offset->y,
++      dest->size.width / xscale,
++      dest->size.height / yscale);
++}
++
+ /**
+  * gsk_rect_snap_to_grid_grow:
+  * @src: rectangle to snap
+diff --git a/gsk/gskrectsnap.c b/gsk/gskrectsnap.c
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/gsk/gskrectsnap.c
+@@ -0,0 +1,70 @@
++/* GSK - The GTK Scene Kit
++ * Copyright © 2025  Benjamin Otte
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include "config.h"
++
++#include "gskrectsnap.h"
++
++/**
++ * GskRectSnap:
++ *
++ * The ways a rectangle can be snapped to a grid.
++ *
++ * Since: 4.18
++ */
++typedef unsigned GskRectSnap;
++
++/**
++ * gsk_rect_snap_new:
++ * @top: How to snap the top edge
++ * @right: How to snap the right edge
++ * @bottom: How to snap the bottom edge
++ * @left: How to snap the left edge
++ *
++ * Creates a new way to snap rectangles for the 4 given sides.
++ *
++ * Returns: a description for how to snap rectangles
++ *
++ * Since: 4.18
++ **/
++GskRectSnap
++gsk_rect_snap_new (GskSnapDirection top,
++                   GskSnapDirection right,
++                   GskSnapDirection bottom,
++                   GskSnapDirection left)
++{
++  return GSK_RECT_SNAP_INIT (top, right, bottom, left);
++}
++
++/**
++ * gsk_rect_snap_get_direction:
++ * @snap: a rectangle snap
++ * @border: the border to query, in order of top, right, bottom, left
++ *
++ * Queries the way a given border is snapped.
++ *
++ * Returns: the direction the given border is snapped
++ *
++ * Since: 4.18
++ **/
++GskSnapDirection
++gsk_rect_snap_get_direction (GskRectSnap snap,
++                             unsigned    border)
++{ 
++  return (GskSnapDirection) ((snap >> (8 * border)) & 0xFF);
++}
++
+diff --git a/gsk/gskrectsnap.h b/gsk/gskrectsnap.h
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/gsk/gskrectsnap.h
+@@ -0,0 +1,97 @@
++/* GSK - The GTK Scene Kit
++ * Copyright © 2025  Benjamin Otte
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#pragma once
++
++#if !defined (__GSK_H_INSIDE__) && !defined (GTK_COMPILATION)
++#error "Only <gsk/gsk.h> can be included directly."
++#endif
++
++#include <gsk/gsktypes.h>
++
++/**
++ * GSK_RECT_SNAP_INIT:
++ * @top: How to snap the top edge
++ * @right: How to snap the right edge
++ * @bottom: How to snap the bottom edge
++ * @left: How to snap the left edge
++ *
++ * A macro that initializes a gsk_rect_snap() value. equivalent to calling
++ * gsk_rect_snap_new().
++ *
++ * Returns: a description for how to snap rectangles
++ *
++ * Since: 4.18
++ */
++#define GSK_RECT_SNAP_INIT(top, right, bottom, left) (((((((left) << 8) | (bottom)) << 8) | (right)) << 8) | (top)) 
++
++/**
++ * GSK_RECT_SNAP_NONE:
++ *
++ * Makes the rectangle not snap at all.
++ *
++ * This is the default value for snapping.
++ *
++ * Since: 4.18
++ */
++#define GSK_RECT_SNAP_NONE GSK_RECT_SNAP_INIT (GSK_SNAP_NONE, GSK_SNAP_NONE, GSK_SNAP_NONE, GSK_SNAP_NONE)
++
++/**
++ * GSK_RECT_SNAP_GROW:
++ *
++ * Makes the rectangle grow in every direction.
++ *
++ * This is useful to avoid seams but can lead to overlap with adjacent content.
++ *
++ * Since: 4.18
++ */
++#define GSK_RECT_SNAP_GROW GSK_RECT_SNAP_INIT (GSK_SNAP_FLOOR, GSK_SNAP_CEIL, GSK_SNAP_CEIL, GSK_SNAP_FLOOR)
++
++/**
++ * GSK_RECT_SNAP_SHRINK:
++ *
++ * Makes the rectangle shrink in every direction.
++ *
++ * This is useful to make sure the rectangle fits into the allocated area
++ * and does not overlap content that is not snapped.
++ *
++ * Since: 4.18
++ */
++#define GSK_RECT_SNAP_SHRINK GSK_RECT_SNAP_INIT (GSK_SNAP_CEIL, GSK_SNAP_FLOOR, GSK_SNAP_FLOOR, GSK_SNAP_CEIL)
++
++/**
++ * GSK_RECT_SNAP_ROUND:
++ *
++ * Makes the rectangle round to the closest pixel edge on all sides.
++ *
++ * This is useful when multiple rectangles are placed next to each other
++ * at the same coordinate, and they should do so without any seams.
++ *
++ * Since: 4.18
++ */
++#define GSK_RECT_SNAP_ROUND GSK_RECT_SNAP_INIT (GSK_SNAP_ROUND, GSK_SNAP_ROUND, GSK_SNAP_ROUND, GSK_SNAP_ROUND)
++
++GDK_AVAILABLE_IN_4_18
++GskRectSnap             gsk_rect_snap_new                       (GskSnapDirection        top,
++                                                                 GskSnapDirection        right,
++                                                                 GskSnapDirection        bottom,
++                                                                 GskSnapDirection        left);
++
++GDK_AVAILABLE_IN_4_18
++GskSnapDirection        gsk_rect_snap_get_direction             (GskRectSnap             snap,
++                                                                 unsigned                border);
++
+diff --git a/gsk/gsktypes.h b/gsk/gsktypes.h
+index 1111111..2222222 100644
+--- a/gsk/gsktypes.h
++++ b/gsk/gsktypes.h
+@@ -29,6 +29,7 @@ typedef struct _GskPath                 GskPath;
+ typedef struct _GskPathBuilder          GskPathBuilder;
+ typedef struct _GskPathMeasure          GskPathMeasure;
+ typedef struct _GskPathPoint            GskPathPoint;
++typedef unsigned                        GskRectSnap;
+ typedef struct _GskRenderer             GskRenderer;
+ typedef struct _GskRenderNode           GskRenderNode;
+ typedef struct _GskRoundedRect          GskRoundedRect;
+diff --git a/gsk/meson.build b/gsk/meson.build
+index 1111111..2222222 100644
+--- a/gsk/meson.build
++++ b/gsk/meson.build
+@@ -8,6 +8,7 @@ gsk_public_sources = files([
+   'gskpathmeasure.c',
+   'gskpathparser.c',
+   'gskpathpoint.c',
++  'gskrectsnap.c',
+   'gskrenderer.c',
+   'gskrendernode.c',
+   'gskrendernodeimpl.c',
+@@ -81,6 +82,7 @@ gsk_public_headers = files([
+   'gskpathbuilder.h',
+   'gskpathmeasure.h',
+   'gskpathpoint.h',
++  'gskrectsnap.h',
+   'gskrenderer.h',
+   'gskrendernode.h',
+   'gskroundedrect.h',
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Benjamin Otte <otte@redhat.com>
+Date: Wed, 19 Mar 2025 16:38:49 +0100
+Subject: [PATCH 03/10] gtk: Add gtk_snapshot_set_snap()
+
+Sets a snap mode to use for all future snappable nodes.
+
+(cherry picked from commit 429b227aa1e3d3eedefb3c13bfaf239c413e3b4e)
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
+
+diff --git a/gtk/gtksnapshot.c b/gtk/gtksnapshot.c
+index 1111111..2222222 100644
+--- a/gtk/gtksnapshot.c
++++ b/gtk/gtksnapshot.c
+@@ -71,6 +71,7 @@ struct _GtkSnapshotState {
+   guint                  n_nodes;
+ 
+   GskTransform *         transform;
++  GskRectSnap            snap;
+ 
+   GtkSnapshotCollectFunc collect_func;
+   GtkSnapshotClearFunc   clear_func;
+@@ -224,6 +225,7 @@ gtk_snapshot_collect_default (GtkSnapshot       *snapshot,
+ static GtkSnapshotState *
+ gtk_snapshot_push_state (GtkSnapshot            *snapshot,
+                          GskTransform           *transform,
++                         GskRectSnap             snap,
+                          GtkSnapshotCollectFunc  collect_func,
+                          GtkSnapshotClearFunc    clear_func)
+ {
+@@ -234,6 +236,7 @@ gtk_snapshot_push_state (GtkSnapshot            *snapshot,
+   state = gtk_snapshot_states_get (&snapshot->state_stack, n_states);
+ 
+   state->transform = gsk_transform_ref (transform);
++  state->snap = snap;
+   state->collect_func = collect_func;
+   state->clear_func = clear_func;
+   state->start_node_index = gtk_snapshot_nodes_get_size (&snapshot->nodes);
+@@ -291,6 +294,7 @@ gtk_snapshot_init (GtkSnapshot *self)
+ 
+   gtk_snapshot_push_state (self,
+                            NULL,
++                           GSK_RECT_SNAP_NONE,
+                            gtk_snapshot_collect_default,
+                            NULL);
+ }
+@@ -363,6 +367,7 @@ gtk_snapshot_collect_autopush_transform (GtkSnapshot      *snapshot,
+   GtkSnapshotState *previous_state;
+ 
+   previous_state = gtk_snapshot_get_previous_state (snapshot);
++  previous_state->snap = state->snap;
+ 
+   node = gtk_snapshot_collect_default (snapshot, state, nodes, n_nodes);
+   if (node == NULL)
+@@ -378,8 +383,11 @@ gtk_snapshot_collect_autopush_transform (GtkSnapshot      *snapshot,
+ static void
+ gtk_snapshot_autopush_transform (GtkSnapshot *snapshot)
+ {
++  GtkSnapshotState *state = gtk_snapshot_get_current_state (snapshot);
++
+   gtk_snapshot_push_state (snapshot,
+                            NULL,
++                           state->snap,
+                            gtk_snapshot_collect_autopush_transform,
+                            NULL);
+ }
+@@ -442,6 +450,7 @@ gtk_snapshot_push_debug (GtkSnapshot *snapshot,
+ 
+       state = gtk_snapshot_push_state (snapshot,
+                                        current_state->transform,
++                                       current_state->snap,
+                                        gtk_snapshot_collect_debug,
+                                        gtk_snapshot_clear_debug);
+ 
+@@ -455,6 +464,7 @@ gtk_snapshot_push_debug (GtkSnapshot *snapshot,
+     {
+       gtk_snapshot_push_state (snapshot,
+                                current_state->transform,
++                               current_state->snap,
+                                gtk_snapshot_collect_default,
+                                NULL);
+     }
+@@ -512,6 +522,7 @@ gtk_snapshot_push_opacity (GtkSnapshot *snapshot,
+ 
+   state = gtk_snapshot_push_state (snapshot,
+                                    current_state->transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_opacity,
+                                    NULL);
+   state->data.opacity.opacity = CLAMP (opacity, 0.0, 1.0);
+@@ -563,6 +574,7 @@ gtk_snapshot_push_blur (GtkSnapshot *snapshot,
+ 
+   state = gtk_snapshot_push_state (snapshot,
+                                    current_state->transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_blur,
+                                    NULL);
+   state->data.blur.radius = radius;
+@@ -681,6 +693,7 @@ gtk_snapshot_push_color_matrix (GtkSnapshot             *snapshot,
+ 
+   state = gtk_snapshot_push_state (snapshot,
+                                    current_state->transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_color_matrix,
+                                    NULL);
+ 
+@@ -843,7 +856,7 @@ gtk_snapshot_push_repeat (GtkSnapshot           *snapshot,
+                           const graphene_rect_t *bounds,
+                           const graphene_rect_t *child_bounds)
+ {
+-  GtkSnapshotState *state;
++  GtkSnapshotState *state, *current_state;
+   gboolean empty_child_bounds = FALSE;
+   graphene_rect_t real_child_bounds = { { 0 } };
+   float scale_x, scale_y, dx, dy;
+@@ -857,8 +870,10 @@ gtk_snapshot_push_repeat (GtkSnapshot           *snapshot,
+         empty_child_bounds = TRUE;
+     }
+ 
++  current_state = gtk_snapshot_get_current_state (snapshot);
+   state = gtk_snapshot_push_state (snapshot,
+-                                   gtk_snapshot_get_current_state (snapshot)->transform,
++                                   current_state->transform,
++                                   current_state->snap,
+                                    empty_child_bounds
+                                    ? gtk_snapshot_collect_discard_repeat
+                                    : gtk_snapshot_collect_repeat,
+@@ -908,13 +923,15 @@ void
+ gtk_snapshot_push_clip (GtkSnapshot           *snapshot,
+                         const graphene_rect_t *bounds)
+ {
+-  GtkSnapshotState *state;
++  GtkSnapshotState *state, *current_state;
+   float scale_x, scale_y, dx, dy;
+ 
+   gtk_snapshot_ensure_affine (snapshot, &scale_x, &scale_y, &dx, &dy);
+ 
++  current_state = gtk_snapshot_get_current_state (snapshot);
+   state = gtk_snapshot_push_state (snapshot,
+-                                   gtk_snapshot_get_current_state (snapshot)->transform,
++                                   current_state->transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_clip,
+                                    NULL);
+ 
+@@ -1062,15 +1079,17 @@ gtk_snapshot_push_gl_shader (GtkSnapshot           *snapshot,
+                              const graphene_rect_t *bounds,
+                              GBytes                *take_args)
+ {
+-  GtkSnapshotState *state;
++  GtkSnapshotState *state, *current_state;
+   float scale_x, scale_y, dx, dy;
+   graphene_rect_t transformed_bounds;
+   int n_children = gsk_gl_shader_get_n_textures (shader);
+ 
+   gtk_snapshot_ensure_affine (snapshot, &scale_x, &scale_y, &dx, &dy);
+ 
++  current_state = gtk_snapshot_get_current_state (snapshot);
+   state = gtk_snapshot_push_state (snapshot,
+-                                   gtk_snapshot_get_current_state (snapshot)->transform,
++                                   current_state->transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_gl_shader,
+                                    gtk_snapshot_clear_gl_shader);
+   gtk_graphene_rect_scale_affine (bounds, scale_x, scale_y, dx, dy, &transformed_bounds);
+@@ -1084,8 +1103,10 @@ gtk_snapshot_push_gl_shader (GtkSnapshot           *snapshot,
+ 
+   for (int i = 0; i  < n_children; i++)
+     {
++      current_state = gtk_snapshot_get_current_state (snapshot);
+       state = gtk_snapshot_push_state (snapshot,
+-                                       gtk_snapshot_get_current_state (snapshot)->transform,
++                                       current_state->transform,
++                                       current_state->snap,
+                                        gtk_snapshot_collect_gl_shader_texture,
+                                        NULL);
+       state->data.glshader_texture.bounds = transformed_bounds;
+@@ -1151,13 +1172,15 @@ void
+ gtk_snapshot_push_rounded_clip (GtkSnapshot          *snapshot,
+                                 const GskRoundedRect *bounds)
+ {
+-  GtkSnapshotState *state;
++  GtkSnapshotState *state, *current_state;
+   float scale_x, scale_y, dx, dy;
+ 
+   gtk_snapshot_ensure_affine (snapshot, &scale_x, &scale_y, &dx, &dy);
+ 
++  current_state = gtk_snapshot_get_current_state (snapshot);
+   state = gtk_snapshot_push_state (snapshot,
+-                                   gtk_snapshot_get_current_state (snapshot)->transform,
++                                   current_state->transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_rounded_clip,
+                                    NULL);
+ 
+@@ -1220,12 +1243,14 @@ gtk_snapshot_push_fill (GtkSnapshot *snapshot,
+                         GskPath     *path,
+                         GskFillRule  fill_rule)
+ {
+-  GtkSnapshotState *state;
++  GtkSnapshotState *state, *current_state;
+ 
+   gtk_snapshot_ensure_identity (snapshot);
+ 
++  current_state = gtk_snapshot_get_current_state (snapshot);
+   state = gtk_snapshot_push_state (snapshot,
+-                                   gtk_snapshot_get_current_state (snapshot)->transform,
++                                   current_state->transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_fill,
+                                    gtk_snapshot_clear_fill);
+ 
+@@ -1323,12 +1348,14 @@ gtk_snapshot_push_stroke (GtkSnapshot     *snapshot,
+                           GskPath         *path,
+                           const GskStroke *stroke)
+ {
+-  GtkSnapshotState *state;
++  GtkSnapshotState *state, *current_state;
+ 
+   gtk_snapshot_ensure_identity (snapshot);
+ 
++  current_state = gtk_snapshot_get_current_state (snapshot);
+   state = gtk_snapshot_push_state (snapshot,
+-                                   gtk_snapshot_get_current_state (snapshot)->transform,
++                                   current_state->transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_stroke,
+                                    gtk_snapshot_clear_stroke);
+ 
+@@ -1450,7 +1477,7 @@ gtk_snapshot_push_shadow2 (GtkSnapshot      *snapshot,
+                            const GskShadow2 *shadow,
+                            gsize             n_shadows)
+ {
+-  GtkSnapshotState *state;
++  GtkSnapshotState *state, *current_state;
+   GskTransform *transform;
+   float scale_x, scale_y, dx, dy;
+   gsize i;
+@@ -1461,8 +1488,10 @@ gtk_snapshot_push_shadow2 (GtkSnapshot      *snapshot,
+                                          &dx, &dy);
+   transform = gsk_transform_scale (gsk_transform_translate (NULL, &GRAPHENE_POINT_INIT (dx, dy)), scale_x, scale_y);
+ 
++  current_state = gtk_snapshot_get_current_state (snapshot);
+   state = gtk_snapshot_push_state (snapshot,
+                                    transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_shadow,
+                                    gtk_snapshot_clear_shadow);
+ 
+@@ -1568,12 +1597,14 @@ gtk_snapshot_push_blend (GtkSnapshot  *snapshot,
+ 
+   top_state = gtk_snapshot_push_state (snapshot,
+                                        current_state->transform,
++                                       current_state->snap,
+                                        gtk_snapshot_collect_blend_top,
+                                        gtk_snapshot_clear_blend_top);
+   top_state->data.blend.blend_mode = blend_mode;
+ 
+   gtk_snapshot_push_state (snapshot,
+                            top_state->transform,
++                           top_state->snap,
+                            gtk_snapshot_collect_blend_bottom,
+                            NULL);
+ }
+@@ -1648,6 +1679,7 @@ gtk_snapshot_push_mask (GtkSnapshot *snapshot,
+ 
+   source_state = gtk_snapshot_push_state (snapshot,
+                                           current_state->transform,
++                                          current_state->snap,
+                                           gtk_snapshot_collect_mask_source,
+                                           gtk_snapshot_clear_mask_source);
+ 
+@@ -1655,6 +1687,7 @@ gtk_snapshot_push_mask (GtkSnapshot *snapshot,
+ 
+   gtk_snapshot_push_state (snapshot,
+                            source_state->transform,
++                           source_state->snap,
+                            gtk_snapshot_collect_mask_mask,
+                            NULL);
+ }
+@@ -1757,12 +1790,14 @@ gtk_snapshot_push_cross_fade (GtkSnapshot *snapshot,
+ 
+   end_state = gtk_snapshot_push_state (snapshot,
+                                        current_state->transform,
++                                       current_state->snap,
+                                        gtk_snapshot_collect_cross_fade_end,
+                                        gtk_snapshot_clear_cross_fade_end);
+   end_state->data.cross_fade.progress = progress;
+ 
+   gtk_snapshot_push_state (snapshot,
+                            end_state->transform,
++                           end_state->snap,
+                            gtk_snapshot_collect_cross_fade_start,
+                            NULL);
+ }
+@@ -1873,11 +1908,9 @@ gtk_snapshot_pop_internal (GtkSnapshot *snapshot,
+   return gtk_snapshot_pop_one (snapshot);
+ }
+ 
+-/**
++/*<private>
+  * gtk_snapshot_push_collect:
+  *
+- * Private.
+- *
+  * Pushes state so a later pop_collect call can collect all nodes
+  * appended until that point.
+  */
+@@ -1886,6 +1919,7 @@ gtk_snapshot_push_collect (GtkSnapshot *snapshot)
+ {
+   gtk_snapshot_push_state (snapshot,
+                            NULL,
++                           GSK_RECT_SNAP_NONE,
+                            gtk_snapshot_collect_default,
+                            NULL);
+ }
+@@ -2047,10 +2081,15 @@ gtk_snapshot_gl_shader_pop_texture (GtkSnapshot *snapshot)
+ void
+ gtk_snapshot_save (GtkSnapshot *snapshot)
+ {
++  GtkSnapshotState *current_state;
++
+   g_return_if_fail (GTK_IS_SNAPSHOT (snapshot));
+ 
++  current_state = gtk_snapshot_get_current_state (snapshot);
++
+   gtk_snapshot_push_state (snapshot,
+-                           gtk_snapshot_get_current_state (snapshot)->transform,
++                           current_state->transform,
++                           current_state->snap,
+                            NULL,
+                            NULL);
+ }
+@@ -2088,6 +2127,31 @@ gtk_snapshot_restore (GtkSnapshot *snapshot)
+   g_assert (node == NULL);
+ }
+ 
++/**
++ * gtk_snapshot_set_snap:
++ * @self: a `GtkSnapshot`
++ * @snap: the snapping mode to use
++ *
++ * Sets the snapping mode to use when appending snappable content
++ * to the snapshot.
++ *
++ * The snap mode is part of the current state, so [method@Snapshot.save]
++ * and [method@Snapshot.restore] can be used to remember a snap mode.
++ *
++ * Since: 4.18
++ **/
++void
++gtk_snapshot_set_snap (GtkSnapshot *self,
++                       GskRectSnap  snap)
++{
++  GtkSnapshotState *state;
++
++  g_return_if_fail (GTK_IS_SNAPSHOT (self));
++
++  state = gtk_snapshot_get_current_state (self);
++  state->snap = snap;
++}
++
+ /**
+  * gtk_snapshot_transform:
+  * @snapshot: a `GtkSnapshot`
+@@ -2362,6 +2426,7 @@ gtk_snapshot_append_texture (GtkSnapshot           *snapshot,
+                              GdkTexture            *texture,
+                              const graphene_rect_t *bounds)
+ {
++  const GtkSnapshotState *state;
+   GskRenderNode *node;
+   graphene_rect_t real_bounds;
+   float scale_x, scale_y, dx, dy;
+@@ -3355,6 +3420,7 @@ gtk_snapshot_push_subsurface (GtkSnapshot   *snapshot,
+ 
+   state = gtk_snapshot_push_state (snapshot,
+                                    current_state->transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_subsurface,
+                                    gtk_snapshot_clear_subsurface);
+ 
+diff --git a/gtk/gtksnapshot.h b/gtk/gtksnapshot.h
+index 1111111..2222222 100644
+--- a/gtk/gtksnapshot.h
++++ b/gtk/gtksnapshot.h
+@@ -124,6 +124,9 @@ GDK_AVAILABLE_IN_ALL
+ void            gtk_snapshot_save                       (GtkSnapshot            *snapshot);
+ GDK_AVAILABLE_IN_ALL
+ void            gtk_snapshot_restore                    (GtkSnapshot            *snapshot);
++GDK_AVAILABLE_IN_4_18
++void            gtk_snapshot_set_snap                   (GtkSnapshot            *self,
++                                                         GskRectSnap             snap);
+ GDK_AVAILABLE_IN_ALL
+ void            gtk_snapshot_transform                  (GtkSnapshot            *snapshot,
+                                                          GskTransform           *transform);
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Benjamin Otte <otte@redhat.com>
+Date: Wed, 19 Mar 2025 05:27:27 +0100
+Subject: [PATCH 04/10] nodeparser: Add support for texture snapping
+
+(cherry picked from commit 17487e8bd81b2c2165e1790736dbe10f06a0b791)
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
+
+diff --git a/gsk/gskrendernodeparser.c b/gsk/gskrendernodeparser.c
+index 1111111..2222222 100644
+--- a/gsk/gskrendernodeparser.c
++++ b/gsk/gskrendernodeparser.c
+@@ -25,6 +25,7 @@
+ 
+ #include "gskpath.h"
+ #include "gskpathbuilder.h"
++#include "gskrectsnap.h"
+ #include "gskroundedrectprivate.h"
+ #include "gskrendernodeprivate.h"
+ #include "gskstroke.h"
+@@ -1106,6 +1107,51 @@ parse_mask_mode (GtkCssParser *parser,
+   return FALSE;
+ }
+ 
++static gboolean
++parse_rect_snap (GtkCssParser *parser,
++                 Context      *context,
++                 gpointer      out_snap)
++{
++  GskRectSnap snap;
++
++  if (gtk_css_parser_try_ident (parser, "grow"))
++    snap = GSK_RECT_SNAP_GROW;
++  else if (gtk_css_parser_try_ident (parser, "shrink"))
++    snap = GSK_RECT_SNAP_SHRINK;
++  else
++    {
++      GskSnapDirection dir[4];
++      gsize i;
++
++      for (i = 0; i < 4; i++)
++        {
++          if (gtk_css_parser_try_ident (parser, "round"))
++            dir[i] = GSK_SNAP_ROUND;
++          else if (gtk_css_parser_try_ident (parser, "floor"))
++            dir[i] = GSK_SNAP_FLOOR;
++          else if (gtk_css_parser_try_ident (parser, "ceil"))
++            dir[i] = GSK_SNAP_CEIL;
++          else if (gtk_css_parser_try_ident (parser, "none"))
++            dir[i] = GSK_SNAP_NONE;
++          else
++            break;
++        }
++      if (i == 0)
++        {
++          gtk_css_parser_error_value (parser, "Unknown value for snap");
++          return FALSE;
++        }
++      for (; i < 4; i++)
++        {
++          dir[i] = dir[(i - 1) >> 1];
++        }
++      snap = gsk_rect_snap_new (dir[0], dir[1], dir[2], dir[3]);
++    }
++
++  *(GskRectSnap *) out_snap = snap;
++  return TRUE;
++}
++
+ static PangoFont *
+ font_from_string (PangoFontMap *fontmap,
+                   const char   *string,
+@@ -3857,6 +3903,58 @@ append_enum_param (Printer    *p,
+   g_string_append_c (p->str, '\n');
+ }
+ 
++static void
++append_snap_param (Printer     *p,
++                   const char  *param_name,
++                   GskRectSnap  snap)
++{
++  static const char *names[] = {
++    [GSK_SNAP_NONE] = "none",
++    [GSK_SNAP_FLOOR] = "floor",
++    [GSK_SNAP_CEIL] = "ceil",
++    [GSK_SNAP_ROUND] = "round",
++  };
++
++  if (snap == GSK_RECT_SNAP_NONE)
++    return;
++
++  _indent (p);
++  g_string_append_printf (p->str, "%s: ", param_name);
++
++  /* try the shortcuts */
++  if (snap == GSK_RECT_SNAP_GROW)
++    {
++      g_string_append (p->str, "grow;\n");
++      return;
++    }
++  else if (snap == GSK_RECT_SNAP_SHRINK)
++    {
++      g_string_append (p->str, "shrink;\n");
++      return;
++    }
++
++  g_string_append (p->str, names[gsk_rect_snap_get_direction (snap, 0)]);
++  if (gsk_rect_snap_get_direction (snap, 0) != gsk_rect_snap_get_direction (snap, 1) ||
++      gsk_rect_snap_get_direction (snap, 0) != gsk_rect_snap_get_direction (snap, 2) ||
++      gsk_rect_snap_get_direction (snap, 0) != gsk_rect_snap_get_direction (snap, 3))
++    {
++      g_string_append_c (p->str, ' ');
++      g_string_append (p->str, names[gsk_rect_snap_get_direction (snap, 1)]);
++      if (gsk_rect_snap_get_direction (snap, 0) != gsk_rect_snap_get_direction (snap, 2) ||
++          gsk_rect_snap_get_direction (snap, 1) != gsk_rect_snap_get_direction (snap, 3))
++        {
++          g_string_append_c (p->str, ' ');
++          g_string_append (p->str, names[gsk_rect_snap_get_direction (snap, 2)]);
++          if (gsk_rect_snap_get_direction (snap, 1) != gsk_rect_snap_get_direction (snap, 3))
++            {
++              g_string_append_c (p->str, ' ');
++              g_string_append (p->str, names[gsk_rect_snap_get_direction (snap, 3)]);
++            }
++        }
++    }
++  g_string_append (p->str, ";\n");
++}
++
+ static void
+ append_vec4_param (Printer               *p,
+                    const char            *param_name,
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Benjamin Otte <otte@redhat.com>
+Date: Wed, 19 Mar 2025 16:37:35 +0100
+Subject: [PATCH 05/10] inspector: Print texture snap
+
+It's just the snap flag as hex, we might want to do something smarter in
+the future.
+
+(cherry picked from commit 3e44f46654326adfa10efd221988e3f33c2a988e)
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
+
+diff --git a/gtk/inspector/recorder.c b/gtk/inspector/recorder.c
+index 1111111..2222222 100644
+--- a/gtk/inspector/recorder.c
++++ b/gtk/inspector/recorder.c
+@@ -1027,6 +1027,23 @@ add_texture_rows (GListStore *store,
+     }
+ }
+ 
++static void
++add_snap_row (GListStore *store,
++              const char *name,
++              GskRectSnap snap)
++{
++  char *names[4];
++  gsize i;
++
++  for (i = 0; i < 4; i++)
++    names[i] = g_enum_to_string (GSK_TYPE_SNAP_DIRECTION, gsk_rect_snap_get_direction (snap, i));
++
++  add_text_row (store, name, "%s %s %s %s", names[0], names[1], names[2], names[3]);
++
++  for (i = 0; i < 4; i++)
++    g_free (names[i]);
++}
++
+ static void
+ populate_render_node_properties (GListStore    *store,
+                                  GskRenderNode *node,
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matthias Clasen <mclasen@redhat.com>
+Date: Sat, 7 Jun 2025 21:36:02 -0400
+Subject: [PATCH 06/10] Add gsk_texture_scale_node_new_snapped
+
+(cherry picked from commit 11eb0be32943a56fbdf852233e9a8fe15b52824b)
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
+
+[Fix: s/GDK_AVAILABLE_IN_4_20/GDK_AVAILABLE_IN_4_18/]
+Signed-off-by: Kleis Auke Wolthuizen <github@kleisauke.nl>
+
+diff --git a/gsk/gskrendernode.h b/gsk/gskrendernode.h
+index 1111111..2222222 100644
+--- a/gsk/gskrendernode.h
++++ b/gsk/gskrendernode.h
+@@ -235,6 +235,13 @@ GDK_AVAILABLE_IN_4_10
+ GskRenderNode *         gsk_texture_scale_node_new              (GdkTexture               *texture,
+                                                                  const graphene_rect_t    *bounds,
+                                                                  GskScalingFilter          filter);
++GDK_AVAILABLE_IN_4_18
++GskRenderNode *         gsk_texture_scale_node_new_snapped      (GdkTexture               *texture,
++                                                                 const graphene_rect_t    *bounds,
++                                                                 GskRectSnap               snap,
++                                                                 GskScalingFilter          filter);
++GDK_AVAILABLE_IN_4_18
++GskRectSnap             gsk_texture_scale_node_get_snap         (const GskRenderNode      *node) G_GNUC_PURE;
+ GDK_AVAILABLE_IN_4_10
+ GdkTexture *            gsk_texture_scale_node_get_texture      (const GskRenderNode      *node) G_GNUC_PURE;
+ GDK_AVAILABLE_IN_4_10
+diff --git a/gsk/gskrendernodeimpl.c b/gsk/gskrendernodeimpl.c
+index 1111111..2222222 100644
+--- a/gsk/gskrendernodeimpl.c
++++ b/gsk/gskrendernodeimpl.c
+@@ -2932,6 +2932,8 @@ struct _GskTextureScaleNode
+ 
+   GdkTexture *texture;
+   GskScalingFilter filter;
++
++  GskRectSnap snap;
+ };
+ 
+ static void
+@@ -3018,6 +3020,7 @@ gsk_texture_scale_node_diff (GskRenderNode *node1,
+ 
+   if (!gsk_rect_equal (&node1->bounds, &node2->bounds) ||
+       self1->filter != self2->filter ||
++      self1->snap != self2->snap ||
+       gdk_texture_get_width (self1->texture) != gdk_texture_get_width (self2->texture) ||
+       gdk_texture_get_height (self1->texture) != gdk_texture_get_height (self2->texture))
+     {
+@@ -3088,6 +3091,24 @@ gsk_texture_scale_node_get_filter (const GskRenderNode *node)
+   return self->filter;
+ }
+ 
++/**
++ * gsk_texture_scale_node_get_snap:
++ * @node: (type GskInsetShadowNode): a `GskRenderNode` of type %GSK_TEXTURE_SCALE_NODE
++ *
++ * Retrieves the snap value used when creating this node.
++ *
++ * Returns: the snap value
++ *
++ * Since: 4.18
++ */
++GskRectSnap
++gsk_texture_scale_node_get_snap (const GskRenderNode *node)
++{
++  const GskTextureScaleNode *self = (const GskTextureScaleNode *) node;
++
++  return self->snap;
++}
++
+ /**
+  * gsk_texture_scale_node_new:
+  * @texture: the texture to scale
+@@ -3115,6 +3136,43 @@ GskRenderNode *
+ gsk_texture_scale_node_new (GdkTexture            *texture,
+                             const graphene_rect_t *bounds,
+                             GskScalingFilter       filter)
++{
++  return gsk_texture_scale_node_new_snapped (texture,
++                                             bounds,
++                                             GSK_RECT_SNAP_NONE,
++                                             filter);
++}
++
++/**
++ * gsk_texture_scale_node_new_snapped:
++ * @texture: the texture to scale
++ * @bounds: the size of the texture to scale to
++ * @snap: the snap value
++ * @filter: how to scale the texture
++ *
++ * Creates a node that scales the texture to the size given by the
++ * bounds using the filter and then places it at the bounds' position,
++ * aligned to the pixel grid according to @snap.
++ *
++ * Note that further scaling and other transformations which are
++ * applied to the node will apply linear filtering to the resulting
++ * texture, as usual.
++ *
++ * This node is intended for tight control over scaling applied
++ * to a texture, such as in image editors and requires the
++ * application to be aware of the whole render tree as further
++ * transforms may be applied that conflict with the desired effect
++ * of this node.
++ *
++ * Returns: (transfer full) (type GskTextureScaleNode): A new `GskRenderNode`
++ *
++ * Since: 4.18
++ */
++GskRenderNode *
++gsk_texture_scale_node_new_snapped (GdkTexture            *texture,
++                                    const graphene_rect_t *bounds,
++                                    GskRectSnap            snap,
++                                    GskScalingFilter       filter)
+ {
+   GskTextureScaleNode *self;
+   GskRenderNode *node;
+@@ -3134,6 +3192,7 @@ gsk_texture_scale_node_new (GdkTexture            *texture,
+   gsk_rect_init_from_rect (&node->bounds, bounds);
+   gsk_rect_normalize (&node->bounds);
+   self->filter = filter;
++  self->snap = snap;
+ 
+   node->preferred_depth = gdk_texture_get_depth (texture);
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matthias Clasen <mclasen@redhat.com>
+Date: Sat, 7 Jun 2025 21:36:20 -0400
+Subject: [PATCH 07/10] nodeparser: Support texture scale snapping
+
+(cherry picked from commit ce64a3bff28736497a546ba7bde9aa144c0f64ce)
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
+
+diff --git a/gsk/gskrendernodeparser.c b/gsk/gskrendernodeparser.c
+index 1111111..2222222 100644
+--- a/gsk/gskrendernodeparser.c
++++ b/gsk/gskrendernodeparser.c
+@@ -2309,10 +2309,12 @@ parse_texture_scale_node (GtkCssParser *parser,
+   graphene_rect_t bounds = GRAPHENE_RECT_INIT (0, 0, 50, 50);
+   GdkTexture *texture = NULL;
+   GskScalingFilter filter = GSK_SCALING_FILTER_LINEAR;
++  GskRectSnap snap = GSK_RECT_SNAP_NONE;
+   const Declaration declarations[] = {
+     { "bounds", parse_rect, NULL, &bounds },
+     { "texture", parse_texture, clear_texture, &texture },
+-    { "filter", parse_scaling_filter, NULL, &filter }
++    { "filter", parse_scaling_filter, NULL, &filter },
++    { "snap", parse_rect_snap, NULL, &snap },
+   };
+   GskRenderNode *node;
+ 
+@@ -2321,7 +2323,7 @@ parse_texture_scale_node (GtkCssParser *parser,
+   if (texture == NULL)
+     texture = create_default_texture ();
+ 
+-  node = gsk_texture_scale_node_new (texture, &bounds, filter);
++  node = gsk_texture_scale_node_new_snapped (texture, &bounds, snap, filter);
+   g_object_unref (texture);
+ 
+   return node;
+@@ -4850,6 +4852,8 @@ render_node_print (Printer       *p,
+           }
+ 
+         append_texture_param (p, "texture", gsk_texture_scale_node_get_texture (node));
++        append_snap_param (p, "snap", gsk_texture_scale_node_get_snap (node));
++
+         end_node (p);
+       }
+       break;
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matthias Clasen <mclasen@redhat.com>
+Date: Mon, 28 Apr 2025 16:10:24 +0200
+Subject: [PATCH 08/10] gpu: Snap texture scale nodes
+
+(cherry picked from commit 53323886f9ef1d798eb2c1cad8c5d8166c9c9d42)
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
+
+diff --git a/gsk/gpu/gskgpunodeprocessor.c b/gsk/gpu/gskgpunodeprocessor.c
+index 1111111..2222222 100644
+--- a/gsk/gpu/gskgpunodeprocessor.c
++++ b/gsk/gpu/gskgpunodeprocessor.c
+@@ -2291,6 +2291,7 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
+   GdkColorState *image_cs;
+   GskScalingFilter scaling_filter;
+   gboolean need_mipmap, need_offscreen;
++  graphene_rect_t bounds;
+ 
+   texture = gsk_texture_scale_node_get_texture (node);
+   scaling_filter = gsk_texture_scale_node_get_filter (node);
+@@ -2354,6 +2355,12 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
+       return;
+     }
+ 
++  gsk_rect_snap_to_grid (&node->bounds,
++                         gsk_texture_scale_node_get_snap (node),
++                         &self->scale,
++                         &self->offset,
++                         &bounds);
++
+   if ((gsk_gpu_image_get_flags (image) & GSK_GPU_IMAGE_STRAIGHT_ALPHA) ||
+       (need_mipmap && !(gsk_gpu_image_get_flags (image) & GSK_GPU_IMAGE_CAN_MIPMAP)) ||
+       !gdk_color_state_equal (image_cs, self->ccs))
+@@ -2370,13 +2377,13 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
+     gsk_gpu_mipmap_op (self->frame, image);
+ 
+   gsk_gpu_texture_op (self->frame,
+-                      gsk_gpu_clip_get_shader_clip (&self->clip, &self->offset, &node->bounds),
++                      gsk_gpu_clip_get_shader_clip (&self->clip, &self->offset, &bounds),
+                       &self->offset,
+                       &(GskGpuShaderImage) {
+                           image,
+                           gsk_gpu_sampler_for_scaling_filter (scaling_filter),
+-                          &node->bounds,
+-                          &node->bounds,
++                          &bounds,
++                          &bounds,
+                       });
+ 
+   g_object_unref (image);
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matthias Clasen <mclasen@redhat.com>
+Date: Mon, 28 Apr 2025 16:04:49 +0200
+Subject: [PATCH 09/10] inspector: Show snap for texture scale nodes
+
+(cherry picked from commit a0dfe32dcb1f8d00f09b1a7e3d5d5dc736c248ef)
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
+
+diff --git a/gtk/inspector/recorder.c b/gtk/inspector/recorder.c
+index 1111111..2222222 100644
+--- a/gtk/inspector/recorder.c
++++ b/gtk/inspector/recorder.c
+@@ -1126,6 +1126,7 @@ populate_render_node_properties (GListStore    *store,
+ 
+         tmp = g_enum_to_string (GSK_TYPE_SCALING_FILTER, filter);
+         add_text_row (store, "Filter", "%s", tmp);
++        add_snap_row (store, "Snap", gsk_texture_scale_node_get_snap (node));
+         g_free (tmp);
+       }
+       break;
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matthias Clasen <mclasen@redhat.com>
+Date: Mon, 28 Apr 2025 16:04:26 +0200
+Subject: [PATCH 10/10] gtk: Apply snap to texture scale nodes
+
+(cherry picked from commit d4bc7a6200eecd90a2de80c50b1e88d626734e0c)
+
+Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
+
+diff --git a/gtk/gtksnapshot.c b/gtk/gtksnapshot.c
+index 1111111..2222222 100644
+--- a/gtk/gtksnapshot.c
++++ b/gtk/gtksnapshot.c
+@@ -2465,6 +2465,7 @@ gtk_snapshot_append_scaled_texture (GtkSnapshot           *snapshot,
+                                     GskScalingFilter       filter,
+                                     const graphene_rect_t *bounds)
+ {
++  const GtkSnapshotState *state;
+   GskRenderNode *node;
+ 
+   g_return_if_fail (snapshot != NULL);
+@@ -2472,7 +2473,11 @@ gtk_snapshot_append_scaled_texture (GtkSnapshot           *snapshot,
+   g_return_if_fail (bounds != NULL);
+ 
+   gtk_snapshot_ensure_identity (snapshot);
+-  node = gsk_texture_scale_node_new (texture, bounds, filter);
++  state = gtk_snapshot_get_current_state (snapshot);
++  node = gsk_texture_scale_node_new_snapped (texture,
++                                             bounds,
++                                             state->snap,
++                                             filter);
+ 
+   gtk_snapshot_append_node_internal (snapshot, node);
+ }
