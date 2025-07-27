@@ -98,6 +98,7 @@ Same as libvips-web + these extra dependencies:
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0     | MIT Licence                                                  |
 | [libjxl]        | 0.11.1    | BSD 3-Clause                                                 |
+| [libraw]        | 0.21.4    | LGPL-2.1-only                                                |
 | [matio]         | 1.5.28    | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1     | Public domain                                                |
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
@@ -115,6 +116,7 @@ Same as libvips-web + these extra dependencies:
 [imath]: https://github.com/AcademySoftwareFoundation/Imath
 [libdicom]: https://github.com/ImagingDataCommons/libdicom
 [libjxl]: https://github.com/libjxl/libjxl
+[libraw]: https://github.com/LibRaw/LibRaw
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://github.com/NIFTI-Imaging/nifti_clib
 [openexr]: https://github.com/AcademySoftwareFoundation/openexr

@@ -11,6 +11,9 @@ ARG DEBUG
 ARG GIT_COMMIT
 ARG PLUGIN_DIRS
 
+# libtool-specific patches for clang
+RUN patch -p1 -d /usr/share < /data/patches/libtool-2-fixes.patch
+
 RUN \
   if [ "$DEBUG" = true ]; then \
     cp -f /data/settings/debug.mk settings.mk; \

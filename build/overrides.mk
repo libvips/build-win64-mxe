@@ -157,6 +157,14 @@ libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
+# upstream version is 0.21.1
+libraw_VERSION  := 0.21.4
+libraw_CHECKSUM := 6be43f19397e43214ff56aab056bf3ff4925ca14012ce5a1538a172406a09e63
+libraw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libraw-[0-9]*.patch)))
+libraw_SUBDIR   := LibRaw-$(libraw_VERSION)
+libraw_FILE     := LibRaw-$(libraw_VERSION).tar.gz
+libraw_URL      := https://www.libraw.org/data/$(libraw_FILE)
+
 # upstream version is 2.7.1
 # needed by nip4
 gsl_VERSION  := 2.8
@@ -180,6 +188,7 @@ glib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 harfbuzz_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+libraw_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libraw-[0-9]*.patch)))
 libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 meson_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/meson-[0-9]*.patch)))
 mingw-w64_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/mingw-w64-[0-9]*.patch)))
@@ -205,6 +214,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: jasper, libiconv
 #  Replaced: jpeg with libjpeg-turbo
 # lcms:
+#  Added: meson-wrapper
 #  Removed: jpeg, tiff
 # libtiff:
 #  Replaced: jpeg with libjpeg-turbo
@@ -219,7 +229,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: libjpeg-turbo, lcms
 #  Removed: boost, curl, qt6-qtbase, libwebp
 # librsvg:
-#  Added: libxml2, rust, $(BUILD)~cargo-c
+#  Added: meson-wrapper, libxml2, rust, $(BUILD)~cargo-c
 #  Removed: gdk-pixbuf, libcroco, libgsf
 # Cairo:
 #  Removed: lzo
@@ -227,7 +237,12 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: hdf5
 # libjpeg-turbo:
 #  Replaced: yasm with $(BUILD)~nasm
+# libraw:
+#  Added: zlib
+#  Replaced: jpeg with libjpeg-turbo
+#  Removed: jasper
 # libxml2:
+#  Added: meson-wrapper
 #  Removed: libiconv, xz, zlib
 # Fontconfig:
 #  Added: meson-wrapper
@@ -246,17 +261,18 @@ freetype_DEPS           := $(subst brotli bzip2,meson-wrapper,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(subst brotli bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
 glib_DEPS               := cc meson-wrapper gettext libffi zlib
 gdk-pixbuf_DEPS         := cc meson-wrapper glib libjpeg-turbo libpng tiff
-lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
+lcms_DEPS               := $(subst jpeg tiff,meson-wrapper,$(lcms_DEPS))
 tiff_DEPS               := cc libjpeg-turbo libwebp zlib
 imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
 graphicsmagick_DEPS     := $(imagemagick_DEPS)
 openexr_DEPS            := cc imath zlib
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
-librsvg_DEPS            := cc cairo glib pango libxml2 rust $(BUILD)~cargo-c
+librsvg_DEPS            := cc meson-wrapper cairo glib pango libxml2 rust $(BUILD)~cargo-c
 cairo_DEPS              := $(filter-out lzo ,$(cairo_DEPS))
 matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
-libxml2_DEPS            := cc
+libraw_DEPS             := cc libjpeg-turbo lcms zlib
+libxml2_DEPS            := cc meson-wrapper
 fontconfig_DEPS         := cc meson-wrapper expat freetype-bootstrap
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 harfbuzz_DEPS           := cc meson-wrapper cairo freetype-bootstrap glib
@@ -475,6 +491,24 @@ define libjpeg-turbo_BUILD
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
+endef
+
+# build without jasper, openmp and examples
+define libraw_BUILD
+    # autoreconf to get updated libtool files for clang
+    cd '$(SOURCE_DIR)' && autoreconf -fi
+
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS) \
+        --disable-examples \
+        --disable-openmp \
+        --disable-jasper \
+        --enable-jpeg \
+        --enable-zlib \
+        --enable-lcms
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB)
 endef
 
 # build with the Meson build system
