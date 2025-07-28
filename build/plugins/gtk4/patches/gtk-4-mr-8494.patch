@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Otte <otte@redhat.com>
 Date: Tue, 1 Oct 2024 20:18:58 +0200
-Subject: [PATCH 01/13] gsk: Add gsk_rect_snap_to_grid_shrink()
+Subject: [PATCH 01/15] gsk: Add gsk_rect_snap_to_grid_shrink()
 
 And rename gsk_rect_snap_to_grid() to gsk_rect_snap_to_grid_grow().
 
@@ -178,7 +178,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Otte <otte@redhat.com>
 Date: Wed, 19 Mar 2025 05:10:37 +0100
-Subject: [PATCH 02/13] API: Add GskRectSnap
+Subject: [PATCH 02/15] API: Add GskRectSnap
 
 A flags property to snap rectangles
 
@@ -548,7 +548,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Otte <otte@redhat.com>
 Date: Wed, 19 Mar 2025 16:38:49 +0100
-Subject: [PATCH 03/13] gtk: Add gtk_snapshot_set_snap()
+Subject: [PATCH 03/15] gtk: Add gtk_snapshot_set_snap()
 
 Sets a snap mode to use for all future snappable nodes.
 
@@ -948,7 +948,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Otte <otte@redhat.com>
 Date: Wed, 19 Mar 2025 05:13:25 +0100
-Subject: [PATCH 04/13] gsk: Add gsk_texture_node_new_snapped()
+Subject: [PATCH 04/15] gsk: Add gsk_texture_node_new_snapped()
 
 Adds a new function to construct a texture node with a hint on how to snap
 to the pixel grid.
@@ -1068,7 +1068,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Otte <otte@redhat.com>
 Date: Wed, 19 Mar 2025 05:27:27 +0100
-Subject: [PATCH 05/13] nodeparser: Add support for texture snapping
+Subject: [PATCH 05/15] nodeparser: Add support for texture snapping
 
 (cherry picked from commit 17487e8bd81b2c2165e1790736dbe10f06a0b791)
 
@@ -1231,7 +1231,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Otte <otte@redhat.com>
 Date: Wed, 19 Mar 2025 05:27:52 +0100
-Subject: [PATCH 06/13] gpu: Add support for texture snapping
+Subject: [PATCH 06/15] gpu: Add support for texture snapping
 
 (cherry picked from commit 35137d4983e8a9a9ed49d767b49de288e9cfab44)
 
@@ -1325,7 +1325,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Otte <otte@redhat.com>
 Date: Wed, 19 Mar 2025 16:37:35 +0100
-Subject: [PATCH 07/13] inspector: Print texture snap
+Subject: [PATCH 07/15] inspector: Print texture snap
 
 It's just the snap flag as hex, we might want to do something smarter in
 the future.
@@ -1373,7 +1373,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matthias Clasen <mclasen@redhat.com>
 Date: Sat, 7 Jun 2025 21:39:26 -0400
-Subject: [PATCH 08/13] gtk: Apply snap to texture nodes
+Subject: [PATCH 08/15] gtk: Apply snap to texture nodes
 
 (cherry picked from commit c9ee5d404137d8424973c3a2c483b9ef56437148)
 
@@ -1397,7 +1397,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matthias Clasen <mclasen@redhat.com>
 Date: Sat, 7 Jun 2025 21:36:02 -0400
-Subject: [PATCH 09/13] Add gsk_texture_scale_node_new_snapped
+Subject: [PATCH 09/15] Add gsk_texture_scale_node_new_snapped
 
 (cherry picked from commit 11eb0be32943a56fbdf852233e9a8fe15b52824b)
 
@@ -1525,7 +1525,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matthias Clasen <mclasen@redhat.com>
 Date: Sat, 7 Jun 2025 21:36:20 -0400
-Subject: [PATCH 10/13] nodeparser: Support texture scale snapping
+Subject: [PATCH 10/15] nodeparser: Support texture scale snapping
 
 (cherry picked from commit ce64a3bff28736497a546ba7bde9aa144c0f64ce)
 
@@ -1571,7 +1571,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matthias Clasen <mclasen@redhat.com>
 Date: Mon, 28 Apr 2025 16:10:24 +0200
-Subject: [PATCH 11/13] gpu: Snap texture scale nodes
+Subject: [PATCH 11/15] gpu: Snap texture scale nodes
 
 (cherry picked from commit 53323886f9ef1d798eb2c1cad8c5d8166c9c9d42)
 
@@ -1623,7 +1623,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matthias Clasen <mclasen@redhat.com>
 Date: Mon, 28 Apr 2025 16:04:49 +0200
-Subject: [PATCH 12/13] inspector: Show snap for texture scale nodes
+Subject: [PATCH 12/15] inspector: Show snap for texture scale nodes
 
 (cherry picked from commit a0dfe32dcb1f8d00f09b1a7e3d5d5dc736c248ef)
 
@@ -1645,7 +1645,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matthias Clasen <mclasen@redhat.com>
 Date: Mon, 28 Apr 2025 16:04:26 +0200
-Subject: [PATCH 13/13] gtk: Apply snap to texture scale nodes
+Subject: [PATCH 13/15] gtk: Apply snap to texture scale nodes
 
 (cherry picked from commit d4bc7a6200eecd90a2de80c50b1e88d626734e0c)
 
@@ -1676,3 +1676,100 @@ index 1111111..2222222 100644
  
    gtk_snapshot_append_node_internal (snapshot, node);
  }
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 28 Jul 2025 13:43:15 +0200
+Subject: [PATCH 14/15] cairo: Snap texture nodes
+
+Upstream-Status: Pending
+
+diff --git a/gsk/gskrendernodeimpl.c b/gsk/gskrendernodeimpl.c
+index 1111111..2222222 100644
+--- a/gsk/gskrendernodeimpl.c
++++ b/gsk/gskrendernodeimpl.c
+@@ -2789,6 +2789,7 @@ gsk_texture_node_draw (GskRenderNode *node,
+   cairo_pattern_t *pattern;
+   cairo_matrix_t matrix;
+   int width, height;
++  graphene_rect_t bounds;
+ 
+   width = gdk_texture_get_width (self->texture);
+   height = gdk_texture_get_height (self->texture);
+@@ -2802,19 +2803,21 @@ gsk_texture_node_draw (GskRenderNode *node,
+   pattern = cairo_pattern_create_for_surface (surface);
+   cairo_pattern_set_extend (pattern, CAIRO_EXTEND_PAD);
+ 
++  gsk_rect_snap (&node->bounds,
++                 gsk_texture_node_get_snap (node),
++                 &bounds);
++
+   cairo_matrix_init_scale (&matrix,
+-                           width / node->bounds.size.width,
+-                           height / node->bounds.size.height);
+-  cairo_matrix_translate (&matrix,
+-                          -node->bounds.origin.x,
+-                          -node->bounds.origin.y);
++                           width / bounds.size.width,
++                           height / bounds.size.height);
++  cairo_matrix_translate (&matrix, -bounds.origin.x, -bounds.origin.y);
+   cairo_pattern_set_matrix (pattern, &matrix);
+ 
+   cairo_set_source (cr, pattern);
+   cairo_pattern_destroy (pattern);
+   cairo_surface_destroy (surface);
+ 
+-  gdk_cairo_rect (cr, &node->bounds);
++  gdk_cairo_rect (cr, &bounds);
+   cairo_fill (cr);
+ }
+ 
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Mon, 28 Jul 2025 13:43:31 +0200
+Subject: [PATCH 15/15] cairo: Snap texture scale nodes
+
+Upstream-Status: Pending
+
+diff --git a/gsk/gskrendernodeimpl.c b/gsk/gskrendernodeimpl.c
+index 1111111..2222222 100644
+--- a/gsk/gskrendernodeimpl.c
++++ b/gsk/gskrendernodeimpl.c
+@@ -3014,9 +3014,14 @@ gsk_texture_scale_node_draw (GskRenderNode *node,
+   cairo_t *cr2;
+   cairo_surface_t *surface2;
+   graphene_rect_t clip_rect;
++  graphene_rect_t bounds;
++
++  gsk_rect_snap (&node->bounds,
++                 gsk_texture_scale_node_get_snap (node),
++                 &bounds);
+ 
+   /* Make sure we draw the minimum region by using the clip */
+-  gdk_cairo_rect (cr, &node->bounds);
++  gdk_cairo_rect (cr, &bounds);
+   cairo_clip (cr);
+   _graphene_rect_init_from_clip_extents (&clip_rect, cr);
+   if (clip_rect.size.width <= 0 || clip_rect.size.height <= 0)
+@@ -3033,9 +3038,9 @@ gsk_texture_scale_node_draw (GskRenderNode *node,
+   cairo_pattern_set_extend (pattern, CAIRO_EXTEND_PAD);
+ 
+   cairo_matrix_init_scale (&matrix,
+-                           gdk_texture_get_width (self->texture) / node->bounds.size.width,
+-                           gdk_texture_get_height (self->texture) / node->bounds.size.height);
+-  cairo_matrix_translate (&matrix, -node->bounds.origin.x, -node->bounds.origin.y);
++                           gdk_texture_get_width (self->texture) / bounds.size.width,
++                           gdk_texture_get_height (self->texture) / bounds.size.height);
++  cairo_matrix_translate (&matrix, -bounds.origin.x, -bounds.origin.y);
+   cairo_pattern_set_matrix (pattern, &matrix);
+   cairo_pattern_set_filter (pattern, filters[self->filter]);
+ 
+@@ -3043,7 +3048,7 @@ gsk_texture_scale_node_draw (GskRenderNode *node,
+   cairo_pattern_destroy (pattern);
+   cairo_surface_destroy (surface);
+ 
+-  gdk_cairo_rect (cr2, &node->bounds);
++  gdk_cairo_rect (cr2, &bounds);
+   cairo_fill (cr2);
+ 
+   cairo_destroy (cr2);
