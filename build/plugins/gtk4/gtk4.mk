@@ -2,13 +2,13 @@ PKG             := gtk4
 $(PKG)_WEBSITE  := https://gtk.org/
 $(PKG)_DESCR    := GTK4
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4.18.6
-$(PKG)_CHECKSUM := e1817c650ddc3261f9a8345b3b22a26a5d80af154630dedc03cc7becefffd0fa
+$(PKG)_VERSION  := 4.20.3
+$(PKG)_CHECKSUM := 2873f2903088a66c71173ea2ed85ffae266a66b972c3a4842bbb2f6f187ec153
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gtk-[0-9]*.patch)))
 $(PKG)_SUBDIR   := gtk-$($(PKG)_VERSION)
 $(PKG)_FILE     := gtk-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://download.gnome.org/sources/gtk/$(call SHORT_PKG_VERSION,$(PKG))/$($(PKG)_FILE)
-$(PKG)_DEPS     := cc meson-wrapper glib gdk-pixbuf pango fontconfig cairo libepoxy graphene
+$(PKG)_DEPS     := cc meson-wrapper glib gdk-pixbuf pango fontconfig cairo libepoxy graphene librsvg directx-headers
 
 define $(PKG)_BUILD
     # Disable tools

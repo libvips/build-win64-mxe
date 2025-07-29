@@ -14,111 +14,114 @@ from there.
 
 Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
 
+diff --git a/gsk/gpu/gskgpucachedfill.c b/gsk/gpu/gskgpucachedfill.c
+index 1111111..2222222 100644
+--- a/gsk/gpu/gskgpucachedfill.c
++++ b/gsk/gpu/gskgpucachedfill.c
+@@ -205,13 +205,14 @@ gsk_gpu_cached_fill_lookup (GskGpuCache           *self,
+       return g_object_ref (cache->image);
+     }
+ 
+-  if (!gsk_path_get_bounds (path, &viewport) ||
+-      !gsk_rect_snap_to_grid (&viewport,
++  if (!gsk_path_get_bounds (path, &viewport))
++    return NULL;
++
++  gsk_rect_snap_to_grid_grow (&viewport,
+                               scale,
+                               &GRAPHENE_POINT_INIT ((float) fx / (sx * SUBPIXEL_SCALE_X), 
+                                                     (float) fy / (sy * SUBPIXEL_SCALE_Y)),
+-                              &viewport))
+-    return NULL;
++                              &viewport);
+ 
+   padding = 1;
+   /* Should already be integers because of snap_to_grid() above, but round just to be sure */
+diff --git a/gsk/gpu/gskgpucachedstroke.c b/gsk/gpu/gskgpucachedstroke.c
+index 1111111..2222222 100644
+--- a/gsk/gpu/gskgpucachedstroke.c
++++ b/gsk/gpu/gskgpucachedstroke.c
+@@ -218,13 +218,14 @@ gsk_gpu_cached_stroke_lookup (GskGpuCache           *self,
+       return g_object_ref (cache->image);
+     }
+ 
+-  if (!gsk_path_get_stroke_bounds (path, stroke, &viewport) ||
+-      !gsk_rect_snap_to_grid (&viewport,
++  if (!gsk_path_get_stroke_bounds (path, stroke, &viewport))
++    return NULL;
++
++  gsk_rect_snap_to_grid_grow (&viewport,
+                               scale,
+                               &GRAPHENE_POINT_INIT ((float) fx / (sx * SUBPIXEL_SCALE_X), 
+                                                     (float) fy / (sy * SUBPIXEL_SCALE_Y)),
+-                              &viewport))
+-    return NULL;
++                              &viewport);
+ 
+   padding = 1;
+   /* Should already be integers because of snap_to_grid() above, but round just to be sure */
 diff --git a/gsk/gpu/gskgpunodeprocessor.c b/gsk/gpu/gskgpunodeprocessor.c
 index 1111111..2222222 100644
 --- a/gsk/gpu/gskgpunodeprocessor.c
 +++ b/gsk/gpu/gskgpunodeprocessor.c
-@@ -845,7 +845,8 @@ gsk_gpu_node_processor_get_node_as_image (GskGpuNodeProcessor   *self,
+@@ -583,8 +583,7 @@ gsk_gpu_node_processor_clip_node_bounds_and_snap_to_grid (GskGpuNodeProcessor *s
+   if (!gsk_rect_intersection (&tmp, &node->bounds, out_bounds))
+     return FALSE;
+ 
+-  if (!gsk_rect_snap_to_grid (out_bounds, &self->scale, &self->offset, out_bounds))
+-    return FALSE;
++  gsk_rect_snap_to_grid_grow (out_bounds, &self->scale, &self->offset, out_bounds);
+ 
+   return TRUE;
+ }
+@@ -862,8 +861,8 @@ gsk_gpu_node_processor_get_node_as_image (GskGpuNodeProcessor   *self,
            if (!gsk_rect_intersection (clip_bounds, &node->bounds, &clip))
              return NULL;
          }
--      gsk_rect_snap_to_grid (&clip, &self->scale, &self->offset, &clip);
+-      if (!gsk_rect_snap_to_grid (&clip, &self->scale, &self->offset, &clip))
+-        return NULL;
 +
 +      gsk_rect_snap_to_grid_grow (&clip, &self->scale, &self->offset, &clip);
      }
  
    return gsk_gpu_get_node_as_image (self->frame,
-@@ -884,7 +885,7 @@ gsk_gpu_node_processor_blur_op (GskGpuNodeProcessor       *self,
+@@ -902,8 +901,7 @@ gsk_gpu_node_processor_blur_op (GskGpuNodeProcessor       *self,
    if (!gsk_rect_intersection (rect, &clip_rect, &intermediate_rect))
      return;
  
--  gsk_rect_snap_to_grid (&intermediate_rect, &self->scale, &self->offset, &intermediate_rect);
+-  if (!gsk_rect_snap_to_grid (&intermediate_rect, &self->scale, &self->offset, &intermediate_rect))
+-    return;
 +  gsk_rect_snap_to_grid_grow (&intermediate_rect, &self->scale, &self->offset, &intermediate_rect);
  
    intermediate = gsk_gpu_node_processor_init_draw (&other,
                                                     self->frame,
-@@ -959,7 +960,7 @@ gsk_gpu_node_processor_add_cairo_node (GskGpuNodeProcessor *self,
-   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &clipped_bounds))
-     return;
- 
--  gsk_rect_snap_to_grid (&clipped_bounds, &self->scale, &self->offset, &clipped_bounds);
-+  gsk_rect_snap_to_grid_grow (&clipped_bounds, &self->scale, &self->offset, &clipped_bounds);
- 
-   if (graphene_rect_get_height (&clipped_bounds) <= 0.0 || graphene_rect_get_width (&clipped_bounds) <= 0.0)
-     return;
-@@ -1297,7 +1298,7 @@ gsk_gpu_node_processor_add_rounded_clip_node_with_mask (GskGpuNodeProcessor *sel
- 
-   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &clip_bounds))
-     return;
--  gsk_rect_snap_to_grid (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
-+  gsk_rect_snap_to_grid_grow (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
- 
-   child_image = gsk_gpu_node_processor_get_node_as_image (self,
-                                                           0,
-@@ -2148,7 +2149,8 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
- 
+@@ -2162,8 +2160,7 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
        if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &clip))
          return;
--      gsk_rect_snap_to_grid (&clip, &self->scale, &self->offset, &rounded_clip);
-+
+ 
+-      if (!gsk_rect_snap_to_grid (&clip, &self->scale, &self->offset, &rounded_clip))
+-        return;
 +      gsk_rect_snap_to_grid_grow (&clip, &self->scale, &self->offset, &rounded_clip);
  
        image = gsk_gpu_get_texture_tiles_as_image (self->frame,
                                                    self->ccs,
-@@ -2306,7 +2308,7 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
+@@ -2331,15 +2328,7 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
  
        gsk_gpu_node_processor_get_clip_bounds (self, &clip_bounds);
        /* first round to pixel boundaries, so we make sure the full pixels are covered */
--      gsk_rect_snap_to_grid (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
+-      if (!gsk_rect_snap_to_grid (&clip_bounds, &self->scale, &self->offset, &clip_bounds))
+-        {
+-          if (image)
+-            {
+-              gdk_color_state_unref (image_cs);
+-              g_object_unref (image);
+-            }
+-          return;
+-        }
 +      gsk_rect_snap_to_grid_grow (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
        /* then expand by half a pixel so that pixels needed for eventual linear
         * filtering are available */
        graphene_rect_inset (&clip_bounds, -0.5, -0.5);
-@@ -2538,7 +2540,7 @@ gsk_gpu_node_processor_add_gradient_node (GskGpuNodeProcessor *self,
- 
-   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &bounds))
-     return;
--  gsk_rect_snap_to_grid (&bounds, &self->scale, &self->offset, &bounds);
-+  gsk_rect_snap_to_grid_grow (&bounds, &self->scale, &self->offset, &bounds);
- 
-   image = gsk_gpu_node_processor_init_draw (&other,
-                                             self->frame,
-@@ -3005,7 +3007,7 @@ gsk_gpu_node_processor_add_mask_node (GskGpuNodeProcessor *self,
- 
-   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &bounds))
-     return;
--  gsk_rect_snap_to_grid (&bounds, &self->scale, &self->offset, &bounds);
-+  gsk_rect_snap_to_grid_grow (&bounds, &self->scale, &self->offset, &bounds);
- 
-   mask_image = gsk_gpu_node_processor_get_node_as_image (self,
-                                                          0,
-@@ -3482,7 +3484,7 @@ gsk_gpu_node_processor_add_fill_node (GskGpuNodeProcessor *self,
- 
-   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &clip_bounds))
-     return;
--  gsk_rect_snap_to_grid (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
-+  gsk_rect_snap_to_grid_grow (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
- 
-   child = gsk_fill_node_get_child (node);
- 
-@@ -3585,7 +3587,7 @@ gsk_gpu_node_processor_add_stroke_node (GskGpuNodeProcessor *self,
- 
-   if (!gsk_gpu_node_processor_clip_node_bounds (self, node, &clip_bounds))
-     return;
--  gsk_rect_snap_to_grid (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
-+  gsk_rect_snap_to_grid_grow (&clip_bounds, &self->scale, &self->offset, &clip_bounds);
- 
-   child = gsk_stroke_node_get_child (node);
- 
-@@ -4465,7 +4467,7 @@ gsk_gpu_node_processor_process (GskGpuFrame           *frame,
-           if (!gsk_gpu_node_processor_clip_node_bounds (&self, node, &clip_bounds))
-             continue;
- 
--          gsk_rect_snap_to_grid (&clip_bounds, &self.scale, &self.offset, &clip_bounds);
-+          gsk_rect_snap_to_grid_grow (&clip_bounds, &self.scale, &self.offset, &clip_bounds);
-           image = gsk_gpu_get_node_as_image (self.frame,
-                                              0,
-                                              ccs,
 diff --git a/gsk/gskrectprivate.h b/gsk/gskrectprivate.h
 index 1111111..2222222 100644
 --- a/gsk/gskrectprivate.h
@@ -132,14 +135,19 @@ index 1111111..2222222 100644
   * @src: rectangle to snap
   * @grid_scale: the scale of the grid
   * @grid_offset: the offset of the grid
-@@ -180,10 +180,10 @@ gsk_rect_coverage (const graphene_rect_t *r1,
+@@ -178,14 +178,12 @@ gsk_rect_coverage (const graphene_rect_t *r1,
+  *
+  * Note that floating point rounding issues might result
   * in the snapping not being perfectly exact.
+- * 
+- * Returns false if the resulting rect has zero width/height
   **/
- static inline void
+-static inline gboolean G_GNUC_WARN_UNUSED_RESULT
 -gsk_rect_snap_to_grid (const graphene_rect_t  *src,
 -                       const graphene_vec2_t  *grid_scale,
 -                       const graphene_point_t *grid_offset,
 -                       graphene_rect_t        *dest)
++static inline void
 +gsk_rect_snap_to_grid_grow (const graphene_rect_t  *src,
 +                            const graphene_vec2_t  *grid_scale,
 +                            const graphene_point_t *grid_offset,
@@ -147,10 +155,14 @@ index 1111111..2222222 100644
  {
    float x, y, xscale, yscale;
  
-@@ -199,6 +199,26 @@ gsk_rect_snap_to_grid (const graphene_rect_t  *src,
+@@ -199,11 +197,26 @@ gsk_rect_snap_to_grid (const graphene_rect_t  *src,
+       y / yscale - grid_offset->y,
+       (ceilf ((src->origin.x + grid_offset->x + src->size.width) * xscale) - x) / xscale,
        (ceilf ((src->origin.y + grid_offset->y + src->size.height) * yscale) - y) / yscale);
- }
++}
  
+-  if (dest->size.width <= 0.0 || dest->size.height <= 0.0)
+-    return FALSE;
 +static inline void
 +gsk_rect_snap_to_grid_shrink (const graphene_rect_t  *src,
 +                              const graphene_vec2_t  *grid_scale,
@@ -158,7 +170,8 @@ index 1111111..2222222 100644
 +                              graphene_rect_t        *dest)
 +{
 +  float x, y, xscale, yscale;
-+
+ 
+-  return TRUE;
 +  xscale = graphene_vec2_get_x (grid_scale);
 +  yscale = graphene_vec2_get_y (grid_scale);
 +
@@ -169,11 +182,9 @@ index 1111111..2222222 100644
 +      y / yscale - grid_offset->y,
 +      (floorf ((src->origin.x + grid_offset->x + src->size.width) * xscale) - x) / xscale,
 +      (floorf ((src->origin.y + grid_offset->y + src->size.height) * yscale) - y) / yscale);
-+}
-+
+ }
+ 
  static inline gboolean G_GNUC_PURE
- gsk_rect_is_empty (const graphene_rect_t *rect)
- {
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Benjamin Otte <otte@redhat.com>
@@ -189,9 +200,6 @@ renderer, respectively.
 (cherry picked from commit a025d90127d1bf07ffffc1a81c50a252f2f996ed)
 
 Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
-
-[Fix: s/GDK_AVAILABLE_IN_4_20/GDK_AVAILABLE_IN_4_18/]
-Signed-off-by: Kleis Auke Wolthuizen <github@kleisauke.nl>
 
 diff --git a/gsk/gsk.h b/gsk/gsk.h
 index 1111111..2222222 100644
@@ -209,7 +217,7 @@ diff --git a/gsk/gskenums.h b/gsk/gskenums.h
 index 1111111..2222222 100644
 --- a/gsk/gskenums.h
 +++ b/gsk/gskenums.h
-@@ -474,3 +474,26 @@ typedef enum
+@@ -483,3 +483,26 @@ typedef enum
    GSK_MASK_MODE_LUMINANCE,
    GSK_MASK_MODE_INVERTED_LUMINANCE
  } GskMaskMode;
@@ -227,7 +235,7 @@ index 1111111..2222222 100644
 + * in the opposite direction from the bottom and right sides to make
 + * the rectangle grow or shrink.
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
 +typedef enum {
 +  GSK_SNAP_NONE,
@@ -365,7 +373,7 @@ index 0000000..1111111
 + *
 + * The ways a rectangle can be snapped to a grid.
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
 +typedef unsigned GskRectSnap;
 +
@@ -380,7 +388,7 @@ index 0000000..1111111
 + *
 + * Returns: a description for how to snap rectangles
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + **/
 +GskRectSnap
 +gsk_rect_snap_new (GskSnapDirection top,
@@ -400,12 +408,12 @@ index 0000000..1111111
 + *
 + * Returns: the direction the given border is snapped
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + **/
 +GskSnapDirection
 +gsk_rect_snap_get_direction (GskRectSnap snap,
 +                             unsigned    border)
-+{ 
++{
 +  return (GskSnapDirection) ((snap >> (8 * border)) & 0xFF);
 +}
 +
@@ -452,9 +460,9 @@ index 0000000..1111111
 + *
 + * Returns: a description for how to snap rectangles
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
-+#define GSK_RECT_SNAP_INIT(top, right, bottom, left) (((((((left) << 8) | (bottom)) << 8) | (right)) << 8) | (top)) 
++#define GSK_RECT_SNAP_INIT(top, right, bottom, left) (((((((left) << 8) | (bottom)) << 8) | (right)) << 8) | (top))
 +
 +/**
 + * GSK_RECT_SNAP_NONE:
@@ -463,7 +471,7 @@ index 0000000..1111111
 + *
 + * This is the default value for snapping.
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
 +#define GSK_RECT_SNAP_NONE GSK_RECT_SNAP_INIT (GSK_SNAP_NONE, GSK_SNAP_NONE, GSK_SNAP_NONE, GSK_SNAP_NONE)
 +
@@ -474,7 +482,7 @@ index 0000000..1111111
 + *
 + * This is useful to avoid seams but can lead to overlap with adjacent content.
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
 +#define GSK_RECT_SNAP_GROW GSK_RECT_SNAP_INIT (GSK_SNAP_FLOOR, GSK_SNAP_CEIL, GSK_SNAP_CEIL, GSK_SNAP_FLOOR)
 +
@@ -486,7 +494,7 @@ index 0000000..1111111
 + * This is useful to make sure the rectangle fits into the allocated area
 + * and does not overlap content that is not snapped.
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
 +#define GSK_RECT_SNAP_SHRINK GSK_RECT_SNAP_INIT (GSK_SNAP_CEIL, GSK_SNAP_FLOOR, GSK_SNAP_FLOOR, GSK_SNAP_CEIL)
 +
@@ -498,17 +506,17 @@ index 0000000..1111111
 + * This is useful when multiple rectangles are placed next to each other
 + * at the same coordinate, and they should do so without any seams.
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
 +#define GSK_RECT_SNAP_ROUND GSK_RECT_SNAP_INIT (GSK_SNAP_ROUND, GSK_SNAP_ROUND, GSK_SNAP_ROUND, GSK_SNAP_ROUND)
 +
-+GDK_AVAILABLE_IN_4_18
++GDK_AVAILABLE_IN_4_20
 +GskRectSnap             gsk_rect_snap_new                       (GskSnapDirection        top,
 +                                                                 GskSnapDirection        right,
 +                                                                 GskSnapDirection        bottom,
 +                                                                 GskSnapDirection        left);
 +
-+GDK_AVAILABLE_IN_4_18
++GDK_AVAILABLE_IN_4_20
 +GskSnapDirection        gsk_rect_snap_get_direction             (GskRectSnap             snap,
 +                                                                 unsigned                border);
 +
@@ -528,7 +536,7 @@ diff --git a/gsk/meson.build b/gsk/meson.build
 index 1111111..2222222 100644
 --- a/gsk/meson.build
 +++ b/gsk/meson.build
-@@ -8,6 +8,7 @@ gsk_public_sources = files([
+@@ -10,6 +10,7 @@ gsk_public_sources = files([
    'gskpathmeasure.c',
    'gskpathparser.c',
    'gskpathpoint.c',
@@ -536,7 +544,7 @@ index 1111111..2222222 100644
    'gskrenderer.c',
    'gskrendernode.c',
    'gskrendernodeimpl.c',
-@@ -81,6 +82,7 @@ gsk_public_headers = files([
+@@ -90,6 +91,7 @@ gsk_public_headers = files([
    'gskpathbuilder.h',
    'gskpathmeasure.h',
    'gskpathpoint.h',
@@ -556,9 +564,6 @@ Sets a snap mode to use for all future snappable nodes.
 
 Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
 
-[Fix: s/GDK_AVAILABLE_IN_4_20/GDK_AVAILABLE_IN_4_18/]
-Signed-off-by: Kleis Auke Wolthuizen <github@kleisauke.nl>
-
 diff --git a/gtk/gtksnapshot.c b/gtk/gtksnapshot.c
 index 1111111..2222222 100644
 --- a/gtk/gtksnapshot.c
@@ -571,7 +576,7 @@ index 1111111..2222222 100644
  
    GtkSnapshotCollectFunc collect_func;
    GtkSnapshotClearFunc   clear_func;
-@@ -224,6 +225,7 @@ gtk_snapshot_collect_default (GtkSnapshot       *snapshot,
+@@ -230,6 +231,7 @@ gtk_snapshot_collect_default (GtkSnapshot       *snapshot,
  static GtkSnapshotState *
  gtk_snapshot_push_state (GtkSnapshot            *snapshot,
                           GskTransform           *transform,
@@ -579,7 +584,7 @@ index 1111111..2222222 100644
                           GtkSnapshotCollectFunc  collect_func,
                           GtkSnapshotClearFunc    clear_func)
  {
-@@ -234,6 +236,7 @@ gtk_snapshot_push_state (GtkSnapshot            *snapshot,
+@@ -240,6 +242,7 @@ gtk_snapshot_push_state (GtkSnapshot            *snapshot,
    state = gtk_snapshot_states_get (&snapshot->state_stack, n_states);
  
    state->transform = gsk_transform_ref (transform);
@@ -587,7 +592,7 @@ index 1111111..2222222 100644
    state->collect_func = collect_func;
    state->clear_func = clear_func;
    state->start_node_index = gtk_snapshot_nodes_get_size (&snapshot->nodes);
-@@ -291,6 +294,7 @@ gtk_snapshot_init (GtkSnapshot *self)
+@@ -297,6 +300,7 @@ gtk_snapshot_init (GtkSnapshot *self)
  
    gtk_snapshot_push_state (self,
                             NULL,
@@ -595,7 +600,7 @@ index 1111111..2222222 100644
                             gtk_snapshot_collect_default,
                             NULL);
  }
-@@ -363,6 +367,7 @@ gtk_snapshot_collect_autopush_transform (GtkSnapshot      *snapshot,
+@@ -369,6 +373,7 @@ gtk_snapshot_collect_autopush_transform (GtkSnapshot      *snapshot,
    GtkSnapshotState *previous_state;
  
    previous_state = gtk_snapshot_get_previous_state (snapshot);
@@ -603,7 +608,7 @@ index 1111111..2222222 100644
  
    node = gtk_snapshot_collect_default (snapshot, state, nodes, n_nodes);
    if (node == NULL)
-@@ -378,8 +383,11 @@ gtk_snapshot_collect_autopush_transform (GtkSnapshot      *snapshot,
+@@ -384,8 +389,11 @@ gtk_snapshot_collect_autopush_transform (GtkSnapshot      *snapshot,
  static void
  gtk_snapshot_autopush_transform (GtkSnapshot *snapshot)
  {
@@ -615,7 +620,7 @@ index 1111111..2222222 100644
                             gtk_snapshot_collect_autopush_transform,
                             NULL);
  }
-@@ -442,6 +450,7 @@ gtk_snapshot_push_debug (GtkSnapshot *snapshot,
+@@ -448,6 +456,7 @@ gtk_snapshot_push_debug (GtkSnapshot *snapshot,
  
        state = gtk_snapshot_push_state (snapshot,
                                         current_state->transform,
@@ -623,7 +628,7 @@ index 1111111..2222222 100644
                                         gtk_snapshot_collect_debug,
                                         gtk_snapshot_clear_debug);
  
-@@ -455,6 +464,7 @@ gtk_snapshot_push_debug (GtkSnapshot *snapshot,
+@@ -461,6 +470,7 @@ gtk_snapshot_push_debug (GtkSnapshot *snapshot,
      {
        gtk_snapshot_push_state (snapshot,
                                 current_state->transform,
@@ -631,7 +636,7 @@ index 1111111..2222222 100644
                                 gtk_snapshot_collect_default,
                                 NULL);
      }
-@@ -512,6 +522,7 @@ gtk_snapshot_push_opacity (GtkSnapshot *snapshot,
+@@ -518,6 +528,7 @@ gtk_snapshot_push_opacity (GtkSnapshot *snapshot,
  
    state = gtk_snapshot_push_state (snapshot,
                                     current_state->transform,
@@ -639,7 +644,7 @@ index 1111111..2222222 100644
                                     gtk_snapshot_collect_opacity,
                                     NULL);
    state->data.opacity.opacity = CLAMP (opacity, 0.0, 1.0);
-@@ -563,6 +574,7 @@ gtk_snapshot_push_blur (GtkSnapshot *snapshot,
+@@ -569,6 +580,7 @@ gtk_snapshot_push_blur (GtkSnapshot *snapshot,
  
    state = gtk_snapshot_push_state (snapshot,
                                     current_state->transform,
@@ -647,7 +652,7 @@ index 1111111..2222222 100644
                                     gtk_snapshot_collect_blur,
                                     NULL);
    state->data.blur.radius = radius;
-@@ -681,6 +693,7 @@ gtk_snapshot_push_color_matrix (GtkSnapshot             *snapshot,
+@@ -686,6 +698,7 @@ gtk_snapshot_push_color_matrix (GtkSnapshot             *snapshot,
  
    state = gtk_snapshot_push_state (snapshot,
                                     current_state->transform,
@@ -655,7 +660,15 @@ index 1111111..2222222 100644
                                     gtk_snapshot_collect_color_matrix,
                                     NULL);
  
-@@ -843,7 +856,7 @@ gtk_snapshot_push_repeat (GtkSnapshot           *snapshot,
+@@ -753,6 +766,7 @@ gtk_snapshot_push_component_transfer (GtkSnapshot                *snapshot,
+ 
+   state = gtk_snapshot_push_state (snapshot,
+                                    current_state->transform,
++                                   current_state->snap,
+                                    gtk_snapshot_collect_component_transfer,
+                                    gtk_snapshot_clear_component_transfer);
+ 
+@@ -917,7 +931,7 @@ gtk_snapshot_push_repeat (GtkSnapshot           *snapshot,
                            const graphene_rect_t *bounds,
                            const graphene_rect_t *child_bounds)
  {
@@ -664,7 +677,7 @@ index 1111111..2222222 100644
    gboolean empty_child_bounds = FALSE;
    graphene_rect_t real_child_bounds = { { 0 } };
    float scale_x, scale_y, dx, dy;
-@@ -857,8 +870,10 @@ gtk_snapshot_push_repeat (GtkSnapshot           *snapshot,
+@@ -931,8 +945,10 @@ gtk_snapshot_push_repeat (GtkSnapshot           *snapshot,
          empty_child_bounds = TRUE;
      }
  
@@ -676,7 +689,7 @@ index 1111111..2222222 100644
                                     empty_child_bounds
                                     ? gtk_snapshot_collect_discard_repeat
                                     : gtk_snapshot_collect_repeat,
-@@ -908,13 +923,15 @@ void
+@@ -986,13 +1002,15 @@ void
  gtk_snapshot_push_clip (GtkSnapshot           *snapshot,
                          const graphene_rect_t *bounds)
  {
@@ -694,7 +707,7 @@ index 1111111..2222222 100644
                                     gtk_snapshot_collect_clip,
                                     NULL);
  
-@@ -1062,15 +1079,17 @@ gtk_snapshot_push_gl_shader (GtkSnapshot           *snapshot,
+@@ -1140,15 +1158,17 @@ gtk_snapshot_push_gl_shader (GtkSnapshot           *snapshot,
                               const graphene_rect_t *bounds,
                               GBytes                *take_args)
  {
@@ -714,7 +727,7 @@ index 1111111..2222222 100644
                                     gtk_snapshot_collect_gl_shader,
                                     gtk_snapshot_clear_gl_shader);
    gtk_graphene_rect_scale_affine (bounds, scale_x, scale_y, dx, dy, &transformed_bounds);
-@@ -1084,8 +1103,10 @@ gtk_snapshot_push_gl_shader (GtkSnapshot           *snapshot,
+@@ -1162,8 +1182,10 @@ gtk_snapshot_push_gl_shader (GtkSnapshot           *snapshot,
  
    for (int i = 0; i  < n_children; i++)
      {
@@ -726,7 +739,7 @@ index 1111111..2222222 100644
                                         gtk_snapshot_collect_gl_shader_texture,
                                         NULL);
        state->data.glshader_texture.bounds = transformed_bounds;
-@@ -1151,13 +1172,15 @@ void
+@@ -1229,13 +1251,15 @@ void
  gtk_snapshot_push_rounded_clip (GtkSnapshot          *snapshot,
                                  const GskRoundedRect *bounds)
  {
@@ -744,7 +757,7 @@ index 1111111..2222222 100644
                                     gtk_snapshot_collect_rounded_clip,
                                     NULL);
  
-@@ -1220,12 +1243,14 @@ gtk_snapshot_push_fill (GtkSnapshot *snapshot,
+@@ -1299,12 +1323,14 @@ gtk_snapshot_push_fill (GtkSnapshot *snapshot,
                          GskPath     *path,
                          GskFillRule  fill_rule)
  {
@@ -761,7 +774,7 @@ index 1111111..2222222 100644
                                     gtk_snapshot_collect_fill,
                                     gtk_snapshot_clear_fill);
  
-@@ -1323,12 +1348,14 @@ gtk_snapshot_push_stroke (GtkSnapshot     *snapshot,
+@@ -1404,12 +1430,14 @@ gtk_snapshot_push_stroke (GtkSnapshot     *snapshot,
                            GskPath         *path,
                            const GskStroke *stroke)
  {
@@ -778,16 +791,16 @@ index 1111111..2222222 100644
                                     gtk_snapshot_collect_stroke,
                                     gtk_snapshot_clear_stroke);
  
-@@ -1450,7 +1477,7 @@ gtk_snapshot_push_shadow2 (GtkSnapshot      *snapshot,
-                            const GskShadow2 *shadow,
-                            gsize             n_shadows)
+@@ -1531,7 +1559,7 @@ gtk_snapshot_push_shadows (GtkSnapshot          *snapshot,
+                            const GskShadowEntry *shadow,
+                            gsize                 n_shadows)
  {
 -  GtkSnapshotState *state;
 +  GtkSnapshotState *state, *current_state;
    GskTransform *transform;
    float scale_x, scale_y, dx, dy;
    gsize i;
-@@ -1461,8 +1488,10 @@ gtk_snapshot_push_shadow2 (GtkSnapshot      *snapshot,
+@@ -1542,8 +1570,10 @@ gtk_snapshot_push_shadows (GtkSnapshot          *snapshot,
                                           &dx, &dy);
    transform = gsk_transform_scale (gsk_transform_translate (NULL, &GRAPHENE_POINT_INIT (dx, dy)), scale_x, scale_y);
  
@@ -798,7 +811,7 @@ index 1111111..2222222 100644
                                     gtk_snapshot_collect_shadow,
                                     gtk_snapshot_clear_shadow);
  
-@@ -1568,12 +1597,14 @@ gtk_snapshot_push_blend (GtkSnapshot  *snapshot,
+@@ -1649,12 +1679,14 @@ gtk_snapshot_push_blend (GtkSnapshot  *snapshot,
  
    top_state = gtk_snapshot_push_state (snapshot,
                                         current_state->transform,
@@ -813,7 +826,7 @@ index 1111111..2222222 100644
                             gtk_snapshot_collect_blend_bottom,
                             NULL);
  }
-@@ -1648,6 +1679,7 @@ gtk_snapshot_push_mask (GtkSnapshot *snapshot,
+@@ -1729,6 +1761,7 @@ gtk_snapshot_push_mask (GtkSnapshot *snapshot,
  
    source_state = gtk_snapshot_push_state (snapshot,
                                            current_state->transform,
@@ -821,7 +834,7 @@ index 1111111..2222222 100644
                                            gtk_snapshot_collect_mask_source,
                                            gtk_snapshot_clear_mask_source);
  
-@@ -1655,6 +1687,7 @@ gtk_snapshot_push_mask (GtkSnapshot *snapshot,
+@@ -1736,6 +1769,7 @@ gtk_snapshot_push_mask (GtkSnapshot *snapshot,
  
    gtk_snapshot_push_state (snapshot,
                             source_state->transform,
@@ -829,7 +842,7 @@ index 1111111..2222222 100644
                             gtk_snapshot_collect_mask_mask,
                             NULL);
  }
-@@ -1757,12 +1790,14 @@ gtk_snapshot_push_cross_fade (GtkSnapshot *snapshot,
+@@ -1838,12 +1872,14 @@ gtk_snapshot_push_cross_fade (GtkSnapshot *snapshot,
  
    end_state = gtk_snapshot_push_state (snapshot,
                                         current_state->transform,
@@ -844,7 +857,7 @@ index 1111111..2222222 100644
                             gtk_snapshot_collect_cross_fade_start,
                             NULL);
  }
-@@ -1873,11 +1908,9 @@ gtk_snapshot_pop_internal (GtkSnapshot *snapshot,
+@@ -1954,11 +1990,9 @@ gtk_snapshot_pop_internal (GtkSnapshot *snapshot,
    return gtk_snapshot_pop_one (snapshot);
  }
  
@@ -857,7 +870,7 @@ index 1111111..2222222 100644
   * Pushes state so a later pop_collect call can collect all nodes
   * appended until that point.
   */
-@@ -1886,6 +1919,7 @@ gtk_snapshot_push_collect (GtkSnapshot *snapshot)
+@@ -1967,6 +2001,7 @@ gtk_snapshot_push_collect (GtkSnapshot *snapshot)
  {
    gtk_snapshot_push_state (snapshot,
                             NULL,
@@ -865,7 +878,7 @@ index 1111111..2222222 100644
                             gtk_snapshot_collect_default,
                             NULL);
  }
-@@ -2047,10 +2081,15 @@ gtk_snapshot_gl_shader_pop_texture (GtkSnapshot *snapshot)
+@@ -2128,10 +2163,15 @@ gtk_snapshot_gl_shader_pop_texture (GtkSnapshot *snapshot)
  void
  gtk_snapshot_save (GtkSnapshot *snapshot)
  {
@@ -882,7 +895,7 @@ index 1111111..2222222 100644
                             NULL,
                             NULL);
  }
-@@ -2088,6 +2127,31 @@ gtk_snapshot_restore (GtkSnapshot *snapshot)
+@@ -2169,6 +2209,31 @@ gtk_snapshot_restore (GtkSnapshot *snapshot)
    g_assert (node == NULL);
  }
  
@@ -897,7 +910,7 @@ index 1111111..2222222 100644
 + * The snap mode is part of the current state, so [method@Snapshot.save]
 + * and [method@Snapshot.restore] can be used to remember a snap mode.
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + **/
 +void
 +gtk_snapshot_set_snap (GtkSnapshot *self,
@@ -914,7 +927,7 @@ index 1111111..2222222 100644
  /**
   * gtk_snapshot_transform:
   * @snapshot: a `GtkSnapshot`
-@@ -2362,6 +2426,7 @@ gtk_snapshot_append_texture (GtkSnapshot           *snapshot,
+@@ -2468,6 +2533,7 @@ gtk_snapshot_append_texture (GtkSnapshot           *snapshot,
                               GdkTexture            *texture,
                               const graphene_rect_t *bounds)
  {
@@ -922,7 +935,7 @@ index 1111111..2222222 100644
    GskRenderNode *node;
    graphene_rect_t real_bounds;
    float scale_x, scale_y, dx, dy;
-@@ -3355,6 +3420,7 @@ gtk_snapshot_push_subsurface (GtkSnapshot   *snapshot,
+@@ -3481,6 +3547,7 @@ gtk_snapshot_push_subsurface (GtkSnapshot   *snapshot,
  
    state = gtk_snapshot_push_state (snapshot,
                                     current_state->transform,
@@ -934,11 +947,11 @@ diff --git a/gtk/gtksnapshot.h b/gtk/gtksnapshot.h
 index 1111111..2222222 100644
 --- a/gtk/gtksnapshot.h
 +++ b/gtk/gtksnapshot.h
-@@ -124,6 +124,9 @@ GDK_AVAILABLE_IN_ALL
+@@ -133,6 +133,9 @@ GDK_AVAILABLE_IN_ALL
  void            gtk_snapshot_save                       (GtkSnapshot            *snapshot);
  GDK_AVAILABLE_IN_ALL
  void            gtk_snapshot_restore                    (GtkSnapshot            *snapshot);
-+GDK_AVAILABLE_IN_4_18
++GDK_AVAILABLE_IN_4_20
 +void            gtk_snapshot_set_snap                   (GtkSnapshot            *self,
 +                                                         GskRectSnap             snap);
  GDK_AVAILABLE_IN_ALL
@@ -957,24 +970,21 @@ to the pixel grid.
 
 Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
 
-[Fix: s/GDK_AVAILABLE_IN_4_20/GDK_AVAILABLE_IN_4_18/]
-Signed-off-by: Kleis Auke Wolthuizen <github@kleisauke.nl>
-
 diff --git a/gsk/gskrendernode.h b/gsk/gskrendernode.h
 index 1111111..2222222 100644
 --- a/gsk/gskrendernode.h
 +++ b/gsk/gskrendernode.h
-@@ -226,8 +226,14 @@ GType                   gsk_texture_node_get_type               (void) G_GNUC_CO
+@@ -233,8 +233,14 @@ GType                   gsk_texture_node_get_type               (void) G_GNUC_CO
  GDK_AVAILABLE_IN_ALL
  GskRenderNode *         gsk_texture_node_new                    (GdkTexture               *texture,
                                                                   const graphene_rect_t    *bounds);
-+GDK_AVAILABLE_IN_4_18
++GDK_AVAILABLE_IN_4_20
 +GskRenderNode *         gsk_texture_node_new_snapped            (GdkTexture               *texture,
 +                                                                 const graphene_rect_t    *bounds,
 +                                                                 GskRectSnap               snap);
  GDK_AVAILABLE_IN_ALL
  GdkTexture *            gsk_texture_node_get_texture            (const GskRenderNode      *node) G_GNUC_PURE;
-+GDK_AVAILABLE_IN_4_18
++GDK_AVAILABLE_IN_4_20
 +GskRectSnap             gsk_texture_node_get_snap               (const GskRenderNode      *node) G_GNUC_PURE;
  
  GDK_AVAILABLE_IN_4_10
@@ -983,7 +993,7 @@ diff --git a/gsk/gskrendernodeimpl.c b/gsk/gskrendernodeimpl.c
 index 1111111..2222222 100644
 --- a/gsk/gskrendernodeimpl.c
 +++ b/gsk/gskrendernodeimpl.c
-@@ -2701,6 +2701,7 @@ struct _GskTextureNode
+@@ -2604,6 +2604,7 @@ struct _GskTextureNode
    GskRenderNode render_node;
  
    GdkTexture *texture;
@@ -991,7 +1001,7 @@ index 1111111..2222222 100644
  };
  
  static void
-@@ -2827,6 +2828,7 @@ gsk_texture_node_diff (GskRenderNode *node1,
+@@ -2733,6 +2734,7 @@ gsk_texture_node_diff (GskRenderNode *node1,
    cairo_region_t *sub;
  
    if (!gsk_rect_equal (&node1->bounds, &node2->bounds) ||
@@ -999,7 +1009,7 @@ index 1111111..2222222 100644
        gdk_texture_get_width (self1->texture) != gdk_texture_get_width (self2->texture) ||
        gdk_texture_get_height (self1->texture) != gdk_texture_get_height (self2->texture))
      {
-@@ -2877,6 +2879,24 @@ gsk_texture_node_get_texture (const GskRenderNode *node)
+@@ -2783,6 +2785,24 @@ gsk_texture_node_get_texture (const GskRenderNode *node)
    return self->texture;
  }
  
@@ -1011,7 +1021,7 @@ index 1111111..2222222 100644
 + *
 + * Returns: the snap value
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
 +GskRectSnap
 +gsk_texture_node_get_snap (const GskRenderNode *node)
@@ -1024,7 +1034,7 @@ index 1111111..2222222 100644
  /**
   * gsk_texture_node_new:
   * @texture: the `GdkTexture`
-@@ -2894,6 +2914,32 @@ gsk_texture_node_get_texture (const GskRenderNode *node)
+@@ -2800,6 +2820,32 @@ gsk_texture_node_get_texture (const GskRenderNode *node)
  GskRenderNode *
  gsk_texture_node_new (GdkTexture            *texture,
                        const graphene_rect_t *bounds)
@@ -1048,7 +1058,7 @@ index 1111111..2222222 100644
 + *
 + * Returns: (transfer full) (type GskTextureNode): A new `GskRenderNode`
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
 +GskRenderNode *
 +gsk_texture_node_new_snapped (GdkTexture            *texture,
@@ -1057,7 +1067,7 @@ index 1111111..2222222 100644
  {
    GskTextureNode *self;
    GskRenderNode *node;
-@@ -2908,6 +2954,7 @@ gsk_texture_node_new (GdkTexture            *texture,
+@@ -2813,6 +2859,7 @@ gsk_texture_node_new (GdkTexture            *texture,
    node->is_hdr = color_state_is_hdr (gdk_texture_get_color_state (texture));
  
    self->texture = g_object_ref (texture);
@@ -1086,7 +1096,7 @@ index 1111111..2222222 100644
  #include "gskroundedrectprivate.h"
  #include "gskrendernodeprivate.h"
  #include "gskstroke.h"
-@@ -1106,6 +1107,51 @@ parse_mask_mode (GtkCssParser *parser,
+@@ -1804,6 +1805,51 @@ parse_mask_mode (GtkCssParser *parser,
    return FALSE;
  }
  
@@ -1138,7 +1148,7 @@ index 1111111..2222222 100644
  static PangoFont *
  font_from_string (PangoFontMap *fontmap,
                    const char   *string,
-@@ -2239,9 +2285,11 @@ parse_texture_node (GtkCssParser *parser,
+@@ -2963,9 +3009,11 @@ parse_texture_node (GtkCssParser *parser,
  {
    graphene_rect_t bounds = GRAPHENE_RECT_INIT (0, 0, 50, 50);
    GdkTexture *texture = NULL;
@@ -1151,7 +1161,7 @@ index 1111111..2222222 100644
    };
    GskRenderNode *node;
  
-@@ -2250,7 +2298,7 @@ parse_texture_node (GtkCssParser *parser,
+@@ -2974,7 +3022,7 @@ parse_texture_node (GtkCssParser *parser,
    if (texture == NULL)
      texture = create_default_texture ();
  
@@ -1160,7 +1170,7 @@ index 1111111..2222222 100644
    g_object_unref (texture);
  
    return node;
-@@ -3857,6 +3905,58 @@ append_enum_param (Printer    *p,
+@@ -4595,6 +4643,58 @@ append_enum_param (Printer    *p,
    g_string_append_c (p->str, '\n');
  }
  
@@ -1219,7 +1229,7 @@ index 1111111..2222222 100644
  static void
  append_vec4_param (Printer               *p,
                     const char            *param_name,
-@@ -4726,6 +4826,7 @@ render_node_print (Printer       *p,
+@@ -5720,6 +5820,7 @@ render_node_print (Printer       *p,
  
          append_rect_param (p, "bounds", &node->bounds);
          append_texture_param (p, "texture", gsk_texture_node_get_texture (node));
@@ -1241,7 +1251,7 @@ diff --git a/gsk/gpu/gskgpunodeprocessor.c b/gsk/gpu/gskgpunodeprocessor.c
 index 1111111..2222222 100644
 --- a/gsk/gpu/gskgpunodeprocessor.c
 +++ b/gsk/gpu/gskgpunodeprocessor.c
-@@ -2137,6 +2137,7 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
+@@ -2147,6 +2147,7 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
    GskGpuImage *image;
    GdkTexture *texture;
    gboolean should_mipmap;
@@ -1249,7 +1259,7 @@ index 1111111..2222222 100644
  
    texture = gsk_texture_node_get_texture (node);
    should_mipmap = texture_node_should_mipmap (node, self->frame, &self->scale);
-@@ -2169,6 +2170,12 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
+@@ -2179,6 +2180,12 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
        return;
      }
  
@@ -1261,8 +1271,8 @@ index 1111111..2222222 100644
 +
    if (should_mipmap)
      {
-       if ((gsk_gpu_image_get_flags (image) & (GSK_GPU_IMAGE_STRAIGHT_ALPHA | GSK_GPU_IMAGE_CAN_MIPMAP)) != GSK_GPU_IMAGE_CAN_MIPMAP ||
-@@ -2189,8 +2196,8 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
+       if ((gsk_gpu_image_get_flags (image) & GSK_GPU_IMAGE_CAN_MIPMAP) != GSK_GPU_IMAGE_CAN_MIPMAP ||
+@@ -2201,8 +2208,8 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
                                         image,
                                         image_cs,
                                         GSK_GPU_SAMPLER_MIPMAP_DEFAULT,
@@ -1273,7 +1283,7 @@ index 1111111..2222222 100644
      }
    else
      {
-@@ -2198,8 +2205,8 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
+@@ -2210,8 +2217,8 @@ gsk_gpu_node_processor_add_texture_node (GskGpuNodeProcessor *self,
                                         image,
                                         image_cs,
                                         GSK_GPU_SAMPLER_DEFAULT,
@@ -1283,8 +1293,8 @@ index 1111111..2222222 100644
 +                                       &bounds);
      }
  
-   g_object_unref (image);
-@@ -2242,6 +2249,7 @@ gsk_gpu_get_texture_node_as_image (GskGpuFrame           *frame,
+   gdk_color_state_unref (image_cs);
+@@ -2255,6 +2262,7 @@ gsk_gpu_get_texture_node_as_image (GskGpuFrame           *frame,
    GdkColorState *image_cs;
    GskGpuImage *image;
    gboolean should_mipmap;
@@ -1292,7 +1302,7 @@ index 1111111..2222222 100644
  
    if ((flags & GSK_GPU_AS_IMAGE_EXACT_SIZE) &&
        !gsk_rect_equal (clip_bounds, &node->bounds))
-@@ -2249,6 +2257,11 @@ gsk_gpu_get_texture_node_as_image (GskGpuFrame           *frame,
+@@ -2262,6 +2270,11 @@ gsk_gpu_get_texture_node_as_image (GskGpuFrame           *frame,
  
    should_mipmap = texture_node_should_mipmap (node, frame, scale);
    image = gsk_gpu_lookup_texture (frame, ccs, texture, FALSE, &image_cs);
@@ -1304,7 +1314,7 @@ index 1111111..2222222 100644
  
    if (image == NULL)
      {
-@@ -2256,7 +2269,7 @@ gsk_gpu_get_texture_node_as_image (GskGpuFrame           *frame,
+@@ -2269,7 +2282,7 @@ gsk_gpu_get_texture_node_as_image (GskGpuFrame           *frame,
                                                    ccs,
                                                    clip_bounds,
                                                    scale,
@@ -1313,10 +1323,10 @@ index 1111111..2222222 100644
                                                    gsk_texture_node_get_texture (node),
                                                    should_mipmap ? GSK_SCALING_FILTER_TRILINEAR : GSK_SCALING_FILTER_LINEAR);
        *out_bounds = *clip_bounds;
-@@ -2278,7 +2291,7 @@ gsk_gpu_get_texture_node_as_image (GskGpuFrame           *frame,
-                                          ccs);
+@@ -2298,7 +2311,7 @@ gsk_gpu_get_texture_node_as_image (GskGpuFrame           *frame,
      }
  
+   gdk_color_state_unref (image_cs);
 -  *out_bounds = node->bounds;
 +  *out_bounds = bounds;
    return image;
@@ -1338,7 +1348,7 @@ diff --git a/gtk/inspector/recorder.c b/gtk/inspector/recorder.c
 index 1111111..2222222 100644
 --- a/gtk/inspector/recorder.c
 +++ b/gtk/inspector/recorder.c
-@@ -1027,6 +1027,23 @@ add_texture_rows (GListStore *store,
+@@ -1117,6 +1117,23 @@ add_texture_rows (GListStore *store,
      }
  }
  
@@ -1362,7 +1372,7 @@ index 1111111..2222222 100644
  static void
  populate_render_node_properties (GListStore    *store,
                                   GskRenderNode *node,
-@@ -1096,6 +1113,7 @@ populate_render_node_properties (GListStore    *store,
+@@ -1186,6 +1203,7 @@ populate_render_node_properties (GListStore    *store,
          GdkTexture *texture = gsk_texture_node_get_texture (node);
  
          add_texture_rows (store, texture);
@@ -1383,7 +1393,7 @@ diff --git a/gtk/gtksnapshot.c b/gtk/gtksnapshot.c
 index 1111111..2222222 100644
 --- a/gtk/gtksnapshot.c
 +++ b/gtk/gtksnapshot.c
-@@ -2437,7 +2437,8 @@ gtk_snapshot_append_texture (GtkSnapshot           *snapshot,
+@@ -2544,7 +2544,8 @@ gtk_snapshot_append_texture (GtkSnapshot           *snapshot,
  
    gtk_snapshot_ensure_affine (snapshot, &scale_x, &scale_y, &dx, &dy);
    gtk_graphene_rect_scale_affine (bounds, scale_x, scale_y, dx, dy, &real_bounds);
@@ -1403,23 +1413,20 @@ Subject: [PATCH 09/15] Add gsk_texture_scale_node_new_snapped
 
 Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8494]
 
-[Fix: s/GDK_AVAILABLE_IN_4_20/GDK_AVAILABLE_IN_4_18/]
-Signed-off-by: Kleis Auke Wolthuizen <github@kleisauke.nl>
-
 diff --git a/gsk/gskrendernode.h b/gsk/gskrendernode.h
 index 1111111..2222222 100644
 --- a/gsk/gskrendernode.h
 +++ b/gsk/gskrendernode.h
-@@ -241,6 +241,13 @@ GDK_AVAILABLE_IN_4_10
+@@ -248,6 +248,13 @@ GDK_AVAILABLE_IN_4_10
  GskRenderNode *         gsk_texture_scale_node_new              (GdkTexture               *texture,
                                                                   const graphene_rect_t    *bounds,
                                                                   GskScalingFilter          filter);
-+GDK_AVAILABLE_IN_4_18
++GDK_AVAILABLE_IN_4_20
 +GskRenderNode *         gsk_texture_scale_node_new_snapped      (GdkTexture               *texture,
 +                                                                 const graphene_rect_t    *bounds,
 +                                                                 GskRectSnap               snap,
 +                                                                 GskScalingFilter          filter);
-+GDK_AVAILABLE_IN_4_18
++GDK_AVAILABLE_IN_4_20
 +GskRectSnap             gsk_texture_scale_node_get_snap         (const GskRenderNode      *node) G_GNUC_PURE;
  GDK_AVAILABLE_IN_4_10
  GdkTexture *            gsk_texture_scale_node_get_texture      (const GskRenderNode      *node) G_GNUC_PURE;
@@ -1428,7 +1435,7 @@ diff --git a/gsk/gskrendernodeimpl.c b/gsk/gskrendernodeimpl.c
 index 1111111..2222222 100644
 --- a/gsk/gskrendernodeimpl.c
 +++ b/gsk/gskrendernodeimpl.c
-@@ -2979,6 +2979,8 @@ struct _GskTextureScaleNode
+@@ -2884,6 +2884,8 @@ struct _GskTextureScaleNode
  
    GdkTexture *texture;
    GskScalingFilter filter;
@@ -1437,7 +1444,7 @@ index 1111111..2222222 100644
  };
  
  static void
-@@ -3065,6 +3067,7 @@ gsk_texture_scale_node_diff (GskRenderNode *node1,
+@@ -2970,6 +2972,7 @@ gsk_texture_scale_node_diff (GskRenderNode *node1,
  
    if (!gsk_rect_equal (&node1->bounds, &node2->bounds) ||
        self1->filter != self2->filter ||
@@ -1445,7 +1452,7 @@ index 1111111..2222222 100644
        gdk_texture_get_width (self1->texture) != gdk_texture_get_width (self2->texture) ||
        gdk_texture_get_height (self1->texture) != gdk_texture_get_height (self2->texture))
      {
-@@ -3135,6 +3138,24 @@ gsk_texture_scale_node_get_filter (const GskRenderNode *node)
+@@ -3040,6 +3043,24 @@ gsk_texture_scale_node_get_filter (const GskRenderNode *node)
    return self->filter;
  }
  
@@ -1457,7 +1464,7 @@ index 1111111..2222222 100644
 + *
 + * Returns: the snap value
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
 +GskRectSnap
 +gsk_texture_scale_node_get_snap (const GskRenderNode *node)
@@ -1470,7 +1477,7 @@ index 1111111..2222222 100644
  /**
   * gsk_texture_scale_node_new:
   * @texture: the texture to scale
-@@ -3162,6 +3183,43 @@ GskRenderNode *
+@@ -3067,6 +3088,43 @@ GskRenderNode *
  gsk_texture_scale_node_new (GdkTexture            *texture,
                              const graphene_rect_t *bounds,
                              GskScalingFilter       filter)
@@ -1504,7 +1511,7 @@ index 1111111..2222222 100644
 + *
 + * Returns: (transfer full) (type GskTextureScaleNode): A new `GskRenderNode`
 + *
-+ * Since: 4.18
++ * Since: 4.20
 + */
 +GskRenderNode *
 +gsk_texture_scale_node_new_snapped (GdkTexture            *texture,
@@ -1514,7 +1521,7 @@ index 1111111..2222222 100644
  {
    GskTextureScaleNode *self;
    GskRenderNode *node;
-@@ -3181,6 +3239,7 @@ gsk_texture_scale_node_new (GdkTexture            *texture,
+@@ -3085,6 +3143,7 @@ gsk_texture_scale_node_new (GdkTexture            *texture,
    gsk_rect_init_from_rect (&node->bounds, bounds);
    gsk_rect_normalize (&node->bounds);
    self->filter = filter;
@@ -1535,7 +1542,7 @@ diff --git a/gsk/gskrendernodeparser.c b/gsk/gskrendernodeparser.c
 index 1111111..2222222 100644
 --- a/gsk/gskrendernodeparser.c
 +++ b/gsk/gskrendernodeparser.c
-@@ -2311,10 +2311,12 @@ parse_texture_scale_node (GtkCssParser *parser,
+@@ -3035,10 +3035,12 @@ parse_texture_scale_node (GtkCssParser *parser,
    graphene_rect_t bounds = GRAPHENE_RECT_INIT (0, 0, 50, 50);
    GdkTexture *texture = NULL;
    GskScalingFilter filter = GSK_SCALING_FILTER_LINEAR;
@@ -1549,7 +1556,7 @@ index 1111111..2222222 100644
    };
    GskRenderNode *node;
  
-@@ -2323,7 +2325,7 @@ parse_texture_scale_node (GtkCssParser *parser,
+@@ -3047,7 +3049,7 @@ parse_texture_scale_node (GtkCssParser *parser,
    if (texture == NULL)
      texture = create_default_texture ();
  
@@ -1558,7 +1565,7 @@ index 1111111..2222222 100644
    g_object_unref (texture);
  
    return node;
-@@ -4853,6 +4855,8 @@ render_node_print (Printer       *p,
+@@ -5847,6 +5849,8 @@ render_node_print (Printer       *p,
            }
  
          append_texture_param (p, "texture", gsk_texture_scale_node_get_texture (node));
@@ -1581,7 +1588,7 @@ diff --git a/gsk/gpu/gskgpunodeprocessor.c b/gsk/gpu/gskgpunodeprocessor.c
 index 1111111..2222222 100644
 --- a/gsk/gpu/gskgpunodeprocessor.c
 +++ b/gsk/gpu/gskgpunodeprocessor.c
-@@ -2304,6 +2304,7 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
+@@ -2324,6 +2324,7 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
    GdkColorState *image_cs;
    GskScalingFilter scaling_filter;
    gboolean need_mipmap, need_offscreen;
@@ -1589,7 +1596,7 @@ index 1111111..2222222 100644
  
    texture = gsk_texture_scale_node_get_texture (node);
    scaling_filter = gsk_texture_scale_node_get_filter (node);
-@@ -2367,6 +2368,12 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
+@@ -2392,6 +2393,12 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
        return;
      }
  
@@ -1599,10 +1606,10 @@ index 1111111..2222222 100644
 +                         &self->offset,
 +                         &bounds);
 +
-   if ((gsk_gpu_image_get_flags (image) & GSK_GPU_IMAGE_STRAIGHT_ALPHA) ||
+   if (gsk_gpu_image_get_shader_op (image) != GDK_SHADER_DEFAULT ||
        (need_mipmap && !(gsk_gpu_image_get_flags (image) & GSK_GPU_IMAGE_CAN_MIPMAP)) ||
        !gdk_color_state_equal (image_cs, self->ccs))
-@@ -2383,13 +2390,13 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
+@@ -2409,13 +2416,13 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
      gsk_gpu_mipmap_op (self->frame, image);
  
    gsk_gpu_texture_op (self->frame,
@@ -1618,7 +1625,7 @@ index 1111111..2222222 100644
 +                          &bounds,
                        });
  
-   g_object_unref (image);
+   gdk_color_state_unref (image_cs);
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Matthias Clasen <mclasen@redhat.com>
@@ -1633,7 +1640,7 @@ diff --git a/gtk/inspector/recorder.c b/gtk/inspector/recorder.c
 index 1111111..2222222 100644
 --- a/gtk/inspector/recorder.c
 +++ b/gtk/inspector/recorder.c
-@@ -1127,6 +1127,7 @@ populate_render_node_properties (GListStore    *store,
+@@ -1217,6 +1217,7 @@ populate_render_node_properties (GListStore    *store,
  
          tmp = g_enum_to_string (GSK_TYPE_SCALING_FILTER, filter);
          add_text_row (store, "Filter", "%s", tmp);
@@ -1655,7 +1662,7 @@ diff --git a/gtk/gtksnapshot.c b/gtk/gtksnapshot.c
 index 1111111..2222222 100644
 --- a/gtk/gtksnapshot.c
 +++ b/gtk/gtksnapshot.c
-@@ -2466,6 +2466,7 @@ gtk_snapshot_append_scaled_texture (GtkSnapshot           *snapshot,
+@@ -2573,6 +2573,7 @@ gtk_snapshot_append_scaled_texture (GtkSnapshot           *snapshot,
                                      GskScalingFilter       filter,
                                      const graphene_rect_t *bounds)
  {
@@ -1663,7 +1670,7 @@ index 1111111..2222222 100644
    GskRenderNode *node;
  
    g_return_if_fail (snapshot != NULL);
-@@ -2473,7 +2474,11 @@ gtk_snapshot_append_scaled_texture (GtkSnapshot           *snapshot,
+@@ -2580,7 +2581,11 @@ gtk_snapshot_append_scaled_texture (GtkSnapshot           *snapshot,
    g_return_if_fail (bounds != NULL);
  
    gtk_snapshot_ensure_identity (snapshot);
@@ -1688,7 +1695,7 @@ diff --git a/gsk/gskrendernodeimpl.c b/gsk/gskrendernodeimpl.c
 index 1111111..2222222 100644
 --- a/gsk/gskrendernodeimpl.c
 +++ b/gsk/gskrendernodeimpl.c
-@@ -2789,6 +2789,7 @@ gsk_texture_node_draw (GskRenderNode *node,
+@@ -2695,6 +2695,7 @@ gsk_texture_node_draw (GskRenderNode *node,
    cairo_pattern_t *pattern;
    cairo_matrix_t matrix;
    int width, height;
@@ -1696,7 +1703,7 @@ index 1111111..2222222 100644
  
    width = gdk_texture_get_width (self->texture);
    height = gdk_texture_get_height (self->texture);
-@@ -2802,19 +2803,21 @@ gsk_texture_node_draw (GskRenderNode *node,
+@@ -2708,19 +2709,21 @@ gsk_texture_node_draw (GskRenderNode *node,
    pattern = cairo_pattern_create_for_surface (surface);
    cairo_pattern_set_extend (pattern, CAIRO_EXTEND_PAD);
  
@@ -1735,7 +1742,7 @@ diff --git a/gsk/gskrendernodeimpl.c b/gsk/gskrendernodeimpl.c
 index 1111111..2222222 100644
 --- a/gsk/gskrendernodeimpl.c
 +++ b/gsk/gskrendernodeimpl.c
-@@ -3014,9 +3014,14 @@ gsk_texture_scale_node_draw (GskRenderNode *node,
+@@ -2919,9 +2919,14 @@ gsk_texture_scale_node_draw (GskRenderNode *node,
    cairo_t *cr2;
    cairo_surface_t *surface2;
    graphene_rect_t clip_rect;
@@ -1751,7 +1758,7 @@ index 1111111..2222222 100644
    cairo_clip (cr);
    _graphene_rect_init_from_clip_extents (&clip_rect, cr);
    if (clip_rect.size.width <= 0 || clip_rect.size.height <= 0)
-@@ -3033,9 +3038,9 @@ gsk_texture_scale_node_draw (GskRenderNode *node,
+@@ -2938,9 +2943,9 @@ gsk_texture_scale_node_draw (GskRenderNode *node,
    cairo_pattern_set_extend (pattern, CAIRO_EXTEND_PAD);
  
    cairo_matrix_init_scale (&matrix,
@@ -1764,7 +1771,7 @@ index 1111111..2222222 100644
    cairo_pattern_set_matrix (pattern, &matrix);
    cairo_pattern_set_filter (pattern, filters[self->filter]);
  
-@@ -3043,7 +3048,7 @@ gsk_texture_scale_node_draw (GskRenderNode *node,
+@@ -2948,7 +2953,7 @@ gsk_texture_scale_node_draw (GskRenderNode *node,
    cairo_pattern_destroy (pattern);
    cairo_surface_destroy (surface);
  
