@@ -10,7 +10,6 @@ $(PKG)_DEPS     := cc meson-wrapper gtk4 gsl vips-all
 
 define $(PKG)_PRE_CONFIGURE
     (printf '{\n'; \
-     printf '  "directx-headers": "$(directx-headers_VERSION)",\n'; \
      printf '  "epoxy": "$(libepoxy_VERSION)",\n'; \
      printf '  "graphene": "$(graphene_VERSION)",\n'; \
      printf '  "gsl": "$(gsl_VERSION)",\n'; \
