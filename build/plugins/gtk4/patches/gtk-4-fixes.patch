@@ -35,7 +35,7 @@ diff --git a/gtk/gtksettings.c b/gtk/gtksettings.c
 index 1111111..2222222 100644
 --- a/gtk/gtksettings.c
 +++ b/gtk/gtksettings.c
-@@ -973,7 +973,7 @@ gtk_settings_class_init (GtkSettingsClass *class)
+@@ -980,7 +980,7 @@ gtk_settings_class_init (GtkSettingsClass *class)
     */
    pspecs[PROP_FONT_RENDERING] = g_param_spec_enum ("gtk-font-rendering", NULL, NULL,
                                                     GTK_TYPE_FONT_RENDERING,
@@ -43,4 +43,4 @@ index 1111111..2222222 100644
 +                                                   GTK_FONT_RENDERING_MANUAL,
                                                     GTK_PARAM_READWRITE);
  
-   g_object_class_install_properties (gobject_class, NUM_PROPERTIES, pspecs);
+   /**

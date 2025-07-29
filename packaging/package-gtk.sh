@@ -96,8 +96,8 @@ fi
 
 echo "Copying $package and dependencies"
 
-# Whitelist dwrite.dll, hid.dll and opengl32.dll for GTK
-whitelist+=(dwrite.dll hid.dll opengl32.dll)
+# A few more DLLs are required to be whitelisted for GTK
+whitelist+=(d3d1{1,2}.dll dcomp.dll dwrite.dll dxgi.dll hid.dll opengl32.dll shcore.dll)
 
 # Copy libvips and dependencies with pe-util
 for pe_target in "${pe_targets[@]}"; do
