@@ -5,6 +5,9 @@ FROM $BASE_IMAGE
 COPY . /data
 WORKDIR /usr/local/mxe
 
+# libtool-specific patches for clang
+RUN patch -p1 -d /usr/share < /data/patches/libtool-2-fixes.patch
+
 ARG PKGS
 ARG MXE_TARGETS
 ARG DEBUG

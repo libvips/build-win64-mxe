@@ -117,8 +117,8 @@ cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 11.2.1
-harfbuzz_VERSION  := 11.3.2
-harfbuzz_CHECKSUM := d58ada9b2d28821245e8bdb8b94a4e2dad01a08c50d57feb027b32e84c9abfb1
+harfbuzz_VERSION  := 11.3.3
+harfbuzz_CHECKSUM := e1fbca6b32a91ae91ecd9eb2ca8d47a5bfe2b1cb2e54855ab7a0b464919ef358
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
@@ -205,6 +205,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: jasper, libiconv
 #  Replaced: jpeg with libjpeg-turbo
 # lcms:
+#  Added: meson-wrapper
 #  Removed: jpeg, tiff
 # libtiff:
 #  Replaced: jpeg with libjpeg-turbo
@@ -219,7 +220,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: libjpeg-turbo, lcms
 #  Removed: boost, curl, qt6-qtbase, libwebp
 # librsvg:
-#  Added: libxml2, rust, $(BUILD)~cargo-c
+#  Added: meson-wrapper, libxml2, rust, $(BUILD)~cargo-c
 #  Removed: gdk-pixbuf, libcroco, libgsf
 # Cairo:
 #  Removed: lzo
@@ -228,6 +229,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # libjpeg-turbo:
 #  Replaced: yasm with $(BUILD)~nasm
 # libxml2:
+#  Added: meson-wrapper
 #  Removed: libiconv, xz, zlib
 # Fontconfig:
 #  Added: meson-wrapper
@@ -246,17 +248,17 @@ freetype_DEPS           := $(subst brotli bzip2,meson-wrapper,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(subst brotli bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
 glib_DEPS               := cc meson-wrapper gettext libffi zlib
 gdk-pixbuf_DEPS         := cc meson-wrapper glib libjpeg-turbo libpng tiff
-lcms_DEPS               := $(filter-out jpeg tiff ,$(lcms_DEPS))
+lcms_DEPS               := $(subst jpeg tiff,meson-wrapper,$(lcms_DEPS))
 tiff_DEPS               := cc libjpeg-turbo libwebp zlib
 imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
 graphicsmagick_DEPS     := $(imagemagick_DEPS)
 openexr_DEPS            := cc imath zlib
 poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
-librsvg_DEPS            := cc cairo glib pango libxml2 rust $(BUILD)~cargo-c
+librsvg_DEPS            := cc meson-wrapper cairo glib pango libxml2 rust $(BUILD)~cargo-c
 cairo_DEPS              := $(filter-out lzo ,$(cairo_DEPS))
 matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
 libjpeg-turbo_DEPS      := $(subst yasm,$(BUILD)~nasm,$(libjpeg-turbo_DEPS))
-libxml2_DEPS            := cc
+libxml2_DEPS            := cc meson-wrapper
 fontconfig_DEPS         := cc meson-wrapper expat freetype-bootstrap
 libexif_DEPS            := $(filter-out  gettext,$(libexif_DEPS))
 harfbuzz_DEPS           := cc meson-wrapper cairo freetype-bootstrap glib
