@@ -9,7 +9,7 @@ diff --git a/libvips/include/vips/internal.h b/libvips/include/vips/internal.h
 index 1111111..2222222 100644
 --- a/libvips/include/vips/internal.h
 +++ b/libvips/include/vips/internal.h
-@@ -426,6 +426,7 @@ guint32 vips__random(guint32 seed);
+@@ -427,6 +427,7 @@ guint32 vips__random(guint32 seed);
  guint32 vips__random_add(guint32 seed, int value);
  
  const char *vips__icc_dir(void);
@@ -46,7 +46,7 @@ diff --git a/libvips/iofuncs/util.c b/libvips/iofuncs/util.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/util.c
 +++ b/libvips/iofuncs/util.c
-@@ -1986,6 +1986,53 @@ DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+@@ -1992,6 +1992,53 @@ DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
  	return TRUE;
  }
  #endif
