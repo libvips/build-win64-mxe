@@ -1,0 +1,34 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 27 Jul 2025 14:00:00 +0200
+Subject: [PATCH 1/1] Make libstdc++ a private dependency
+
+Prevent downstream packages that depend on LibRaw from being
+required to link explicitly against libstdc++.
+
+diff --git a/libraw.pc.in b/libraw.pc.in
+index 1111111..2222222 100644
+--- a/libraw.pc.in
++++ b/libraw.pc.in
+@@ -7,6 +7,6 @@ Name: libraw
+ Description: Raw image decoder library (non-thread-safe)
+ Requires: @PACKAGE_REQUIRES@
+ Version: @PACKAGE_VERSION@
+-Libs: -L${libdir} -lraw -lstdc++@PC_OPENMP@
+-Libs.private: @PACKAGE_LIBS_PRIVATE@
++Libs: -L${libdir} -lraw@PC_OPENMP@
++Libs.private: @PACKAGE_LIBS_PRIVATE@ -lstdc++
+ Cflags: -I${includedir}/libraw -I${includedir}
+diff --git a/libraw_r.pc.in b/libraw_r.pc.in
+index 1111111..2222222 100644
+--- a/libraw_r.pc.in
++++ b/libraw_r.pc.in
+@@ -7,6 +7,6 @@ Name: libraw
+ Description: Raw image decoder library (thread-safe)
+ Requires: @PACKAGE_REQUIRES@
+ Version: @PACKAGE_VERSION@
+-Libs: -L${libdir} -lraw_r -lstdc++@PC_OPENMP@
+-Libs.private: @PACKAGE_LIBS_PRIVATE@
++Libs: -L${libdir} -lraw_r@PC_OPENMP@
++Libs.private: @PACKAGE_LIBS_PRIVATE@ -lstdc++
+ Cflags: -I${includedir}/libraw -I${includedir}
