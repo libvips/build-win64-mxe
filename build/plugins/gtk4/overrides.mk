@@ -15,4 +15,5 @@ cairo_CONFIGURE_OPTS = -Dzlib=enabled -Ddwrite=enabled
 libxml2_MESON_OPTS = -Doutput=enabled
 
 # Override sub-dependencies
+adwaita-icon-theme_DEPS := $(subst gtk3,gtk4,$(adwaita-icon-theme_DEPS))
 libepoxy_DEPS := $(filter-out  xorg-macros,$(libepoxy_DEPS))
