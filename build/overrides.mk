@@ -574,6 +574,9 @@ define librsvg_BUILD
     # Disable tools
     $(SED) -i "/subdir('rsvg_convert')/d" '$(SOURCE_DIR)/meson.build'
 
+    # Ensure MXE's pkg-config wrapper finds librsvg-2.0-uninstalled.pc
+    $(SED) -i "s/PKG_CONFIG_PATH/&_$(subst .,_,$(subst -,_,$(TARGET)))/" '$(SOURCE_DIR)/meson/cargo_wrapper.py'
+
     $(MXE_MESON_WRAPPER) \
         -Dintrospection=disabled \
         -Dpixbuf=disabled \
@@ -583,6 +586,7 @@ define librsvg_BUILD
         -Dtests=false \
         -Dtriplet='$(PROCESSOR)-pc-windows-gnullvm' \
         -Dc_link_args='$(LDFLAGS) -lntdll -luserenv' \
+        $(librsvg_CONFIGURE_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
