@@ -137,6 +137,12 @@ rm -rf share/locale
 # Remove .gitkeep files
 rm -f share/.gitkeep
 
+# touch the icon theme root and cache to be newer than any icon it holds
+# prevents a "cache out of date" warning
+for theme in $install_dir/share/icons/*; do
+  touch -c $theme $theme/index.theme 
+done
+
 echo "Strip unneeded symbols"
 
 # Remove all symbols that are not needed
