@@ -6,8 +6,6 @@ $(PKG)_VERSION  := 4.1.2
 $(PKG)_CHECKSUM := 1f9edf4cf7b3abcccbd7cb61e63b8d9c8397db689dd3c937048fea7ca56d7b0c
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := jcupitt/vipsdisp/releases,v,,,,.tar.xz
-$(PKG)_SUBDIR   := $(PKG)-$(firstword $(subst -, ,$($(PKG)_VERSION)))
-$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
 $(PKG)_DEPS     := cc meson-wrapper gtk4 adwaita-icon-theme vips-all 
 
 define $(PKG)_PRE_CONFIGURE
