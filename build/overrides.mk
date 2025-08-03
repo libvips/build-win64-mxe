@@ -175,6 +175,15 @@ gsl_FILE     := gsl-$(gsl_VERSION).tar.gz
 gsl_URL      := https://ftp.gnu.org/gnu/gsl/$(gsl_FILE)
 gsl_URL_2    := https://ftp.snt.utwente.nl/pub/software/gnu/gsl/$(gsl_FILE)
 
+# upstream version is 3.36.1
+# needed by nip4 and vipsdisp
+adwaita-icon-theme_VERSION  := 48.1
+adwaita-icon-theme_CHECKSUM := cbfe9b86ebcd14b03ba838c49829f7e86a7b132873803b90ac10be7d318a6e12
+adwaita-icon-theme_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/adwaita-icon-theme-[0-9]*.patch)))
+adwaita-icon-theme_SUBDIR   := adwaita-icon-theme-$(adwaita-icon-theme_VERSION)
+adwaita-icon-theme_FILE     := adwaita-icon-theme-$(adwaita-icon-theme_VERSION).tar.xz
+adwaita-icon-theme_URL      := https://download.gnome.org/sources/adwaita-icon-theme/$(firstword $(subst ., ,$(adwaita-icon-theme_VERSION)))/$(adwaita-icon-theme_FILE)
+
 ## Patches that we override with our own
 
 cairo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
@@ -202,6 +211,9 @@ tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
 ## Override sub-dependencies
+# adwaita-icon-theme:
+#  Added: meson-wrapper
+#  Removed: gettext
 # freetype:
 #  Added: meson-wrapper
 #  Removed: brotli, bzip2
@@ -257,6 +269,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Added: zlib
 #  Removed: dlfcn-win32
 
+adwaita-icon-theme_DEPS := $(subst gettext,meson-wrapper,$(adwaita-icon-theme_DEPS))
 freetype_DEPS           := $(subst brotli bzip2,meson-wrapper,$(freetype_DEPS))
 freetype-bootstrap_DEPS := $(subst brotli bzip2,meson-wrapper,$(freetype-bootstrap_DEPS))
 glib_DEPS               := cc meson-wrapper gettext libffi zlib
@@ -280,6 +293,13 @@ libarchive_DEPS         := cc zlib
 sqlite_DEPS             := cc zlib
 
 ## Override build scripts
+
+# build with the Meson build system
+define adwaita-icon-theme_BUILD
+    $(MXE_MESON_WRAPPER) '$(SOURCE_DIR)' '$(BUILD_DIR)'
+
+    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+endef
 
 # libasprintf isn't needed, so build with --disable-libasprintf
 # this definition is for reference purposes only, we use the
@@ -554,6 +574,9 @@ define librsvg_BUILD
     # Disable tools
     $(SED) -i "/subdir('rsvg_convert')/d" '$(SOURCE_DIR)/meson.build'
 
+    # Ensure MXE's pkg-config wrapper finds librsvg-2.0-uninstalled.pc
+    $(SED) -i "s/PKG_CONFIG_PATH/&_$(subst .,_,$(subst -,_,$(TARGET)))/" '$(SOURCE_DIR)/meson/cargo_wrapper.py'
+
     $(MXE_MESON_WRAPPER) \
         -Dintrospection=disabled \
         -Dpixbuf=disabled \
@@ -563,6 +586,7 @@ define librsvg_BUILD
         -Dtests=false \
         -Dtriplet='$(PROCESSOR)-pc-windows-gnullvm' \
         -Dc_link_args='$(LDFLAGS) -lntdll -luserenv' \
+        $(librsvg_CONFIGURE_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
