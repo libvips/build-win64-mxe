@@ -1,1 +1,4 @@
-*crlf.patch -text
+# Shell scripts can't have CRLF line endings
+*.sh		eol=lf
+
+*crlf.patch	-text

@@ -1,0 +1,42 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Tue, 13 Oct 2020 16:40:45 +0200
+Subject: [PATCH 1/1] Don't force relocation support on Windows
+
+We don't use loadable modules for gdk-pixbuf.
+
+diff --git a/meson.build b/meson.build
+index 1111111..2222222 100644
+--- a/meson.build
++++ b/meson.build
+@@ -388,15 +388,8 @@ if not tiff_opt.disabled() and not native_windows_loaders
+   endif
+ endif
+ 
+-# Determine whether we enable application bundle relocation support, and we use
+-# this always on Windows
+-if host_system == 'windows'
+-  relocatable = (get_option('default_library') != 'static')
+-else
+-  relocatable = get_option('relocatable')
+-endif
+-
+-if relocatable
++# Determine whether we enable application bundle relocation support
++if get_option('relocatable')
+   add_project_arguments([ '-DGDK_PIXBUF_RELOCATABLE' ], language: 'c')
+ endif
+ 
+@@ -474,7 +467,7 @@ summary({
+     'Introspection': build_gir,
+     'Documentation': build_docs,
+     'Manual pages': get_option('man'),
+-    'Relocatable': relocatable,
++    'Relocatable': get_option('relocatable'),
+     'Build tests': get_option('tests'),
+     'Installed tests': get_option('installed_tests'),
+   },

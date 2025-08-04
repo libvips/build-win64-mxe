@@ -2,14 +2,15 @@ PKG             := vipsdisp
 $(PKG)_WEBSITE  := https://github.com/jcupitt/vipsdisp
 $(PKG)_DESCR    := Tiny libvips / gtk+4 image viewer
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4.1.0
-$(PKG)_CHECKSUM := 51a1105f27e495fdd8e55a8628c4f688f28f900475efc479c9a7202ba59f09c2
+$(PKG)_VERSION  := 4.1.2
+$(PKG)_CHECKSUM := 1f9edf4cf7b3abcccbd7cb61e63b8d9c8397db689dd3c937048fea7ca56d7b0c
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := jcupitt/vipsdisp/releases,v,,,,.tar.xz
-$(PKG)_DEPS     := cc meson-wrapper gtk4 vips-all
+$(PKG)_DEPS     := cc meson-wrapper gtk4 adwaita-icon-theme vips-all 
 
 define $(PKG)_PRE_CONFIGURE
     (printf '{\n'; \
+     printf '  "adwaita-icon-theme": "$(adwaita-icon-theme_VERSION)",\n'; \
      printf '  "epoxy": "$(libepoxy_VERSION)",\n'; \
      printf '  "graphene": "$(graphene_VERSION)",\n'; \
      printf '  "gtk": "$(gtk4_VERSION)",\n'; \
