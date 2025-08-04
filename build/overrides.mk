@@ -564,9 +564,6 @@ define librsvg_BUILD
     # Enable networking while we build librsvg
     $(eval export MXE_ENABLE_NETWORK := 1)
 
-    # Ensure MXE's pkg-config wrapper finds librsvg-2.0-uninstalled.pc
-    $(SED) -i "s/PKG_CONFIG_PATH/&_$(subst .,_,$(subst -,_,$(TARGET)))/" '$(SOURCE_DIR)/meson/cargo_wrapper.py'
-
     $(MXE_MESON_WRAPPER) \
         --buildtype=plain \
         -Dintrospection=disabled \
@@ -578,7 +575,6 @@ define librsvg_BUILD
         -Dtests=false \
         -Dtriplet='$(PROCESSOR)-pc-windows-gnullvm' \
         -Dc_link_args='$(LDFLAGS) -lntdll -luserenv' \
-        $(PKG_MESON_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
