@@ -24,13 +24,13 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.17.1    | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16    | LGPLv3                                                       |
-| [glib]          | 2.85.2    | LGPLv3                                                       |
+| [glib]          | 2.85.3    | LGPLv3                                                       |
 | [harfbuzz]      | 11.3.3    | MIT Licence                                                  |
 | [highway]       | 1.2.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17      | MIT Licence                                                  |
 | [libarchive]    | 3.8.1     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.25    | LGPLv3                                                       |
-| [libffi]        | 3.5.1     | MIT Licence                                                  |
+| [libffi]        | 3.5.2     | MIT Licence                                                  |
 | [libheif]       | 1.20.1    | LGPLv3                                                       |
 | [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.50    | [libpng License version 2]                                   |
@@ -107,7 +107,7 @@ Same as libvips-web + these extra dependencies:
 | [openjpeg]      | 2.5.3     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
 | [poppler]       | 25.07.0   | GPLv2                                                        |
-| [sqlite]        | 3.50.2    | Public domain                                                |
+| [sqlite]        | 3.50.4    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://github.com/HEASARC/cfitsio
