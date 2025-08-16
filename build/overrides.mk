@@ -39,8 +39,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-26
-imagemagick_CHECKSUM := fcf235fd48be181d8711f2c9e1e61e4498fbe64a7a2bb5c56e41fb41ae1dc158
+imagemagick_VERSION  := 6.9.13-27
+imagemagick_CHECKSUM := f3037537b23ca4e32f31253e99f784dc7e25e5834a206bc464c2f553744bbfa8
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -53,8 +53,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.60.0
-librsvg_CHECKSUM := 0b6ffccdf6e70afc9876882f5d2ce9ffcf2c713cbaaf1ad90170daa752e1eec3
+librsvg_VERSION  := 2.61.0
+librsvg_CHECKSUM := dbd0db40a1179a382fbb8cc930837671b973d722ba106a3dee2aad0fd858e2c4
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -92,6 +92,12 @@ cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
+# upstream version is 11.3.3
+harfbuzz_VERSION  := 11.4.1
+harfbuzz_CHECKSUM := 7aafab93115eb56cdc9a931ab7d19ff60d7f2937b599d140f17236f374e32698
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1
 fontconfig_CHECKSUM := 9f5cae93f4fffc1fbc05ae99cdfc708cd60dfd6612ffc0512827025c026fa541
@@ -118,6 +124,14 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
+
+# upstream version is 25.07.0
+poppler_VERSION  := 25.08.0
+poppler_CHECKSUM := 425ed4d4515a093bdcdbbaac6876f20617451edc710df6a4fd6c45dd67eb418d
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
 libraw_VERSION  := 0.21.4
