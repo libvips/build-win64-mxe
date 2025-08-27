@@ -1,4 +1,4 @@
-FROM docker.io/library/buildpack-deps:bookworm
+FROM docker.io/library/buildpack-deps:trixie
 
 RUN \
   apt-get update && \
@@ -6,11 +6,12 @@ RUN \
     # http://mxe.cc/#requirements-debian
     autopoint bison build-essential flex gettext gperf \
     intltool jq libtool-bin libxml-parser-perl lzip p7zip-full \
-    python-is-python3 python3-mako python3-packaging python3-tomli \
-    ruby zip
+    python-is-python3 python3-mako ruby zip \
+    # needed by adwaita-icon-theme
+    gtk-update-icon-cache
 
 WORKDIR /usr/local
-RUN git clone -b llvm-mingw-20250712 --single-branch https://github.com/kleisauke/mxe.git
+RUN git clone -b llvm-mingw-20250827 --single-branch https://github.com/kleisauke/mxe.git
 
 WORKDIR /usr/local/mxe
 
