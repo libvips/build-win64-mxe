@@ -2,14 +2,6 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
-# upstream version is 3.4.8
-libffi_VERSION  := 3.5.2
-libffi_CHECKSUM := f3a3082a23b37c293a4fcd1053147b371f2ff91fa7ea1b2a52e335676bac82dc
-libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
-libffi_SUBDIR   := libffi-$(libffi_VERSION)
-libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
-libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
-
 # upstream version is 2.42.12
 # gdk-pixbuf is still used by OpenSlide
 gdk-pixbuf_VERSION  := 2.43.3
@@ -18,15 +10,6 @@ gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
-
-# no longer needed by libvips, but some of the deps need it
-# upstream version is 2.14.4
-libxml2_VERSION  := 2.14.5
-libxml2_CHECKSUM := 03d006f3537616833c16c53addcdc32a0eb20e55443cba4038307e3fa7d8d44b
-libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
-libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
-libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
-libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 1.5.23
 # cannot use GH_CONF:
@@ -76,14 +59,6 @@ pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
 pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
-# upstream version is 1.5.0
-libwebp_VERSION  := 1.6.0
-libwebp_CHECKSUM := e4ab7009bf0629fd11982d4c2aa83964cf244cffba7347ecd39019a9e38c4564
-libwebp_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libwebp-[0-9]*.patch)))
-libwebp_SUBDIR   := libwebp-$(libwebp_VERSION)
-libwebp_FILE     := libwebp-$(libwebp_VERSION).tar.gz
-libwebp_URL      := https://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(libwebp_FILE)
-
 # upstream version is 1.0.13
 # cannot use GH_CONF:
 # fribidi_GH_CONF  := fribidi/fribidi/releases,v
@@ -93,14 +68,6 @@ fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
-
-# upstream version is 2.85.1
-glib_VERSION  := 2.85.3
-glib_CHECKSUM := af229e1de191d66aebcdb03c7493c724fd4d0a6628b1ca4ea1f35739259b311d
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
-glib_SUBDIR   := glib-$(glib_VERSION)
-glib_FILE     := glib-$(glib_VERSION).tar.xz
-glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
@@ -115,20 +82,6 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
-
-# upstream version is 11.2.1
-harfbuzz_VERSION  := 11.4.1
-harfbuzz_CHECKSUM := 7aafab93115eb56cdc9a931ab7d19ff60d7f2937b599d140f17236f374e32698
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
-
-# upstream version is 0.46.0
-pixman_VERSION  := 0.46.4
-pixman_CHECKSUM := a098c33924754ad43f981b740f6d576c70f9ed1006e12221b1845431ebce1239
-pixman_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pixman-[0-9]*.patch)))
-pixman_SUBDIR   := pixman-$(pixman_VERSION)
-pixman_FILE     := pixman-$(pixman_VERSION).tar.xz
-pixman_URL      := https://cairographics.org/releases/$(pixman_FILE)
 
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1
@@ -156,14 +109,6 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
-
-# upstream version is 25.07.0
-poppler_VERSION  := 25.08.0
-poppler_CHECKSUM := 425ed4d4515a093bdcdbbaac6876f20617451edc710df6a4fd6c45dd67eb418d
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
 libraw_VERSION  := 0.21.4

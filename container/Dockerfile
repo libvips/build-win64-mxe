@@ -5,10 +5,6 @@ FROM $BASE_IMAGE
 COPY . /data
 WORKDIR /usr/local/mxe
 
-# TODO(kleisauke): Move to the base image.
-# While we're at it, update the Docker container to Debian 13 (trixie) as well.
-RUN apt-get install -qqy --no-install-recommends gtk-update-icon-cache
-
 # libtool-specific patches for clang
 RUN patch -p1 -d /usr/share < /data/patches/libtool-2-fixes.patch
 
