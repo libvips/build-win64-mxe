@@ -25,7 +25,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.13.3    | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16    | LGPLv3                                                       |
 | [glib]          | 2.85.4    | LGPLv3                                                       |
-| [harfbuzz]      | 11.4.4    | MIT Licence                                                  |
+| [harfbuzz]      | 11.4.5    | MIT Licence                                                  |
 | [highway]       | 1.3.0     | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17      | MIT Licence                                                  |
 | [libarchive]    | 3.8.1     | BSD 2-Clause                                                 |
@@ -41,9 +41,9 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libwebp]       | 1.6.0     | New BSD License                                              |
 | [libxml2]       | 2.14.5    | MIT Licence                                                  |
 | [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
-| [pango]         | 1.56.4    | LGPLv3                                                       |
+| [pango]         | 1.57.0    | LGPLv3                                                       |
 | [pixman]        | 0.46.4    | MIT Licence                                                  |
-| [proxy-libintl] | 0.4       | LGPLv3                                                       |
+| [proxy-libintl] | 0.5       | LGPLv3                                                       |
 | [zlib-ng]       | 2.2.5     | [zlib-ng Licence]                                            |
 
 ¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
@@ -95,8 +95,8 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0     | MIT Licence                                                  |
 | [cfitsio]       | 4.6.2     | BSD-like                                                     |
 | [fftw]          | 3.3.10    | GPLv2                                                        |
-| [gdk-pixbuf]    | 2.43.3    | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-27 | [ImageMagick License] (Apache-2.0-like)                      |
+| [gdk-pixbuf]    | 2.43.5    | LGPLv3                                                       |
+| [imagemagick]   | 6.9.13-29 | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9     | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0     | MIT Licence                                                  |
 | [libjxl]        | 0.11.1    | BSD 3-Clause                                                 |
@@ -106,7 +106,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.3     | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 25.08.0   | GPLv2                                                        |
+| [poppler]       | 25.09.0   | GPLv2                                                        |
 | [sqlite]        | 3.50.4    | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
