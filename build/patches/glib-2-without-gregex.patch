@@ -72,7 +72,7 @@ index 1111111..2222222 100644
 -  g_strfreev (lines);
 -
 -  return result;
-+  return orig;
++  return g_strdup (orig);
  }
  
  static void

@@ -4,8 +4,8 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 # upstream version is 2.42.12
 # gdk-pixbuf is still used by OpenSlide
-gdk-pixbuf_VERSION  := 2.43.3
-gdk-pixbuf_CHECKSUM := ed4c5d16346a5b4e95326731de9700fad70d03bbd2f9324732e6c94f42d869d7
+gdk-pixbuf_VERSION  := 2.43.5
+gdk-pixbuf_CHECKSUM := a723ec2428427f857b8727dfbbe9dab77142a13fb6d0c47f95222251ae36ff15
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -30,8 +30,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-27
-imagemagick_CHECKSUM := f3037537b23ca4e32f31253e99f784dc7e25e5834a206bc464c2f553744bbfa8
+imagemagick_VERSION  := 6.9.13-29
+imagemagick_CHECKSUM := 822a472f2b42a9e116536291d73bc375532a8690892d4191855971d77198edac
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -52,8 +52,8 @@ librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.51.0
-pango_VERSION  := 1.56.4
-pango_CHECKSUM := 17065e2fcc5f5a5bdbffc884c956bfc7c451a96e8c4fb2f8ad837c6413cb5a01
+pango_VERSION  := 1.57.0
+pango_CHECKSUM := 890640c841dae77d3ae3d8fe8953784b930fa241b17423e6120c7bfdf8b891e7
 pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
 pango_SUBDIR   := pango-$(pango_VERSION)
 pango_FILE     := pango-$(pango_VERSION).tar.xz
@@ -83,6 +83,12 @@ cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
+# upstream version is 11.4.4
+harfbuzz_VERSION  := 11.4.5
+harfbuzz_CHECKSUM := 0f052eb4ab01d8bae98ba971c954becb32be57d7250f18af343b1d27892e03fa
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1
 fontconfig_CHECKSUM := 9f5cae93f4fffc1fbc05ae99cdfc708cd60dfd6612ffc0512827025c026fa541
@@ -109,6 +115,14 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
+
+# upstream version is 25.08.0
+poppler_VERSION  := 25.09.0
+poppler_CHECKSUM := 758abfe0c77108c72d654b291dfbce54964b5315a53028e3875f07ef55ff20a3
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.7.1
 # needed by nip4
@@ -476,6 +490,7 @@ define librsvg_BUILD
     $(SED) -i "/subdir('rsvg_convert')/d" '$(SOURCE_DIR)/meson.build'
 
     $(MXE_MESON_WRAPPER) \
+        --buildtype=plain \
         -Dintrospection=disabled \
         -Dpixbuf=disabled \
         -Dpixbuf-loader=disabled \
