@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 7 Oct 2019 11:30:00 +0200
-Subject: [PATCH 1/2] Fix pkg-config file when using built-in loader(s)
+Subject: [PATCH 1/1] Fix pkg-config file when using built-in loader(s)
 
 See: https://gitlab.gnome.org/GNOME/gdk-pixbuf/merge_requests/50
 
@@ -59,25 +59,3 @@ index 1111111..2222222 100644
    endif
  endif
  
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Matthias Clasen <mclasen@redhat.com>
-Date: Sat, 30 Aug 2025 20:15:00 +0200
-Subject: [PATCH 2/2] build: Always define thumbnailer_opt
-
-This is necessary to keep cross-building working.
-
-Upstream-Status: Backport [https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/commit/d8ff7ec050b939ae21544194c124e7ba0eca5e2d]
-
-diff --git a/meson.build b/meson.build
-index 1111111..2222222 100644
---- a/meson.build
-+++ b/meson.build
-@@ -448,6 +448,8 @@ if not meson.is_cross_build()
-   if not thumbnailer_opt.disabled()
-     subdir('thumbnailer')
-   endif
-+else
-+  thumbnailer_opt = disabler()
- endif
- 
- # Documentation

@@ -4,74 +4,8 @@ Contains ad hoc patches for cross building.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Tue, 6 Oct 2020 19:40:00 +0200
-Subject: [PATCH 1/2] aom_pthread: switch win32 mutex API entirely to SWR
-
-Incorporates the changes from:
-https://code.videolan.org/videolan/dav1d/-/merge_requests/107
-
-diff --git a/aom_util/aom_pthread.h b/aom_util/aom_pthread.h
-index 1111111..2222222 100644
---- a/aom_util/aom_pthread.h
-+++ b/aom_util/aom_pthread.h
-@@ -34,7 +34,9 @@ extern "C" {
- #include <windows.h>  // NOLINT
- typedef HANDLE pthread_t;
- typedef int pthread_attr_t;
--typedef CRITICAL_SECTION pthread_mutex_t;
-+
-+// use lightweight mutex/condition variable API for Windows Vista and later
-+typedef SRWLOCK pthread_mutex_t;
- 
- #if _WIN32_WINNT < 0x0600
- #error _WIN32_WINNT must target Windows Vista / Server 2008 or newer.
-@@ -118,26 +120,27 @@ static inline int pthread_join(pthread_t thread, void **value_ptr) {
- static inline int pthread_mutex_init(pthread_mutex_t *const mutex,
-                                      void *mutexattr) {
-   (void)mutexattr;
--  InitializeCriticalSectionEx(mutex, 0 /*dwSpinCount*/, 0 /*Flags*/);
-+  InitializeSRWLock(mutex);
-   return 0;
- }
- 
- static inline int pthread_mutex_trylock(pthread_mutex_t *const mutex) {
--  return TryEnterCriticalSection(mutex) ? 0 : EBUSY;
-+  return TryAcquireSRWLockExclusive(mutex) ? 0 : EBUSY;
- }
- 
- static inline int pthread_mutex_lock(pthread_mutex_t *const mutex) {
--  EnterCriticalSection(mutex);
-+  AcquireSRWLockExclusive(mutex);
-   return 0;
- }
- 
- static inline int pthread_mutex_unlock(pthread_mutex_t *const mutex) {
--  LeaveCriticalSection(mutex);
-+  ReleaseSRWLockExclusive(mutex);
-   return 0;
- }
- 
- static inline int pthread_mutex_destroy(pthread_mutex_t *const mutex) {
--  DeleteCriticalSection(mutex);
-+  (void)mutex;
-+  // Unlocked SWR locks does not use resources
-   return 0;
- }
- 
-@@ -167,7 +170,7 @@ static inline int pthread_cond_broadcast(pthread_cond_t *const condition) {
- static inline int pthread_cond_wait(pthread_cond_t *const condition,
-                                     pthread_mutex_t *const mutex) {
-   int ok;
--  ok = SleepConditionVariableCS(condition, mutex, INFINITE);
-+  ok = SleepConditionVariableSRW(condition, mutex, INFINITE, 0);
-   return !ok;
- }
- #else                 // _WIN32
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Wed, 7 Oct 2020 18:43:50 +0200
-Subject: [PATCH 2/2] aom_thread: fix potentially bad call to execute
+Subject: [PATCH 1/1] aom_thread: fix potentially bad call to execute
 
 Incorporates the changes from:
 https://chromium.googlesource.com/webm/libwebp/+/fde2782ecbb95043c9640f53682d128713542c49
