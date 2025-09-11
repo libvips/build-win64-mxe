@@ -210,7 +210,7 @@ plugin_dirs+=" /data/plugins/proxy-libintl"
 
 # Build requested packages
 $oci_runtime build \
-  --pull \
+  --pull=$with_prebuilt \
   -t libvips-build-win-mxe \
   -f container/Dockerfile \
   --build-arg BASE_IMAGE="$image" \
