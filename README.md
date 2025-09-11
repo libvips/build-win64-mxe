@@ -15,38 +15,38 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 ## libvips-web dependencies
 
-| Dependency      | Version   | Used under the terms of                                      |
-|-----------------|-----------|--------------------------------------------------------------|
-| [aom]           | 3.13.1    | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
-| [cairo]         | 1.18.4    | Mozilla Public License 2.0                                   |
-| [cgif]          | 0.5.0     | MIT Licence                                                  |
-| [expat]         | 2.7.1     | MIT Licence                                                  |
-| [fontconfig]    | 2.17.1    | [fontconfig Licence] (BSD-like)                              |
-| [freetype]      | 2.14.1    | [freetype Licence] (BSD-like)                                |
-| [fribidi]       | 1.0.16    | LGPLv3                                                       |
-| [glib]          | 2.86.0    | LGPLv3                                                       |
-| [harfbuzz]      | 11.5.0    | MIT Licence                                                  |
-| [highway]       | 1.3.0     | Apache-2.0 License, BSD 3-Clause                             |
-| [lcms]          | 2.17      | MIT Licence                                                  |
-| [libarchive]    | 3.8.1     | BSD 2-Clause                                                 |
-| [libexif]       | 0.6.25    | LGPLv3                                                       |
-| [libffi]        | 3.5.2     | MIT Licence                                                  |
-| [libheif]       | 1.20.2    | LGPLv3                                                       |
-| [libimagequant] | 2.4.1¹    | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.50    | [libpng License version 2]                                   |
-| [librsvg]       | 2.61.1    | LGPLv3                                                       |
-| [libspng]       | 0.7.4     | BSD 2-Clause                                                 |
-| [libtiff]       | 4.7.0     | [libtiff License] (BSD-like)                                 |
-| [libvips]       | 8.17.2    | LGPLv3                                                       |
-| [libwebp]       | 1.6.0     | New BSD License                                              |
-| [libxml2]       | 2.14.6    | MIT Licence                                                  |
-| [mozjpeg]       | 4.1.5     | [zlib License, IJG License, BSD-3-Clause]                    |
-| [pango]         | 1.57.0    | LGPLv3                                                       |
-| [pixman]        | 0.46.4    | MIT Licence                                                  |
-| [proxy-libintl] | 0.5       | LGPLv3                                                       |
-| [zlib-ng]       | 2.2.5     | [zlib-ng Licence]                                            |
+| Dependency      | Version    | Used under the terms of                                      |
+|-----------------|------------|--------------------------------------------------------------|
+| [aom]           | 3.13.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
+| [cgif]          | 0.5.0      | MIT Licence                                                  |
+| [expat]         | 2.7.1      | MIT Licence                                                  |
+| [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
+| [freetype]      | 2.14.1     | [freetype Licence] (BSD-like)                                |
+| [fribidi]       | 1.0.16     | LGPLv3                                                       |
+| [glib]          | 2.86.0     | LGPLv3                                                       |
+| [harfbuzz]      | 11.5.0     | MIT Licence                                                  |
+| [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
+| [lcms]          | 2.17       | MIT Licence                                                  |
+| [libarchive]    | 3.8.1      | BSD 2-Clause                                                 |
+| [libexif]       | 0.6.25     | LGPLv3                                                       |
+| [libffi]        | 3.5.2      | MIT Licence                                                  |
+| [libheif]       | 1.20.2     | LGPLv3                                                       |
+| [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
+| [libpng]        | 1.6.50     | [libpng License version 2]                                   |
+| [librsvg]       | 2.61.1     | LGPLv3                                                       |
+| [libspng]       | 0.7.4      | BSD 2-Clause                                                 |
+| [libtiff]       | 4.7.0      | [libtiff License] (BSD-like)                                 |
+| [libvips]       | 8.17.2     | LGPLv3                                                       |
+| [libwebp]       | 1.6.0      | New BSD License                                              |
+| [libxml2]       | 2.14.6     | MIT Licence                                                  |
+| [mozjpeg]       | 4.1.5      | [zlib License, IJG License, BSD-3-Clause]                    |
+| [pango]         | 1.57.0     | LGPLv3                                                       |
+| [pixman]        | 0.46.4     | MIT Licence                                                  |
+| [proxy-libintl] | 0.5        | LGPLv3                                                       |
+| [zlib-ng]       | 2.2.5      | [zlib-ng Licence]                                            |
 
-¹ [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.  
+[^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
@@ -88,23 +88,23 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 Same as libvips-web + these extra dependencies:
 
-| Dependency      | Version   | Used under the terms of                                      |
-|-----------------|-----------|--------------------------------------------------------------|
-| [brotli]        | 1.1.0     | MIT Licence                                                  |
-| [cfitsio]       | 4.6.2     | BSD-like                                                     |
-| [fftw]          | 3.3.10    | GPLv2                                                        |
-| [gdk-pixbuf]    | 2.44.1    | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-29 | [ImageMagick License] (Apache-2.0-like)                      |
-| [imath]         | 3.1.9     | BSD 3-Clause                                                 |
-| [libdicom]      | 1.2.0     | MIT Licence                                                  |
-| [libjxl]        | 0.11.1    | BSD 3-Clause                                                 |
-| [matio]         | 1.5.28    | BSD 2-Clause                                                 |
-| [nifticlib]     | 3.0.1     | Public domain                                                |
-| [openexr]       | 3.1.11    | BSD 3-Clause                                                 |
-| [openjpeg]      | 2.5.3     | BSD 2-Clause                                                 |
-| [openslide]     | 4.0.0     | LGPLv3                                                       |
-| [poppler]       | 25.09.1   | GPLv2                                                        |
-| [sqlite]        | 3.50.4    | Public domain                                                |
+| Dependency      | Version    | Used under the terms of                                      |
+|-----------------|------------|--------------------------------------------------------------|
+| [brotli]        | 1.1.0      | MIT Licence                                                  |
+| [cfitsio]       | 4.6.2      | BSD-like                                                     |
+| [fftw]          | 3.3.10     | GPLv2                                                        |
+| [gdk-pixbuf]    | 2.44.1     | LGPLv3                                                       |
+| [imagemagick]   | 6.9.13-29  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imath]         | 3.1.9      | BSD 3-Clause                                                 |
+| [libdicom]      | 1.2.0      | MIT Licence                                                  |
+| [libjxl]        | 0.11.1     | BSD 3-Clause                                                 |
+| [matio]         | 1.5.28     | BSD 2-Clause                                                 |
+| [nifticlib]     | 3.0.1      | Public domain                                                |
+| [openexr]       | 3.1.11     | BSD 3-Clause                                                 |
+| [openjpeg]      | 2.5.3      | BSD 2-Clause                                                 |
+| [openslide]     | 4.0.0      | LGPLv3                                                       |
+| [poppler]       | 25.09.1    | GPLv2                                                        |
+| [sqlite]        | 3.50.4     | Public domain                                                |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://github.com/HEASARC/cfitsio
@@ -136,9 +136,9 @@ For example:
 
 In that case, the following version of libjpeg-turbo is built:
 
-| Dependency      | Version   | Used under the terms of                                      |
-|-----------------|-----------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 3.1.0     | [zlib License, IJG License]                                  |
+| Dependency      | Version    | Used under the terms of                                      |
+|-----------------|------------|--------------------------------------------------------------|
+| [libjpeg-turbo] | 3.1.0      | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/LICENSE.md
@@ -158,9 +158,9 @@ building. For example:
 
 In that case, the following version of jpegli is built:
 
-| Dependency      | Version   | Used under the terms of                                      |
-|-----------------|-----------|--------------------------------------------------------------|
-| [jpegli]        | [5126d62] | BSD 3-Clause                                                 |
+| Dependency      | Version    | Used under the terms of                                      |
+|-----------------|------------|--------------------------------------------------------------|
+| [jpegli]        | [5126d62]  | BSD 3-Clause                                                 |
 
 [5126d62]: https://github.com/google/jpegli/commit/5126d62d24d368f0ceadd53454653edeb9086386
 
@@ -168,7 +168,7 @@ In that case, the following version of jpegli is built:
 
 ## zlib
 
-By default [zlib-ng] is built. This is a zlib replacement with optimizations for
+By default, [zlib-ng] is built. This is a zlib replacement with optimizations for
 "next generation" systems. You can use the `--without-zlib-ng` argument during the
 build when (vanilla-)[zlib] is preferred. For example:
 
@@ -178,9 +178,9 @@ build when (vanilla-)[zlib] is preferred. For example:
 
 In that case, the following version of zlib is built:
 
-| Dependency      | Version   | Used under the terms of                                      |
-|-----------------|-----------|--------------------------------------------------------------|
-| [zlib]          | 1.3.1     | [zlib Licence]                                               |
+| Dependency      | Version    | Used under the terms of                                      |
+|-----------------|------------|--------------------------------------------------------------|
+| [zlib]          | 1.3.1      | [zlib Licence]                                               |
 
 [zlib]: https://github.com/madler/zlib
 [zlib Licence]: https://github.com/madler/zlib/blob/develop/LICENSE
@@ -197,10 +197,10 @@ HEIC images. This can be turned on with the `--with-hevc` argument. For example:
 These dependencies include HEVC-related logic and are therefore not included in the
 prebuilt binaries while it is patent-encumbered.
 
-| Dependency      | Version   | Used under the terms of                                      |
-|-----------------|-----------|--------------------------------------------------------------|
-| [libde265]      | 1.0.16    | LGPLv3                                                       |
-| [x265]          | 4.1       | GPLv2                                                        |
+| Dependency      | Version    | Used under the terms of                                      |
+|-----------------|------------|--------------------------------------------------------------|
+| [libde265]      | 1.0.16     | LGPLv3                                                       |
+| [x265]          | 4.1        | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265
 [x265]: https://bitbucket.org/multicoreware/x265_git/wiki/Home
