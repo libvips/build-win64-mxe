@@ -100,12 +100,6 @@ cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
-# upstream version is 11.4.4
-harfbuzz_VERSION  := 11.4.5
-harfbuzz_CHECKSUM := 0f052eb4ab01d8bae98ba971c954becb32be57d7250f18af343b1d27892e03fa
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
-
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1
 fontconfig_CHECKSUM := 9f5cae93f4fffc1fbc05ae99cdfc708cd60dfd6612ffc0512827025c026fa541
