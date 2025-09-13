@@ -581,7 +581,7 @@ define librsvg_BUILD
         -Dtests=false \
         -Dtriplet='$(PROCESSOR)-pc-windows-gnullvm' \
         -Dc_link_args='$(LDFLAGS) -lntdll -luserenv' \
-        $(librsvg_CONFIGURE_OPTS) \
+        $(PKG_MESON_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -657,6 +657,7 @@ define tiff_BUILD
         --disable-cxx \
         --disable-lzma \
         --disable-zstd \
+        $(PKG_CONFIGURE_OPTS) \
         $(if $(and $(IS_JPEGLI),$(BUILD_STATIC)), LIBS="`'$(TARGET)-pkg-config' --libs libjpeg`")
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
@@ -700,7 +701,7 @@ define cairo_BUILD
         -Dspectre=disabled \
         -Dsymbol-lookup=disabled \
         -Dgtk_doc=false \
-        $(cairo_CONFIGURE_OPTS) \
+        $(PKG_MESON_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -722,16 +723,10 @@ endef
 
 # build with the Meson build system
 # build a minimal libxml2, see: https://github.com/lovell/sharp-libvips/pull/92
-# OpenSlide needs -Dxpath=enabled
-# ImageMagick's internal MSVG parser needs -Dpush=enabled -Dsax1=enabled
 define libxml2_BUILD
     $(MXE_MESON_WRAPPER) \
         -Dminimum=true \
-        $(if $(findstring .all,$(TARGET)), \
-            -Dxpath=enabled \
-            -Dpush=enabled \
-            -Dsax1=enabled) \
-        $(libxml2_MESON_OPTS) \
+        $(PKG_MESON_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -766,14 +761,8 @@ endef
 # build with the Meson build system
 # compile with the internal PCRE library
 define glib_BUILD
-    $(if $(findstring .ffi,$(TARGET)), \
-        (cd '$(SOURCE_DIR)' && $(PATCH) -p1 -u) < $(realpath $(dir $(lastword $(glib_PATCHES))))/glib-static.patch)
-
-    # Build as shared library when `--with-ffi-compat` is passed, since we
-    # need `libgobject-2.0-0.dll` and `libglib-2.0-0.dll` for these bindings.
     # Enable networking to allow gvdb to be downloaded from WrapDB
     MXE_ENABLE_NETWORK=1 $(MXE_MESON_WRAPPER) \
-        $(if $(findstring .ffi,$(TARGET)), --default-library=shared) \
         --force-fallback-for=gvdb \
         -Dsysprof=disabled \
         -Dtests=false \
@@ -781,7 +770,7 @@ define glib_BUILD
         -Dglib_debug=disabled \
         -Dglib_assert=false \
         -Dglib_checks=false \
-        $(glib_CONFIGURE_OPTS) \
+        $(PKG_MESON_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

@@ -40,7 +40,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libvips]       | 8.18.0[^2] | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
 | [libxml2]       | 2.14.6     | MIT Licence                                                  |
-| [mozjpeg]       | 4.1.5      | [zlib License, IJG License, BSD-3-Clause]                    |
+| [mozjpeg]       | 4.1.5      | [zlib License, IJG License, BSD 3-Clause]                    |
 | [pango]         | 1.57.0     | LGPLv3                                                       |
 | [pixman]        | 0.46.4     | MIT Licence                                                  |
 | [proxy-libintl] | 0.5        | LGPLv3                                                       |
@@ -79,7 +79,7 @@ https://github.com/libvips/libvips/releases/tag/v8.18.0-test1
 [libwebp]: https://github.com/webmproject/libwebp
 [libxml2]: https://gitlab.gnome.org/GNOME/libxml2
 [mozjpeg]: https://github.com/mozilla/mozjpeg
-[zlib License, IJG License, BSD-3-Clause]: https://github.com/mozilla/mozjpeg/blob/master/LICENSE.md
+[zlib License, IJG License, BSD 3-Clause]: https://github.com/mozilla/mozjpeg/blob/master/LICENSE.md
 [pango]: https://gitlab.gnome.org/GNOME/pango
 [pixman]: https://gitlab.freedesktop.org/pixman/pixman
 [proxy-libintl]: https://github.com/frida/proxy-libintl
@@ -108,6 +108,7 @@ Same as libvips-web + these extra dependencies:
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
 | [poppler]       | 25.09.1    | GPLv2                                                        |
 | [sqlite]        | 3.50.4     | Public domain                                                |
+| [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://github.com/HEASARC/cfitsio
@@ -126,6 +127,7 @@ Same as libvips-web + these extra dependencies:
 [openslide]: https://github.com/openslide/openslide
 [poppler]: https://gitlab.freedesktop.org/poppler/poppler
 [sqlite]: https://sqlite.org/
+[zstd]: https://github.com/facebook/zstd
 
 ## libjpeg-turbo
 

@@ -25,12 +25,12 @@ index 1111111..2222222 100644
  const char *
  vips_guess_libdir(const char *argv0, const char *env_name)
  {
-+#if defined(G_OS_WIN32) && defined(VIPS_DLLDIR_AS_LIBDIR)
++#ifdef G_OS_WIN32
 +	/* Sometimes users want to use the DLL directory where the libvips DLL
 +	 * resides as libdir.
 +	 */
 +	return vips__dll_dir();
-+#else  /*!G_OS_WIN32 || !VIPS_DLLDIR_AS_LIBDIR*/
++#else  /*!G_OS_WIN32*/
  	const char *prefix = vips_guess_prefix(argv0, env_name);
  	static char *libdir = NULL;
  
@@ -38,7 +38,7 @@ index 1111111..2222222 100644
  		libdir = g_strdup_printf("%s/lib", prefix);
  
  	return libdir;
-+#endif /*G_OS_WIN32 && VIPS_DLLDIR_AS_LIBDIR*/
++#endif /*G_OS_WIN32*/
  }
  
  /**
@@ -46,12 +46,11 @@ diff --git a/libvips/iofuncs/util.c b/libvips/iofuncs/util.c
 index 1111111..2222222 100644
 --- a/libvips/iofuncs/util.c
 +++ b/libvips/iofuncs/util.c
-@@ -1992,6 +1992,53 @@ DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+@@ -1992,6 +1992,51 @@ DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
  	return TRUE;
  }
  #endif
 +
-+#ifdef VIPS_DLLDIR_AS_LIBDIR
 +static void *
 +vips__dll_dir_once(void *null)
 +{
@@ -96,7 +95,6 @@ index 1111111..2222222 100644
 +
 +	return (const char *) g_once(&once, vips__dll_dir_once, NULL);
 +}
-+#endif /*VIPS_DLLDIR_AS_LIBDIR*/
  #endif /*G_OS_WIN32*/
  
  static void *

@@ -1,16 +1,14 @@
 PKG             := vips-web
-$(PKG)_WEBSITE  := https://libvips.github.io/libvips/
-$(PKG)_DESCR    := A fast image processing library with low memory needs.
-$(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.18.0-test1
-$(PKG)_CHECKSUM := 242eaa2c195fd5a3021e5daaa4448cdbfa5b9702ec4377cbb9b2b18c4f542163
-$(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/vips-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,-test1.tar.xz
-$(PKG)_SUBDIR   := vips-$(firstword $(subst -, ,$($(PKG)_VERSION)))
-$(PKG)_FILE     := vips-$($(PKG)_VERSION).tar.xz
-$(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
-                   libjpeg-turbo tiff lcms libexif libheif libspng \
-                   libimagequant highway cgif
+$(PKG)_WEBSITE   = $(vips_WEBSITE)
+$(PKG)_DESCR     = $(vips_DESCR)
+$(PKG)_IGNORE    = $(vips_IGNORE)
+$(PKG)_VERSION   = $(vips_VERSION)
+$(PKG)_CHECKSUM  = $(vips_CHECKSUM)
+$(PKG)_PATCHES   = $(vips_PATCHES)
+$(PKG)_SUBDIR    = $(vips_SUBDIR)
+$(PKG)_FILE      = $(vips_FILE)
+$(PKG)_URL       = $(vips_URL)
+$(PKG)_DEPS     := $(vips_DEPS)
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
@@ -47,7 +45,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "rsvg": "$(librsvg_VERSION)",\n'; \
      printf '  "spng": "$(libspng_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
-     printf '  "vips": "$(vips-web_VERSION)",\n'; \
+     printf '  "vips": "$(vips_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
      printf '  "xml2": "$(libxml2_VERSION)",\n'; \
      $(if $(IS_ZLIB_NG), \
@@ -60,35 +58,5 @@ endef
 define $(PKG)_BUILD
     $($(PKG)_PRE_CONFIGURE)
 
-    $(eval export CFLAGS += -O3)
-    $(eval export CXXFLAGS += -O3)
-
-    # Always build as shared library, we need
-    # libvips-42.dll for the language bindings.
-    $(MXE_MESON_WRAPPER) \
-        --default-library=shared \
-        -Ddeprecated=false \
-        -Dexamples=false \
-        -Dintrospection=disabled \
-        -Dmodules=disabled \
-        -Dcfitsio=disabled \
-        -Dfftw=disabled \
-        -Djpeg-xl=disabled \
-        -Dmagick=disabled \
-        -Dmatio=disabled \
-        -Dnifti=disabled \
-        -Dopenexr=disabled \
-        -Dopenjpeg=disabled \
-        -Dopenslide=disabled \
-        -Dpdfium=disabled \
-        -Dpoppler=disabled \
-        -Dquantizr=disabled \
-        -Draw=disabled \
-        -Dppm=false \
-        -Danalyze=false \
-        -Dradiance=false \
-        '$(SOURCE_DIR)' \
-        '$(BUILD_DIR)'
-
-    $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+    $(vips_BUILD)
 endef

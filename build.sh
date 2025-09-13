@@ -144,15 +144,7 @@ fi
 # GitHub's tarball API requires the short SHA commit as the directory name
 git_commit="${git_commit:0:7}"
 
-# Ensure separate build targets
-if [ "$build_all_variant" = true ]; then
-  mxe_targets=("${mxe_targets[@]/%/.all}")
-fi
-
-if [ "$with_ffi_compat" = true ]; then
-  mxe_targets=("${mxe_targets[@]/%/.ffi}")
-fi
-
+# Ensure separate debug build targets
 if [ "$with_debug" = true ]; then
   mxe_targets=("${mxe_targets[@]/%/.debug}")
 fi
@@ -187,16 +179,26 @@ if [ "$jpeg_impl" != "libjpeg-turbo" ]; then
   plugin_dirs+=" /data/plugins/$jpeg_impl"
 fi
 
-if [ "$build_gtk" = true ]; then
-  plugin_dirs+=" /data/plugins/gtk4"
-fi
-
 if [ "$with_hevc" = true ]; then
-  plugin_dirs+=" /data/plugins/hevc"
+  plugin_dirs+=" /data/plugins/hevc-deps"
 fi
 
 if [ "$with_zlib_ng" = true ]; then
   plugin_dirs+=" /data/plugins/zlib-ng"
+fi
+
+if [ "$with_ffi_compat" = true ]; then
+  plugin_dirs+=" /data/plugins/ffi-compat"
+fi
+
+if [ "$build_web_variant" = true ]; then
+  plugin_dirs+=" /data/plugins/web-deps"
+elif [ "$build_all_variant" = true ]; then
+  plugin_dirs+=" /data/plugins/all-deps"
+fi
+
+if [ "$build_gtk" = true ]; then
+  plugin_dirs+=" /data/plugins/gtk4"
 fi
 
 # Avoid shipping the gettext DLL (libintl-8.dll),
