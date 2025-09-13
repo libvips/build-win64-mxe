@@ -4,8 +4,8 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 # upstream version is 2.42.12
 # gdk-pixbuf is still used by OpenSlide
-gdk-pixbuf_VERSION  := 2.44.0
-gdk-pixbuf_CHECKSUM := 31d65c2db14d321b9d862a323fc63002179cf3cc0b10d04db6ed55ffaed00db3
+gdk-pixbuf_VERSION  := 2.44.1
+gdk-pixbuf_CHECKSUM := 4eec84cfc55979045b3e0fca72c3cc081d556952ad33b30c7d29c0474db48a28
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -100,6 +100,12 @@ cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
+# upstream version is 11.4.5
+harfbuzz_VERSION  := 11.5.0
+harfbuzz_CHECKSUM := 2d30ba45c4c8ec4de661a1002b4f88d0841ff1a3087f34629275f5436d722109
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1
 fontconfig_CHECKSUM := 9f5cae93f4fffc1fbc05ae99cdfc708cd60dfd6612ffc0512827025c026fa541
@@ -120,8 +126,8 @@ openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
 # upstream version is 2.13.3
-freetype_VERSION  := 2.14.0
-freetype_CHECKSUM := f8dfa8f15ef0576738dfb55b2e6e6b172fd5d09b6f03785a1df03239549f64d2
+freetype_VERSION  := 2.14.1
+freetype_CHECKSUM := 32427e8c471ac095853212a37aef816c60b42052d4d9e48230bab3bdf2936ccc
 freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
 freetype_SUBDIR   := freetype-$(freetype_VERSION)
 freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
