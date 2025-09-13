@@ -11,7 +11,7 @@ compiler libraries.
 https://crbug.com/749263
 https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27866
 
-Upstream-Status: Backport [https://git.savannah.gnu.org/cgit/libtool.git/commit/?id=e606cd2358dd526d79837ce9f98da159c1d02bf7]
+Upstream-Status: Backport [https://git.savannah.gnu.org/cgit/libtool.git/commit/?id=52f78952b9ceb46a8c95a98cd0258fe4b23ce3c1]
 
 diff --git a/aclocal/libtool.m4 b/aclocal/libtool.m4
 index 1111111..2222222 100644
@@ -37,7 +37,7 @@ For cases with deplibs_check_method="file_magic ..." (as it is for mingw),
 there were previously no way that a static library could be accepted
 here.
 
-Upstream-Status: Backport [https://git.savannah.gnu.org/cgit/libtool.git/commit/?id=2f505131b5f29b0de6338bf9d13b7ceadf617d96]
+Upstream-Status: Backport [https://git.savannah.gnu.org/cgit/libtool.git/commit/?id=d12a1929dbf2550c0ba77da8e976473b24da317b]
 
 diff --git a/libtool/build-aux/ltmain.sh b/libtool/build-aux/ltmain.sh
 index 1111111..2222222 100644
