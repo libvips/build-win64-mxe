@@ -1,0 +1,14 @@
+name: Winget Release
+on:
+  release:
+    types: [released]
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - uses: vedantmgoyal9/winget-releaser@main
+        with:
+          identifier: libvips.libvips
+          installers-regex: 'w64\-all*\.zip $' 
+          token: ${{ secrets.WINGET_TOKEN }}
+          # version: ${{ env.WINGET_TAG_NAME }}
