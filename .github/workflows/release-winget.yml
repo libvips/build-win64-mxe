@@ -1,0 +1,26 @@
+name: Winget Release
+on:
+  # push:
+  #   tags:
+  #     - 'v*'   # run on any tag push like v8.14.3, v8.15.0 etc.
+  release:
+    types: [published]
+
+  # release:
+  #   types: [released]
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # fetch all history so tags are available
+          ref: ${{ github.ref }}  # this ensures we check out the pushed tag
+      - name: Winget Releaser
+        uses: vedantmgoyal9/winget-releaser@main
+        with:
+          identifier: libvips.libvips
+          installers-regex: 'w64\-all*\.zip $' 
+          token: ${{ secrets.WINGET_TOKEN }}
+          version: ${{ github.ref_name }} 

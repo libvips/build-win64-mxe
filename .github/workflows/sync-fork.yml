@@ -1,0 +1,76 @@
+name: Sync winget-release-workflow fork branch with upstream master
+# Default branch set to winget-release-workflow rather than master so action can run, and changes only occur in that branch so master is synced. 
+
+on:
+  schedule:
+    - cron: '0 3 * * *'   # daily at 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  sync-master:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/libvips/build-win64-mxe.git || true
+          git fetch upstream master --tags
+
+      - name: Hard reset fork master to upstream
+        run: |
+          git checkout master
+          git reset --hard upstream/master
+          git push origin master --force
+
+  sync-winget-branch:
+    runs-on: ubuntu-latest
+    needs: sync-master
+    steps:
+      - name: Checkout fork branch
+        uses: actions/checkout@v4
+        with:
+          ref: winget-release-workflow
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/libvips/build-win64-mxe.git || true
+          git fetch upstream master --tags
+
+      - name: Configure Git identity
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Rebase winget-release-workflow on upstream/master
+        run: |
+          git checkout winget-release-workflow
+          git rebase upstream/master || (git rebase --abort && exit 1)
+          git push origin winget-release-workflow --force
+
+      - name: Push latest upstream tag
+        run: |
+          # find latest tag by commit date
+          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "Latest upstream tag: $LATEST_TAG"
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          # check if tag exists in fork
+          if ! git ls-remote --tags origin | grep -q "refs/tags/$LATEST_TAG"; then
+            git push origin $LATEST_TAG
+            echo "Pushed latest tag to fork: $LATEST_TAG"
+          else
+            echo "Tag already exists in fork: $LATEST_TAG"
+          fi
+          
+      - name: Create GitHub release for latest tag
+        uses: ncipollo/release-action@v1
+        if: github.event_name == 'workflow_dispatch' || steps.push_tag.outputs.pushed == 'true' || !github.event_name
+        with:
+          tag: ${{ env.LATEST_TAG }}
+          generateReleaseNotes: true
+          skipIfReleaseExists: true
