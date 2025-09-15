@@ -47,12 +47,13 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      - name: Rebase winget-release-workflow on upstream/master
+      - name: Merge upstream/master into winget-release-workflow
+        # rebase would merge-conflict, and we want OCI to run onevery release
         run: |
           git checkout winget-release-workflow
-          git rebase upstream/master || (git rebase --abort && exit 1)
-          git push origin winget-release-workflow --force
-
+          git merge upstream/master --no-ff -m "Merge upstream/master into winget-release-workflow"
+          git push origin winget-release-workflow
+          
       - name: Push latest upstream tag
         run: |
           # find latest tag by commit date
