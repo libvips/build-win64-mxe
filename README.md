@@ -47,8 +47,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [zlib-ng]       | 2.2.5      | [zlib-ng Licence]                                            |
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
-[^2]: libvips is built from the [`v8.18.0-test1`](https://github.com/libvips/libvips/tree/v8.18.0-test1) tag, see:
-https://github.com/libvips/libvips/releases/tag/v8.18.0-test1
+[^2]: libvips is built from the [`v8.18.0-alpha1`](https://github.com/libvips/libvips/tree/v8.18.0-alpha1) tag, see:
+https://github.com/libvips/libvips/releases/tag/v8.18.0-alpha1
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
