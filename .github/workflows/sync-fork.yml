@@ -3,7 +3,7 @@ name: Sync winget-release-workflow fork branch with upstream master
 
 on:
   schedule:
-    - cron: '0 3 * * *'   # daily at 03:00 UTC
+    - cron: '0 0 1 1 *'   # ~never run https://crontab.guru/#0_0_1_1_* 
   workflow_dispatch:
 
 jobs:
