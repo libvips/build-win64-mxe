@@ -13,8 +13,8 @@ gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHOR
 
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.14.5
-libxml2_VERSION  := 2.14.6
-libxml2_CHECKSUM := 7ce458a0affeb83f0b55f1f4f9e0e55735dbfc1a9de124ee86fb4a66b597203a
+libxml2_VERSION  := 2.15.0
+libxml2_CHECKSUM := 5abc766497c5b1d6d99231f662e30c99402a90d03b06c67b62d6c1179dedd561
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
 libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
@@ -86,11 +86,27 @@ glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
+# upstream version is 2.7.1
+expat_VERSION  := 2.7.2
+expat_CHECKSUM := 21b778b34ec837c2ac285aef340f9fb5fa063a811b21ea4d2412a9702c88995c
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
+
+# upstream version is 4.7.0
+tiff_VERSION  := 4.7.1
+tiff_CHECKSUM := b92017489bdc1db3a4c97191aa4b75366673cb746de0dce5d7a749d5954681ba
+tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
+tiff_SUBDIR   := tiff-$(tiff_VERSION)
+tiff_FILE     := tiff-$(tiff_VERSION).tar.xz
+tiff_URL      := https://download.osgeo.org/libtiff/$(tiff_FILE)
 
 # upstream version is 4.5.0
 cfitsio_VERSION  := 4.6.2
@@ -148,6 +164,12 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
+
+# upstream version is 2.5.3
+openjpeg_VERSION  := 2.5.4
+openjpeg_CHECKSUM := a695fbe19c0165f295a8531b1e4e855cd94d0875d2f88ec4b61080677e27188a
+openjpeg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openjpeg-[0-9]*.patch)))
+openjpeg_GH_CONF  := uclouvain/openjpeg/tags,v
 
 # upstream version is 25.08.0
 poppler_VERSION  := 25.09.1
