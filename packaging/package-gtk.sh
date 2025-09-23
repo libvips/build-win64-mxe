@@ -167,7 +167,7 @@ rm -f $repackage_dir/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-heif.dll
 # touch the icon theme root and cache to be newer than any icon it holds
 # prevents a "cache out of date" warning
 for theme in $install_dir/share/icons/*; do
-  touch -c $theme $theme/index.theme 
+  touch -c $theme $theme/index.theme
 done
 
 echo "Strip unneeded symbols"
