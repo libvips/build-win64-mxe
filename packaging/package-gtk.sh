@@ -62,7 +62,7 @@ mkdir -p $repackage_dir/{bin,lib}
 mkdir $pdb_dir
 
 # List of PE targets that need to be copied, including their transitive dependencies and PDBs
-pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{$package,gdbus,convert,gspawn-win64-helper-console,gspawn-win64-helper}.exe) # gdk-pixbuf-query-loaders
+pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{$package,gdbus}.exe) # gdk-pixbuf-query-loaders
 
 # DLL search paths
 search_paths=($bin_dir $install_dir/${target%%.*}/bin)
@@ -70,6 +70,10 @@ search_paths=($bin_dir $install_dir/${target%%.*}/bin)
 if [ -d "$module_dir" ]; then
   mkdir -p $repackage_dir/bin/$module_dir_base
   pe_targets+=($module_dir/*.dll)
+fi
+
+if [ "$package" = "nip4" ]; then
+  pe_targets+=($bin_dir/{convert,gspawn-win64-helper-console,gspawn-win64-helper}.exe)
 fi
 
 zip_suffix="$package_version"
