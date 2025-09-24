@@ -480,7 +480,6 @@ define imagemagick_BUILD
         --without-pango \
         --without-png \
         --without-rsvg \
-        --without-tiff \
         --without-webp \
         --without-x \
         --without-zlib \
