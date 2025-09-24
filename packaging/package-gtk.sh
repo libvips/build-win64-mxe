@@ -72,6 +72,10 @@ if [ -d "$module_dir" ]; then
   pe_targets+=($module_dir/*.dll)
 fi
 
+if [ "$package" = "nip4" ]; then
+  pe_targets+=($bin_dir/{convert,gspawn-win64-helper-console,gspawn-win64-helper}.exe)
+fi
+
 zip_suffix="$package_version"
 
 if [ "$HEVC" = true ]; then
@@ -167,7 +171,7 @@ rm -f $repackage_dir/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-heif.dll
 # touch the icon theme root and cache to be newer than any icon it holds
 # prevents a "cache out of date" warning
 for theme in $install_dir/share/icons/*; do
-  touch -c $theme $theme/index.theme 
+  touch -c $theme $theme/index.theme
 done
 
 echo "Strip unneeded symbols"

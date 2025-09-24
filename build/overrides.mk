@@ -510,9 +510,10 @@ define imagemagick_BUILD
         --disable-largefile \
         --disable-opencl \
         --disable-openmp \
-        --disable-deprecated
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
+        --disable-deprecated \
+        $(PKG_CONFIGURE_OPTS)
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_DOCS)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_DOCS)
 endef
 
 # Alias GraphicsMagick build with ImageMagick
