@@ -480,6 +480,7 @@ define imagemagick_BUILD
         --without-pango \
         --without-png \
         --without-rsvg \
+        --without-tiff \
         --without-webp \
         --without-x \
         --without-zlib \
@@ -487,7 +488,8 @@ define imagemagick_BUILD
         --disable-largefile \
         --disable-opencl \
         --disable-openmp \
-        --disable-deprecated
+        --disable-deprecated \
+        $(PKG_CONFIGURE_OPTS)
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_DOCS)
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_DOCS)
 endef

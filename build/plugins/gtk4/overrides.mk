@@ -20,6 +20,10 @@ librsvg_MESON_OPTS = -Dpixbuf=enabled -Dpixbuf-loader=enabled
 # nip4 needs -Doutput=enabled
 libxml2_MESON_OPTS := $(libxml2_MESON_OPTS) -Doutput=enabled
 
+# nip4 needs IM with TIFF support
+imagemagick_DEPS := $(imagemagick_DEPS) tiff
+imagemagick_CONFIGURE_OPTS = --with-tiff
+
 # Override sub-dependencies
 adwaita-icon-theme_DEPS := $(subst gtk3,gtk4,$(adwaita-icon-theme_DEPS))
 libepoxy_DEPS := $(filter-out  xorg-macros,$(libepoxy_DEPS))
