@@ -5,9 +5,8 @@ $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 8.18.0-alpha1
 $(PKG)_CHECKSUM := 242eaa2c195fd5a3021e5daaa4448cdbfa5b9702ec4377cbb9b2b18c4f542163
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,-alpha1.tar.xz
+$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$(firstword $(subst -, ,$($(PKG)_VERSION)))
-$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif libspng \
                    libimagequant highway cgif
