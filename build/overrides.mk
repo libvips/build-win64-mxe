@@ -2,17 +2,8 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
-# upstream version is 2.42.12
-# gdk-pixbuf is still used by OpenSlide
-gdk-pixbuf_VERSION  := 2.44.1
-gdk-pixbuf_CHECKSUM := 4eec84cfc55979045b3e0fca72c3cc081d556952ad33b30c7d29c0474db48a28
-gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
-gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
-gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
-gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
-
 # no longer needed by libvips, but some of the deps need it
-# upstream version is 2.14.5
+# upstream version is 2.14.6
 libxml2_VERSION  := 2.15.0
 libxml2_CHECKSUM := 5abc766497c5b1d6d99231f662e30c99402a90d03b06c67b62d6c1179dedd561
 libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
@@ -78,35 +69,11 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
-# upstream version is 2.85.4
-glib_VERSION  := 2.86.0
-glib_CHECKSUM := b5739972d737cfb0d6fd1e7f163dfe650e2e03740bb3b8d408e4d1faea580d6d
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
-glib_SUBDIR   := glib-$(glib_VERSION)
-glib_FILE     := glib-$(glib_VERSION).tar.xz
-glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
-
-# upstream version is 2.7.1
-expat_VERSION  := 2.7.2
-expat_CHECKSUM := 21b778b34ec837c2ac285aef340f9fb5fa063a811b21ea4d2412a9702c88995c
-expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
-expat_SUBDIR   := expat-$(expat_VERSION)
-expat_FILE     := expat-$(expat_VERSION).tar.xz
-expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
-
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
-
-# upstream version is 4.7.0
-tiff_VERSION  := 4.7.1
-tiff_CHECKSUM := b92017489bdc1db3a4c97191aa4b75366673cb746de0dce5d7a749d5954681ba
-tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
-tiff_SUBDIR   := tiff-$(tiff_VERSION)
-tiff_FILE     := tiff-$(tiff_VERSION).tar.xz
-tiff_URL      := https://download.osgeo.org/libtiff/$(tiff_FILE)
 
 # upstream version is 4.5.0
 cfitsio_VERSION  := 4.6.2
@@ -115,12 +82,6 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
-
-# upstream version is 11.4.5
-harfbuzz_VERSION  := 11.5.0
-harfbuzz_CHECKSUM := 2d30ba45c4c8ec4de661a1002b4f88d0841ff1a3087f34629275f5436d722109
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1
@@ -141,22 +102,6 @@ openexr_SUBDIR   := openexr-$(openexr_VERSION)
 openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
 
-# upstream version is 2.13.3
-freetype_VERSION  := 2.14.1
-freetype_CHECKSUM := 32427e8c471ac095853212a37aef816c60b42052d4d9e48230bab3bdf2936ccc
-freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
-freetype_SUBDIR   := freetype-$(freetype_VERSION)
-freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
-freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
-
-# upstream version is 2.13.3
-freetype-bootstrap_VERSION  := $(freetype_VERSION)
-freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
-freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
-freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
-freetype-bootstrap_FILE     := $(freetype_FILE)
-freetype-bootstrap_URL      := $(freetype_URL)
-
 # upstream version is 3.0.1
 libjpeg-turbo_VERSION  := 3.1.0
 libjpeg-turbo_CHECKSUM := 9564c72b1dfd1d6fe6274c5f95a8d989b59854575d4bbee44ade7bc17aa9bc93
@@ -164,20 +109,6 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
-
-# upstream version is 2.5.3
-openjpeg_VERSION  := 2.5.4
-openjpeg_CHECKSUM := a695fbe19c0165f295a8531b1e4e855cd94d0875d2f88ec4b61080677e27188a
-openjpeg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openjpeg-[0-9]*.patch)))
-openjpeg_GH_CONF  := uclouvain/openjpeg/tags,v
-
-# upstream version is 25.08.0
-poppler_VERSION  := 25.09.1
-poppler_CHECKSUM := 0c1091d01d3dd1664a13816861e812d02b29201e96665454b81b52d261fad658
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 2.7.1
 # needed by nip4
