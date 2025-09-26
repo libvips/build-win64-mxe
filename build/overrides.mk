@@ -2,6 +2,15 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
+# upstream version is 2.44.1
+# gdk-pixbuf is still used by OpenSlide
+gdk-pixbuf_VERSION  := 2.44.2
+gdk-pixbuf_CHECKSUM := ea4ed9930b10db0655fb24f7c35b3375a65c58afbc9d3eb7417a0fd112bb6b08
+gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
+gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
+gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
+gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
+
 # no longer needed by libvips, but some of the deps need it
 # upstream version is 2.14.6
 libxml2_VERSION  := 2.15.0
@@ -69,6 +78,14 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
+# upstream version is 2.7.2
+expat_VERSION  := 2.7.3
+expat_CHECKSUM := 71df8f40706a7bb0a80a5367079ea75d91da4f8c65c58ec59bcdfbf7decdab9f
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
@@ -82,6 +99,12 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
+
+# upstream version is 11.5.0
+harfbuzz_VERSION  := 11.5.1
+harfbuzz_CHECKSUM := 972a60a8d274d49e70361da6920c3a73dfb0fb4387f6c6811906a47ba634d8a1
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1

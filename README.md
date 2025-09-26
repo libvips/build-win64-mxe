@@ -20,12 +20,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.13.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.0      | MIT Licence                                                  |
-| [expat]         | 2.7.2      | MIT Licence                                                  |
+| [expat]         | 2.7.3      | MIT Licence                                                  |
 | [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.14.1     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
 | [glib]          | 2.86.0     | LGPLv3                                                       |
-| [harfbuzz]      | 11.5.0     | MIT Licence                                                  |
+| [harfbuzz]      | 11.5.1     | MIT Licence                                                  |
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17       | MIT Licence                                                  |
 | [libarchive]    | 3.8.1      | BSD 2-Clause                                                 |
@@ -93,7 +93,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.1.0      | MIT Licence                                                  |
 | [cfitsio]       | 4.6.2      | BSD-like                                                     |
 | [fftw]          | 3.3.10     | GPLv2                                                        |
-| [gdk-pixbuf]    | 2.44.1     | LGPLv3                                                       |
+| [gdk-pixbuf]    | 2.44.2     | LGPLv3                                                       |
 | [imagemagick]   | 6.9.13-29  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
