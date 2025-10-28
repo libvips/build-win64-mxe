@@ -24,7 +24,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.14.1     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
-| [glib]          | 2.86.0     | LGPLv3                                                       |
+| [glib]          | 2.86.1     | LGPLv3                                                       |
 | [harfbuzz]      | 12.1.0     | MIT Licence                                                  |
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17       | MIT Licence                                                  |
@@ -34,7 +34,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.20.2     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.50     | [libpng License version 2]                                   |
-| [librsvg]       | 2.61.1     | LGPLv3                                                       |
+| [librsvg]       | 2.61.2     | LGPLv3                                                       |
 | [libspng]       | 0.7.4      | BSD 2-Clause                                                 |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.18.0[^2] | LGPLv3                                                       |
@@ -94,11 +94,11 @@ Same as libvips-web + these extra dependencies:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [brotli]        | 1.1.0      | MIT Licence                                                  |
+| [brotli]        | 1.2.0      | MIT Licence                                                  |
 | [cfitsio]       | 4.6.2      | BSD-like                                                     |
 | [fftw]          | 3.3.10     | GPLv2                                                        |
-| [gdk-pixbuf]    | 2.44.3     | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-32  | [ImageMagick License] (Apache-2.0-like)                      |
+| [gdk-pixbuf]    | 2.44.4     | LGPLv3                                                       |
+| [imagemagick]   | 6.9.13-33  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.1     | BSD 3-Clause                                                 |

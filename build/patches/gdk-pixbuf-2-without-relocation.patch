@@ -13,7 +13,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -406,15 +406,8 @@ if not tiff_opt.disabled() and not native_windows_loaders
+@@ -407,15 +407,8 @@ if not tiff_opt.disabled() and not native_windows_loaders
    endif
  endif
  
@@ -31,7 +31,7 @@ index 1111111..2222222 100644
    add_project_arguments([ '-DGDK_PIXBUF_RELOCATABLE' ], language: 'c')
  endif
  
-@@ -495,7 +488,7 @@ summary({
+@@ -496,7 +489,7 @@ summary({
      'Introspection': build_gir,
      'Documentation': build_docs,
      'Manual pages': get_option('man'),

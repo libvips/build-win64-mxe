@@ -13,7 +13,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -304,6 +304,9 @@ if not png_opt.disabled()
+@@ -305,6 +305,9 @@ if not png_opt.disabled()
    if png_dep.found()
      enabled_loaders += 'png'
      loaders_deps += png_dep
@@ -23,7 +23,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -344,9 +347,13 @@ else
+@@ -345,9 +348,13 @@ else
  endif
  
  if native_windows_loaders
@@ -39,7 +39,7 @@ index 1111111..2222222 100644
  endif
  
  # Don't check and build the jpeg loader if native_windows_loaders is true
-@@ -377,6 +384,9 @@ if not jpeg_opt.disabled() and not native_windows_loaders
+@@ -378,6 +385,9 @@ if not jpeg_opt.disabled() and not native_windows_loaders
      if has_destroy_decompress and has_simple_progression
        gdk_pixbuf_conf.set('HAVE_PROGRESSIVE_JPEG', has_simple_progression)
      endif
@@ -49,7 +49,7 @@ index 1111111..2222222 100644
    endif
  endif
  
-@@ -390,6 +400,9 @@ if not tiff_opt.disabled() and not native_windows_loaders
+@@ -391,6 +401,9 @@ if not tiff_opt.disabled() and not native_windows_loaders
    if tiff_dep.found()
      enabled_loaders += 'tiff'
      loaders_deps += tiff_dep
