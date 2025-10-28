@@ -4,8 +4,8 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 # upstream version is 2.44.2
 # gdk-pixbuf is still used by OpenSlide
-gdk-pixbuf_VERSION  := 2.44.3
-gdk-pixbuf_CHECKSUM := 40a92dcc237ff94b63a80c159a3f6f22cd59f6fb4961f201c78799fa2c8ac0a6
+gdk-pixbuf_VERSION  := 2.44.4
+gdk-pixbuf_CHECKSUM := 93a1aac3f1427ae73457397582a2c38d049638a801788ccbd5f48ca607bdbd17
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -39,8 +39,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-32
-imagemagick_CHECKSUM := bb042c19b6a528b93845cb83998bf6a2cf70952c42e5fcabd3a169ab20621243
+imagemagick_VERSION  := 6.9.13-33
+imagemagick_CHECKSUM := a1a3753b616b90d342cff028eb9ab8a1fd24a65e9dec5adca8af569e3d0c5759
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -53,8 +53,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.61.1
-librsvg_CHECKSUM := bc1bbcd419120b098db28bea55335d9de2470d4e6a9f6ee97207b410fc15867d
+librsvg_VERSION  := 2.61.2
+librsvg_CHECKSUM := 4644d83623dd61cc4479c2b3c372e1da2b281552ebc90035c8d1ac502eb1dc00
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -78,6 +78,14 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
+# upstream version is 2.86.0
+glib_VERSION  := 2.86.1
+glib_CHECKSUM := 119d1708ca022556d6d2989ee90ad1b82bd9c0d1667e066944a6d0020e2d5e57
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
@@ -99,6 +107,12 @@ fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_
 fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/$(fontconfig_VERSION)/$(fontconfig_FILE)
+
+# upstream version is 1.1.0
+brotli_VERSION  := 1.2.0
+brotli_CHECKSUM := 816c96e8e8f193b40151dad7e8ff37b1221d019dbcb9c35cd3fadbfe6477dfec
+brotli_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/brotli-[0-9]*.patch)))
+brotli_GH_CONF  := google/brotli/tags,v
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -728,11 +742,12 @@ define cfitsio_BUILD
         `'$(TARGET)-pkg-config' cfitsio --cflags --libs`
 endef
 
-# Disable tests
+# Disable tests and tools
 # Strip during install if needed
 define brotli_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DBROTLI_DISABLE_TESTS=ON \
+        -DBROTLI_BUILD_TOOLS=OFF \
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
