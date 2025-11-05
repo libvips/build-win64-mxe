@@ -53,8 +53,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.61.2
-librsvg_CHECKSUM := 4644d83623dd61cc4479c2b3c372e1da2b281552ebc90035c8d1ac502eb1dc00
+librsvg_VERSION  := 2.61.3
+librsvg_CHECKSUM := a56d2c80d744ad2f2718f85df466fe71d24ff1f9bc3e5ef588bde4d7e87815f2
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -79,8 +79,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.86.0
-glib_VERSION  := 2.86.1
-glib_CHECKSUM := 119d1708ca022556d6d2989ee90ad1b82bd9c0d1667e066944a6d0020e2d5e57
+glib_VERSION  := 2.87.0
+glib_CHECKSUM := 926cf73d8eb90ea341cc2d6fc7b258901e1a086a3808b166b4476d69a98b2401
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -99,6 +99,12 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
+
+# upstream version is 12.1.0
+harfbuzz_VERSION  := 12.2.0
+harfbuzz_CHECKSUM := ecb603aa426a8b24665718667bda64a84c1504db7454ee4cadbd362eea64e545
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1
@@ -132,6 +138,14 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
+
+# upstream version is 25.10.0
+poppler_VERSION  := 25.11.0
+poppler_CHECKSUM := 63f155142b77349e2bccaef148e754e7506ab1641e713b83af4f54a8f8b15369
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
 libraw_VERSION  := 0.21.4
@@ -550,9 +564,6 @@ define librsvg_BUILD
     # Enable networking while we build librsvg
     $(eval export MXE_ENABLE_NETWORK := 1)
 
-    # Disable tools
-    $(SED) -i "/subdir('rsvg_convert')/d" '$(SOURCE_DIR)/meson.build'
-
     # Ensure MXE's pkg-config wrapper finds librsvg-2.0-uninstalled.pc
     $(SED) -i "s/PKG_CONFIG_PATH/&_$(subst .,_,$(subst -,_,$(TARGET)))/" '$(SOURCE_DIR)/meson/cargo_wrapper.py'
 
@@ -561,6 +572,7 @@ define librsvg_BUILD
         -Dintrospection=disabled \
         -Dpixbuf=disabled \
         -Dpixbuf-loader=disabled \
+        -Drsvg-convert=disabled \
         -Ddocs=disabled \
         -Dvala=disabled \
         -Dtests=false \
