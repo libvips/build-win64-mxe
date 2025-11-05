@@ -109,7 +109,7 @@ Same as libvips-web + these extra dependencies:
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
 | [poppler]       | 25.11.0    | GPLv2                                                        |
-| [sqlite]        | 3.50.4     | Public domain                                                |
+| [sqlite]        | 3.51.0     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
 [brotli]: https://github.com/google/brotli

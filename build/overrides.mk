@@ -78,7 +78,7 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
-# upstream version is 2.86.0
+# upstream version is 2.86.1
 glib_VERSION  := 2.87.0
 glib_CHECKSUM := 926cf73d8eb90ea341cc2d6fc7b258901e1a086a3808b166b4476d69a98b2401
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
