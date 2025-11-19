@@ -28,7 +28,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [harfbuzz]      | 12.2.0     | MIT Licence                                                  |
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17       | MIT Licence                                                  |
-| [libarchive]    | 3.8.2      | BSD 2-Clause                                                 |
+| [libarchive]    | 3.8.3      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.25     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
 | [libheif]       | 1.20.2     | LGPLv3                                                       |
@@ -103,7 +103,7 @@ Same as libvips-web + these extra dependencies:
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.1     | BSD 3-Clause                                                 |
 | [libraw]        | 0.21.4     | LGPL-2.1-only                                                |
-| [matio]         | 1.5.28     | BSD 2-Clause                                                 |
+| [matio]         | 1.5.29     | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1      | Public domain                                                |
 | [openexr]       | 3.1.11     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |

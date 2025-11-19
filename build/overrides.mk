@@ -23,16 +23,16 @@ libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.28
-matio_CHECKSUM := 9da698934a21569af058e6348564666f45029e6c2b0878ca0d8f9609bf77b8d8
+matio_VERSION  := 1.5.29
+matio_CHECKSUM := d9e5f7a2f2c594eff15f550e34729b01991cdd5a028a558be8ce595b32233afb
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.8.2
-libarchive_CHECKSUM := db0dee91561cbd957689036a3a71281efefd131d35d1d98ebbc32720e4da58e2
+libarchive_VERSION  := 3.8.3
+libarchive_CHECKSUM := 90e21f2b89f19391ce7b90f6e48ed9fde5394d23ad30ae256fb8236b38b99788
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
@@ -154,6 +154,9 @@ libraw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 libraw_SUBDIR   := LibRaw-$(libraw_VERSION)
 libraw_FILE     := LibRaw-$(libraw_VERSION).tar.gz
 libraw_URL      := https://www.libraw.org/data/$(libraw_FILE)
+
+# https://github.com/mxe/mxe/commit/a46f5f7c1c7b524f17401531ab16eda5a998f699
+sqlite_CHECKSUM := 42e26dfdd96aa2e6b1b1be5c88b0887f9959093f650d693cb02eb9c36d146ca5
 
 # upstream version is 2.7.1
 # needed by nip4
