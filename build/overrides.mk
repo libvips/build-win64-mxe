@@ -155,9 +155,6 @@ libraw_SUBDIR   := LibRaw-$(libraw_VERSION)
 libraw_FILE     := LibRaw-$(libraw_VERSION).tar.gz
 libraw_URL      := https://www.libraw.org/data/$(libraw_FILE)
 
-# https://github.com/mxe/mxe/commit/a46f5f7c1c7b524f17401531ab16eda5a998f699
-sqlite_CHECKSUM := 42e26dfdd96aa2e6b1b1be5c88b0887f9959093f650d693cb02eb9c36d146ca5
-
 # upstream version is 2.7.1
 # needed by nip4
 gsl_VERSION  := 2.8
