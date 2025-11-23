@@ -13,7 +13,8 @@ vips_MESON_OPTS = \
     -Dheif-module=$(if $(IS_HEVC),enabled,disabled) \
     $(if $(findstring graphicsmagick,$(vips_all_DEPS)), -Dmagick-package=GraphicsMagick) \
     -Dpdfium=disabled \
-    -Dquantizr=disabled
+    -Dquantizr=disabled \
+    -Dspng=disabled
 
 # https://github.com/libvips/build-win64-mxe/issues/80
 tiff_CONFIGURE_OPTS = --enable-zstd

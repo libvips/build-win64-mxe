@@ -35,7 +35,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.50     | [libpng License version 2]                                   |
 | [librsvg]       | 2.61.3     | LGPLv3                                                       |
-| [libspng]       | 0.7.4      | BSD 2-Clause                                                 |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
 | [libvips]       | 8.18.0[^2] | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
@@ -74,7 +73,6 @@ https://github.com/libvips/libvips/releases/tag/v8.18.0-alpha1
 [libpng]: https://github.com/pnggroup/libpng
 [libpng License version 2]: https://github.com/pnggroup/libpng/blob/master/LICENSE
 [librsvg]: https://gitlab.gnome.org/GNOME/librsvg
-[libspng]: https://github.com/randy408/libspng
 [libtiff]: https://gitlab.com/libtiff/libtiff
 [libtiff License]: https://gitlab.com/libtiff/libtiff/blob/master/LICENSE.md
 [libvips]: https://github.com/libvips/libvips
