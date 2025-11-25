@@ -58,11 +58,11 @@ module_dir_base=$(basename $module_dir)
 
 # Make sure that the repackaging dir is empty
 rm -rf $repackage_dir $pdb_dir
-mkdir -p $repackage_dir/{bin,lib}
+mkdir -p $repackage_dir/bin
 mkdir $pdb_dir
 
 # List of PE targets that need to be copied, including their transitive dependencies and PDBs
-pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{$package,gdbus}.exe) # gdk-pixbuf-query-loaders
+pe_targets=($bin_dir/libvips-cpp-42.dll $bin_dir/{$package,gdbus}.exe)
 
 # DLL search paths
 search_paths=($bin_dir $install_dir/${target%%.*}/bin)
@@ -96,8 +96,8 @@ fi
 
 echo "Copying $package and dependencies"
 
-# Whitelist dwrite.dll, hid.dll and opengl32.dll for GTK
-whitelist+=(dwrite.dll hid.dll opengl32.dll)
+# A few more DLLs are required to be whitelisted for GTK
+whitelist+=(d3d1{1,2}.dll dcomp.dll dwrite.dll dxgi.dll hid.dll opengl32.dll shcore.dll)
 
 # Copy libvips and dependencies with pe-util
 for pe_target in "${pe_targets[@]}"; do
@@ -122,30 +122,6 @@ echo "Copying install area $install_dir/"
 # Follow symlinks when copying /share and /etc directories
 cp -Lr $install_dir/{share,etc} $repackage_dir
 
-# Ensure pixbufloader_svg.dll is packaged
-cp -r $install_dir/lib/gdk-pixbuf-2.0 $repackage_dir/lib
-
-# ... and loaders.cache is created
-cat > $repackage_dir/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache << 'EOF'
-# GdkPixbuf Image Loader Modules file
-# Automatically generated file, do not edit
-# Created by gdk-pixbuf-query-loaders from gdk-pixbuf-2.43.3
-#
-# LoaderDir = lib\gdk-pixbuf-2.0\2.10.0\loaders
-#
-"lib\\gdk-pixbuf-2.0\\2.10.0\\loaders\\pixbufloader_svg.dll"
-"svg" 6 "gdk-pixbuf" "Scalable Vector Graphics" "LGPL"
-"image/svg+xml" "image/svg" "image/svg-xml" "image/vnd.adobe.svg+xml" "text/xml-svg" "image/svg+xml-compressed" ""
-"svg" "svgz" "svg.gz" ""
-" <svg" "*    " 100
-" <!DOCTYPE svg" "*             " 100
-
-EOF
-
-# TODO(kleisauke): Perhaps we should generate that natively or using wine?
-#wine $install_dir/bin/gdk-pixbuf-query-loaders.exe \
-#  $repackage_dir/lib/gdk-pixbuf-2.0/2.10.0/loaders/pixbufloader_svg.dll --update-cache
-
 cd $repackage_dir
 
 echo "Cleaning unnecessary files / directories"
@@ -164,9 +140,6 @@ rm -rf share/locale
 
 # Remove .gitkeep files
 rm -f share/.gitkeep
-
-# libpixbufloader-heif.dll is probably not needed
-rm -f $repackage_dir/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-heif.dll
 
 # touch the icon theme root and cache to be newer than any icon it holds
 # prevents a "cache out of date" warning
