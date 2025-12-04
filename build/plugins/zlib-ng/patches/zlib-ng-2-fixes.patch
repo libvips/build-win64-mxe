@@ -12,16 +12,16 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -1239,7 +1239,12 @@ endforeach()
+@@ -1431,7 +1431,12 @@ endforeach()
  if(WIN32)
      # Shared library
      if(NOT DEFINED BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
--        set_target_properties(zlib PROPERTIES OUTPUT_NAME zlib${SUFFIX})
+-        set_target_properties(zlib-ng PROPERTIES OUTPUT_NAME zlib${SUFFIX})
 +        if(MINGW)
-+            # When cross-compiling with MinGW-w64, we want to make libz, not libzlib
-+            set_target_properties(${ZLIB_INSTALL_LIBRARIES} PROPERTIES OUTPUT_NAME z${SUFFIX})
++            # When cross-compiling with mingw-w64, we want to make libz, not libzlib
++            set_target_properties(zlib-ng PROPERTIES OUTPUT_NAME z${SUFFIX})
 +        else()
-+            set_target_properties(${ZLIB_INSTALL_LIBRARIES} PROPERTIES OUTPUT_NAME zlib${SUFFIX})
++            set_target_properties(zlib-ng PROPERTIES OUTPUT_NAME zlib${SUFFIX})
 +        endif()
      endif()
      # Static library
