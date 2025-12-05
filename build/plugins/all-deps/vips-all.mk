@@ -9,7 +9,7 @@ $(PKG)_SUBDIR    = $(vips_SUBDIR)
 $(PKG)_FILE      = $(vips_FILE)
 $(PKG)_URL       = $(vips_URL)
 $(PKG)_DEPS     := $(vips_DEPS) imagemagick matio openexr cfitsio \
-                   nifticlib poppler fftw openslide libjxl libraw
+                   nifticlib poppler fftw openslide libraw
 
 define $(PKG)_PRE_CONFIGURE
     # Copy some files to the packaging directory
