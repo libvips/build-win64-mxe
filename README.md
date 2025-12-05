@@ -34,7 +34,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
 | [libheif]       | 1.20.2     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
-| [libjxl]        | 0.11.1     | BSD 3-Clause                                                 |
+| [libjxl]        | [53042ec]  | BSD 3-Clause                                                 |
 | [libpng]        | 1.6.53     | [libpng License version 2]                                   |
 | [librsvg]       | 2.61.3     | LGPLv3                                                       |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
@@ -52,6 +52,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [^2]: libvips is built from the [`v8.18.0-rc2`](https://github.com/libvips/libvips/tree/v8.18.0-rc2) tag, see:
 https://github.com/libvips/libvips/releases/tag/v8.18.0-rc2
 
+[53042ec]: https://github.com/libjxl/libjxl/commit/53042ec537712e0df08709524f4df097d42174bc
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
 [aom]: https://aomedia.googlesource.com/aom/
