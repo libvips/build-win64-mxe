@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Ram Mohan M <ram.mohan@ittiam.com>
+Date: Fri, 26 Sep 2025 19:57:48 +0530
+Subject: [PATCH 1/1] improper use of clamp macro
+
+fixes #372
+
+Upstream-Status: Backport [https://github.com/google/libultrahdr/commit/5ed39d67cd31d254e84ebf76b03d4b7bcc12e2f7]
+
+diff --git a/lib/src/jpegr.cpp b/lib/src/jpegr.cpp
+index 1111111..2222222 100644
+--- a/lib/src/jpegr.cpp
++++ b/lib/src/jpegr.cpp
+@@ -1562,7 +1562,7 @@ uhdr_error_info_t JpegR::applyGainMap(uhdr_raw_image_t* sdr_intent, uhdr_raw_ima
+         (log2(display_boost) - log2(gainmap_metadata->hdr_capacity_min)) /
+         (log2(gainmap_metadata->hdr_capacity_max) - log2(gainmap_metadata->hdr_capacity_min));
+     // avoid extrapolating the gain map to fill the displayable range
+-    gainmap_weight = CLIP3(0.0f, gainmap_weight, 1.0f);
++    gainmap_weight = CLIP3(gainmap_weight, 0.0f, 1.0f);
+   } else {
+     gainmap_weight = 1.0f;
+   }

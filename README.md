@@ -36,6 +36,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libpng]        | 1.6.52     | [libpng License version 2]                                   |
 | [librsvg]       | 2.61.3     | LGPLv3                                                       |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
+| [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
 | [libvips]       | 8.18.0[^2] | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
 | [libxml2]       | 2.15.1     | MIT Licence                                                  |
@@ -75,6 +76,7 @@ https://github.com/libvips/libvips/releases/tag/v8.18.0-alpha1
 [librsvg]: https://gitlab.gnome.org/GNOME/librsvg
 [libtiff]: https://gitlab.com/libtiff/libtiff
 [libtiff License]: https://gitlab.com/libtiff/libtiff/blob/master/LICENSE.md
+[libultrahdr]: https://github.com/google/libultrahdr
 [libvips]: https://github.com/libvips/libvips
 [libwebp]: https://github.com/webmproject/libwebp
 [libxml2]: https://gitlab.gnome.org/GNOME/libxml2
