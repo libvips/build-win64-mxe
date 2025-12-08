@@ -10,6 +10,7 @@ libraw_DEPS         := $(subst libjpeg-turbo,mozjpeg,$(libraw_DEPS))
 openslide_DEPS      := $(subst libjpeg-turbo,mozjpeg,$(openslide_DEPS))
 poppler_DEPS        := $(subst libjpeg-turbo,mozjpeg,$(poppler_DEPS))
 tiff_DEPS           := $(subst libjpeg-turbo,mozjpeg,$(tiff_DEPS))
+uhdr_DEPS           := $(subst libjpeg-turbo,mozjpeg,$(uhdr_DEPS))
 vips_DEPS           := $(subst libjpeg-turbo,mozjpeg,$(vips_DEPS))
 
 # Disable the libjpeg-turbo build, just to be sure

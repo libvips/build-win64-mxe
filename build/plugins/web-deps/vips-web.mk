@@ -44,6 +44,7 @@ define $(PKG)_PRE_CONFIGURE
      $(if $(IS_INTL_DUMMY),printf '  "proxy-libintl": "$(proxy-libintl_VERSION)"$(comma)\n';) \
      printf '  "rsvg": "$(librsvg_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
+     printf '  "uhdr": "$(uhdr_VERSION)",\n'; \
      printf '  "vips": "$(vips_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
      printf '  "xml2": "$(libxml2_VERSION)",\n'; \

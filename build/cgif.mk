@@ -5,7 +5,6 @@ $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 0.5.0
 $(PKG)_CHECKSUM := d6cb312c7da2c6c9f310811aa3658120c0316ba130c48a012e7baf3698920fe9
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_GH_CONF  := dloebl/cgif/tags,v
 $(PKG)_DEPS     := cc meson-wrapper
 

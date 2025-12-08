@@ -62,6 +62,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "rsvg": "$(librsvg_VERSION)",\n'; \
      printf '  "sqlite": "$(sqlite_VERSION)",\n'; \
      printf '  "tiff": "$(tiff_VERSION)",\n'; \
+     printf '  "uhdr": "$(uhdr_VERSION)",\n'; \
      printf '  "vips": "$(vips_VERSION)",\n'; \
      printf '  "webp": "$(libwebp_VERSION)",\n'; \
      $(if $(IS_HEVC),printf '  "x265": "$(x265_VERSION)"$(comma)\n';) \

@@ -9,7 +9,7 @@ $(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
 $(PKG)_SUBDIR   := $(PKG)-$(firstword $(subst -, ,$($(PKG)_VERSION)))
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif \
-                   libimagequant highway cgif
+                   libimagequant highway cgif uhdr
 
 define $(PKG)_BUILD
     $(eval export CFLAGS += -O3)
