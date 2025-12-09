@@ -19,6 +19,7 @@ define $(PKG)_PRE_CONFIGURE
     (printf '{\n'; \
      printf '  "aom": "$(aom_VERSION)",\n'; \
      printf '  "archive": "$(libarchive_VERSION)",\n'; \
+     printf '  "brotli": "$(brotli_VERSION)",\n'; \
      printf '  "cairo": "$(cairo_VERSION)",\n'; \
      printf '  "cgif": "$(cgif_VERSION)",\n'; \
      printf '  "exif": "$(libexif_VERSION)",\n'; \
@@ -36,6 +37,7 @@ define $(PKG)_PRE_CONFIGURE
      $(if $(IS_JPEGLI), \
           printf '  "jpegli": "$(jpegli_VERSION)"$(comma)\n';, \
           $(if $(IS_MOZJPEG),,printf '  "jpeg": "$(libjpeg-turbo_VERSION)"$(comma)\n';)) \
+     printf '  "jxl": "$(libjxl_VERSION)",\n'; \
      printf '  "lcms": "$(lcms_VERSION)",\n'; \
      $(if $(IS_MOZJPEG),printf '  "mozjpeg": "$(mozjpeg_VERSION)"$(comma)\n';) \
      printf '  "pango": "$(pango_VERSION)",\n'; \

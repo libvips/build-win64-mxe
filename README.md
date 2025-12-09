@@ -18,6 +18,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
 | [aom]           | 3.13.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [brotli]        | 1.2.0      | MIT Licence                                                  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.0      | MIT Licence                                                  |
 | [expat]         | 2.7.3      | MIT Licence                                                  |
@@ -33,6 +34,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
 | [libheif]       | 1.20.2     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
+| [libjxl]        | [53042ec]  | BSD 3-Clause                                                 |
 | [libpng]        | 1.6.53     | [libpng License version 2]                                   |
 | [librsvg]       | 2.61.3     | LGPLv3                                                       |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
@@ -50,10 +52,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [^2]: libvips is built from the [`v8.18.0-rc2`](https://github.com/libvips/libvips/tree/v8.18.0-rc2) tag, see:
 https://github.com/libvips/libvips/releases/tag/v8.18.0-rc2
 
+[53042ec]: https://github.com/libjxl/libjxl/commit/53042ec537712e0df08709524f4df097d42174bc
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
+[brotli]: https://github.com/google/brotli
 [cairo]: https://gitlab.freedesktop.org/cairo/cairo
 [cgif]: https://github.com/dloebl/cgif
 [expat]: https://github.com/libexpat/libexpat
@@ -71,6 +75,7 @@ https://github.com/libvips/libvips/releases/tag/v8.18.0-rc2
 [libffi]: https://github.com/libffi/libffi
 [libheif]: https://github.com/strukturag/libheif
 [libimagequant]: https://github.com/lovell/libimagequant
+[libjxl]: https://github.com/libjxl/libjxl
 [libpng]: https://github.com/pnggroup/libpng
 [libpng License version 2]: https://github.com/pnggroup/libpng/blob/master/LICENSE
 [librsvg]: https://gitlab.gnome.org/GNOME/librsvg
@@ -94,14 +99,12 @@ Same as libvips-web + these extra dependencies:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [brotli]        | 1.2.0      | MIT Licence                                                  |
 | [cfitsio]       | 4.6.2      | BSD-like                                                     |
 | [fftw]          | 3.3.10     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.4     | LGPLv3                                                       |
 | [imagemagick]   | 6.9.13-35  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
-| [libjxl]        | 0.11.1     | BSD 3-Clause                                                 |
 | [libraw]        | 0.21.4     | LGPL-2.1-only                                                |
 | [matio]         | 1.5.29     | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1      | Public domain                                                |
@@ -112,7 +115,6 @@ Same as libvips-web + these extra dependencies:
 | [sqlite]        | 3.51.1     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
-[brotli]: https://github.com/google/brotli
 [cfitsio]: https://github.com/HEASARC/cfitsio
 [fftw]: https://github.com/FFTW/fftw3
 [gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
@@ -120,7 +122,6 @@ Same as libvips-web + these extra dependencies:
 [ImageMagick License]: https://github.com/ImageMagick/ImageMagick6/blob/main/LICENSE
 [imath]: https://github.com/AcademySoftwareFoundation/Imath
 [libdicom]: https://github.com/ImagingDataCommons/libdicom
-[libjxl]: https://github.com/libjxl/libjxl
 [libraw]: https://github.com/LibRaw/LibRaw
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://github.com/NIFTI-Imaging/nifti_clib
