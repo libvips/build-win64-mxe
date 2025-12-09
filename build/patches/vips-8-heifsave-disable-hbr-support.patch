@@ -41,7 +41,7 @@ index 1111111..2222222 100644
  		vips_error("heifsave", _("%d-bit colour depth not supported"),
  			heif->bitdepth);
  		return -1;
-@@ -738,14 +727,10 @@ vips_foreign_save_heif_build(VipsObject *object)
+@@ -748,14 +737,10 @@ vips_foreign_save_heif_build(VipsObject *object)
  }
  
  #define UC VIPS_FORMAT_UCHAR
@@ -57,7 +57,7 @@ index 1111111..2222222 100644
  };
  
  static void
-@@ -781,7 +766,7 @@ vips_foreign_save_heif_class_init(VipsForeignSaveHeifClass *class)
+@@ -791,7 +776,7 @@ vips_foreign_save_heif_class_init(VipsForeignSaveHeifClass *class)
  		_("Number of bits per pixel"),
  		VIPS_ARGUMENT_OPTIONAL_INPUT,
  		G_STRUCT_OFFSET(VipsForeignSaveHeif, bitdepth),
@@ -66,7 +66,7 @@ index 1111111..2222222 100644
  
  	VIPS_ARG_BOOL(class, "lossless", 13,
  		_("Lossless"),
-@@ -834,7 +819,7 @@ vips_foreign_save_heif_init(VipsForeignSaveHeif *heif)
+@@ -852,7 +837,7 @@ vips_foreign_save_heif_init(VipsForeignSaveHeif *heif)
  {
  	heif->ctx = heif_context_alloc();
  	heif->Q = 50;

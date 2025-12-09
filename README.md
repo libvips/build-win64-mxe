@@ -33,7 +33,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
 | [libheif]       | 1.20.2     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.52     | [libpng License version 2]                                   |
+| [libpng]        | 1.6.53     | [libpng License version 2]                                   |
 | [librsvg]       | 2.61.3     | LGPLv3                                                       |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
@@ -47,8 +47,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [zlib-ng]       | 2.3.2      | [zlib-ng Licence]                                            |
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
-[^2]: libvips is built from the [`v8.18.0-alpha1`](https://github.com/libvips/libvips/tree/v8.18.0-alpha1) tag, see:
-https://github.com/libvips/libvips/releases/tag/v8.18.0-alpha1
+[^2]: libvips is built from the [`v8.18.0-rc2`](https://github.com/libvips/libvips/tree/v8.18.0-rc2) tag, see:
+https://github.com/libvips/libvips/releases/tag/v8.18.0-rc2
 
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
@@ -98,7 +98,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.6.2      | BSD-like                                                     |
 | [fftw]          | 3.3.10     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.4     | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-33  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-35  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.1     | BSD 3-Clause                                                 |
@@ -108,7 +108,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.11     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
-| [poppler]       | 25.11.0    | GPLv2                                                        |
+| [poppler]       | 25.12.0    | GPLv2                                                        |
 | [sqlite]        | 3.51.1     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 

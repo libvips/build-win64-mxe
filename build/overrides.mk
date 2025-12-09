@@ -21,8 +21,8 @@ libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 1.6.51
-libpng_VERSION  := 1.6.52
-libpng_CHECKSUM := 36bd726228ec93a3b6c22fdb49e94a67b16f2fe9b39b78b7cb65772966661ccc
+libpng_VERSION  := 1.6.53
+libpng_CHECKSUM := 1d3fb8ccc2932d04aa3663e22ef5ef490244370f4e568d7850165068778d98d4
 libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
 libpng_SUBDIR   := libpng-$(libpng_VERSION)
 libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
@@ -47,8 +47,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-33
-imagemagick_CHECKSUM := a1a3753b616b90d342cff028eb9ab8a1fd24a65e9dec5adca8af569e3d0c5759
+imagemagick_VERSION  := 6.9.13-35
+imagemagick_CHECKSUM := b6df03651f5551949abc811587bb2f815bc331617a62c9ac832e8ce8bfe7cbd9
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -134,8 +134,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 25.10.0
-poppler_VERSION  := 25.11.0
-poppler_CHECKSUM := 63f155142b77349e2bccaef148e754e7506ab1641e713b83af4f54a8f8b15369
+poppler_VERSION  := 25.12.0
+poppler_CHECKSUM := c18b40eb36b1a0c5b86e29ca054bf0770304583da4f2cdd42fe86eca6a20de48
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
