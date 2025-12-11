@@ -1,6 +1,9 @@
 name: Publish OCI image to ghcr.io
 
-on: workflow_dispatch
+on:
+  release:
+    types: [published]
+  workflow_dispatch: 
 
 permissions: {}
 
