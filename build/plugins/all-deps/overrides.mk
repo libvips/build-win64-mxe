@@ -11,6 +11,7 @@ vips_PATCHES := $(vips_PATCHES) \
 vips_MESON_OPTS = \
     -Dmodules=enabled \
     -Dheif-module=$(if $(IS_HEVC),enabled,disabled) \
+    -Djpeg-xl-module=disabled \
     $(if $(findstring graphicsmagick,$(vips_all_DEPS)), -Dmagick-package=GraphicsMagick) \
     -Dpdfium=disabled \
     -Dquantizr=disabled \

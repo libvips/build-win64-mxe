@@ -4,7 +4,6 @@ vips_MESON_OPTS = \
     -Dmodules=disabled \
     -Dcfitsio=disabled \
     -Dfftw=disabled \
-    -Djpeg-xl=disabled \
     -Dmagick=disabled \
     -Dmatio=disabled \
     -Dnifti=disabled \
