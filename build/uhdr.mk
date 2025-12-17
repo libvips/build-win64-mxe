@@ -12,6 +12,9 @@ define $(PKG)_BUILD
     $(eval export CFLAGS += -O3)
     $(eval export CXXFLAGS += -O3)
 
+    # Avoid architecture-specific compile flags
+    $(SED) -i '/add_compile_options(-[mf]/d' '$(SOURCE_DIR)/CMakeLists.txt'
+
     # Ensure install targets are enabled when cross-compiling
     $(SED) -i 's/CMAKE_CROSSCOMPILING AND UHDR_ENABLE_INSTALL/FALSE/' '$(SOURCE_DIR)/CMakeLists.txt'
 

@@ -47,8 +47,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-35
-imagemagick_CHECKSUM := b6df03651f5551949abc811587bb2f815bc331617a62c9ac832e8ce8bfe7cbd9
+imagemagick_VERSION  := 6.9.13-36
+imagemagick_CHECKSUM := d71d5dfd50363bbdd8ccf5798cc54dcab6921638a349ec40ff194b521649aa27
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -93,8 +93,8 @@ libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
 
 # upstream version is 4.5.0
-cfitsio_VERSION  := 4.6.2
-cfitsio_CHECKSUM := 66fd078cc0bea896b0d44b120d46d6805421a5361d3a5ad84d9f397b1b5de2cb
+cfitsio_VERSION  := 4.6.3
+cfitsio_CHECKSUM := fad44fff274fdda5ffcc0c0fff3bc3c596362722b9292fc8944db91187813600
 cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz

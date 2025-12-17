@@ -37,7 +37,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.61.3     | LGPLv3                                                       |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
-| [libvips]       | 8.18.0[^2] | LGPLv3                                                       |
+| [libvips]       | 8.18.0     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
 | [libxml2]       | 2.15.1     | MIT Licence                                                  |
 | [mozjpeg]       | [0826579]  | [zlib License, IJG License, BSD 3-Clause]                    |
@@ -47,8 +47,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [zlib-ng]       | 2.3.2      | [zlib-ng Licence]                                            |
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
-[^2]: libvips is built from the [`v8.18.0-rc2`](https://github.com/libvips/libvips/tree/v8.18.0-rc2) tag, see:
-https://github.com/libvips/libvips/releases/tag/v8.18.0-rc2
 
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
@@ -95,10 +93,10 @@ Same as libvips-web + these extra dependencies:
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
 | [brotli]        | 1.2.0      | MIT Licence                                                  |
-| [cfitsio]       | 4.6.2      | BSD-like                                                     |
+| [cfitsio]       | 4.6.3      | BSD-like                                                     |
 | [fftw]          | 3.3.10     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.4     | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-35  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-36  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.1     | BSD 3-Clause                                                 |
