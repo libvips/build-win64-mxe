@@ -11,7 +11,7 @@ RUN \
     gtk-update-icon-cache
 
 WORKDIR /usr/local
-RUN git clone -b llvm-mingw-20251204 --single-branch https://github.com/kleisauke/mxe.git
+RUN git clone -b llvm-mingw-20251219 --single-branch https://github.com/kleisauke/mxe.git
 
 WORKDIR /usr/local/mxe
 
