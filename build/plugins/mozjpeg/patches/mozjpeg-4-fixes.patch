@@ -50,3 +50,19 @@ index 1111111..2222222 100644
  
  /* Datatype used for image dimensions.  The JPEG standard only supports
   * images up to 64K*64K due to 16-bit fields in SOF markers.  Therefore
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+Subject: Use fastest compression profile by default
+
+diff --git a/jcapimin.c b/jcapimin.c
+index f9eeb66a..54038f8b 100644
+--- a/jcapimin.c
++++ b/jcapimin.c
+@@ -105,7 +105,7 @@ jpeg_CreateCompress(j_compress_ptr cinfo, int version, size_t structsize)
+   memset(cinfo->master, 0, sizeof(my_comp_master));
+ 
+   #if BITS_IN_JSAMPLE == 8
+-  cinfo->master->compress_profile = JCP_MAX_COMPRESSION;
++  cinfo->master->compress_profile = JCP_FASTEST;
+   #endif
+ }
