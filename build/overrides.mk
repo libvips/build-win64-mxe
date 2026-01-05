@@ -31,16 +31,16 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.8.4
-libarchive_CHECKSUM := c7b847b57feacf5e182f4d14dd6cae545ac6843d55cb725f58e107cdf1c9ad73
+libarchive_VERSION  := 3.8.5
+libarchive_CHECKSUM := d68068e74beee3a0ec0dd04aee9037d5757fcc651591a6dcf1b6d542fb15a703
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-36
-imagemagick_CHECKSUM := d71d5dfd50363bbdd8ccf5798cc54dcab6921638a349ec40ff194b521649aa27
+imagemagick_VERSION  := 6.9.13-37
+imagemagick_CHECKSUM := 6c43e24ca21db0dafcd894b2b88e5a40e38b526a94a3204ada812acf16a11078
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -78,6 +78,14 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
+# upstream version is 2.87.0
+glib_VERSION  := 2.87.1
+glib_CHECKSUM := fc2ce0f948ee163f8adc5bdde2f38612b8a3f270022aa1b0d087cb9f1f0ac5c2
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
@@ -91,6 +99,12 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
+
+# upstream version is 12.2.0
+harfbuzz_VERSION  := 12.3.0
+harfbuzz_CHECKSUM := 8660ebd3c27d9407fc8433b5d172bafba5f0317cb0bb4339f28e5370c93d42b7
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1
@@ -134,8 +148,8 @@ poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
 poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
-libraw_VERSION  := 0.21.4
-libraw_CHECKSUM := 6be43f19397e43214ff56aab056bf3ff4925ca14012ce5a1538a172406a09e63
+libraw_VERSION  := 0.21.5
+libraw_CHECKSUM := a74a2e68303d3b9219f82318f935b28c5c4abd7f2c9f7dbf8faa4997c9038305
 libraw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libraw-[0-9]*.patch)))
 libraw_SUBDIR   := LibRaw-$(libraw_VERSION)
 libraw_FILE     := LibRaw-$(libraw_VERSION).tar.gz

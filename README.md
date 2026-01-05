@@ -24,14 +24,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.14.1     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
-| [glib]          | 2.87.0     | LGPLv3                                                       |
-| [harfbuzz]      | 12.2.0     | MIT Licence                                                  |
+| [glib]          | 2.87.1     | LGPLv3                                                       |
+| [harfbuzz]      | 12.3.0     | MIT Licence                                                  |
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.17       | MIT Licence                                                  |
-| [libarchive]    | 3.8.4      | BSD 2-Clause                                                 |
+| [libarchive]    | 3.8.5      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.25     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
-| [libheif]       | 1.20.2     | LGPLv3                                                       |
+| [libheif]       | 1.21.1     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.53     | [libpng License version 2]                                   |
 | [librsvg]       | 2.61.3     | LGPLv3                                                       |
@@ -96,11 +96,11 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.6.3      | BSD-like                                                     |
 | [fftw]          | 3.3.10     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.4     | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-36  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-37  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.1.9      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.1     | BSD 3-Clause                                                 |
-| [libraw]        | 0.21.4     | LGPL-2.1-only                                                |
+| [libraw]        | 0.21.5     | LGPL-2.1-only                                                |
 | [matio]         | 1.5.29     | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1      | Public domain                                                |
 | [openexr]       | 3.1.11     | BSD 3-Clause                                                 |

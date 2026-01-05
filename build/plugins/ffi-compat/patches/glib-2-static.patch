@@ -12,7 +12,7 @@ diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -875,12 +875,9 @@ else
+@@ -884,12 +884,9 @@ else
    gio_dtrace_hdr = []
  endif
  
@@ -30,8 +30,8 @@ diff --git a/gmodule/meson.build b/gmodule/meson.build
 index 1111111..2222222 100644
 --- a/gmodule/meson.build
 +++ b/gmodule/meson.build
-@@ -88,11 +88,8 @@ if host_system == 'windows'
-   gmodule_sources += [gmodule_win_res]
+@@ -96,11 +96,8 @@ if host_system == 'windows' and glib_build_shared
+   )]
  endif
  
 -libgmodule = library('gmodule-2.0',

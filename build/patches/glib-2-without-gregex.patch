@@ -121,7 +121,7 @@ index 1111111..2222222 100644
    'gscanner.c',
    'gsequence.c',
    'gshell.c',
-@@ -396,13 +394,7 @@ else
+@@ -405,13 +403,7 @@ else
    glib_dtrace_hdr = []
  endif
  
@@ -136,7 +136,7 @@ index 1111111..2222222 100644
  libglib = library('glib-2.0',
    glib_dtrace_obj, glib_dtrace_hdr,
    sources : [glib_deprecated_sources, glib_sources],
-@@ -422,7 +414,6 @@ libglib = library('glib-2.0',
+@@ -431,7 +423,6 @@ libglib = library('glib-2.0',
      libm,
      librt,
      libsysprof_capture_dep,
@@ -144,7 +144,7 @@ index 1111111..2222222 100644
      platform_deps,
      thread_dep,
    ],
-@@ -449,7 +440,6 @@ libglib_static_dep = declare_dependency(
+@@ -458,7 +449,6 @@ libglib_static_dep = declare_dependency(
      libm,
      librt,
      libsysprof_capture_dep,
