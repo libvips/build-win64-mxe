@@ -13,7 +13,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -352,13 +352,9 @@ if host_system in ['windows', 'linux']
+@@ -353,13 +353,9 @@ if host_system in ['windows', 'linux']
    native_libs = run_command(
      rustc_query_native_static_libs_args,
      capture: true,
@@ -105,8 +105,8 @@ index 1111111..2222222 100644
 -
  [[package]]
  name = "gio"
- version = "0.21.4"
-@@ -1169,10 +1153,7 @@ checksum = "529feb3e6769d234375c4cf1ee2ce713682b8e76538cb13f9fc23e1400a591e7"
+ version = "0.22.0-alpha.2"
+@@ -1315,10 +1299,7 @@ checksum = "529feb3e6769d234375c4cf1ee2ce713682b8e76538cb13f9fc23e1400a591e7"
  dependencies = [
   "bytemuck",
   "byteorder-lite",
@@ -117,7 +117,7 @@ index 1111111..2222222 100644
   "moxcms",
   "mp4parse",
   "num-traits",
-@@ -1181,16 +1162,6 @@ dependencies = [
+@@ -1327,16 +1308,6 @@ dependencies = [
   "zune-jpeg",
  ]
  
@@ -180,7 +180,16 @@ index 1111111..2222222 100644
  ]
  
  [[package]]
-@@ -2264,7 +2264,7 @@ dependencies = [
+@@ -980,7 +980,7 @@ dependencies = [
+  "gobject-sys",
+  "libc",
+  "system-deps",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -2426,7 +2426,7 @@ dependencies = [
   "errno",
   "libc",
   "linux-raw-sys",
@@ -189,7 +198,7 @@ index 1111111..2222222 100644
  ]
  
  [[package]]
-@@ -2573,7 +2573,7 @@ dependencies = [
+@@ -2735,7 +2735,7 @@ dependencies = [
   "getrandom",
   "once_cell",
   "rustix",
@@ -198,7 +207,7 @@ index 1111111..2222222 100644
  ]
  
  [[package]]
-@@ -2950,7 +2950,7 @@ version = "0.1.11"
+@@ -3100,7 +3100,7 @@ version = "0.1.11"
  source = "registry+https://github.com/rust-lang/crates.io-index"
  checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
  dependencies = [
@@ -207,7 +216,7 @@ index 1111111..2222222 100644
  ]
  
  [[package]]
-@@ -3036,15 +3036,6 @@ dependencies = [
+@@ -3186,15 +3186,6 @@ dependencies = [
   "windows-targets 0.53.5",
  ]
  

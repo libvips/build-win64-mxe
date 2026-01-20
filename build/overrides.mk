@@ -20,11 +20,19 @@ libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
+# upstream version is 1.6.53
+libpng_VERSION  := 1.6.54
+libpng_CHECKSUM := 01c9d8a303c941ec2c511c14312a3b1d36cedb41e2f5168ccdaa85d53b887805
+libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
+libpng_SUBDIR   := libpng-$(libpng_VERSION)
+libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
+libpng_URL      := https://$(SOURCEFORGE_MIRROR)/project/libpng/libpng16/$(libpng_VERSION)/$(libpng_FILE)
+
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
-matio_VERSION  := 1.5.29
-matio_CHECKSUM := d9e5f7a2f2c594eff15f550e34729b01991cdd5a028a558be8ce595b32233afb
+matio_VERSION  := 1.5.30
+matio_CHECKSUM := 8bd3b9477042ecc00dd71c04762fa58468e14cccc32fd8c6826c2da1e8bc3107
 matio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/matio-[0-9]*.patch)))
 matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
@@ -39,22 +47,22 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-37
-imagemagick_CHECKSUM := 6c43e24ca21db0dafcd894b2b88e5a40e38b526a94a3204ada812acf16a11078
+imagemagick_VERSION  := 6.9.13-38
+imagemagick_CHECKSUM := 30329a34d99cf4baa3c87035147b5c3d09b86201a8df709160bc2d2047fe6071
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
 # alternatively, one could build libvips with GraphicsMagick
 # upstream version is 1.3.38
-graphicsmagick_VERSION  := 1.3.45
-graphicsmagick_CHECKSUM := dcea5167414f7c805557de2d7a47a9b3147bcbf617b91f5f0f4afe5e6543026b
+graphicsmagick_VERSION  := 1.3.46
+graphicsmagick_CHECKSUM := c7c706a505e9c6c3764156bb94a0c9644d79131785df15a89c9f8721d1abd061
 graphicsmagick_SUBDIR   := GraphicsMagick-$(graphicsmagick_VERSION)
 graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.61.3
-librsvg_CHECKSUM := a56d2c80d744ad2f2718f85df466fe71d24ff1f9bc3e5ef588bde4d7e87815f2
+librsvg_VERSION  := 2.61.90
+librsvg_CHECKSUM := 8991685ab71a8e59ce597553946034a9282a2713744e8b94877cb0e757b42b76
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -79,8 +87,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.87.0
-glib_VERSION  := 2.87.1
-glib_CHECKSUM := fc2ce0f948ee163f8adc5bdde2f38612b8a3f270022aa1b0d087cb9f1f0ac5c2
+glib_VERSION  := 2.87.2
+glib_CHECKSUM := d6eb74a4f4ffc0b56df79ae3a939463b1d92c623f6c167d51aab24e303a851f3
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -99,6 +107,16 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
+
+# upstream version is 2.17
+# cannot use GH_CONF:
+# lcms_GH_CONF  := mm2/Little-CMS,lcms
+lcms_VERSION  := 2.18
+lcms_CHECKSUM := ee67be3566f459362c1ee094fde2c159d33fa0390aa4ed5f5af676f9e5004347
+lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
+lcms_SUBDIR   := lcms2-$(lcms_VERSION)
+lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
+lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
 
 # upstream version is 12.2.0
 harfbuzz_VERSION  := 12.3.0
@@ -140,16 +158,16 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 25.10.0
-poppler_VERSION  := 25.12.0
-poppler_CHECKSUM := c18b40eb36b1a0c5b86e29ca054bf0770304583da4f2cdd42fe86eca6a20de48
+poppler_VERSION  := 26.01.0
+poppler_CHECKSUM := 1cb944a4b88847f5fb6551683bc799db59f04990f5d8be07aba2acbf38601089
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
 poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
-libraw_VERSION  := 0.21.5
-libraw_CHECKSUM := a74a2e68303d3b9219f82318f935b28c5c4abd7f2c9f7dbf8faa4997c9038305
+libraw_VERSION  := 0.22.0
+libraw_CHECKSUM := 1071e6e8011593c366ffdadc3d3513f57c90202d526e133174945ec1dd53f2a1
 libraw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libraw-[0-9]*.patch)))
 libraw_SUBDIR   := LibRaw-$(libraw_VERSION)
 libraw_FILE     := LibRaw-$(libraw_VERSION).tar.gz
