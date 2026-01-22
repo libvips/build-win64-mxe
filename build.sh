@@ -159,7 +159,7 @@ else
   exit 1
 fi
 
-image="ghcr.io/libvips/build-win64-mxe:latest"
+image="ghcr.io/libvips/build-win64-mxe:rc"
 
 if [ "$with_prebuilt" = false ]; then
   image="libvips-build-win-mxe-base"

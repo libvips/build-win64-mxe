@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: OCI metadata
         id: meta
@@ -25,6 +25,8 @@ jobs:
             type=sha
             # Set latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
+            # Set rc tag for llvm-22 branch
+            type=raw,value=rc,enable=${{ github.ref == 'refs/heads/llvm-22' }}
           # Overwrite some generated OCI labels
           labels: |
             org.opencontainers.image.authors=libvips team and contributors

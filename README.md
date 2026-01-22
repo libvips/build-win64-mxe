@@ -97,17 +97,17 @@ Same as libvips-web + these extra dependencies:
 | [fftw]          | 3.3.10     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.4     | LGPLv3                                                       |
 | [imagemagick]   | 6.9.13-38  | [ImageMagick License] (Apache-2.0-like)                      |
-| [imath]         | 3.1.9      | BSD 3-Clause                                                 |
+| [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.1     | BSD 3-Clause                                                 |
 | [libraw]        | 0.22.0     | LGPL-2.1-only                                                |
 | [matio]         | 1.5.30     | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1      | Public domain                                                |
-| [openexr]       | 3.1.11     | BSD 3-Clause                                                 |
+| [openexr]       | 3.1.13     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
 | [poppler]       | 26.01.0    | GPLv2                                                        |
-| [sqlite]        | 3.51.1     | Public domain                                                |
+| [sqlite]        | 3.51.2     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
 [brotli]: https://github.com/google/brotli

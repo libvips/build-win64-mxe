@@ -20,14 +20,6 @@ libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
 libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
-# upstream version is 1.6.53
-libpng_VERSION  := 1.6.54
-libpng_CHECKSUM := 01c9d8a303c941ec2c511c14312a3b1d36cedb41e2f5168ccdaa85d53b887805
-libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
-libpng_SUBDIR   := libpng-$(libpng_VERSION)
-libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
-libpng_URL      := https://$(SOURCEFORGE_MIRROR)/project/libpng/libpng16/$(libpng_VERSION)/$(libpng_FILE)
-
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -86,7 +78,7 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
-# upstream version is 2.87.0
+# upstream version is 2.87.1
 glib_VERSION  := 2.87.2
 glib_CHECKSUM := d6eb74a4f4ffc0b56df79ae3a939463b1d92c623f6c167d51aab24e303a851f3
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
@@ -140,14 +132,15 @@ brotli_GH_CONF  := google/brotli/tags,v
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
-# openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
+# openexr_GH_CONF  := AcademySoftwareFoundation/openexr/releases,v
 # 3.2.0 requires libdeflate instead of zlib
-openexr_VERSION  := 3.1.11
-openexr_CHECKSUM := 06b4a20d0791b5ec0f804c855d320a0615ce8445124f293616a086e093f1f1e1
+# 3.4.0 requires OpenJPH
+openexr_VERSION  := 3.1.13
+openexr_CHECKSUM := 466213c67b6f45ae2642de762b8c327e01c2f29e0aec56ff62215391e4e06440
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
-openexr_SUBDIR   := openexr-$(openexr_VERSION)
-openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
-openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
+openexr_SUBDIR   :=
+openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
+openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
 
 # upstream version is 3.0.1
 libjpeg-turbo_VERSION  := 3.1.2
@@ -795,6 +788,7 @@ define openexr_BUILD
         -DOPENEXR_INSTALL_TOOLS=OFF \
         -DOPENEXR_BUILD_TOOLS=OFF \
         -DBUILD_TESTING=OFF \
+        -DCMAKE_C_FLAGS='$(CFLAGS) -Wno-error=incompatible-pointer-types' \
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
