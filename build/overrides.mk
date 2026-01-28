@@ -111,8 +111,8 @@ lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
 lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
 
 # upstream version is 12.2.0
-harfbuzz_VERSION  := 12.3.0
-harfbuzz_CHECKSUM := 8660ebd3c27d9407fc8433b5d172bafba5f0317cb0bb4339f28e5370c93d42b7
+harfbuzz_VERSION  := 12.3.2
+harfbuzz_CHECKSUM := 6f6db164359a2da5a84ef826615b448b33e6306067ad829d85d5b0bf936f1bb8
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 

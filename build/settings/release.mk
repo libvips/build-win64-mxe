@@ -24,8 +24,7 @@ export CARGO_PROFILE_RELEASE_INCREMENTAL   := false
 export CARGO_PROFILE_RELEASE_LTO           := true
 export CARGO_PROFILE_RELEASE_OPT_LEVEL     := z
 export CARGO_PROFILE_RELEASE_PANIC         := abort
-# FIXME(kleisauke): Re-enable once cargo-c updates Cargo to include https://github.com/rust-lang/cargo/pull/16536
-export CARGO_PROFILE_RELEASE_TRIM_PATHS    := false
+export CARGO_PROFILE_RELEASE_TRIM_PATHS    := true
 
 # Install the various PDBs.
 INSTALL_PDB := $(true)
