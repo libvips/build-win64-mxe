@@ -29,7 +29,7 @@ Subject: [PATCH 2/2] gfile: Use MAX_PATH instead of _MAX_PATH
 
 In line with commit e3663a855a9c86f0a3988a7a50fa40d37d0ea069.
 
-Upstream-Status: Submitted [https://gitlab.freedesktop.org/poppler/poppler/-/merge_requests/2076]
+Upstream-Status: Backport [https://gitlab.freedesktop.org/poppler/poppler/-/commit/074050be803550ad941e46759704be11a7efbc03]
 
 diff --git a/goo/gfile.cc b/goo/gfile.cc
 index 1111111..2222222 100644

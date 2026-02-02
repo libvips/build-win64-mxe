@@ -4,8 +4,8 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 # upstream version is 2.44.2
 # gdk-pixbuf is still used by OpenSlide
-gdk-pixbuf_VERSION  := 2.44.4
-gdk-pixbuf_CHECKSUM := 93a1aac3f1427ae73457397582a2c38d049638a801788ccbd5f48ca607bdbd17
+gdk-pixbuf_VERSION  := 2.44.5
+gdk-pixbuf_CHECKSUM := 69b93e09139b80c0ee661503d60deb5a5874a31772b5184b9cd5462a4100ab68
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -86,6 +86,14 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
+# upstream version is 2.7.3
+expat_VERSION  := 2.7.4
+expat_CHECKSUM := 9e9cabb457c1e09de91db2706d8365645792638eb3be1f94dbb2149301086ac0
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
+
 # upstream version is 2.87.0
 glib_VERSION  := 2.87.2
 glib_CHECKSUM := d6eb74a4f4ffc0b56df79ae3a939463b1d92c623f6c167d51aab24e303a851f3
@@ -119,8 +127,8 @@ lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
 lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
 
 # upstream version is 12.2.0
-harfbuzz_VERSION  := 12.3.0
-harfbuzz_CHECKSUM := 8660ebd3c27d9407fc8433b5d172bafba5f0317cb0bb4339f28e5370c93d42b7
+harfbuzz_VERSION  := 12.3.2
+harfbuzz_CHECKSUM := 6f6db164359a2da5a84ef826615b448b33e6306067ad829d85d5b0bf936f1bb8
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
@@ -140,14 +148,15 @@ brotli_GH_CONF  := google/brotli/tags,v
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
-# openexr_GH_CONF  := AcademySoftwareFoundation/openexr/tags
+# openexr_GH_CONF  := AcademySoftwareFoundation/openexr/releases,v
 # 3.2.0 requires libdeflate instead of zlib
-openexr_VERSION  := 3.1.11
-openexr_CHECKSUM := 06b4a20d0791b5ec0f804c855d320a0615ce8445124f293616a086e093f1f1e1
+# 3.4.0 requires OpenJPH
+openexr_VERSION  := 3.1.13
+openexr_CHECKSUM := 466213c67b6f45ae2642de762b8c327e01c2f29e0aec56ff62215391e4e06440
 openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/openexr-[0-9]*.patch)))
-openexr_SUBDIR   := openexr-$(openexr_VERSION)
-openexr_FILE     := openexr-$(openexr_VERSION).tar.gz
-openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/archive/v$(openexr_VERSION).tar.gz
+openexr_SUBDIR   :=
+openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
+openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
 
 # upstream version is 3.0.1
 libjpeg-turbo_VERSION  := 3.1.2
