@@ -21,8 +21,8 @@ libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
 libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
 
 # upstream version is 1.6.53
-libpng_VERSION  := 1.6.54
-libpng_CHECKSUM := 01c9d8a303c941ec2c511c14312a3b1d36cedb41e2f5168ccdaa85d53b887805
+libpng_VERSION  := 1.6.55
+libpng_CHECKSUM := d925722864837ad5ae2a82070d4b2e0603dc72af44bd457c3962298258b8e82d
 libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
 libpng_SUBDIR   := libpng-$(libpng_VERSION)
 libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
@@ -61,8 +61,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.61.90
-librsvg_CHECKSUM := 8991685ab71a8e59ce597553946034a9282a2713744e8b94877cb0e757b42b76
+librsvg_VERSION  := 2.61.91
+librsvg_CHECKSUM := 92b75310deb99e8e8d47e4010e25fcd9833fa94d488d8318aeb8e335d20977ee
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -167,8 +167,8 @@ libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
 # upstream version is 25.10.0
-poppler_VERSION  := 26.01.0
-poppler_CHECKSUM := 1cb944a4b88847f5fb6551683bc799db59f04990f5d8be07aba2acbf38601089
+poppler_VERSION  := 26.02.0
+poppler_CHECKSUM := dded8621f7b2f695c91063aab1558691c8418374cd583501e89ed39487e7ab77
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz

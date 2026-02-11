@@ -33,8 +33,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
 | [libheif]       | 1.21.2     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.54     | [libpng License version 2]                                   |
-| [librsvg]       | 2.61.90    | LGPLv3                                                       |
+| [libpng]        | 1.6.55     | [libpng License version 2]                                   |
+| [librsvg]       | 2.61.91    | LGPLv3                                                       |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
 | [libvips]       | 8.18.0     | LGPLv3                                                       |
@@ -44,7 +44,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [pango]         | 1.57.0     | LGPLv3                                                       |
 | [pixman]        | 0.46.4     | MIT Licence                                                  |
 | [proxy-libintl] | 0.5        | LGPLv3                                                       |
-| [zlib-ng]       | 2.3.2      | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.3.3      | [zlib-ng Licence]                                            |
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
@@ -99,14 +99,14 @@ Same as libvips-web + these extra dependencies:
 | [imagemagick]   | 6.9.13-38  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
-| [libjxl]        | 0.11.1     | BSD 3-Clause                                                 |
+| [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |
 | [libraw]        | 0.22.0     | LGPL-2.1-only                                                |
 | [matio]         | 1.5.30     | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1      | Public domain                                                |
 | [openexr]       | 3.1.13     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
-| [poppler]       | 26.01.0    | GPLv2                                                        |
+| [poppler]       | 26.02.0    | GPLv2                                                        |
 | [sqlite]        | 3.51.1     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
