@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 19 Feb 2021 16:00:00 +0100
-Subject: [PATCH 1/2] Fix bogus volatile caught by clang 11
+Subject: [PATCH 1/1] Fix bogus volatile caught by clang 11
 
 
 diff --git a/glib/poppler-enums.c.template b/glib/poppler-enums.c.template
@@ -21,46 +21,3 @@ index 1111111..2222222 100644
   
    if (g_once_init_enter (&g_define_type_id)) {
      static const G@Type@Value values[] = {
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Tue, 20 Jan 2026 13:29:49 +0100
-Subject: [PATCH 2/2] gfile: Use MAX_PATH instead of _MAX_PATH
-
-In line with commit e3663a855a9c86f0a3988a7a50fa40d37d0ea069.
-
-Upstream-Status: Backport [https://gitlab.freedesktop.org/poppler/poppler/-/commit/074050be803550ad941e46759704be11a7efbc03]
-
-diff --git a/goo/gfile.cc b/goo/gfile.cc
-index 1111111..2222222 100644
---- a/goo/gfile.cc
-+++ b/goo/gfile.cc
-@@ -187,8 +187,8 @@ FILE *openFile(const char *path, const char *mode)
- {
- #ifdef _WIN32
-     OSVERSIONINFO version;
--    wchar_t wPath[_MAX_PATH + 1];
--    char nPath[_MAX_PATH + 1];
-+    wchar_t wPath[MAX_PATH + 1];
-+    char nPath[MAX_PATH + 1];
-     wchar_t wMode[8];
-     const char *p;
-     size_t i;
-@@ -197,7 +197,7 @@ FILE *openFile(const char *path, const char *mode)
-     version.dwOSVersionInfoSize = sizeof(version);
-     GetVersionEx(&version);
-     if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
--        for (p = path, i = 0; *p && i < _MAX_PATH; ++i) {
-+        for (p = path, i = 0; *p && i < MAX_PATH; ++i) {
-             if ((p[0] & 0xe0) == 0xc0 && p[1] && (p[1] & 0xc0) == 0x80) {
-                 wPath[i] = (wchar_t)(((p[0] & 0x1f) << 6) | (p[1] & 0x3f));
-                 p += 2;
-@@ -216,7 +216,7 @@ FILE *openFile(const char *path, const char *mode)
-         wMode[i] = (wchar_t)0;
-         return _wfopen(wPath, wMode);
-     } else {
--        for (p = path, i = 0; *p && i < _MAX_PATH; ++i) {
-+        for (p = path, i = 0; *p && i < MAX_PATH; ++i) {
-             if ((p[0] & 0xe0) == 0xc0 && p[1] && (p[1] & 0xc0) == 0x80) {
-                 nPath[i] = (char)(((p[0] & 0x1f) << 6) | (p[1] & 0x3f));
-                 p += 2;
