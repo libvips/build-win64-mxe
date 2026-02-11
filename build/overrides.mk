@@ -52,14 +52,6 @@ imagemagick_CHECKSUM := 30329a34d99cf4baa3c87035147b5c3d09b86201a8df709160bc2d20
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
-# alternatively, one could build libvips with GraphicsMagick
-# upstream version is 1.3.38
-graphicsmagick_VERSION  := 1.3.46
-graphicsmagick_CHECKSUM := c7c706a505e9c6c3764156bb94a0c9644d79131785df15a89c9f8721d1abd061
-graphicsmagick_SUBDIR   := GraphicsMagick-$(graphicsmagick_VERSION)
-graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
-graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
-
 # upstream version is 2.40.21
 librsvg_VERSION  := 2.61.91
 librsvg_CHECKSUM := 92b75310deb99e8e8d47e4010e25fcd9833fa94d488d8318aeb8e335d20977ee
@@ -86,22 +78,6 @@ fribidi_SUBDIR   := fribidi-$(fribidi_VERSION)
 fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
-# upstream version is 2.7.3
-expat_VERSION  := 2.7.4
-expat_CHECKSUM := 9e9cabb457c1e09de91db2706d8365645792638eb3be1f94dbb2149301086ac0
-expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
-expat_SUBDIR   := expat-$(expat_VERSION)
-expat_FILE     := expat-$(expat_VERSION).tar.xz
-expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
-
-# upstream version is 2.87.1
-glib_VERSION  := 2.87.2
-glib_CHECKSUM := d6eb74a4f4ffc0b56df79ae3a939463b1d92c623f6c167d51aab24e303a851f3
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
-glib_SUBDIR   := glib-$(glib_VERSION)
-glib_FILE     := glib-$(glib_VERSION).tar.xz
-glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
-
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.25
 libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
@@ -115,22 +91,6 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
-
-# upstream version is 2.17
-# cannot use GH_CONF:
-# lcms_GH_CONF  := mm2/Little-CMS,lcms
-lcms_VERSION  := 2.18
-lcms_CHECKSUM := ee67be3566f459362c1ee094fde2c159d33fa0390aa4ed5f5af676f9e5004347
-lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
-lcms_SUBDIR   := lcms2-$(lcms_VERSION)
-lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
-lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
-
-# upstream version is 12.2.0
-harfbuzz_VERSION  := 12.3.2
-harfbuzz_CHECKSUM := 6f6db164359a2da5a84ef826615b448b33e6306067ad829d85d5b0bf936f1bb8
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1
@@ -165,14 +125,6 @@ libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFI
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
-
-# upstream version is 25.10.0
-poppler_VERSION  := 26.02.0
-poppler_CHECKSUM := dded8621f7b2f695c91063aab1558691c8418374cd583501e89ed39487e7ab77
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
 libraw_VERSION  := 0.22.0
