@@ -47,8 +47,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-38
-imagemagick_CHECKSUM := 30329a34d99cf4baa3c87035147b5c3d09b86201a8df709160bc2d2047fe6071
+imagemagick_VERSION  := 6.9.13-40
+imagemagick_CHECKSUM := 07d5e0f150d5065c6eda5765b1d3d0636ec2a5b99009c465b9456200432c0704
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -61,8 +61,8 @@ graphicsmagick_FILE     := GraphicsMagick-$(graphicsmagick_VERSION).tar.xz
 graphicsmagick_URL      := https://$(SOURCEFORGE_MIRROR)/project/graphicsmagick/graphicsmagick/$(graphicsmagick_VERSION)/$(graphicsmagick_FILE)
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.61.91
-librsvg_CHECKSUM := 92b75310deb99e8e8d47e4010e25fcd9833fa94d488d8318aeb8e335d20977ee
+librsvg_VERSION  := 2.61.92
+librsvg_CHECKSUM := 5ee3b21fb9a12e5947baaa13baba5b0e90daac14709adceedd861d16822e3c71
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
