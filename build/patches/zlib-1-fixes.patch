@@ -1,60 +1,33 @@
 This file is part of MXE. See LICENSE.md for licensing information.
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Alexander Karatarakis <alkarata@microsoft.com>
-Date: Sun, 24 Sep 2017 00:03:34 -0700
-Subject: [PATCH 1/2] Do not build more things than needed
-
-
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 1111111..2222222 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -179,7 +179,15 @@ elseif(BUILD_SHARED_LIBS AND WIN32)
- endif()
- 
- if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )
--    install(TARGETS zlib zlibstatic
-+    if(BUILD_SHARED_LIBS)
-+        set(ZLIB_TARGETS zlib)
-+        set_target_properties(zlibstatic PROPERTIES EXCLUDE_FROM_ALL ON)
-+    else()
-+        set(ZLIB_TARGETS zlibstatic)
-+        set_target_properties(zlib PROPERTIES EXCLUDE_FROM_ALL ON)
-+    endif()
-+
-+    install(TARGETS ${ZLIB_TARGETS}
-         RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-         ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-         LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: "fix@me" <fix@me>
 Date: Sunday, 25 Feb 2018 21:37:44 +0200
-Subject: [PATCH 2/3] Fix DLL naming (libzlib.dll -> libz.dll)
+Subject: [PATCH 1/2] Fix static library naming (libzs.a -> libz.a)
 
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -167,6 +167,11 @@ if(NOT CYGWIN)
-     set_target_properties(zlib PROPERTIES VERSION ${ZLIB_FULL_VERSION})
- endif()
+@@ -149,10 +149,10 @@ set(ZLIB_SRCS
+     uncompr.c
+     zutil.c)
  
-+if(MINGW)
-+    # when cross-compiling with mingw, we want to make libz, not libzlib
-+    set_target_properties(zlib zlibstatic PROPERTIES OUTPUT_NAME z)
-+endif(MINGW)
-+
- if(UNIX)
-     # On unix-like platforms the library is almost always called libz
-    set_target_properties(zlib zlibstatic PROPERTIES OUTPUT_NAME z)
+-if(WIN32)
++if(MSVC)
+     set(zlib_static_suffix "s")
+     set(CMAKE_DEBUG_POSTFIX "d")
+-endif(WIN32)
++endif(MSVC)
+ 
+ if(ZLIB_BUILD_SHARED)
+     add_library(
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Nicolas Pena <npm@chromium.org>
 Date: Tue, 8 Aug 2017 17:33:32 +0000
-Subject: [PATCH 3/3] Zlib patch: prevent uninitialized use of state->check
+Subject: [PATCH 2/2] Zlib patch: prevent uninitialized use of state->check
 
 This CL fixes a security bug in zlib. It was reported upstream long ago
 and the testcase was shared upstream but it's yet unsolved. As a fix,
@@ -68,7 +41,7 @@ diff --git a/inflate.c b/inflate.c
 index 1111111..2222222 100644
 --- a/inflate.c
 +++ b/inflate.c
-@@ -207,6 +207,7 @@ int stream_size;
+@@ -203,6 +203,7 @@ int stream_size;
      state->strm = strm;
      state->window = Z_NULL;
      state->mode = HEAD;     /* to pass state test in inflateReset2() */

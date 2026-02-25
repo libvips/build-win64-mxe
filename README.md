@@ -186,7 +186,7 @@ In that case, the following version of zlib is built:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [zlib]          | 1.3.1      | [zlib Licence]                                               |
+| [zlib]          | 1.3.2      | [zlib Licence]                                               |
 
 [zlib]: https://github.com/madler/zlib
 [zlib Licence]: https://github.com/madler/zlib/blob/develop/LICENSE

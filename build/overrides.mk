@@ -11,23 +11,6 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
-# no longer needed by libvips, but some of the deps need it
-# upstream version is 2.14.6
-libxml2_VERSION  := 2.15.1
-libxml2_CHECKSUM := c008bac08fd5c7b4a87f7b8a71f283fa581d80d80ff8d2efd3b26224c39bc54c
-libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
-libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
-libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
-libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
-
-# upstream version is 1.6.54
-libpng_VERSION  := 1.6.55
-libpng_CHECKSUM := d925722864837ad5ae2a82070d4b2e0603dc72af44bd457c3962298258b8e82d
-libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
-libpng_SUBDIR   := libpng-$(libpng_VERSION)
-libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
-libpng_URL      := https://$(SOURCEFORGE_MIRROR)/project/libpng/libpng16/$(libpng_VERSION)/$(libpng_FILE)
-
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -100,12 +83,6 @@ fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
 fontconfig_URL      := https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/$(fontconfig_VERSION)/$(fontconfig_FILE)
 
-# upstream version is 1.1.0
-brotli_VERSION  := 1.2.0
-brotli_CHECKSUM := 816c96e8e8f193b40151dad7e8ff37b1221d019dbcb9c35cd3fadbfe6477dfec
-brotli_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/brotli-[0-9]*.patch)))
-brotli_GH_CONF  := google/brotli/tags,v
-
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/releases,v
@@ -174,9 +151,6 @@ pixman_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)
 poppler_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 sqlite_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/sqlite-[0-9]*.patch)))
 tiff_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
-
-# zlib will make libzlib.dll, but we want libz.dll so we must
-# patch CMakeLists.txt
 zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
 
 ## Override sub-dependencies
@@ -599,8 +573,9 @@ endef
 # the zlib configure is a bit basic, so we'll use cmake
 define zlib_BUILD
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
-        -DZLIB_BUILD_EXAMPLES=OFF \
-        -DINSTALL_PKGCONFIG_DIR='$(PREFIX)/$(TARGET)/lib/pkgconfig' \
+        -DZLIB_BUILD_TESTING=OFF \
+        -DZLIB_BUILD_SHARED=$(CMAKE_SHARED_BOOL) \
+        -DZLIB_BUILD_STATIC=$(CMAKE_STATIC_BOOL) \
         '$(SOURCE_DIR)'
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
