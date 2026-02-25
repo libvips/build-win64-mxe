@@ -107,7 +107,7 @@ Same as libvips-web + these extra dependencies:
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
 | [poppler]       | 26.02.0    | GPLv2                                                        |
-| [sqlite]        | 3.51.1     | Public domain                                                |
+| [sqlite]        | 3.51.2     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
 [brotli]: https://github.com/google/brotli
@@ -186,7 +186,7 @@ In that case, the following version of zlib is built:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [zlib]          | 1.3.1      | [zlib Licence]                                               |
+| [zlib]          | 1.3.2      | [zlib Licence]                                               |
 
 [zlib]: https://github.com/madler/zlib
 [zlib Licence]: https://github.com/madler/zlib/blob/develop/LICENSE
