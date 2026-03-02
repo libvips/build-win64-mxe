@@ -105,7 +105,7 @@ index 1111111..2222222 100644
 -
  [[package]]
  name = "gio"
- version = "0.22.0-alpha.2"
+ version = "0.22.1"
 @@ -1322,10 +1306,7 @@ checksum = "e6506c6c10786659413faa717ceebcb8f70731c0a60cbae39795fdf114519c1a"
  dependencies = [
   "bytemuck",

@@ -12,7 +12,7 @@ diff --git a/gio/meson.build b/gio/meson.build
 index 1111111..2222222 100644
 --- a/gio/meson.build
 +++ b/gio/meson.build
-@@ -884,12 +884,9 @@ else
+@@ -891,12 +891,9 @@ else
    gio_dtrace_hdr = []
  endif
  
@@ -47,7 +47,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -336,13 +336,14 @@ endif
+@@ -338,13 +338,14 @@ endif
  if glib_build_static_only
    glibconfig_conf.set('GLIB_STATIC_COMPILATION', '1')
    glibconfig_conf.set('GOBJECT_STATIC_COMPILATION', '1')
