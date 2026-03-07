@@ -11,6 +11,15 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
+# no longer needed by libvips, but some of the deps need it
+# upstream version is 2.15.1
+libxml2_VERSION  := 2.15.2
+libxml2_CHECKSUM := c8b9bc81f8b590c33af8cc6c336dbff2f53409973588a351c95f1c621b13d09d
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
+libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
+libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
+
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -83,6 +92,12 @@ cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
+# upstream version is 12.3.2
+harfbuzz_VERSION  := 13.0.0
+harfbuzz_CHECKSUM := 1626ebc763d28f4bcca1531fef42e92ca995d45f8ad90ad2ae0b5d1a567fe67a
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
 # upstream version is 2.16.0
 fontconfig_VERSION  := 2.17.1
 fontconfig_CHECKSUM := 9f5cae93f4fffc1fbc05ae99cdfc708cd60dfd6612ffc0512827025c026fa541
@@ -127,6 +142,14 @@ libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz
 libjpeg-turbo_URL      := https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/$(libjpeg-turbo_VERSION)/$(libjpeg-turbo_FILE)
 
+# upstream version is 26.02.0
+poppler_VERSION  := 26.03.0
+poppler_CHECKSUM := 8b3c5e2a9f2ab4c3ec5029f28af1b433c6b71f0d1e7b3997aa561cf1c0ca4ebe
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
+
 # upstream version is 0.21.1
 libraw_VERSION  := 0.22.0
 libraw_CHECKSUM := 1071e6e8011593c366ffdadc3d3513f57c90202d526e133174945ec1dd53f2a1
@@ -147,8 +170,8 @@ gsl_URL_2    := https://ftp.snt.utwente.nl/pub/software/gnu/gsl/$(gsl_FILE)
 
 # upstream version is 3.36.1
 # needed by nip4 and vipsdisp
-adwaita-icon-theme_VERSION  := 48.1
-adwaita-icon-theme_CHECKSUM := cbfe9b86ebcd14b03ba838c49829f7e86a7b132873803b90ac10be7d318a6e12
+adwaita-icon-theme_VERSION  := 49.0
+adwaita-icon-theme_CHECKSUM := 65166461d1b278aa942f59aa8d0fccf1108d71c65f372c6266e172449791755c
 adwaita-icon-theme_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/adwaita-icon-theme-[0-9]*.patch)))
 adwaita-icon-theme_SUBDIR   := adwaita-icon-theme-$(adwaita-icon-theme_VERSION)
 adwaita-icon-theme_FILE     := adwaita-icon-theme-$(adwaita-icon-theme_VERSION).tar.xz
@@ -322,15 +345,21 @@ define libexif_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_PROGRAMS)
 endef
 
-# icu will pull in standard linux headers, which we don't want,
-# build with Meson.
+# icu will pull in standard linux headers, which we don't want
+# skip building newly-added harfbuzz-vector and harfbuzz-raster libraries
+# skip building unused harfbuzz-subset library
+# build with Meson
 define harfbuzz_BUILD
     $(MXE_MESON_WRAPPER) \
         -Dicu=disabled \
+        -Draster=disabled \
+        -Dvector=disabled \
+        -Dsubset=disabled \
         -Dtests=disabled \
         -Dintrospection=disabled \
         -Ddocs=disabled \
         -Dbenchmark=disabled \
+        $(PKG_MESON_OPTS) \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 

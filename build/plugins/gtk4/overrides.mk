@@ -11,6 +11,9 @@ glib_MESON_OPTS = --force-fallback-for=libpcre2-8
 cairo_PATCHES := $(filter-out $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/../../patches/cairo-1-nanoserver-compat.patch))),$(cairo_PATCHES))
 cairo_MESON_OPTS = -Dzlib=enabled -Ddwrite=enabled
 
+# GTK requires harfbuzz-subset
+harfbuzz_MESON_OPTS = -Dsubset=enabled
+
 # nip4 needs -Doutput=enabled
 libxml2_MESON_OPTS := $(libxml2_MESON_OPTS) -Doutput=enabled
 

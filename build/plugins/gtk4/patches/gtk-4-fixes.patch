@@ -35,7 +35,7 @@ diff --git a/gtk/gtksettings.c b/gtk/gtksettings.c
 index 1111111..2222222 100644
 --- a/gtk/gtksettings.c
 +++ b/gtk/gtksettings.c
-@@ -980,7 +980,7 @@ gtk_settings_class_init (GtkSettingsClass *class)
+@@ -983,7 +983,7 @@ gtk_settings_class_init (GtkSettingsClass *class)
     */
    pspecs[PROP_FONT_RENDERING] = g_param_spec_enum ("gtk-font-rendering", NULL, NULL,
                                                     GTK_TYPE_FONT_RENDERING,
@@ -60,8 +60,8 @@ diff --git a/gdk/win32/gdkdisplay-win32.c b/gdk/win32/gdkdisplay-win32.c
 index 1111111..2222222 100644
 --- a/gdk/win32/gdkdisplay-win32.c
 +++ b/gdk/win32/gdkdisplay-win32.c
-@@ -517,7 +517,7 @@
-   const GUID my_IID_IDCompositionDevice = { 0xC37EA93A,0xE7AA,0x450D,0xB1,0x6F,0x97,0x46,0xCB,0x04,0x07,0xF3 };
+@@ -517,7 +517,7 @@ gdk_win32_display_init_dcomp (GdkWin32Display *self)
+   const GUID my_IID_IDCompositionDevice = { 0xC37EA93A,0xE7AA,0x450D, { 0xB1,0x6F,0x97,0x46,0xCB,0x04,0x07,0xF3 } };
    IDXGIDevice *dxgi_device;
  
 -  if (!gdk_has_feature (GDK_FEATURE_DCOMP))
@@ -69,28 +69,3 @@ index 1111111..2222222 100644
      return;
    
    hr_warn (ID3D11Device_QueryInterface (self->d3d11_device, &IID_IDXGIDevice, (void **) &dxgi_device));
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Dan Yeaw <dan@yeaw.me>
-Date: Sun, 23 Nov 2025 15:26:12 -0500
-Subject: [PATCH 4/4] Windows: fix cairo crash with dcomp disabled
-
-See: https://gitlab.gnome.org/GNOME/gtk/-/issues/7890
-
-Upstream-Status: Backport [https://gitlab.gnome.org/GNOME/gtk/-/commit/f071763fd69e8924c497b9b21e43ef8e80718eff]
-
-diff --git a/gdk/win32/gdkcairocontext-win32.c b/gdk/win32/gdkcairocontext-win32.c
-index 1111111..2222222 100644
---- a/gdk/win32/gdkcairocontext-win32.c
-+++ b/gdk/win32/gdkcairocontext-win32.c
-@@ -134,8 +134,9 @@ gdk_win32_cairo_context_surface_detach (GdkDrawContext *context)
- {
-   GdkWin32CairoContext *self = GDK_WIN32_CAIRO_CONTEXT (context);
-   GdkSurface *surface = gdk_draw_context_get_surface (context);
-+  GdkWin32Display *display = GDK_WIN32_DISPLAY (gdk_draw_context_get_display (context));
- 
--  if (!GDK_SURFACE_DESTROYED (surface))
-+  if (!GDK_SURFACE_DESTROYED (surface) && gdk_win32_display_get_dcomp_device (display))
-     gdk_win32_surface_set_dcomp_content (GDK_WIN32_SURFACE (surface), NULL);
- 
-   gdk_win32_com_clear (&self->staging_texture);

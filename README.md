@@ -25,7 +25,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.14.2     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
 | [glib]          | 2.87.3     | LGPLv3                                                       |
-| [harfbuzz]      | 12.3.2     | MIT Licence                                                  |
+| [harfbuzz]      | 13.0.0     | MIT Licence                                                  |
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.18       | MIT Licence                                                  |
 | [libarchive]    | 3.8.5      | BSD 2-Clause                                                 |
@@ -39,7 +39,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
 | [libvips]       | 8.18.0     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
-| [libxml2]       | 2.15.1     | MIT Licence                                                  |
+| [libxml2]       | 2.15.2     | MIT Licence                                                  |
 | [mozjpeg]       | [0826579]  | [zlib License, IJG License, BSD 3-Clause]                    |
 | [pango]         | 1.57.0     | LGPLv3                                                       |
 | [pixman]        | 0.46.4     | MIT Licence                                                  |
@@ -106,7 +106,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.13     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
-| [poppler]       | 26.02.0    | GPLv2                                                        |
+| [poppler]       | 26.03.0    | GPLv2                                                        |
 | [sqlite]        | 3.51.2     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
