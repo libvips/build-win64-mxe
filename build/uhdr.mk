@@ -13,6 +13,7 @@ define $(PKG)_BUILD
     $(eval export CXXFLAGS += -O3)
 
     # Avoid architecture-specific compile flags
+    # https://github.com/google/libultrahdr/pull/383
     $(SED) -i '/add_compile_options(-[mf]/d' '$(SOURCE_DIR)/CMakeLists.txt'
 
     # Ensure install targets are enabled when cross-compiling

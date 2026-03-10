@@ -93,8 +93,8 @@ index 1111111..2222222 100644
 -  target_link_libraries(${TESTNAME}
 -    hwy
 -    jpegli-static
--    GTest::GTest
--    GTest::Main
+-    gtest
+-    gtest_main
 -    ${JPEG_LIBRARIES}
 +    "${JPEG_INCLUDE_DIRS}"
    )
@@ -135,8 +135,8 @@ index 1111111..2222222 100644
 +    target_link_libraries(${TESTNAME}
 +      hwy
 +      jpegli-static
-+      GTest::GTest
-+      GTest::Main
++      gtest
++      gtest_main
 +      ${JPEG_LIBRARIES}
 +    )
 +    set_target_properties(${TESTNAME} PROPERTIES LINK_FLAGS "${JPEGXL_COVERAGE_LINK_FLAGS}")
@@ -313,12 +313,12 @@ index 1111111..2222222 100644
      target_link_libraries(${TESTNAME}
 -      hwy
 -      jpegli-static
--      GTest::GTest
--      GTest::Main
+-      gtest
+-      gtest_main
 -      ${JPEG_LIBRARIES}
 +      PUBLIC
-+        GTest::GTest
-+        GTest::Main
++        gtest
++        gtest_main
 +        ${JPEG_LIBRARIES}
 +      PRIVATE
 +        ${JPEGLI_INTERNAL_LIBS}

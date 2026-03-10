@@ -39,8 +39,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-40
-imagemagick_CHECKSUM := 07d5e0f150d5065c6eda5765b1d3d0636ec2a5b99009c465b9456200432c0704
+imagemagick_VERSION  := 6.9.13-41
+imagemagick_CHECKSUM := 7dbe9b0cbb7ea7d33527a8ee0c2bbd073b5e0089875b20345a87426cb571fd75
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -93,8 +93,8 @@ cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 12.3.2
-harfbuzz_VERSION  := 13.0.0
-harfbuzz_CHECKSUM := 1626ebc763d28f4bcca1531fef42e92ca995d45f8ad90ad2ae0b5d1a567fe67a
+harfbuzz_VERSION  := 13.0.1
+harfbuzz_CHECKSUM := 3553d943401c34ab9b8c75f35cdb8452ca660233b0e9d4a22395ce5245484bd7
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
@@ -135,8 +135,8 @@ freetype-bootstrap_FILE     := $(freetype_FILE)
 freetype-bootstrap_URL      := $(freetype_URL)
 
 # upstream version is 3.0.1
-libjpeg-turbo_VERSION  := 3.1.2
-libjpeg-turbo_CHECKSUM := 8f0012234b464ce50890c490f18194f913a7b1f4e6a03d6644179fa0f867d0cf
+libjpeg-turbo_VERSION  := 3.1.3
+libjpeg-turbo_CHECKSUM := 075920b826834ac4ddf97661cc73491047855859affd671d52079c6867c1c6c0
 libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 libjpeg-turbo_SUBDIR   := libjpeg-turbo-$(libjpeg-turbo_VERSION)
 libjpeg-turbo_FILE     := libjpeg-turbo-$(libjpeg-turbo_VERSION).tar.gz

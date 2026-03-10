@@ -25,7 +25,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.14.2     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
 | [glib]          | 2.87.3     | LGPLv3                                                       |
-| [harfbuzz]      | 13.0.0     | MIT Licence                                                  |
+| [harfbuzz]      | 13.0.1     | MIT Licence                                                  |
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.18       | MIT Licence                                                  |
 | [libarchive]    | 3.8.5      | BSD 2-Clause                                                 |
@@ -96,7 +96,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.6.3      | BSD-like                                                     |
 | [fftw]          | 3.3.10     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.5     | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-40  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-41  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |
@@ -144,7 +144,7 @@ In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 3.1.2      | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 3.1.3      | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/LICENSE.md
@@ -166,9 +166,9 @@ In that case, the following version of jpegli is built:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [jpegli]        | [5126d62]  | BSD 3-Clause                                                 |
+| [jpegli]        | [86eab85]  | BSD 3-Clause                                                 |
 
-[5126d62]: https://github.com/google/jpegli/commit/5126d62d24d368f0ceadd53454653edeb9086386
+[86eab85]: https://github.com/google/jpegli/commit/86eab85e9efd836d28337c5739b3e934e41ad80c
 
 [jpegli]: https://github.com/google/jpegli
 
