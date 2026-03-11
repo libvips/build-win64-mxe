@@ -118,22 +118,6 @@ openexr_SUBDIR   :=
 openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
 
-# upstream version is 2.14.1
-freetype_VERSION  := 2.14.2
-freetype_CHECKSUM := 4b62dcab4c920a1a860369933221814362e699e26f55792516d671e6ff55b5e1
-freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
-freetype_SUBDIR   := freetype-$(freetype_VERSION)
-freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
-freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
-
-# upstream version is 2.14.1
-freetype-bootstrap_VERSION  := $(freetype_VERSION)
-freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
-freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
-freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
-freetype-bootstrap_FILE     := $(freetype_FILE)
-freetype-bootstrap_URL      := $(freetype_URL)
-
 # upstream version is 3.0.1
 libjpeg-turbo_VERSION  := 3.1.3
 libjpeg-turbo_CHECKSUM := 075920b826834ac4ddf97661cc73491047855859affd671d52079c6867c1c6c0
@@ -188,6 +172,7 @@ freetype-bootstrap_PATCHES := $(freetype_PATCHES)
 gdk-pixbuf_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 glib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 harfbuzz_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+imath_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imath-[0-9]*.patch)))
 lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 libraw_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libraw-[0-9]*.patch)))
@@ -777,6 +762,18 @@ define glib_BUILD
     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
 endef
 
+# build statically
+# disable tests
+define imath_BUILD
+    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DBUILD_TESTING=OFF \
+        '$(SOURCE_DIR)'
+
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
+endef
+
 # build with CMake.
 define openexr_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
@@ -817,7 +814,8 @@ define brotli_BUILD
     $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef
 
-# build with --disable-load-extension
+# build with --disable-load-extension and --disable-rpath
+# build with HAVE_WASI_SDK=1 to disable the command-line shell (sqlite3.exe)
 define sqlite_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --host='$(TARGET)' \
@@ -830,7 +828,9 @@ define sqlite_BUILD
         $(else), \
             --enable-static \
             --disable-shared) \
+        --disable-load-extension \
         --disable-readline \
-        --disable-load-extension
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+        --disable-rpath
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' HAVE_WASI_SDK=1
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install HAVE_WASI_SDK=1
 endef
