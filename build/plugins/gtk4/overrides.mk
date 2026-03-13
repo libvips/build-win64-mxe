@@ -12,6 +12,7 @@ cairo_PATCHES := $(filter-out $(realpath $(sort $(wildcard $(dir $(lastword $(MA
 cairo_MESON_OPTS = -Dzlib=enabled -Ddwrite=enabled
 
 # GTK requires harfbuzz-subset
+harfbuzz_DEPS := $(harfbuzz_DEPS) libpng
 harfbuzz_MESON_OPTS = -Dsubset=enabled
 
 # nip4 needs -Doutput=enabled

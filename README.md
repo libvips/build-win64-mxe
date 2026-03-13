@@ -24,11 +24,11 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.14.2     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
-| [glib]          | 2.87.3     | LGPLv3                                                       |
-| [harfbuzz]      | 13.0.1     | MIT Licence                                                  |
+| [glib]          | 2.87.5     | LGPLv3                                                       |
+| [harfbuzz]      | 13.1.1     | MIT Licence                                                  |
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.18       | MIT Licence                                                  |
-| [libarchive]    | 3.8.5      | BSD 2-Clause                                                 |
+| [libarchive]    | 3.8.6      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.25     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
 | [libheif]       | 1.21.2     | LGPLv3                                                       |
