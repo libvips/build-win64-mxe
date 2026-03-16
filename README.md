@@ -24,7 +24,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.14.2     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
-| [glib]          | 2.87.5     | LGPLv3                                                       |
+| [glib]          | 2.88.0     | LGPLv3                                                       |
 | [harfbuzz]      | 13.1.1     | MIT Licence                                                  |
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.18       | MIT Licence                                                  |
@@ -96,7 +96,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.6.3      | BSD-like                                                     |
 | [fftw]          | 3.3.10     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.5     | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-41  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-42  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |
@@ -107,7 +107,7 @@ Same as libvips-web + these extra dependencies:
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
 | [poppler]       | 26.03.0    | GPLv2                                                        |
-| [sqlite]        | 3.52.0     | Public domain                                                |
+| [sqlite]        | 3.51.3     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
 [brotli]: https://github.com/google/brotli

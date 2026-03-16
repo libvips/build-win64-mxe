@@ -39,8 +39,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-41
-imagemagick_CHECKSUM := 7dbe9b0cbb7ea7d33527a8ee0c2bbd073b5e0089875b20345a87426cb571fd75
+imagemagick_VERSION  := 6.9.13-42
+imagemagick_CHECKSUM := 74a87651d31357f7c57adeb12017f665aa8069160570ec72f5016742895f6e8f
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -71,8 +71,8 @@ fribidi_FILE     := fribidi-$(fribidi_VERSION).tar.xz
 fribidi_URL      := https://github.com/fribidi/fribidi/releases/download/v$(fribidi_VERSION)/$(fribidi_FILE)
 
 # upstream version is 2.87.2
-glib_VERSION  := 2.87.5
-glib_CHECKSUM := c1075c2d958cc14e179989a74a6c16ec89862ba66915be115bb542283c7fc1f9
+glib_VERSION  := 2.88.0
+glib_CHECKSUM := 3546251ccbb3744d4bc4eb48354540e1f6200846572bab68e3a2b7b2b64dfd07
 glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
 glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
@@ -141,6 +141,15 @@ libraw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 libraw_SUBDIR   := LibRaw-$(libraw_VERSION)
 libraw_FILE     := LibRaw-$(libraw_VERSION).tar.gz
 libraw_URL      := https://www.libraw.org/data/$(libraw_FILE)
+
+# upstream version is 3.52.0, which has been withdrawn:
+# https://sqlite.org/releaselog/3_52_0.html
+sqlite_VERSION  := 3510300
+sqlite_CHECKSUM := 81f5be397049b0cae1b167f2225af7646fc0f82e4a9b3c48c9ea3a533e21d77a
+sqlite_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/sqlite-[0-9]*.patch)))
+sqlite_SUBDIR   := sqlite-autoconf-$(sqlite_VERSION)
+sqlite_FILE     := sqlite-autoconf-$(sqlite_VERSION).tar.gz
+sqlite_URL      := https://www.sqlite.org/2026/$(sqlite_FILE)
 
 # upstream version is 2.7.1
 # needed by nip4
@@ -815,7 +824,6 @@ define brotli_BUILD
 endef
 
 # build with --disable-load-extension and --disable-rpath
-# build with HAVE_WASI_SDK=1 to disable the command-line shell (sqlite3.exe)
 define sqlite_BUILD
     cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         --host='$(TARGET)' \
@@ -831,6 +839,6 @@ define sqlite_BUILD
         --disable-load-extension \
         --disable-readline \
         --disable-rpath
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' HAVE_WASI_SDK=1
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 install HAVE_WASI_SDK=1
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
