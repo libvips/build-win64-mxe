@@ -1,0 +1,107 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 18 Mar 2026 13:55:08 +0100
+Subject: [PATCH 1/2] Use correct definition on win32
+
+Fixes a regression introduced in commit bc0bfdd32575cfc7cc80bf27656aff8f5db17595.
+
+Upstream-Status: Pending
+
+diff --git a/wand/studio.h b/wand/studio.h
+index 1111111..2222222 100644
+--- a/wand/studio.h
++++ b/wand/studio.h
+@@ -226,7 +226,7 @@ extern int vsnprintf(char *,size_t,const char *,va_list);
+ #if defined(S_IRUSR) && defined(S_IWUSR)
+ # define P_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)
+ # define S_MODE (S_IRUSR | S_IWUSR)
+-#elif defined (MAGICKCORE_WINDOWS_SUPPORT)
++#elif defined (MAGICKWAND_WINDOWS_SUPPORT)
+ # define P_MODE (_S_IREAD | _S_IWRITE)
+ # define S_MODE (_S_IREAD | _S_IWRITE)
+ #else
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 18 Mar 2026 14:46:04 +0100
+Subject: [PATCH 2/2] Revert
+ "https://github.com/ImageMagick/ImageMagick/issues/8609"
+
+This reverts commit bc0bfdd32575cfc7cc80bf27656aff8f5db17595,
+as it fails at runtime when cross-compiling with mingw-w64.
+
+Reproducer:
+```console
+$ vips magicksave zebra.jpg x.jpg
+magicksave: libMagick error: UnableToOpenBlob `x.jpg': Invalid argument @ error/blob.c/OpenBlob/3098
+```
+
+Upstream-Status: Pending
+
+diff --git a/magick/blob.c b/magick/blob.c
+index 1111111..2222222 100644
+--- a/magick/blob.c
++++ b/magick/blob.c
+@@ -289,7 +289,7 @@ MagickExport MagickBooleanType BlobToFile(char *filename,const void *blob,
+   if (*filename == '\0')
+     file=AcquireUniqueFileResource(filename);
+   else
+-    file=open_utf8(filename,O_RDWR | O_CREAT | O_EXCL | O_BINARY,P_MODE);
++    file=open_utf8(filename,O_RDWR | O_CREAT | O_EXCL | O_BINARY,S_MODE);
+   if (file == -1)
+     {
+       ThrowFileException(exception,BlobError,"UnableToWriteBlob",filename);
+@@ -1948,7 +1948,7 @@ MagickExport MagickBooleanType ImageToFile(Image *image,char *filename,
+     if (LocaleCompare(filename,"-") == 0)
+       file=fileno(stdout);
+     else
+-      file=open_utf8(filename,O_RDWR | O_CREAT | O_EXCL | O_BINARY,P_MODE);
++      file=open_utf8(filename,O_RDWR | O_CREAT | O_EXCL | O_BINARY,S_MODE);
+   if (file == -1)
+     {
+       ThrowFileException(exception,BlobError,"UnableToWriteBlob",filename);
+@@ -3073,7 +3073,7 @@ MagickExport MagickBooleanType OpenBlob(const ImageInfo *image_info,
+                 file;
+ 
+               blob_info->file_info.file=(FILE *) NULL;
+-              file=open_utf8(filename,flags,P_MODE);
++              file=open_utf8(filename,flags,S_MODE);
+               if (file >= 0)
+                 blob_info->file_info.file=fdopen(file,type);
+               if (blob_info->file_info.file != (FILE *) NULL)
+diff --git a/magick/studio.h b/magick/studio.h
+index 1111111..2222222 100644
+--- a/magick/studio.h
++++ b/magick/studio.h
+@@ -243,13 +243,10 @@ extern int vsnprintf(char *,size_t,const char *,va_list);
+ #endif
+ 
+ #if defined(S_IRUSR) && defined(S_IWUSR)
+-# define P_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)
+ # define S_MODE (S_IRUSR | S_IWUSR)
+ #elif defined (MAGICKCORE_WINDOWS_SUPPORT)
+-# define P_MODE (_S_IREAD | _S_IWRITE)
+ # define S_MODE (_S_IREAD | _S_IWRITE)
+ #else
+-# define P_MODE  0666
+ # define S_MODE  0600
+ #endif
+ 
+diff --git a/wand/studio.h b/wand/studio.h
+index 1111111..2222222 100644
+--- a/wand/studio.h
++++ b/wand/studio.h
+@@ -224,13 +224,10 @@ extern int vsnprintf(char *,size_t,const char *,va_list);
+ #endif
+ 
+ #if defined(S_IRUSR) && defined(S_IWUSR)
+-# define P_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)
+ # define S_MODE (S_IRUSR | S_IWUSR)
+ #elif defined (MAGICKWAND_WINDOWS_SUPPORT)
+-# define P_MODE (_S_IREAD | _S_IWRITE)
+ # define S_MODE (_S_IREAD | _S_IWRITE)
+ #else
+-# define P_MODE  0666
+ # define S_MODE  0600
+ #endif
+ 
