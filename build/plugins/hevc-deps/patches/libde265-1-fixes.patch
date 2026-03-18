@@ -12,8 +12,8 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -8,7 +8,10 @@ project (libde265
- set(CMAKE_CXX_STANDARD 11)
+@@ -40,7 +40,10 @@ set(DE265_LIBRARY_VERSION "0.1.10")
+ set(CMAKE_CXX_STANDARD 17)
  set(CMAKE_CXX_STANDARD_REQUIRED ON)
  set(CMAKE_CXX_EXTENSIONS OFF)
 -set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -22,5 +22,5 @@ index 1111111..2222222 100644
 +  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 +endif()
  
- # The version number.
- set (NUMERIC_VERSION 0x01001600)
+ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+   add_compile_options(-Wall -Wextra -Wpedantic -Wno-unused-parameter)

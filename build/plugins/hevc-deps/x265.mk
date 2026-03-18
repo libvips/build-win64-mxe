@@ -71,10 +71,4 @@ define $(PKG)_BUILD
         $(INSTALL) '$(BUILD_DIR)/libx265_main12.a' '$(PREFIX)/$(TARGET)/lib/libx265_main12.a'; \
         $(INSTALL) '$(BUILD_DIR)/libx265_main10.a' '$(PREFIX)/$(TARGET)/lib/libx265_main10.a'; \
         $(SED) -i 's|-lx265|-lx265 -lx265_main10 -lx265_main12|' '$(PREFIX)/$(TARGET)/lib/pkgconfig/x265.pc')
-
-    '$(TARGET)-gcc' \
-        -W -Wall -Werror \
-        '$(TOP_DIR)/src/$(PKG)-test.c' \
-        -o '$(PREFIX)/$(TARGET)/bin/test-$(PKG).exe' \
-        `$(TARGET)-pkg-config --cflags --libs $(PKG)`
 endef

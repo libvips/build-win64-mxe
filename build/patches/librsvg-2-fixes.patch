@@ -89,7 +89,7 @@ index 1111111..2222222 100644
  [[package]]
  name = "colorchoice"
  version = "1.0.4"
-@@ -915,16 +909,6 @@ dependencies = [
+@@ -914,16 +908,6 @@ dependencies = [
   "wasip2",
  ]
  
@@ -106,7 +106,7 @@ index 1111111..2222222 100644
  [[package]]
  name = "gio"
  version = "0.22.1"
-@@ -1322,10 +1306,7 @@ checksum = "e6506c6c10786659413faa717ceebcb8f70731c0a60cbae39795fdf114519c1a"
+@@ -1321,10 +1305,7 @@ checksum = "85ab80394333c02fe689eaf900ab500fbd0c2213da414687ebf995a65d5a6104"
  dependencies = [
   "bytemuck",
   "byteorder-lite",
@@ -117,7 +117,7 @@ index 1111111..2222222 100644
   "moxcms",
   "mp4parse",
   "num-traits",
-@@ -1334,16 +1315,6 @@ dependencies = [
+@@ -1333,16 +1314,6 @@ dependencies = [
   "zune-jpeg",
  ]
  
@@ -162,7 +162,7 @@ diff --git a/Cargo.lock b/Cargo.lock
 index 1111111..2222222 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -3197,13 +3197,78 @@ dependencies = [
+@@ -3190,13 +3190,78 @@ dependencies = [
  
  [[package]]
  name = "windows-sys"

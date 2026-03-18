@@ -20,7 +20,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.13.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.2      | MIT Licence                                                  |
-| [expat]         | 2.7.4      | MIT Licence                                                  |
+| [expat]         | 2.7.5      | MIT Licence                                                  |
 | [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.14.2     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
@@ -34,7 +34,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.21.2     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.55     | [libpng License version 2]                                   |
-| [librsvg]       | 2.62.0     | LGPLv3                                                       |
+| [librsvg]       | 2.62.1     | LGPLv3                                                       |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
 | [libvips]       | 8.18.0     | LGPLv3                                                       |
@@ -205,7 +205,7 @@ prebuilt binaries while it is patent-encumbered.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [libde265]      | 1.0.16     | LGPLv3                                                       |
+| [libde265]      | 1.0.17     | LGPLv3                                                       |
 | [x265]          | 4.1        | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265
