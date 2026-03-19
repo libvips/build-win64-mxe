@@ -41,6 +41,12 @@ build_os=`$mxe_dir/ext/config.guess`
 
 export PATH="$mxe_prefix/$build_os/bin:$mxe_prefix/bin:$mxe_prefix/$target/bin:$PATH"
 
+case "$arch" in
+  x86_64) arch=x64 ;;
+  i686) arch=x86 ;;
+  aarch64) arch=arm64 ;;
+esac
+
 # Utilities
 strip=$target-strip
 
