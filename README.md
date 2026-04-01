@@ -19,7 +19,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 |-----------------|------------|--------------------------------------------------------------|
 | [aom]           | 3.13.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
-| [cgif]          | 0.5.2      | MIT Licence                                                  |
+| [cgif]          | 0.5.3      | MIT Licence                                                  |
 | [expat]         | 2.7.5      | MIT Licence                                                  |
 | [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.14.3     | [freetype Licence] (BSD-like)                                |
@@ -37,7 +37,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.62.1     | LGPLv3                                                       |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
-| [libvips]       | 8.18.1     | LGPLv3                                                       |
+| [libvips]       | 8.18.2     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
 | [libxml2]       | 2.15.2     | MIT Licence                                                  |
 | [mozjpeg]       | [0826579]  | [zlib License, IJG License, BSD 3-Clause]                    |
@@ -95,7 +95,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.2.0      | MIT Licence                                                  |
 | [cfitsio]       | 4.6.3      | BSD-like                                                     |
 | [fftw]          | 3.3.10     | GPLv2                                                        |
-| [gdk-pixbuf]    | 2.44.5     | LGPLv3                                                       |
+| [gdk-pixbuf]    | 2.44.6     | LGPLv3                                                       |
 | [imagemagick]   | 6.9.13-43  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |

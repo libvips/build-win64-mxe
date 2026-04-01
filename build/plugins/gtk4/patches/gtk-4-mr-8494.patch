@@ -1128,7 +1128,7 @@ index 1111111..2222222 100644
  #include "gskrendernodeprivate.h"
  #include "gskrepeatnodeprivate.h"
  #include "gskroundedclipnode.h"
-@@ -1851,6 +1852,51 @@ parse_mask_mode (GtkCssParser *parser,
+@@ -1850,6 +1851,51 @@ parse_mask_mode (GtkCssParser *parser,
    return FALSE;
  }
  
@@ -1180,7 +1180,7 @@ index 1111111..2222222 100644
  static gboolean
  parse_porter_duff (GtkCssParser *parser,
                     Context      *context,
-@@ -3154,9 +3200,11 @@ parse_texture_node (GtkCssParser *parser,
+@@ -3153,9 +3199,11 @@ parse_texture_node (GtkCssParser *parser,
  {
    graphene_rect_t bounds = GRAPHENE_RECT_INIT (0, 0, 50, 50);
    GdkTexture *texture = NULL;
@@ -1193,7 +1193,7 @@ index 1111111..2222222 100644
    };
    GskRenderNode *node;
  
-@@ -3165,7 +3213,7 @@ parse_texture_node (GtkCssParser *parser,
+@@ -3164,7 +3212,7 @@ parse_texture_node (GtkCssParser *parser,
    if (texture == NULL)
      texture = create_default_texture ();
  
@@ -1202,7 +1202,7 @@ index 1111111..2222222 100644
    g_object_unref (texture);
  
    return node;
-@@ -5146,6 +5194,58 @@ append_enum_param (Printer    *p,
+@@ -5145,6 +5193,58 @@ append_enum_param (Printer    *p,
    g_string_append_c (p->str, '\n');
  }
  
@@ -1261,7 +1261,7 @@ index 1111111..2222222 100644
  static void
  append_vec4_param (Printer               *p,
                     const char            *param_name,
-@@ -6382,6 +6482,7 @@ render_node_print (Printer       *p,
+@@ -6381,6 +6481,7 @@ render_node_print (Printer       *p,
  
          append_rect_param (p, "bounds", &node->bounds);
          append_texture_param (p, "texture", gsk_texture_node_get_texture (node));
@@ -1564,7 +1564,7 @@ diff --git a/gsk/gskrendernodeparser.c b/gsk/gskrendernodeparser.c
 index 1111111..2222222 100644
 --- a/gsk/gskrendernodeparser.c
 +++ b/gsk/gskrendernodeparser.c
-@@ -3226,10 +3226,12 @@ parse_texture_scale_node (GtkCssParser *parser,
+@@ -3225,10 +3225,12 @@ parse_texture_scale_node (GtkCssParser *parser,
    graphene_rect_t bounds = GRAPHENE_RECT_INIT (0, 0, 50, 50);
    GdkTexture *texture = NULL;
    GskScalingFilter filter = GSK_SCALING_FILTER_LINEAR;
@@ -1578,7 +1578,7 @@ index 1111111..2222222 100644
    };
    GskRenderNode *node;
  
-@@ -3238,7 +3240,7 @@ parse_texture_scale_node (GtkCssParser *parser,
+@@ -3237,7 +3239,7 @@ parse_texture_scale_node (GtkCssParser *parser,
    if (texture == NULL)
      texture = create_default_texture ();
  
@@ -1587,7 +1587,7 @@ index 1111111..2222222 100644
    g_object_unref (texture);
  
    return node;
-@@ -6509,6 +6511,8 @@ render_node_print (Printer       *p,
+@@ -6508,6 +6510,8 @@ render_node_print (Printer       *p,
            }
  
          append_texture_param (p, "texture", gsk_texture_scale_node_get_texture (node));

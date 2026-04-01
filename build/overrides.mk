@@ -4,8 +4,8 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 # upstream version is 2.44.2
 # gdk-pixbuf is still used by OpenSlide
-gdk-pixbuf_VERSION  := 2.44.5
-gdk-pixbuf_CHECKSUM := 69b93e09139b80c0ee661503d60deb5a5874a31772b5184b9cd5462a4100ab68
+gdk-pixbuf_VERSION  := 2.44.6
+gdk-pixbuf_CHECKSUM := 140c2d0b899fcf853ee92b26373c9dc228dbcde0820a4246693f4328a27466fa
 gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
 gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
@@ -123,8 +123,8 @@ gsl_URL_2    := https://ftp.snt.utwente.nl/pub/software/gnu/gsl/$(gsl_FILE)
 
 # upstream version is 3.36.1
 # needed by nip4 and vipsdisp
-adwaita-icon-theme_VERSION  := 49.0
-adwaita-icon-theme_CHECKSUM := 65166461d1b278aa942f59aa8d0fccf1108d71c65f372c6266e172449791755c
+adwaita-icon-theme_VERSION  := 50.0
+adwaita-icon-theme_CHECKSUM := fac6e0401fca714780561a081b8f7e27c3bc1db34ebda4da175081f26b24d460
 adwaita-icon-theme_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/adwaita-icon-theme-[0-9]*.patch)))
 adwaita-icon-theme_SUBDIR   := adwaita-icon-theme-$(adwaita-icon-theme_VERSION)
 adwaita-icon-theme_FILE     := adwaita-icon-theme-$(adwaita-icon-theme_VERSION).tar.xz
