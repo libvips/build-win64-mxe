@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Wed, 8 Apr 2026 14:32:36 +0200
+Subject: [PATCH 1/1] Reapply "globals: Don't export DllMain on Windows"
+
+This reverts commit d87d94773e0ea963465ec0fb3b1d1b9831760d25.
+
+Upstream-Status: Inappropriate [other]
+This change would require downstream code to be recompiled.
+
+diff --git a/globals.c b/globals.c
+index 1111111..2222222 100644
+--- a/globals.c
++++ b/globals.c
+@@ -786,11 +786,8 @@ xmlDllMain(ATTRIBUTE_UNUSED void *hinstDLL, unsigned long fdwReason,
+  * Note that we do NOT want to include this function declaration in
+  * a public header because it's meant to be called by Windows itself,
+  * not a program that uses this library.
+- *
+- * It is a mistake to export this function, but changing that seems
+- * to break the ABI.
+  */
+-XMLPUBFUN BOOL WINAPI
++BOOL WINAPI
+ DllMain (HINSTANCE hinstDLL,
+          DWORD     fdwReason,
+          LPVOID    lpvReserved);

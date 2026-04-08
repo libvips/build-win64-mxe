@@ -17,7 +17,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [aom]           | 3.13.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.13.3     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.3      | MIT Licence                                                  |
 | [expat]         | 2.7.5      | MIT Licence                                                  |
@@ -25,7 +25,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.14.3     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
 | [glib]          | 2.88.0     | LGPLv3                                                       |
-| [harfbuzz]      | 13.2.1     | MIT Licence                                                  |
+| [harfbuzz]      | 14.1.0     | MIT Licence                                                  |
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.18       | MIT Licence                                                  |
 | [libarchive]    | 3.8.6      | BSD 2-Clause                                                 |
@@ -100,13 +100,13 @@ Same as libvips-web + these extra dependencies:
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |
-| [libraw]        | 0.22.0     | LGPL-2.1-only                                                |
+| [libraw]        | 0.22.1     | LGPL-2.1-only                                                |
 | [matio]         | 1.5.30     | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1      | Public domain                                                |
 | [openexr]       | 3.1.13     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
-| [poppler]       | 26.03.0    | GPLv2                                                        |
+| [poppler]       | 26.04.0    | GPLv2                                                        |
 | [sqlite]        | 3.51.3     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
@@ -144,7 +144,7 @@ In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 3.1.3      | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 3.1.4.1    | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/LICENSE.md

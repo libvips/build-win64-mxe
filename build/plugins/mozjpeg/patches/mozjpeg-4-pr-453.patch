@@ -1,0 +1,174 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Lilith River <lilith@imazen.io>
+Date: Fri, 30 Jan 2026 19:33:38 -0700
+Subject: [PATCH 1/1] fix: use saturating arithmetic in SIMD FDCT to prevent
+ overflow (#444)
+
+Overshoot deringing can push level-shifted sample values to +-158
+(vs normal +-128). The SIMD forward DCT column pass final butterfly
+(tmp10+tmp11, tmp10-tmp11) sums 8 such row-pass outputs, reaching
++-40448 — exceeding the signed 16-bit range. The wrapping paddw
+causes catastrophic sign flips in DC/AC[1] coefficients, producing
+visible inverted-brightness 8x8 block artifacts.
+
+The C ISLOW DCT is immune (uses 32-bit JLONG intermediates). Only the
+final even-part butterfly can overflow; all earlier stages have >=12543
+margin within 16-bit range.
+
+Fix: change paddw/psubw to paddsw/psubsw (saturating) for the final
+butterfly in the column pass of all 8 SIMD implementations:
+
+  x86_64 SSE2/AVX2, i386 SSE2/AVX2/MMX, ARM NEON,
+  MIPS64 MMI, PowerPC AltiVec
+
+Validated on 71 images x 9 quality levels (639 encodes): 637 byte-
+identical, 2 corrected (imdb.com screenshot Q25/Q50, both 9 bytes
+smaller with fixed coefficients).
+
+Fixes #444
+
+Upstream-Status: Submitted [https://github.com/mozilla/mozjpeg/pull/453]
+
+diff --git a/jcdctmgr.c b/jcdctmgr.c
+index 1111111..2222222 100644
+--- a/jcdctmgr.c
++++ b/jcdctmgr.c
+@@ -440,7 +440,9 @@ preprocess_deringing(DCTELEM *data, const JQUANT_TBL *quantization_table)
+     return;
+   }
+ 
+-  /* Too much overshoot is not good: increased amplitude will cost bits, and the cost is proportional to quantization (here using DC quant as a rough guide). */
++  /* Too much overshoot is not good: increased amplitude will cost bits, and
++     the cost is proportional to quantization (here using DC quant as a rough
++     guide). */
+   maxovershoot = maxsample + MIN(MIN(31, 2*quantization_table->quantval[0]), (maxsample * size - sum) / maxsample_count);
+ 
+   n = 0;
+diff --git a/simd/arm/jfdctint-neon.c b/simd/arm/jfdctint-neon.c
+index 1111111..2222222 100644
+--- a/simd/arm/jfdctint-neon.c
++++ b/simd/arm/jfdctint-neon.c
+@@ -274,8 +274,12 @@ void jsimd_fdct_islow_neon(DCTELEM *data)
+   tmp11 = vaddq_s16(tmp1, tmp2);
+   tmp12 = vsubq_s16(tmp1, tmp2);
+ 
+-  row0 = vrshrq_n_s16(vaddq_s16(tmp10, tmp11), PASS1_BITS);
+-  row4 = vrshrq_n_s16(vsubq_s16(tmp10, tmp11), PASS1_BITS);
++  /* Use saturating arithmetic for the final butterfly to prevent 16-bit
++   * overflow when overshoot deringing produces large uniform column values.
++   * See https://github.com/mozilla/mozjpeg/issues/444
++   */
++  row0 = vrshrq_n_s16(vqaddq_s16(tmp10, tmp11), PASS1_BITS);
++  row4 = vrshrq_n_s16(vqsubq_s16(tmp10, tmp11), PASS1_BITS);
+ 
+   tmp12_add_tmp13 = vaddq_s16(tmp12, tmp13);
+   z1_l = vmull_lane_s16(vget_low_s16(tmp12_add_tmp13), consts.val[0], 2);
+diff --git a/simd/i386/jfdctint-avx2.asm b/simd/i386/jfdctint-avx2.asm
+index 1111111..2222222 100644
+--- a/simd/i386/jfdctint-avx2.asm
++++ b/simd/i386/jfdctint-avx2.asm
+@@ -118,7 +118,7 @@ F_3_072 equ DESCALE(3299298341, 30 - CONST_BITS)  ; FIX(3.072711026)
+ 
+     vperm2i128  %7, %1, %1, 0x01        ; %7=tmp11_10
+     vpsignw     %1, %1, [GOTOFF(ebx, PW_1_NEG1)]  ; %1=tmp10_neg11
+-    vpaddw      %7, %7, %1              ; %7=(tmp10+tmp11)_(tmp10-tmp11)
++    vpaddsw     %7, %7, %1              ; %7=(tmp10+tmp11)_(tmp10-tmp11)
+ %if %9 == 1
+     vpsllw      %1, %7, PASS1_BITS      ; %1=data0_4
+ %else
+diff --git a/simd/i386/jfdctint-mmx.asm b/simd/i386/jfdctint-mmx.asm
+index 1111111..2222222 100644
+--- a/simd/i386/jfdctint-mmx.asm
++++ b/simd/i386/jfdctint-mmx.asm
+@@ -438,8 +438,8 @@ EXTN(jsimd_fdct_islow_mmx):
+     psubw       mm6, mm4                ; mm6=tmp12
+ 
+     movq        mm7, mm5
+-    paddw       mm5, mm0                ; mm5=tmp10+tmp11
+-    psubw       mm7, mm0                ; mm7=tmp10-tmp11
++    paddsw      mm5, mm0                ; mm5=tmp10+tmp11
++    psubsw      mm7, mm0                ; mm7=tmp10-tmp11
+ 
+     paddw       mm5, [GOTOFF(ebx,PW_DESCALE_P2X)]
+     paddw       mm7, [GOTOFF(ebx,PW_DESCALE_P2X)]
+diff --git a/simd/i386/jfdctint-sse2.asm b/simd/i386/jfdctint-sse2.asm
+index 1111111..2222222 100644
+--- a/simd/i386/jfdctint-sse2.asm
++++ b/simd/i386/jfdctint-sse2.asm
+@@ -457,8 +457,8 @@ EXTN(jsimd_fdct_islow_sse2):
+     psubw       xmm6, xmm4              ; xmm6=tmp12
+ 
+     movdqa      xmm5, xmm7
+-    paddw       xmm7, xmm2              ; xmm7=tmp10+tmp11
+-    psubw       xmm5, xmm2              ; xmm5=tmp10-tmp11
++    paddsw      xmm7, xmm2              ; xmm7=tmp10+tmp11
++    psubsw      xmm5, xmm2              ; xmm5=tmp10-tmp11
+ 
+     paddw       xmm7, [GOTOFF(ebx,PW_DESCALE_P2X)]
+     paddw       xmm5, [GOTOFF(ebx,PW_DESCALE_P2X)]
+diff --git a/simd/mips64/jfdctint-mmi.c b/simd/mips64/jfdctint-mmi.c
+index 1111111..2222222 100644
+--- a/simd/mips64/jfdctint-mmi.c
++++ b/simd/mips64/jfdctint-mmi.c
+@@ -356,8 +356,11 @@ static uint64_t const_value[] = {
+   tmp11 = _mm_add_pi16(tmp1, tmp2);           /* tmp11=tmp1+tmp2 */ \
+   tmp12 = _mm_sub_pi16(tmp1, tmp2);           /* tmp12=tmp1-tmp2 */ \
+   \
+-  out0 = _mm_add_pi16(tmp10, tmp11);          /* out0=tmp10+tmp11 */ \
+-  out4 = _mm_sub_pi16(tmp10, tmp11);          /* out4=tmp10-tmp11 */ \
++  /* Use saturating add/sub to prevent 16-bit overflow when overshoot \
++   * deringing produces large uniform column values (issue #444).     \
++   */ \
++  out0 = _mm_adds_pi16(tmp10, tmp11);         /* out0=tmp10+tmp11 */ \
++  out4 = _mm_subs_pi16(tmp10, tmp11);         /* out4=tmp10-tmp11 */ \
+   \
+   out0 = _mm_add_pi16(out0, PW_DESCALE_P2X); \
+   out4 = _mm_add_pi16(out4, PW_DESCALE_P2X); \
+diff --git a/simd/powerpc/jfdctint-altivec.c b/simd/powerpc/jfdctint-altivec.c
+index 1111111..2222222 100644
+--- a/simd/powerpc/jfdctint-altivec.c
++++ b/simd/powerpc/jfdctint-altivec.c
+@@ -168,10 +168,13 @@
+   tmp11 = vec_add(tmp1, tmp2); \
+   tmp12 = vec_sub(tmp1, tmp2); \
+   \
+-  out0  = vec_add(tmp10, tmp11); \
++  /* Use saturating add/sub to prevent 16-bit overflow when overshoot \
++   * deringing produces large uniform column values (issue #444).     \
++   */ \
++  out0  = vec_adds(tmp10, tmp11); \
+   out0  = vec_add(out0, pw_descale_p2x); \
+   out0  = vec_sra(out0, pass1_bits); \
+-  out4  = vec_sub(tmp10, tmp11); \
++  out4  = vec_subs(tmp10, tmp11); \
+   out4  = vec_add(out4, pw_descale_p2x); \
+   out4  = vec_sra(out4, pass1_bits); \
+   \
+diff --git a/simd/x86_64/jfdctint-avx2.asm b/simd/x86_64/jfdctint-avx2.asm
+index 1111111..2222222 100644
+--- a/simd/x86_64/jfdctint-avx2.asm
++++ b/simd/x86_64/jfdctint-avx2.asm
+@@ -118,7 +118,7 @@ F_3_072 equ DESCALE(3299298341, 30 - CONST_BITS)  ; FIX(3.072711026)
+ 
+     vperm2i128  %7, %1, %1, 0x01        ; %7=tmp11_10
+     vpsignw     %1, %1, [rel PW_1_NEG1]  ; %1=tmp10_neg11
+-    vpaddw      %7, %7, %1              ; %7=(tmp10+tmp11)_(tmp10-tmp11)
++    vpaddsw     %7, %7, %1              ; %7=(tmp10+tmp11)_(tmp10-tmp11)
+ %if %9 == 1
+     vpsllw      %1, %7, PASS1_BITS      ; %1=data0_4
+ %else
+diff --git a/simd/x86_64/jfdctint-sse2.asm b/simd/x86_64/jfdctint-sse2.asm
+index 1111111..2222222 100644
+--- a/simd/x86_64/jfdctint-sse2.asm
++++ b/simd/x86_64/jfdctint-sse2.asm
+@@ -449,8 +449,8 @@ EXTN(jsimd_fdct_islow_sse2):
+     psubw       xmm6, xmm4              ; xmm6=tmp12
+ 
+     movdqa      xmm5, xmm7
+-    paddw       xmm7, xmm2              ; xmm7=tmp10+tmp11
+-    psubw       xmm5, xmm2              ; xmm5=tmp10-tmp11
++    paddsw      xmm7, xmm2              ; xmm7=tmp10+tmp11
++    psubsw      xmm5, xmm2              ; xmm5=tmp10-tmp11
+ 
+     paddw       xmm7, [rel PW_DESCALE_P2X]
+     paddw       xmm5, [rel PW_DESCALE_P2X]
