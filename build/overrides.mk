@@ -11,6 +11,14 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
+# upstream version is 1.6.56
+libpng_VERSION  := 1.6.57
+libpng_CHECKSUM := d10c20d7171569804cae8dfc13ba6dcd0662c41ed39d43d4d429314aafb10a80
+libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
+libpng_SUBDIR   := libpng-$(libpng_VERSION)
+libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
+libpng_URL      := https://$(SOURCEFORGE_MIRROR)/project/libpng/libpng16/$(libpng_VERSION)/$(libpng_FILE)
+
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -22,16 +30,16 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.8.6
-libarchive_CHECKSUM := 8ac57c1f5e99550948d1fe755c806d26026e71827da228f36bef24527e372e6f
+libarchive_VERSION  := 3.8.7
+libarchive_CHECKSUM := d3a8ba457ae25c27c84fd2830a2efdcc5b1d40bf585d4eb0d35f47e99e5d4774
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-43
-imagemagick_CHECKSUM := aca5db60e8a2cdc32696e72d1685fe137b1e6da826e9b4fbfe711f79992fa372
+imagemagick_VERSION  := 6.9.13-44
+imagemagick_CHECKSUM := 3c9b853599bfb65b10fd3ebc7d75c408a9d23dcc390decb7517ffd1a5186c30f
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 

@@ -28,12 +28,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [harfbuzz]      | 14.1.0     | MIT Licence                                                  |
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.18       | MIT Licence                                                  |
-| [libarchive]    | 3.8.6      | BSD 2-Clause                                                 |
+| [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.25     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
-| [libheif]       | 1.21.2     | LGPLv3                                                       |
+| [libheif]       | [434d96c]  | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.56     | [libpng License version 2]                                   |
+| [libpng]        | 1.6.57     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.1     | LGPLv3                                                       |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
@@ -48,6 +48,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
+[434d96c]: https://github.com/strukturag/libheif/commit/434d96c53b86c82a598aeb960be32035a7cea742
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
 [aom]: https://aomedia.googlesource.com/aom/
@@ -96,7 +97,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.6.3      | BSD-like                                                     |
 | [fftw]          | 3.3.10     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.6     | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-43  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-44  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |

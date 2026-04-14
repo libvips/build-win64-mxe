@@ -2,10 +2,11 @@ PKG             := libheif
 $(PKG)_WEBSITE  := http://www.libheif.org/
 $(PKG)_DESCR    := libheif is a ISO/IEC 23008-12:2017 HEIF file format decoder and encoder.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.21.2
-$(PKG)_CHECKSUM := 75f530b7154bc93e7ecf846edfc0416bf5f490612de8c45983c36385aa742b42
+# https://github.com/strukturag/libheif/tarball/434d96c53b86c82a598aeb960be32035a7cea742
+$(PKG)_VERSION  := 434d96c
+$(PKG)_CHECKSUM := 3580e163b14ac9e1353af9c4bb553fa56a077d87ef24e4b83e2f62be8e5cc554
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := strukturag/libheif/releases,v
+$(PKG)_GH_CONF  := strukturag/libheif/branches/master
 $(PKG)_DEPS     := cc aom
 
 define $(PKG)_BUILD
