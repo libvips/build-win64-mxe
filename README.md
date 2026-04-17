@@ -29,17 +29,17 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.18       | MIT Licence                                                  |
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
-| [libexif]       | 0.6.25     | LGPLv3                                                       |
+| [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
 | [libheif]       | [434d96c]  | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
-| [libpng]        | 1.6.57     | [libpng License version 2]                                   |
+| [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.1     | LGPLv3                                                       |
 | [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
 | [libvips]       | 8.18.2     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
-| [libxml2]       | 2.15.2     | MIT Licence                                                  |
+| [libxml2]       | 2.15.3     | MIT Licence                                                  |
 | [mozjpeg]       | [0826579]  | [zlib License, IJG License, BSD 3-Clause]                    |
 | [pango]         | 1.57.1     | LGPLv3                                                       |
 | [pixman]        | 0.46.4     | MIT Licence                                                  |
@@ -108,7 +108,7 @@ Same as libvips-web + these extra dependencies:
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
 | [poppler]       | 26.04.0    | GPLv2                                                        |
-| [sqlite]        | 3.51.3     | Public domain                                                |
+| [sqlite]        | 3.53.0     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
 [brotli]: https://github.com/google/brotli

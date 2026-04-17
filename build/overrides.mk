@@ -11,9 +11,18 @@ gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
 gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
 gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
 
+# no longer needed by libvips, but some of the deps need it
+# upstream version is 2.15.2
+libxml2_VERSION  := 2.15.3
+libxml2_CHECKSUM := 78262a6e7ac170d6528ebfe2efccdf220191a5af6a6cd61ea4a9a9a5042c7a07
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
+libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
+libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
+
 # upstream version is 1.6.56
-libpng_VERSION  := 1.6.57
-libpng_CHECKSUM := d10c20d7171569804cae8dfc13ba6dcd0662c41ed39d43d4d429314aafb10a80
+libpng_VERSION  := 1.6.58
+libpng_CHECKSUM := 28eb403f51f0f7405249132cecfe82ea5c0ef97f1b32c5a65828814ae0d34775
 libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
 libpng_SUBDIR   := libpng-$(libpng_VERSION)
 libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
@@ -58,8 +67,8 @@ fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
 # upstream version is 0.6.22
-libexif_VERSION  := 0.6.25
-libexif_CHECKSUM := 62f74cf3bf673a6e24d2de68f6741643718541f83aca5947e76e3978c25dce83
+libexif_VERSION  := 0.6.26
+libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e471476c0c
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
 
@@ -88,6 +97,14 @@ libraw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 libraw_SUBDIR   := LibRaw-$(libraw_VERSION)
 libraw_FILE     := LibRaw-$(libraw_VERSION).tar.gz
 libraw_URL      := https://www.libraw.org/data/$(libraw_FILE)
+
+# upstream version is 3.51.3
+sqlite_VERSION  := 3530000
+sqlite_CHECKSUM := 851e9b38192fe2ceaa65e0baa665e7fa06230c3d9bd1a6a9662d02380d73365a
+sqlite_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/sqlite-[0-9]*.patch)))
+sqlite_SUBDIR   := sqlite-autoconf-$(sqlite_VERSION)
+sqlite_FILE     := sqlite-autoconf-$(sqlite_VERSION).tar.gz
+sqlite_URL      := https://www.sqlite.org/2026/$(sqlite_FILE)
 
 # upstream version is 2.7.1
 # needed by nip4
