@@ -12,6 +12,7 @@ $(PKG)_DEPS     := cc $(BUILD)~nasm
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && NASM_PATH='$(PREFIX)/$(BUILD)/bin' $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DENABLE_NASM=ON \
         -DENABLE_DOCS=OFF \
         -DENABLE_TESTS=OFF \

@@ -20,22 +20,22 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.13.3     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.3      | MIT Licence                                                  |
-| [expat]         | 2.7.5      | MIT Licence                                                  |
+| [expat]         | 2.8.0      | MIT Licence                                                  |
 | [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.14.3     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
 | [glib]          | 2.88.0     | LGPLv3                                                       |
-| [harfbuzz]      | 14.1.0     | MIT Licence                                                  |
-| [highway]       | 1.3.0      | Apache-2.0 License, BSD 3-Clause                             |
-| [lcms]          | 2.18       | MIT Licence                                                  |
+| [harfbuzz]      | 14.2.0     | MIT Licence                                                  |
+| [highway]       | 1.4.0      | Apache-2.0 License, BSD 3-Clause                             |
+| [lcms]          | 2.19       | MIT Licence                                                  |
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
-| [libheif]       | [434d96c]  | LGPLv3                                                       |
+| [libheif]       | [4652161]  | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.1     | LGPLv3                                                       |
-| [libtiff]       | 4.7.1      | [libtiff License] (BSD-like)                                 |
+| [libtiff]       | [179a100]  | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
 | [libvips]       | 8.18.2     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
@@ -48,7 +48,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
-[434d96c]: https://github.com/strukturag/libheif/commit/434d96c53b86c82a598aeb960be32035a7cea742
+[4652161]: https://github.com/strukturag/libheif/commit/46521618983c795fdb09a412ebb29e917086896a
+[179a100]: https://gitlab.com/libtiff/libtiff/-/commit/179a100cf35d3840ed0b8f47a720fd9e522bbd0d
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
 [aom]: https://aomedia.googlesource.com/aom/
@@ -95,9 +96,9 @@ Same as libvips-web + these extra dependencies:
 |-----------------|------------|--------------------------------------------------------------|
 | [brotli]        | 1.2.0      | MIT Licence                                                  |
 | [cfitsio]       | 4.6.3      | BSD-like                                                     |
-| [fftw]          | 3.3.10     | GPLv2                                                        |
+| [fftw]          | 3.3.11     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.6     | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-44  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 6.9.13-46  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.0      | MIT Licence                                                  |
 | [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |
@@ -207,7 +208,7 @@ prebuilt binaries while it is patent-encumbered.
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
 | [libde265]      | 1.0.18     | LGPLv3                                                       |
-| [x265]          | 4.1        | GPLv2                                                        |
+| [x265]          | 4.2        | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265
 [x265]: https://bitbucket.org/multicoreware/x265_git/wiki/Home

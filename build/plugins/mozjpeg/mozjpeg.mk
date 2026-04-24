@@ -13,6 +13,7 @@ $(PKG)_DEPS     := cc $(BUILD)~nasm
 # libjpeg API)
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DWITH_TURBOJPEG=OFF \
         -DPNG_SUPPORTED=OFF \
         -DCMAKE_ASM_NASM_COMPILER='$(PREFIX)/$(BUILD)/bin/nasm' \

@@ -12,6 +12,7 @@ $(PKG)_DEPS     := cc zlib
 # nifticdf library is not used by libvips, so don't build that either
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DUSE_NIFTI2_CODE=OFF \
         -DUSE_NIFTICDF_CODE=OFF \
         -DNIFTI_BUILD_TESTING=OFF \

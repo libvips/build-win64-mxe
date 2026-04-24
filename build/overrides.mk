@@ -47,8 +47,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-44
-imagemagick_CHECKSUM := 3c9b853599bfb65b10fd3ebc7d75c408a9d23dcc390decb7517ffd1a5186c30f
+imagemagick_VERSION  := 6.9.13-46
+imagemagick_CHECKSUM := 737b965cb308a450f448516d3b4ccbf65efdfa48b0173b1ba07acef1338eddf9
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
 
@@ -66,15 +66,41 @@ fribidi_CHECKSUM := 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9e
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
+# upstream version is 2.7.5
+expat_VERSION  := 2.8.0
+expat_CHECKSUM := a37bfae0aa9775bd8521ebd85dc456d486f0ff31138f6c91fd902ea732624542
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.26
 libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e471476c0c
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
 
+# upstream version is 4.7.1
+tiff_VERSION  := 179a100
+tiff_CHECKSUM := cb3b501c271c59e61f6452f5c240e05ef40efd10e08dc902d151789b6f710ca6
+tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
+tiff_SUBDIR   := libtiff-$(tiff_VERSION)
+tiff_FILE     := libtiff-$(tiff_VERSION).tar.gz
+tiff_URL      := https://gitlab.com/libtiff/libtiff/-/archive/$(tiff_VERSION)/$(tiff_FILE)
+
+# upstream version is 2.18
+# cannot use GH_CONF:
+# lcms_GH_CONF  := mm2/Little-CMS,lcms
+lcms_VERSION  := 2.19
+lcms_CHECKSUM := 49e7e134e4299733dd0eda434fa468997a28ab3d33fa397c642b03644f552216
+lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
+lcms_SUBDIR   := lcms2-$(lcms_VERSION)
+lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
+lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
+
 # upstream version is 13.2.1
-harfbuzz_VERSION  := 14.1.0
-harfbuzz_CHECKSUM := ee0eb3a1da2c5a28147f12dff55f6c7d60aeeeb29ac7ef334eabe84c8476c105
+harfbuzz_VERSION  := 14.2.0
+harfbuzz_CHECKSUM := 94017020f96d025bb66ae91574e4cf334bcad23e8175a8a40565b3721bc2eaff
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
@@ -105,6 +131,14 @@ sqlite_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST
 sqlite_SUBDIR   := sqlite-autoconf-$(sqlite_VERSION)
 sqlite_FILE     := sqlite-autoconf-$(sqlite_VERSION).tar.gz
 sqlite_URL      := https://www.sqlite.org/2026/$(sqlite_FILE)
+
+# upstream version is 3.3.10
+fftw_VERSION  := 3.3.11
+fftw_CHECKSUM := 5630c24cdeb33b131612f7eb4b1a9934234754f9f388ff8617458d0be6f239a1
+fftw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fftw-[0-9]*.patch)))
+fftw_SUBDIR   := fftw-$(fftw_VERSION)
+fftw_FILE     := fftw-$(fftw_VERSION).tar.gz
+fftw_URL      := http://www.fftw.org/$(fftw_FILE)
 
 # upstream version is 2.7.1
 # needed by nip4
@@ -453,6 +487,7 @@ endef
 # Switch to NASM because YASM has been unmaintained for a few years, while NASM is actively maintained.
 define libjpeg-turbo_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DWITH_TURBOJPEG=OFF \
         -DPNG_SUPPORTED=OFF \
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
@@ -577,6 +612,7 @@ endef
 # the zlib configure is a bit basic, so we'll use cmake
 define zlib_BUILD
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DZLIB_BUILD_TESTING=OFF \
         -DZLIB_BUILD_SHARED=$(CMAKE_SHARED_BOOL) \
         -DZLIB_BUILD_STATIC=$(CMAKE_STATIC_BOOL) \
@@ -590,28 +626,33 @@ define zlib_BUILD_SHARED
     $($(PKG)_BUILD)
 endef
 
+# build with CMake
 # avoid building unnecessary things
 # disable the C++ API for now, we don't use it anyway
 # build without lzma and zstd
 # disable old-style JPEG in TIFF images, see:
 # https://github.com/libvips/libvips/issues/1328#issuecomment-572020749
 define tiff_BUILD
-    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --disable-tools \
-        --disable-tests \
-        --disable-contrib \
-        --disable-docs \
-        --disable-mdi \
-        --disable-pixarlog \
-        --disable-old-jpeg \
-        --disable-cxx \
-        --disable-lzma \
-        --disable-zstd \
-        $(PKG_CONFIGURE_OPTS) \
-        $(if $(and $(IS_JPEGLI),$(BUILD_STATIC)), LIBS="`'$(TARGET)-pkg-config' --libs libjpeg`")
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)
-    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(INSTALL_STRIP_LIB) $(MXE_DISABLE_CRUFT)
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
+        -Dtiff-contrib=OFF \
+        -Dtiff-cxx=OFF \
+        -Dtiff-docs=OFF \
+        -Dtiff-tests=OFF \
+        -Dtiff-tools=OFF \
+        -Dmdi=OFF \
+        -Djbig=OFF \
+        -Dlerc=OFF \
+        -Dlibdeflate=OFF \
+        -Dlzma=OFF \
+        -Dold-jpeg=OFF \
+        -Dpixarlog=OFF \
+        -Dtiff-opengl=OFF \
+        -Dzstd=OFF \
+        $(PKG_CMAKE_OPTS) \
+        '$(SOURCE_DIR)'
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef
 
 # disable unneeded loaders
@@ -732,6 +773,7 @@ endef
 # disable tests
 define imath_BUILD
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DBUILD_SHARED_LIBS=OFF \
         -DBUILD_TESTING=OFF \
         '$(SOURCE_DIR)'
@@ -743,6 +785,7 @@ endef
 # build with CMake.
 define openexr_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DOPENEXR_INSTALL_PKG_CONFIG=ON \
         -DOPENEXR_INSTALL_TOOLS=OFF \
         -DOPENEXR_BUILD_TOOLS=OFF \
@@ -755,6 +798,7 @@ endef
 
 define cfitsio_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DUSE_CURL=OFF \
         -DTESTS=OFF \
         -DUTILS=OFF \
@@ -773,6 +817,7 @@ endef
 # Strip during install if needed
 define brotli_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DBROTLI_DISABLE_TESTS=ON \
         -DBROTLI_BUILD_TOOLS=OFF \
         '$(SOURCE_DIR)'

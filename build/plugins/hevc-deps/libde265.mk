@@ -11,6 +11,7 @@ $(PKG)_DEPS     := cc
 define $(PKG)_BUILD
     # Disable dec265.exe with -DENABLE_DECODER=OFF
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DENABLE_DECODER=OFF \
         '$(SOURCE_DIR)'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'

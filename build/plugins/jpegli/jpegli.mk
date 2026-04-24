@@ -11,6 +11,7 @@ $(PKG)_DEPS     := cc highway lcms libjpeg-turbo
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DBUILD_TESTING=OFF \
         -DJPEGXL_ENABLE_TOOLS=OFF \
         -DJPEGXL_ENABLE_DOXYGEN=OFF \

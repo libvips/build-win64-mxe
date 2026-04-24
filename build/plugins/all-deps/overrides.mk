@@ -17,7 +17,7 @@ vips_MESON_OPTS = \
     -Dspng=disabled
 
 # https://github.com/libvips/build-win64-mxe/issues/80
-tiff_CONFIGURE_OPTS = --enable-zstd
+tiff_CMAKE_OPTS = -Dzstd=ON
 
 # Override sub-dependencies
 tiff_DEPS := $(tiff_DEPS) zstd

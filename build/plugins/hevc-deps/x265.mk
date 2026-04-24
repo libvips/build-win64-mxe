@@ -2,8 +2,8 @@ PKG             := x265
 $(PKG)_WEBSITE  := http://x265.org/
 $(PKG)_DESCR    := H.265/HEVC video stream encoder.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4.1
-$(PKG)_CHECKSUM := a31699c6a89806b74b0151e5e6a7df65de4b49050482fe5ebf8a4379d7af8f29
+$(PKG)_VERSION  := 4.2
+$(PKG)_CHECKSUM := 40b1ea0453e0309f0eba934e0ddf533f8f6295966679e8894e8f1c1c8d5e1210
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/x265-[0-9]*.patch)))
 $(PKG)_SUBDIR   := x265_$($(PKG)_VERSION)
 $(PKG)_FILE     := x265_$($(PKG)_VERSION).tar.gz
@@ -24,6 +24,7 @@ define $(PKG)_BUILD
 
     # 12 bit
     cd '$(BUILD_DIR)/12bit' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DHIGH_BIT_DEPTH=ON \
         -DEXPORT_C_API=OFF \
         -DENABLE_SHARED=OFF \
@@ -38,6 +39,7 @@ define $(PKG)_BUILD
 
     # 10 bit
     cd '$(BUILD_DIR)/10bit' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DHIGH_BIT_DEPTH=ON \
         -DEXPORT_C_API=OFF \
         -DENABLE_SHARED=OFF \
@@ -51,6 +53,7 @@ define $(PKG)_BUILD
 
     # 8bit
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)/source' \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DHIGH_BIT_DEPTH=OFF \
         -DEXPORT_C_API=ON \
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
