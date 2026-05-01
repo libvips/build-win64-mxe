@@ -80,9 +80,17 @@ libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e47147
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
 
+# upstream version is 4.6.3
+cfitsio_VERSION  := 4.6.4
+cfitsio_CHECKSUM := 227b637b91c9820ea96f39a65eb087f053de567d82f4338e2884f123f8183c55
+cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cfitsio-[0-9]*.patch)))
+cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
+cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
+cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
+
 # upstream version is 4.7.1
-tiff_VERSION  := 179a100
-tiff_CHECKSUM := cb3b501c271c59e61f6452f5c240e05ef40efd10e08dc902d151789b6f710ca6
+tiff_VERSION  := c09bb26
+tiff_CHECKSUM := e99a792bf6d39b2311f769243e921a4d2aba374344100dbe72b5a66ccd4a7747
 tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 tiff_SUBDIR   := libtiff-$(tiff_VERSION)
 tiff_FILE     := libtiff-$(tiff_VERSION).tar.gz
@@ -843,4 +851,17 @@ define sqlite_BUILD
         --disable-rpath
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+endef
+
+# build with -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_TESTING=OFF
+define zstd_BUILD
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
+        -DBUILD_TESTING=OFF \
+        -DZSTD_BUILD_STATIC=$(CMAKE_STATIC_BOOL) \
+        -DZSTD_BUILD_SHARED=$(CMAKE_SHARED_BOOL) \
+        -DZSTD_BUILD_PROGRAMS=OFF \
+        '$(SOURCE_DIR)/build/cmake'
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 $(subst -,/,$(INSTALL_STRIP_LIB))
 endef

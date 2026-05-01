@@ -31,11 +31,11 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
-| [libheif]       | [4652161]  | LGPLv3                                                       |
+| [libheif]       | [7283380]  | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.1     | LGPLv3                                                       |
-| [libtiff]       | [179a100]  | [libtiff License] (BSD-like)                                 |
+| [libtiff]       | [c09bb26]  | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
 | [libvips]       | 8.18.2     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
@@ -48,8 +48,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
-[4652161]: https://github.com/strukturag/libheif/commit/46521618983c795fdb09a412ebb29e917086896a
-[179a100]: https://gitlab.com/libtiff/libtiff/-/commit/179a100cf35d3840ed0b8f47a720fd9e522bbd0d
+[7283380]: https://github.com/strukturag/libheif/commit/7283380ec21003a6812d8a1e7e4328bdda8b2026
+[c09bb26]: https://gitlab.com/libtiff/libtiff/-/commit/c09bb267ca6fbc66ae0b18be05fffd5c4d3ebf3b
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
 [aom]: https://aomedia.googlesource.com/aom/
@@ -95,12 +95,12 @@ Same as libvips-web + these extra dependencies:
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
 | [brotli]        | 1.2.0      | MIT Licence                                                  |
-| [cfitsio]       | 4.6.3      | BSD-like                                                     |
+| [cfitsio]       | 4.6.4      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.6     | LGPLv3                                                       |
 | [imagemagick]   | 6.9.13-46  | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
-| [libdicom]      | 1.2.0      | MIT Licence                                                  |
+| [libdicom]      | 1.2.1      | MIT Licence                                                  |
 | [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |
 | [libraw]        | 0.22.1     | LGPL-2.1-only                                                |
 | [matio]         | 1.5.30     | BSD 2-Clause                                                 |
