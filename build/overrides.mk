@@ -46,11 +46,11 @@ libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
-# upstream version is 7, we want ImageMagick 6
-imagemagick_VERSION  := 6.9.13-46
-imagemagick_CHECKSUM := 737b965cb308a450f448516d3b4ccbf65efdfa48b0173b1ba07acef1338eddf9
+# upstream version is 7.1.2-17
+imagemagick_VERSION  := 7.1.2-21
+imagemagick_CHECKSUM := 4ba5b81797910efa93e65fb5a02b496284b8069d64513c6d2687c80d180dd70f
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
-imagemagick_GH_CONF  := ImageMagick/ImageMagick6/tags
+imagemagick_GH_CONF  := ImageMagick/ImageMagick/tags
 
 # upstream version is 2.40.21
 librsvg_VERSION  := 2.62.1
@@ -65,6 +65,14 @@ fribidi_VERSION  := 1.0.16
 fribidi_CHECKSUM := 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9ea05c
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
+
+# upstream version is 2.88.0
+glib_VERSION  := 2.88.1
+glib_CHECKSUM := 51ab804c56f6eab3e5045c774d1290ac5e4c923d4f9a3d8e33123bee45c1840e
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 2.7.5
 expat_VERSION  := 2.8.0
@@ -460,9 +468,7 @@ define imagemagick_BUILD
         --without-gdi32 \
         --without-gvc \
         --without-heic \
-        --without-heif \
         --without-jxl \
-        --without-ltdl \
         --without-lqr \
         --without-lzma \
         --without-magick-plus-plus \
@@ -475,6 +481,7 @@ define imagemagick_BUILD
         --without-webp \
         --without-x \
         --without-zlib \
+        --without-zstd \
         --without-threads \
         --disable-largefile \
         --disable-opencl \

@@ -1,0 +1,149 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sat, 12 Nov 2022 17:00:56 +0100
+Subject: [PATCH 1/1] Revert "coders: Enable opening https files in mingw (#5727)"
+
+This reverts commit 36d3408b57171ec0f04309da7f7b631c468e5bd1.
+
+diff --git a/MagickCore/Makefile.am b/MagickCore/Makefile.am
+index 1111111..2222222 100644
+--- a/MagickCore/Makefile.am
++++ b/MagickCore/Makefile.am
+@@ -50,10 +50,6 @@ endif # WITH_MODULES
+ 
+ if WIN32_NATIVE_BUILD
+ MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_LIBADD += -lws2_32
+-if WITH_MODULES
+-else
+-MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_LIBADD += -lurlmon
+-endif
+ endif
+ 
+ nodist_MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES =
+diff --git a/Makefile.in b/Makefile.in
+index 1111111..2222222 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -258,11 +258,9 @@ bin_PROGRAMS = $(am__EXEEXT_1)
+ TESTS = $(TESTS_TESTS) $(am__EXEEXT_5)
+ XFAIL_TESTS = $(am__EXEEXT_6) $(am__EXEEXT_6)
+ check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_4)
+-@WIN32_NATIVE_BUILD_TRUE@am__append_1 = -lurlmon
+-@WIN32_NATIVE_BUILD_TRUE@am__append_2 = -lws2_32
+-@WIN32_NATIVE_BUILD_TRUE@@WITH_MODULES_FALSE@am__append_3 = -lurlmon
+-@MAGICKCORE_ZERO_CONFIGURATION_SUPPORT_TRUE@am__append_4 = MagickCore/threshold-map.h
+-@MAGICKCORE_ZERO_CONFIGURATION_SUPPORT_TRUE@am__append_5 = MagickCore/threshold-map.h
++@WIN32_NATIVE_BUILD_TRUE@am__append_1 = -lws2_32
++@MAGICKCORE_ZERO_CONFIGURATION_SUPPORT_TRUE@am__append_2 = MagickCore/threshold-map.h
++@MAGICKCORE_ZERO_CONFIGURATION_SUPPORT_TRUE@am__append_3 = MagickCore/threshold-map.h
+ subdir = .
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ am__aclocal_m4_deps = $(top_srcdir)/m4/ax_c___attribute__.m4 \
+@@ -1860,7 +1858,7 @@ coders_uil_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+ @WITH_MODULES_TRUE@am_coders_uil_la_rpath = -rpath $(codersdir)
+ coders_url_la_DEPENDENCIES = $(MAGICKCORE_LIBS) $(am__DEPENDENCIES_1) \
+ 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
++	$(am__DEPENDENCIES_1)
+ am_coders_url_la_OBJECTS = coders/url_la-url.lo
+ coders_url_la_OBJECTS = $(am_coders_url_la_OBJECTS)
+ coders_url_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+@@ -3614,7 +3612,7 @@ MODULECOMMONCPPFLAGS = $(AM_CPPFLAGS)
+ DISTCHECK_CONFIGURE_FLAGS = $(DISTCHECK_CONFIG_FLAGS)
+ DISTCLEANFILES = _configs.sed MagickCore/magick-baseconfig.h
+ CLEANFILES = $(MAGICKWAND_CLEANFILES) $(MAGICKPP_CLEANFILES) \
+-	$(UTILITIES_CLEANFILES) $(TESTS_CLEANFILES) $(am__append_5)
++	$(UTILITIES_CLEANFILES) $(TESTS_CLEANFILES) $(am__append_3)
+ 
+ # Binary scripts
+ bin_SCRIPTS = \
+@@ -5129,8 +5127,7 @@ coders_uil_la_LIBADD = $(MAGICKCORE_LIBS)
+ coders_url_la_SOURCES = coders/url.c
+ coders_url_la_CPPFLAGS = $(MAGICK_CODER_CPPFLAGS)
+ coders_url_la_LDFLAGS = $(MODULECOMMONFLAGS)
+-coders_url_la_LIBADD = $(MAGICKCORE_LIBS) $(XML_LIBS) $(LZMA_LIBS) \
+-	$(ZLIB_LIBS) $(MATH_LIBS) $(am__append_1)
++coders_url_la_LIBADD = $(MAGICKCORE_LIBS) $(XML_LIBS) $(LZMA_LIBS) $(ZLIB_LIBS) $(MATH_LIBS)
+ 
+ # UYVY coder module
+ coders_uyvy_la_SOURCES = coders/uyvy.c
+@@ -5277,13 +5274,11 @@ MAGICKCORE_LIBS = MagickCore/libMagickCore-@MAGICK_MAJOR_VERSION@.@MAGICK_ABI_SU
+ @WITH_MODULES_FALSE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES = $(MAGICKCORE_BASE_SRCS) $(MAGICKCORE_PLATFORM_SRCS) $(MAGICKCORE_CODER_SRCS) $(MAGICKCORE_FILTER_SRCS)
+ @WITH_MODULES_TRUE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES = $(MAGICKCORE_BASE_SRCS) $(MAGICKCORE_PLATFORM_SRCS)
+ @WITH_MODULES_FALSE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_LIBADD =  \
+-@WITH_MODULES_FALSE@	$(MAGICK_DEP_LIBS) $(am__append_2) \
+-@WITH_MODULES_FALSE@	$(am__append_3)
++@WITH_MODULES_FALSE@	$(MAGICK_DEP_LIBS) $(am__append_1)
+ @WITH_MODULES_TRUE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_LIBADD =  \
+-@WITH_MODULES_TRUE@	$(MAGICK_DEP_LIBS) $(am__append_2) \
+-@WITH_MODULES_TRUE@	$(am__append_3)
++@WITH_MODULES_TRUE@	$(MAGICK_DEP_LIBS) $(am__append_1)
+ nodist_MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES =  \
+-	$(am__append_4)
++	$(am__append_2)
+ MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_CPPFLAGS = $(AM_CPPFLAGS) $(LIBRARY_EXTRA_CPPFLAGS)
+ @HAVE_LD_VERSION_SCRIPT_FALSE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_LDFLAGS_VERSION = -export-symbols-regex ".*"
+ @HAVE_LD_VERSION_SCRIPT_TRUE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_LDFLAGS_VERSION = -Wl,--version-script=$(top_srcdir)/MagickCore/libMagickCore.map
+diff --git a/coders/Makefile.am b/coders/Makefile.am
+index 1111111..2222222 100644
+--- a/coders/Makefile.am
++++ b/coders/Makefile.am
+@@ -1428,9 +1428,6 @@ coders_url_la_SOURCES      = coders/url.c
+ coders_url_la_CPPFLAGS     = $(MAGICK_CODER_CPPFLAGS)
+ coders_url_la_LDFLAGS      = $(MODULECOMMONFLAGS)
+ coders_url_la_LIBADD       = $(MAGICKCORE_LIBS) $(XML_LIBS) $(LZMA_LIBS) $(ZLIB_LIBS) $(MATH_LIBS)
+-if WIN32_NATIVE_BUILD
+-coders_url_la_LIBADD += -lurlmon
+-endif
+ 
+ # UYVY coder module
+ coders_uyvy_la_SOURCES     = coders/uyvy.c
+diff --git a/coders/url.c b/coders/url.c
+index 1111111..2222222 100644
+--- a/coders/url.c
++++ b/coders/url.c
+@@ -59,7 +59,7 @@
+ #include "MagickCore/resource_.h"
+ #include "MagickCore/string_.h"
+ #include "MagickCore/utility.h"
+-#if defined(MAGICKCORE_WINDOWS_SUPPORT)
++#if defined(MAGICKCORE_WINDOWS_SUPPORT) && !defined(__MINGW32__)
+ #  include <urlmon.h>
+ #  if !defined(__MINGW32__)
+ #    pragma comment(lib, "urlmon.lib")
+@@ -93,7 +93,7 @@
+ %
+ */
+ 
+-#if !defined(MAGICKCORE_WINDOWS_SUPPORT)
++#if !defined(MAGICKCORE_WINDOWS_SUPPORT) || defined(__MINGW32__)
+ static Image* InvokeURLDelegate(ImageInfo* read_info,Image* image,
+   const char *delegate,ExceptionInfo* exception)
+ {
+@@ -146,7 +146,7 @@ static Image *ReadURLImage(const ImageInfo *image_info,ExceptionInfo *exception)
+   image=AcquireImage(image_info,exception);
+   read_info=CloneImageInfo(image_info);
+   SetImageInfoBlob(read_info,(void *) NULL,0);
+-#if !defined(MAGICKCORE_WINDOWS_SUPPORT)
++#if !defined(MAGICKCORE_WINDOWS_SUPPORT) || defined(__MINGW32__)
+   if (LocaleCompare(read_info->magick,"http") == 0)
+     {
+       images=InvokeURLDelegate(read_info,image,"http:decode",exception);
+@@ -189,7 +189,7 @@ static Image *ReadURLImage(const ImageInfo *image_info,ExceptionInfo *exception)
+   LocaleLower(filename);
+   (void) ConcatenateMagickString(filename,image_info->filename,
+     MagickPathExtent);
+-#if defined(MAGICKCORE_WINDOWS_SUPPORT)
++#if defined(MAGICKCORE_WINDOWS_SUPPORT) && !defined(__MINGW32__)
+   (void) fclose(file);
+   if (URLDownloadToFile(NULL,filename,read_info->filename,0,NULL) != S_OK)
+     {
+@@ -259,7 +259,7 @@ ModuleExport size_t RegisterURLImage(void)
+   entry->format_type=ImplicitFormatType;
+   (void) RegisterMagickInfo(entry);
+   entry=AcquireMagickInfo("URL","FTP","Uniform Resource Locator (ftp://)");
+-#if defined(MAGICKCORE_WINDOWS_SUPPORT)
++#if defined(MAGICKCORE_WINDOWS_SUPPORT) && !defined(__MINGW32__)
+   entry->decoder=(DecodeImageHandler *) ReadURLImage;
+ #endif
+   entry->format_type=ImplicitFormatType;

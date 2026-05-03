@@ -24,14 +24,14 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
 | [freetype]      | 2.14.3     | [freetype Licence] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
-| [glib]          | 2.88.0     | LGPLv3                                                       |
+| [glib]          | 2.88.1     | LGPLv3                                                       |
 | [harfbuzz]      | 14.2.0     | MIT Licence                                                  |
 | [highway]       | 1.4.0      | Apache-2.0 License, BSD 3-Clause                             |
 | [lcms]          | 2.19       | MIT Licence                                                  |
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT Licence                                                  |
-| [libheif]       | [7283380]  | LGPLv3                                                       |
+| [libheif]       | [78638f4]  | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.1     | LGPLv3                                                       |
@@ -48,7 +48,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
-[7283380]: https://github.com/strukturag/libheif/commit/7283380ec21003a6812d8a1e7e4328bdda8b2026
+[78638f4]: https://github.com/strukturag/libheif/commit/78638f4fe417e49f2b129f42ae691a4954560bbd
 [c09bb26]: https://gitlab.com/libtiff/libtiff/-/commit/c09bb267ca6fbc66ae0b18be05fffd5c4d3ebf3b
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
@@ -98,7 +98,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.6.4      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.6     | LGPLv3                                                       |
-| [imagemagick]   | 6.9.13-46  | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 7.1.2-21   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.1      | MIT Licence                                                  |
 | [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |
@@ -116,8 +116,8 @@ Same as libvips-web + these extra dependencies:
 [cfitsio]: https://github.com/HEASARC/cfitsio
 [fftw]: https://github.com/FFTW/fftw3
 [gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
-[imagemagick]: https://github.com/ImageMagick/ImageMagick6
-[ImageMagick License]: https://github.com/ImageMagick/ImageMagick6/blob/main/LICENSE
+[imagemagick]: https://github.com/ImageMagick/ImageMagick
+[ImageMagick License]: https://github.com/ImageMagick/ImageMagick/blob/main/LICENSE
 [imath]: https://github.com/AcademySoftwareFoundation/Imath
 [libdicom]: https://github.com/ImagingDataCommons/libdicom
 [libjxl]: https://github.com/libjxl/libjxl
