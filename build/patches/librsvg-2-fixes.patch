@@ -150,96 +150,30 @@ index 1111111..2222222 100644
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
-Date: Wed, 5 Nov 2025 10:39:31 +0100
-Subject: [PATCH 4/4] Downgrade to windows-sys 0.60.2
+Date: Fri, 17 Apr 2026 12:47:45 +0200
+Subject: [PATCH 4/4] Avoid linking with `--whole-archive`
 
-Generated using:
-cargo update -p windows-sys@0.61.2 --precise 0.60.2
+See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/1210.
 
-Context: https://github.com/msys2/MINGW-packages/pull/26246#issuecomment-3486403668.
-
-diff --git a/Cargo.lock b/Cargo.lock
+diff --git a/rsvg/meson.build b/rsvg/meson.build
 index 1111111..2222222 100644
---- a/Cargo.lock
-+++ b/Cargo.lock
-@@ -3190,13 +3190,78 @@ dependencies = [
- 
- [[package]]
- name = "windows-sys"
--version = "0.61.2"
-+version = "0.60.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "f2f500e4d28234f72040990ec9d39e3a6b950f9f22d3dba18416c35882612bcb"
-+dependencies = [
-+ "windows-targets",
-+]
-+
-+[[package]]
-+name = "windows-targets"
-+version = "0.53.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
-+checksum = "4945f9f551b88e0d65f3db0bc25c33b8acea4d9e41163edf90dcd0b19f9069f3"
- dependencies = [
-  "windows-link",
-+ "windows_aarch64_gnullvm",
-+ "windows_aarch64_msvc",
-+ "windows_i686_gnu",
-+ "windows_i686_gnullvm",
-+ "windows_i686_msvc",
-+ "windows_x86_64_gnu",
-+ "windows_x86_64_gnullvm",
-+ "windows_x86_64_msvc",
- ]
- 
-+[[package]]
-+name = "windows_aarch64_gnullvm"
-+version = "0.53.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "a9d8416fa8b42f5c947f8482c43e7d89e73a173cead56d044f6a56104a6d1b53"
-+
-+[[package]]
-+name = "windows_aarch64_msvc"
-+version = "0.53.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "b9d782e804c2f632e395708e99a94275910eb9100b2114651e04744e9b125006"
-+
-+[[package]]
-+name = "windows_i686_gnu"
-+version = "0.53.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "960e6da069d81e09becb0ca57a65220ddff016ff2d6af6a223cf372a506593a3"
-+
-+[[package]]
-+name = "windows_i686_gnullvm"
-+version = "0.53.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "fa7359d10048f68ab8b09fa71c3daccfb0e9b559aed648a8f95469c27057180c"
-+
-+[[package]]
-+name = "windows_i686_msvc"
-+version = "0.53.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1e7ac75179f18232fe9c285163565a57ef8d3c89254a30685b57d83a38d326c2"
-+
-+[[package]]
-+name = "windows_x86_64_gnu"
-+version = "0.53.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "9c3842cdd74a865a8066ab39c8a7a473c0778a3f29370b5fd6b4b9aa7df4a499"
-+
-+[[package]]
-+name = "windows_x86_64_gnullvm"
-+version = "0.53.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "0ffa179e2d07eee8ad8f57493436566c7cc30ac536a3379fdf008f47f6bb7ae1"
-+
-+[[package]]
-+name = "windows_x86_64_msvc"
-+version = "0.53.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
-+
- [[package]]
- name = "winnow"
- version = "0.7.14"
+--- a/rsvg/meson.build
++++ b/rsvg/meson.build
+@@ -234,7 +234,7 @@ if get_option('default_library') in ['shared', 'both']
+   librsvg_shared_lib = shared_library(
+     'rsvg-@0@'.format(librsvg_api_major),
+     rsvg_dummy,
+-    link_whole: librsvg_c_lib,
++    link_with: librsvg_c_lib,
+     link_args: link_args,
+     link_depends: librsvg_ver,
+     dependencies: library_dependencies,
+@@ -352,7 +352,7 @@ if build_gir.allowed()
+       librsvg_gir = shared_library(
+         'rsvg-gir',
+         rsvg_dummy,
+-        link_whole: librsvg_c_lib,
++        link_with: librsvg_c_lib,
+         dependencies: library_dependencies,
+         include_directories: [includeinc],
+       )
