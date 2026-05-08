@@ -19,18 +19,18 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 |-----------------|------------|--------------------------------------------------------------|
 | [aom]           | 3.13.3     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
-| [cgif]          | 0.5.3      | MIT Licence                                                  |
-| [expat]         | 2.8.0      | MIT Licence                                                  |
-| [fontconfig]    | 2.17.1     | [fontconfig Licence] (BSD-like)                              |
-| [freetype]      | 2.14.3     | [freetype Licence] (BSD-like)                                |
+| [cgif]          | 0.5.3      | MIT License                                                  |
+| [expat]         | 2.8.0      | MIT License                                                  |
+| [fontconfig]    | 2.17.1     | [fontconfig License] (BSD-like)                              |
+| [freetype]      | 2.14.3     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
 | [glib]          | 2.88.1     | LGPLv3                                                       |
-| [harfbuzz]      | 14.2.0     | MIT Licence                                                  |
+| [harfbuzz]      | 14.2.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | Apache-2.0 License, BSD 3-Clause                             |
-| [lcms]          | 2.19       | MIT Licence                                                  |
+| [lcms]          | 2.19       | MIT License                                                  |
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
-| [libffi]        | 3.5.2      | MIT Licence                                                  |
+| [libffi]        | 3.5.2      | MIT License                                                  |
 | [libheif]       | [78638f4]  | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
@@ -39,12 +39,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
 | [libvips]       | 8.18.2     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
-| [libxml2]       | 2.15.3     | MIT Licence                                                  |
+| [libxml2]       | 2.15.3     | MIT License                                                  |
 | [mozjpeg]       | [0826579]  | [zlib License, IJG License, BSD 3-Clause]                    |
 | [pango]         | 1.57.1     | LGPLv3                                                       |
-| [pixman]        | 0.46.4     | MIT Licence                                                  |
+| [pixman]        | 0.46.4     | MIT License                                                  |
 | [proxy-libintl] | 0.5        | LGPLv3                                                       |
-| [zlib-ng]       | 2.3.3      | [zlib-ng Licence]                                            |
+| [zlib-ng]       | 2.3.3      | [zlib-ng License]                                            |
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
@@ -58,9 +58,9 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [cgif]: https://github.com/dloebl/cgif
 [expat]: https://github.com/libexpat/libexpat
 [fontconfig]: https://gitlab.freedesktop.org/fontconfig/fontconfig
-[fontconfig Licence]: https://gitlab.freedesktop.org/fontconfig/fontconfig/blob/main/COPYING
+[fontconfig License]: https://gitlab.freedesktop.org/fontconfig/fontconfig/blob/main/COPYING
 [freetype]: https://gitlab.freedesktop.org/freetype/freetype
-[freetype Licence]: https://gitlab.freedesktop.org/freetype/freetype/blob/master/docs/FTL.TXT
+[freetype License]: https://gitlab.freedesktop.org/freetype/freetype/blob/master/docs/FTL.TXT
 [fribidi]: https://github.com/fribidi/fribidi
 [glib]: https://gitlab.gnome.org/GNOME/glib
 [harfbuzz]: https://github.com/harfbuzz/harfbuzz
@@ -86,7 +86,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [pixman]: https://gitlab.freedesktop.org/pixman/pixman
 [proxy-libintl]: https://github.com/frida/proxy-libintl
 [zlib-ng]: https://github.com/zlib-ng/zlib-ng
-[zlib-ng Licence]: https://github.com/zlib-ng/zlib-ng/blob/develop/LICENSE.md
+[zlib-ng License]: https://github.com/zlib-ng/zlib-ng/blob/develop/LICENSE.md
 
 ## libvips-all dependencies
 
@@ -94,13 +94,13 @@ Same as libvips-web + these extra dependencies:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [brotli]        | 1.2.0      | MIT Licence                                                  |
+| [brotli]        | 1.2.0      | MIT License                                                  |
 | [cfitsio]       | 4.6.4      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.6     | LGPLv3                                                       |
 | [imagemagick]   | 7.1.2-21   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
-| [libdicom]      | 1.2.1      | MIT Licence                                                  |
+| [libdicom]      | 1.2.1      | MIT License                                                  |
 | [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |
 | [libraw]        | 0.22.1     | LGPL-2.1-only                                                |
 | [matio]         | 1.5.30     | BSD 2-Clause                                                 |
@@ -188,10 +188,10 @@ In that case, the following version of zlib is built:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [zlib]          | 1.3.2      | [zlib Licence]                                               |
+| [zlib]          | 1.3.2      | [zlib License]                                               |
 
 [zlib]: https://github.com/madler/zlib
-[zlib Licence]: https://github.com/madler/zlib/blob/develop/LICENSE
+[zlib License]: https://github.com/madler/zlib/blob/develop/LICENSE
 
 ## HEVC-related dependencies
 
