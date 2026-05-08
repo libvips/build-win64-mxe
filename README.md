@@ -36,7 +36,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.1     | LGPLv3                                                       |
 | [libtiff]       | [c09bb26]  | [libtiff License] (BSD-like)                                 |
-| [libultrahdr]   | 1.4.0      | Apache-2.0 License                                           |
+| [libultrahdr]   | 1.4.0      | MIT License                                                  |
 | [libvips]       | 8.18.2     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
 | [libxml2]       | 2.15.3     | MIT License                                                  |
