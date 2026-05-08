@@ -26,7 +26,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
 | [glib]          | 2.88.1     | LGPLv3                                                       |
 | [harfbuzz]      | 14.2.0     | MIT License                                                  |
-| [highway]       | 1.4.0      | Apache-2.0 License, BSD 3-Clause                             |
+| [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.19       | MIT License                                                  |
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
