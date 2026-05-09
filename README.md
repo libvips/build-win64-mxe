@@ -27,7 +27,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [glib]          | 2.88.1     | LGPLv3                                                       |
 | [harfbuzz]      | 14.2.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
-| [lcms]          | 2.19       | MIT License                                                  |
+| [lcms]          | 2.19.1     | MIT License                                                  |
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT License                                                  |
@@ -35,7 +35,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.1     | LGPLv3                                                       |
-| [libtiff]       | [c09bb26]  | [libtiff License] (BSD-like)                                 |
+| [libtiff]       | [f43900c]  | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 1.4.0      | MIT License                                                  |
 | [libvips]       | 8.18.2     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
@@ -49,7 +49,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
 [78638f4]: https://github.com/strukturag/libheif/commit/78638f4fe417e49f2b129f42ae691a4954560bbd
-[c09bb26]: https://gitlab.com/libtiff/libtiff/-/commit/c09bb267ca6fbc66ae0b18be05fffd5c4d3ebf3b
+[f43900c]: https://gitlab.com/libtiff/libtiff/-/commit/f43900c82ec8cf7bd02fed22310254972267b3ba
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
 [aom]: https://aomedia.googlesource.com/aom/
@@ -108,7 +108,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.13     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
-| [poppler]       | 26.04.0    | GPLv2                                                        |
+| [poppler]       | 26.05.0    | GPLv2                                                        |
 | [sqlite]        | 3.53.0     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 

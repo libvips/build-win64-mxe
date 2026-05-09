@@ -80,8 +80,8 @@ cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 4.7.1
-tiff_VERSION  := c09bb26
-tiff_CHECKSUM := e99a792bf6d39b2311f769243e921a4d2aba374344100dbe72b5a66ccd4a7747
+tiff_VERSION  := f43900c
+tiff_CHECKSUM := 16f793cc70310c9203bb16d75e2d9444b3d590c68735040f21163fccab37ee96
 tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 tiff_SUBDIR   := libtiff-$(tiff_VERSION)
 tiff_FILE     := libtiff-$(tiff_VERSION).tar.gz
@@ -90,8 +90,8 @@ tiff_URL      := https://gitlab.com/libtiff/libtiff/-/archive/$(tiff_VERSION)/$(
 # upstream version is 2.18
 # cannot use GH_CONF:
 # lcms_GH_CONF  := mm2/Little-CMS,lcms
-lcms_VERSION  := 2.19
-lcms_CHECKSUM := 49e7e134e4299733dd0eda434fa468997a28ab3d33fa397c642b03644f552216
+lcms_VERSION  := 2.19.1
+lcms_CHECKSUM := bfc54f7bab59fbc921012014a8032e4cba4abd46db47d46b76416a8c0b2815c8
 lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
 lcms_SUBDIR   := lcms2-$(lcms_VERSION)
 lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
@@ -114,6 +114,14 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   :=
 openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
+
+# upstream version is 26.04.0
+poppler_VERSION  := 26.05.0
+poppler_CHECKSUM := 6fef27ff04f37db43054c86bcdff6128c9fb1f6af4ef3c8b369a7e9abd68d0bb
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
 libraw_VERSION  := 0.22.1
