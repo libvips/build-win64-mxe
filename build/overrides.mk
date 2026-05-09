@@ -2,15 +2,6 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
-# upstream version is 2.44.2
-# gdk-pixbuf is still used by OpenSlide
-gdk-pixbuf_VERSION  := 2.44.6
-gdk-pixbuf_CHECKSUM := 140c2d0b899fcf853ee92b26373c9dc228dbcde0820a4246693f4328a27466fa
-gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
-gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
-gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
-gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
-
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -49,14 +40,6 @@ fribidi_CHECKSUM := 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9e
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
-# upstream version is 2.88.0
-glib_VERSION  := 2.88.1
-glib_CHECKSUM := 51ab804c56f6eab3e5045c774d1290ac5e4c923d4f9a3d8e33123bee45c1840e
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
-glib_SUBDIR   := glib-$(glib_VERSION)
-glib_FILE     := glib-$(glib_VERSION).tar.xz
-glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
-
 # upstream version is 2.7.5
 expat_VERSION  := 2.8.0
 expat_CHECKSUM := a37bfae0aa9775bd8521ebd85dc456d486f0ff31138f6c91fd902ea732624542
@@ -87,7 +70,7 @@ tiff_SUBDIR   := libtiff-$(tiff_VERSION)
 tiff_FILE     := libtiff-$(tiff_VERSION).tar.gz
 tiff_URL      := https://gitlab.com/libtiff/libtiff/-/archive/$(tiff_VERSION)/$(tiff_FILE)
 
-# upstream version is 2.18
+# upstream version is 2.19
 # cannot use GH_CONF:
 # lcms_GH_CONF  := mm2/Little-CMS,lcms
 lcms_VERSION  := 2.19.1
@@ -96,12 +79,6 @@ lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 lcms_SUBDIR   := lcms2-$(lcms_VERSION)
 lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
 lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
-
-# upstream version is 13.2.1
-harfbuzz_VERSION  := 14.2.0
-harfbuzz_CHECKSUM := 94017020f96d025bb66ae91574e4cf334bcad23e8175a8a40565b3721bc2eaff
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -114,14 +91,6 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   :=
 openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
-
-# upstream version is 26.04.0
-poppler_VERSION  := 26.05.0
-poppler_CHECKSUM := 6fef27ff04f37db43054c86bcdff6128c9fb1f6af4ef3c8b369a7e9abd68d0bb
-poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
-poppler_SUBDIR   := poppler-$(poppler_VERSION)
-poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
-poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
 libraw_VERSION  := 0.22.1
