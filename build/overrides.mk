@@ -21,8 +21,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7.1.2-17
-imagemagick_VERSION  := 7.1.2-21
-imagemagick_CHECKSUM := 4ba5b81797910efa93e65fb5a02b496284b8069d64513c6d2687c80d180dd70f
+imagemagick_VERSION  := 7.1.2-22
+imagemagick_CHECKSUM := 78de50d00e3e7b6cce5e5751460d43feda626a778904438ab83a6b51449f9452
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick/tags
 
@@ -41,8 +41,8 @@ fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
 # upstream version is 2.7.5
-expat_VERSION  := 2.8.0
-expat_CHECKSUM := a37bfae0aa9775bd8521ebd85dc456d486f0ff31138f6c91fd902ea732624542
+expat_VERSION  := 2.8.1
+expat_CHECKSUM := 10b195ee78160a908388180a8fe3603d4e9a12f4755fbf5f3816b23a9d750da0
 expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
 expat_SUBDIR   := expat-$(expat_VERSION)
 expat_FILE     := expat-$(expat_VERSION).tar.xz
@@ -63,8 +63,8 @@ cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 4.7.1
-tiff_VERSION  := f43900c
-tiff_CHECKSUM := 16f793cc70310c9203bb16d75e2d9444b3d590c68735040f21163fccab37ee96
+tiff_VERSION  := 1b17963
+tiff_CHECKSUM := 38bae9de932ad13fd77fa20f7dd5c4f02ccc7ff85297bcf8bfa9e1573cc6f2f9
 tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 tiff_SUBDIR   := libtiff-$(tiff_VERSION)
 tiff_FILE     := libtiff-$(tiff_VERSION).tar.gz
