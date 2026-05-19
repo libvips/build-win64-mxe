@@ -23,10 +23,10 @@ index 1111111..2222222 100644
  static THREADFN thread_loop(void *ptr) {
    AVxWorker *const worker = (AVxWorker *)ptr;
 +  const AVxWorkerInterface *const winterface = aom_get_worker_interface();
+ #ifdef HAVE_PTHREAD_SETNAME_NP
  #ifdef __APPLE__
    if (worker->thread_name != NULL) {
-     // Apple's version of pthread_setname_np takes one argument and operates on
-@@ -79,7 +78,7 @@ static THREADFN thread_loop(void *ptr) {
+@@ -81,7 +80,7 @@ static THREADFN thread_loop(void *ptr) {
        // When the worker reacquires worker->impl_->mutex_, worker->status_ must
        // still be AVX_WORKER_STATUS_WORKING.
        pthread_mutex_unlock(&worker->impl_->mutex_);

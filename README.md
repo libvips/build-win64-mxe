@@ -17,7 +17,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [aom]           | 3.13.3     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.14.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.3      | MIT License                                                  |
 | [expat]         | 2.8.1      | MIT License                                                  |
@@ -31,10 +31,10 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT License                                                  |
-| [libheif]       | [580ca12]  | LGPLv3                                                       |
+| [libheif]       | [2f6b962]  | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
-| [librsvg]       | 2.62.1     | LGPLv3                                                       |
+| [librsvg]       | 2.62.2     | LGPLv3                                                       |
 | [libtiff]       | [1b17963]  | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | [82b4f6d]  | MIT License                                                  |
 | [libvips]       | 8.18.2     | LGPLv3                                                       |
@@ -48,7 +48,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
-[580ca12]: https://github.com/strukturag/libheif/commit/78638f4fe417e49f2b129f42ae691a4954560bbd
+[2f6b962]: https://github.com/strukturag/libheif/commit/2f6b9627c3a240122f36307a8854f378d8354f03
 [1b17963]: https://gitlab.com/libtiff/libtiff/-/commit/1b179633dc8729b6ccd7e1ba3758fb995337eb2f
 [82b4f6d]: https://github.com/google/libultrahdr/commit/82b4f6da9f4db25f51a3a40201ab6eb86b6d6bb7
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
@@ -99,7 +99,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.6.4      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.6     | LGPLv3                                                       |
-| [imagemagick]   | 7.1.2-22   | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 7.1.2-23   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.1      | MIT License                                                  |
 | [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |

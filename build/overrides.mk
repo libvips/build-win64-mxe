@@ -21,14 +21,14 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7.1.2-17
-imagemagick_VERSION  := 7.1.2-22
-imagemagick_CHECKSUM := 78de50d00e3e7b6cce5e5751460d43feda626a778904438ab83a6b51449f9452
+imagemagick_VERSION  := 7.1.2-23
+imagemagick_CHECKSUM := f129f7d87fc21da453d032dd291b80ea13faf2497f13ef8279d97759ed7d5c46
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick/tags
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.62.1
-librsvg_CHECKSUM := b41ca84206242fddd826a2bf76348d7cdf52c1050cbfa060b866e81a252145c3
+librsvg_VERSION  := 2.62.2
+librsvg_CHECKSUM := c0c1367e381e1ae4842a78f1b57c656ff19b25637e3a6527cb44ae5a1cc68d65
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
