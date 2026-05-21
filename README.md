@@ -21,17 +21,17 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.3      | MIT License                                                  |
 | [expat]         | 2.8.1      | MIT License                                                  |
-| [fontconfig]    | 2.17.1     | [fontconfig License] (BSD-like)                              |
+| [fontconfig]    | 2.18.0     | [fontconfig License] (BSD-like)                              |
 | [freetype]      | 2.14.3     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
-| [glib]          | 2.88.1     | LGPLv3                                                       |
+| [glib]          | 2.89.0     | LGPLv3                                                       |
 | [harfbuzz]      | 14.2.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.19.1     | MIT License                                                  |
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT License                                                  |
-| [libheif]       | [2f6b962]  | LGPLv3                                                       |
+| [libheif]       | 1.22.0     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.2     | LGPLv3                                                       |
@@ -48,7 +48,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
-[2f6b962]: https://github.com/strukturag/libheif/commit/2f6b9627c3a240122f36307a8854f378d8354f03
 [1b17963]: https://gitlab.com/libtiff/libtiff/-/commit/1b179633dc8729b6ccd7e1ba3758fb995337eb2f
 [82b4f6d]: https://github.com/google/libultrahdr/commit/82b4f6da9f4db25f51a3a40201ab6eb86b6d6bb7
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
@@ -208,7 +207,7 @@ prebuilt binaries while it is patent-encumbered.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [libde265]      | 1.0.18     | LGPLv3                                                       |
+| [libde265]      | 1.0.19     | LGPLv3                                                       |
 | [x265]          | 4.2        | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265

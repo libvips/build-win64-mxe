@@ -40,6 +40,14 @@ fribidi_CHECKSUM := 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9e
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
+# upstream version is 2.88.1
+glib_VERSION  := 2.89.0
+glib_CHECKSUM := 205bf5dab175de68f11e33be7bb36d4ad4c5a5097d8c0c88a8682b257b6293dc
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
 # upstream version is 2.7.5
 expat_VERSION  := 2.8.1
 expat_CHECKSUM := 10b195ee78160a908388180a8fe3603d4e9a12f4755fbf5f3816b23a9d750da0
@@ -79,6 +87,14 @@ lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST))
 lcms_SUBDIR   := lcms2-$(lcms_VERSION)
 lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
 lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
+
+# upstream version is 2.17.1
+fontconfig_VERSION  := 2.18.0
+fontconfig_CHECKSUM := e7064a4725431ddba06ff8b971ec5a4b422e23b0169ce215747beedcb30e9073
+fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
+fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
+fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz
+fontconfig_URL      := https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/$(fontconfig_VERSION)/$(fontconfig_FILE)
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
