@@ -17,7 +17,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [aom]           | 3.14.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.14.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.3      | MIT License                                                  |
 | [expat]         | 2.8.1      | MIT License                                                  |
@@ -31,7 +31,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.5.2      | MIT License                                                  |
-| [libheif]       | 1.22.0     | LGPLv3                                                       |
+| [libheif]       | 1.22.2     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.2     | LGPLv3                                                       |
@@ -207,7 +207,7 @@ prebuilt binaries while it is patent-encumbered.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [libde265]      | 1.0.19     | LGPLv3                                                       |
+| [libde265]      | 1.1.0      | LGPLv3                                                       |
 | [x265]          | 4.2        | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265
