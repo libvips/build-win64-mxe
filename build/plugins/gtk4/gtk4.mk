@@ -2,13 +2,12 @@ PKG             := gtk4
 $(PKG)_WEBSITE  := https://gtk.org/
 $(PKG)_DESCR    := GTK4
 $(PKG)_IGNORE   :=
-# https://gitlab.gnome.org/GNOME/gtk/-/archive/7556498/gtk-7556498.tar.gz
-$(PKG)_VERSION  := 7556498
-$(PKG)_CHECKSUM := 3d53fd2ae832a2788588c6e565ba847db62c6c8416c583e8b950dd72dc259703
+$(PKG)_VERSION  := 4.23.1
+$(PKG)_CHECKSUM := 838e7515ec7c5bd6ca7c89dfcb9b43e6f4ece1c5240045a7e844db4cfa1ce7a0
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gtk-[0-9]*.patch)))
 $(PKG)_SUBDIR   := gtk-$($(PKG)_VERSION)
-$(PKG)_FILE     := gtk-$($(PKG)_VERSION).tar.gz
-$(PKG)_URL      := https://gitlab.gnome.org/GNOME/gtk/-/archive/$($(PKG)_VERSION)/$($(PKG)_FILE)
+$(PKG)_FILE     := gtk-$($(PKG)_VERSION).tar.xz
+$(PKG)_URL      := https://download.gnome.org/sources/gtk/$(call SHORT_PKG_VERSION,$(PKG))/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc meson-wrapper glib gdk-pixbuf pango fontconfig cairo libepoxy graphene directx-headers
 
 define $(PKG)_BUILD

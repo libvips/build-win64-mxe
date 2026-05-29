@@ -5,10 +5,6 @@ FROM $BASE_IMAGE
 COPY . /data
 WORKDIR /usr/local/mxe
 
-# TODO(kleisauke): Move to the base image.
-# needed by GTK (when building from Git, not from release tarballs)
-RUN apt-get install -qqy --no-install-recommends sassc
-
 # libtool-specific patches for clang
 RUN patch -p1 -d /usr/share < /data/patches/libtool-2-fixes.patch
 
