@@ -21,8 +21,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7.1.2-17
-imagemagick_VERSION  := 7.1.2-23
-imagemagick_CHECKSUM := f129f7d87fc21da453d032dd291b80ea13faf2497f13ef8279d97759ed7d5c46
+imagemagick_VERSION  := 7.1.2-24
+imagemagick_CHECKSUM := 645f1dc68482ba952a02a854ffaf67efca42871b168e0cf702a043db2ec54638
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick/tags
 
@@ -71,8 +71,8 @@ cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 4.7.1
-tiff_VERSION  := 1b17963
-tiff_CHECKSUM := 38bae9de932ad13fd77fa20f7dd5c4f02ccc7ff85297bcf8bfa9e1573cc6f2f9
+tiff_VERSION  := 732665c
+tiff_CHECKSUM := 736e375ec80dc83687d035c5daabca6bd46808297add9bddf7ae874694f43e47
 tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
 tiff_SUBDIR   := libtiff-$(tiff_VERSION)
 tiff_FILE     := libtiff-$(tiff_VERSION).tar.gz
