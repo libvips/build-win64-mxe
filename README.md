@@ -21,11 +21,11 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.3      | MIT License                                                  |
 | [expat]         | 2.8.1      | MIT License                                                  |
-| [fontconfig]    | 2.18.0     | [fontconfig License] (BSD-like)                              |
+| [fontconfig]    | 2.18.1     | [fontconfig License] (BSD-like)                              |
 | [freetype]      | 2.14.3     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
 | [glib]          | 2.89.0     | LGPLv3                                                       |
-| [harfbuzz]      | 14.2.0     | MIT License                                                  |
+| [harfbuzz]      | 14.2.1     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.19.1     | MIT License                                                  |
 | [libarchive]    | 3.8.7      | BSD 2-Clause                                                 |
@@ -34,7 +34,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libheif]       | 1.23.0     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
-| [librsvg]       | 2.62.2     | LGPLv3                                                       |
+| [librsvg]       | 2.62.3     | LGPLv3                                                       |
 | [libtiff]       | [732665c]  | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | [82b4f6d]  | MIT License                                                  |
 | [libvips]       | 8.18.2     | LGPLv3                                                       |
@@ -108,7 +108,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.13     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.0      | LGPLv3                                                       |
-| [poppler]       | 26.05.0    | GPLv2                                                        |
+| [poppler]       | 26.06.0    | GPLv2                                                        |
 | [sqlite]        | 3.53.1     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
