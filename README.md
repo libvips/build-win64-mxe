@@ -36,7 +36,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.3     | LGPLv3                                                       |
 | [libtiff]       | [732665c]  | [libtiff License] (BSD-like)                                 |
-| [libultrahdr]   | [82b4f6d]  | MIT License                                                  |
+| [libultrahdr]   | [13a058f]  | MIT License                                                  |
 | [libvips]       | 8.18.2     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
 | [libxml2]       | 2.15.3     | MIT License                                                  |
@@ -49,7 +49,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
 
 [732665c]: https://gitlab.com/libtiff/libtiff/-/commit/732665c2c8785cec3e1f46ba9908575f0f3a8059
-[82b4f6d]: https://github.com/google/libultrahdr/commit/82b4f6da9f4db25f51a3a40201ab6eb86b6d6bb7
+[13a058f]: https://github.com/google/libultrahdr/commit/13a058f452d846e43d4691f6885eeeaa8b0ea8d0
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
 [aom]: https://aomedia.googlesource.com/aom/
@@ -98,7 +98,7 @@ Same as libvips-web + these extra dependencies:
 | [cfitsio]       | 4.6.4      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
 | [gdk-pixbuf]    | 2.44.6     | LGPLv3                                                       |
-| [imagemagick]   | 7.1.2-24   | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 7.1.2-25   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.2.1      | MIT License                                                  |
 | [libjxl]        | 0.11.2     | BSD 3-Clause                                                 |
@@ -207,7 +207,7 @@ prebuilt binaries while it is patent-encumbered.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [libde265]      | 1.1.0      | LGPLv3                                                       |
+| [libde265]      | 1.1.1      | LGPLv3                                                       |
 | [x265]          | 4.2        | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265

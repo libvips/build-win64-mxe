@@ -21,8 +21,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7.1.2-17
-imagemagick_VERSION  := 7.1.2-24
-imagemagick_CHECKSUM := 645f1dc68482ba952a02a854ffaf67efca42871b168e0cf702a043db2ec54638
+imagemagick_VERSION  := 7.1.2-25
+imagemagick_CHECKSUM := ff33d227d2e1744327280e956ec9f7abaebbd8f48277d16cdad906e05e4794b6
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick/tags
 
