@@ -19,7 +19,7 @@ define $(PKG)_BUILD
         -DENABLE_TESTDATA=OFF \
         -DENABLE_TOOLS=OFF \
         -DENABLE_EXAMPLES=OFF \
-        -DCONFIG_AV1_HIGHBITDEPTH=0 \
+        -DCONFIG_AV1_HIGHBITDEPTH=1 \
         -DCONFIG_WEBM_IO=0 \
         $(if $(call seq,i686,$(PROCESSOR)), -DAOM_TARGET_CPU='x86') \
         '$(SOURCE_DIR)'
