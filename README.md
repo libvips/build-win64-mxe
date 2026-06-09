@@ -37,7 +37,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.62.3     | LGPLv3                                                       |
 | [libtiff]       | [732665c]  | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | [13a058f]  | MIT License                                                  |
-| [libvips]       | 8.18.3[^2] | LGPLv3                                                       |
+| [libvips]       | 8.18.3     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
 | [libxml2]       | 2.15.3     | MIT License                                                  |
 | [mozjpeg]       | [0826579]  | [zlib License, IJG License, BSD 3-Clause]                    |
@@ -47,8 +47,6 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [zlib-ng]       | 2.3.3      | [zlib-ng License]                                            |
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
-[^2]: libvips is built from the [`v8.18.3-rc1`](https://github.com/libvips/libvips/tree/v8.18.3-rc1) tag, see:
-https://github.com/libvips/libvips/releases/tag/v8.18.3-rc1
 
 [732665c]: https://gitlab.com/libtiff/libtiff/-/commit/732665c2c8785cec3e1f46ba9908575f0f3a8059
 [13a058f]: https://github.com/google/libultrahdr/commit/13a058f452d846e43d4691f6885eeeaa8b0ea8d0
@@ -109,7 +107,7 @@ Same as libvips-web + these extra dependencies:
 | [nifticlib]     | 3.0.1      | Public domain                                                |
 | [openexr]       | 3.1.13     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
-| [openslide]     | 4.0.0      | LGPLv3                                                       |
+| [openslide]     | 4.0.1      | LGPL-2.1-only                                                |
 | [poppler]       | 26.06.0    | GPLv2                                                        |
 | [sqlite]        | 3.53.2     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
