@@ -6,7 +6,7 @@ $(PKG)_VERSION  := 4.0.1
 $(PKG)_CHECKSUM := df82f6b264f98d11eeb80d85bbb10c7935fcd69c7abae1d610ce49b9a0437faf
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := openslide/openslide/releases,v,,,,.tar.xz
-$(PKG)_DEPS     := cc zlib glib libxml2 cairo gdk-pixbuf libjpeg-turbo tiff openjpeg sqlite libdicom zstd
+$(PKG)_DEPS     := cc zlib glib libxml2 cairo libjpeg-turbo tiff openjpeg sqlite libdicom zstd
 
 define $(PKG)_BUILD
     $(MXE_MESON_WRAPPER) \

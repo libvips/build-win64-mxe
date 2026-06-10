@@ -22,6 +22,11 @@ libxml2_MESON_OPTS := $(libxml2_MESON_OPTS) -Doutput=enabled
 imagemagick_DEPS := $(imagemagick_DEPS) tiff
 imagemagick_CONFIGURE_OPTS = --with-tiff
 
-# Override sub-dependencies
+## Override sub-dependencies
+# adwaita-icon-theme:
+#  Replaced: gtk3 with gtk4
+# libepoxy:
+#  Removed: xorg-macros
+
 adwaita-icon-theme_DEPS := $(subst gtk3,gtk4,$(adwaita-icon-theme_DEPS))
-libepoxy_DEPS := $(filter-out  xorg-macros,$(libepoxy_DEPS))
+libepoxy_DEPS           := $(filter-out  xorg-macros,$(libepoxy_DEPS))

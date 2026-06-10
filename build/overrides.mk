@@ -347,6 +347,7 @@ define freetype-bootstrap_BUILD
 endef
 
 # build with the Meson build system
+# needed by gtk4
 define gdk-pixbuf_BUILD
     $(MXE_MESON_WRAPPER) \
         -Dtiff=disabled \

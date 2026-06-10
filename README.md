@@ -97,7 +97,6 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.2.0      | MIT License                                                  |
 | [cfitsio]       | 4.6.4      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
-| [gdk-pixbuf]    | 2.44.6     | LGPLv3                                                       |
 | [imagemagick]   | 7.1.2-25   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.3.0      | MIT License                                                  |
@@ -115,7 +114,6 @@ Same as libvips-web + these extra dependencies:
 [brotli]: https://github.com/google/brotli
 [cfitsio]: https://github.com/HEASARC/cfitsio
 [fftw]: https://github.com/FFTW/fftw3
-[gdk-pixbuf]: https://gitlab.gnome.org/GNOME/gdk-pixbuf
 [imagemagick]: https://github.com/ImageMagick/ImageMagick
 [ImageMagick License]: https://github.com/ImageMagick/ImageMagick/blob/main/LICENSE
 [imath]: https://github.com/AcademySoftwareFoundation/Imath
