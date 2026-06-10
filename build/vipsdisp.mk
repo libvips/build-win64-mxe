@@ -13,6 +13,7 @@ define $(PKG)_PRE_CONFIGURE
      printf '  "adwaita-icon-theme": "$(adwaita-icon-theme_VERSION)",\n'; \
      printf '  "directx-headers": "$(directx-headers_VERSION)",\n'; \
      printf '  "epoxy": "$(libepoxy_VERSION)",\n'; \
+     printf '  "gdk-pixbuf": "$(gdk-pixbuf_VERSION)",\n'; \
      printf '  "graphene": "$(graphene_VERSION)",\n'; \
      printf '  "gtk": "$(gtk4_VERSION)",\n'; \
      printf '  "vipsdisp": "$(vipsdisp_VERSION)"\n'; \
