@@ -216,6 +216,7 @@ $oci_runtime build \
   -t libvips-build-win-mxe \
   -f container/Dockerfile \
   --build-arg BASE_IMAGE="$image" \
+  --build-arg SOURCE_DATE_EPOCH="$(git log -1 --pretty=%ct)" \
   --build-arg PKGS="${pkgs[*]}" \
   --build-arg MXE_TARGETS="${mxe_targets[*]}" \
   --build-arg DEBUG="$with_debug" \

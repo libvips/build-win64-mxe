@@ -8,11 +8,14 @@ WORKDIR /usr/local/mxe
 # libtool-specific patches for clang
 RUN patch -p1 -d /usr/share < /data/patches/libtool-2-fixes.patch
 
+ARG SOURCE_DATE_EPOCH
 ARG PKGS
 ARG MXE_TARGETS
 ARG DEBUG
 ARG GIT_COMMIT
 ARG PLUGIN_DIRS
+
+ENV SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH"
 
 RUN \
   if [ "$DEBUG" = true ]; then \
