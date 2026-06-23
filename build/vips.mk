@@ -2,11 +2,11 @@ PKG             := vips
 $(PKG)_WEBSITE  := https://libvips.github.io/libvips/
 $(PKG)_DESCR    := A fast image processing library with low memory needs.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.18.3
-$(PKG)_CHECKSUM := f41285b61bfb495605494f074ca341f7791a1d406e2f157dcea606ef1ae1b146
+# https://github.com/libvips/libvips/tarball/e51dfe501b080cce9a6f7679a553c9bfcf88bce7
+$(PKG)_VERSION  := e51dfe5
+$(PKG)_CHECKSUM := a2b3c78138751be30025ea5315a8d1ec2b846bb928766bd12e7fca7f6d7f34b2
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/libvips/releases,v,,,,.tar.xz
-$(PKG)_SUBDIR   := $(PKG)-$(firstword $(subst -, ,$($(PKG)_VERSION)))
+$(PKG)_GH_CONF  := libvips/libvips/branches/master
 $(PKG)_DEPS     := cc meson-wrapper libwebp librsvg glib pango libarchive \
                    libjpeg-turbo tiff lcms libexif libheif \
                    libimagequant highway cgif uhdr
@@ -19,8 +19,10 @@ define $(PKG)_BUILD
     # libvips-42.dll for the language bindings.
     $(MXE_MESON_WRAPPER) \
         --default-library=shared \
-        -Ddeprecated=false \
         -Dexamples=false \
+        -Dman=false \
+        $(if $(IS_INTL_DUMMY), -Dpo=false) \
+        -Dtests=false \
         -Dintrospection=disabled \
         $(vips_MESON_OPTS) \
         '$(SOURCE_DIR)' \

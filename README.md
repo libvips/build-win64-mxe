@@ -37,7 +37,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.62.3     | LGPLv3                                                       |
 | [libtiff]       | [732665c]  | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | [13a058f]  | MIT License                                                  |
-| [libvips]       | 8.18.3     | LGPLv3                                                       |
+| [libvips]       | [e51dfe5]  | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
 | [libxml2]       | 2.15.3     | MIT License                                                  |
 | [mozjpeg]       | [0826579]  | [zlib License, IJG License, BSD 3-Clause]                    |
@@ -50,6 +50,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 [732665c]: https://gitlab.com/libtiff/libtiff/-/commit/732665c2c8785cec3e1f46ba9908575f0f3a8059
 [13a058f]: https://github.com/google/libultrahdr/commit/13a058f452d846e43d4691f6885eeeaa8b0ea8d0
+[e51dfe5]: https://github.com/libvips/libvips/commit/e51dfe501b080cce9a6f7679a553c9bfcf88bce7
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
 [aom]: https://aomedia.googlesource.com/aom/
