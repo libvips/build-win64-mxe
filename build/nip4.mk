@@ -2,11 +2,11 @@ PKG             := nip4
 $(PKG)_WEBSITE  := https://github.com/libvips/nip4
 $(PKG)_DESCR    := Image processing spreadsheet
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 9.1.5
-$(PKG)_CHECKSUM := ceea7a00f9e8182195c3b4a62416145dbc303f44f62a09bfce0690fd6fbf1ecc
+# https://github.com/libvips/nip4/tarball/960b27d015ebbc9e73a4e70a8aba87ac09c5fa1f
+$(PKG)_VERSION  := 960b27d
+$(PKG)_CHECKSUM := d8c9c6d9b8ca0282bf339a9d31b8946f1f52d1e6ea195c146bbfd9d931833325
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/nip4/releases,v,,,,.tar.xz
-$(PKG)_SUBDIR   := $(PKG)-$(firstword $(subst -, ,$($(PKG)_VERSION)))
+$(PKG)_GH_CONF  := libvips/nip4/branches/main
 $(PKG)_DEPS     := cc meson-wrapper gtk4 adwaita-icon-theme gsl vips-all
 
 define $(PKG)_PRE_CONFIGURE
