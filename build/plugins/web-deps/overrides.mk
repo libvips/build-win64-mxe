@@ -17,5 +17,6 @@ vips_MESON_OPTS = \
     -Draw=disabled \
     -Dspng=disabled \
     -Dppm=false \
+    -Dqoi=false \
     -Danalyze=false \
     -Dradiance=false
