@@ -21,8 +21,10 @@ else
   whitelist=(api-ms-win-crt-{conio,convert,environment,filesystem,heap,locale,math,multibyte,private,process,runtime,stdio,string,time,utility}-l1-1-0.dll)
 fi
 
-# Whitelist bcryptprimitives.dll for Rust
-# See: https://github.com/rust-lang/rust/pull/84096
+# Whitelist bcryptprimitives.dll for Rust and libarchive
+# See:
+# https://github.com/rust-lang/rust/pull/84096
+# https://github.com/libarchive/libarchive/pull/2739
 whitelist+=(bcryptprimitives.dll)
 
 # Whitelist ntdll.dll for Rust

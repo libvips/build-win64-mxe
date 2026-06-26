@@ -2,6 +2,14 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
+# upstream version is 3.5.2
+libffi_VERSION  := 3.6.0
+libffi_CHECKSUM := 31ff1fe32deaebfbb388727f32677bb254bf2a41382c51464c0b1837c9ee9828
+libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
+libffi_SUBDIR   := libffi-$(libffi_VERSION)
+libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
+libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
+
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -13,22 +21,22 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.4.0
-libarchive_VERSION  := 3.8.7
-libarchive_CHECKSUM := d3a8ba457ae25c27c84fd2830a2efdcc5b1d40bf585d4eb0d35f47e99e5d4774
+libarchive_VERSION  := 3.8.8
+libarchive_CHECKSUM := 3873a88801da067d0528a989af06877710529d50ee8fe6f3970cbb4302efb918
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7.1.2-17
-imagemagick_VERSION  := 7.1.2-25
-imagemagick_CHECKSUM := ff33d227d2e1744327280e956ec9f7abaebbd8f48277d16cdad906e05e4794b6
+imagemagick_VERSION  := 7.1.2-26
+imagemagick_CHECKSUM := d63594e334e1c410f600fb9370d78d49e4dc6f315722ca4ba083e864e5c354cb
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_GH_CONF  := ImageMagick/ImageMagick/tags
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.62.3
-librsvg_CHECKSUM := 7eb449b2722a768021356f66dfee3202c229b54ed4e6a70ce40c090e97ff16f2
+librsvg_VERSION  := 2.62.90
+librsvg_CHECKSUM := 5d108758255c225590d862d94f2591ee1f8cc976dc7b25b06eaba74f21850f08
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -39,6 +47,22 @@ fribidi_VERSION  := 1.0.16
 fribidi_CHECKSUM := 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9ea05c
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
+
+# upstream version is 2.89.0
+glib_VERSION  := 2.89.1
+glib_CHECKSUM := 74447129c31afe141810f995626e8b99ab677413dae76ee3cf5a9cc6e75a486e
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
+# upstream version is 2.8.1
+expat_VERSION  := 2.8.2
+expat_CHECKSUM := 3ad89b8588e6644bd4e49981480d48b21289eebbcd4f0a1a4afb1c29f99b6ab4
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
 
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.26
@@ -61,12 +85,12 @@ cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 4.7.1
-tiff_VERSION  := 732665c
-tiff_CHECKSUM := 736e375ec80dc83687d035c5daabca6bd46808297add9bddf7ae874694f43e47
+tiff_VERSION  := 4.7.2
+tiff_CHECKSUM := ae7aae17b86555551040999fdfa5abec9a0249f3fe0ed9dedbd4d24c2bf2dffb
 tiff_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/tiff-[0-9]*.patch)))
-tiff_SUBDIR   := libtiff-$(tiff_VERSION)
-tiff_FILE     := libtiff-$(tiff_VERSION).tar.gz
-tiff_URL      := https://gitlab.com/libtiff/libtiff/-/archive/$(tiff_VERSION)/$(tiff_FILE)
+tiff_SUBDIR   := tiff-$(tiff_VERSION)
+tiff_FILE     := tiff-$(tiff_VERSION)rc2.tar.xz
+tiff_URL      := https://download.osgeo.org/libtiff/$(tiff_FILE)
 
 # upstream version is 2.17.1
 fontconfig_VERSION  := 2.18.1
@@ -707,7 +731,6 @@ define libarchive_BUILD
         --without-lz4 \
         --without-zstd \
         --without-lzma \
-        --without-cng \
         --without-openssl \
         --without-xml2 \
         --without-expat \

@@ -76,9 +76,9 @@ diff --git a/Cargo.lock b/Cargo.lock
 index 1111111..2222222 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -425,12 +425,6 @@ version = "0.7.7"
+@@ -453,12 +453,6 @@ version = "1.1.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c3e64b0cc0439b12df2fa678eae89a1c56a529fd067a9115f7827f1fffd22b32"
+ checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
  
 -[[package]]
 -name = "color_quant"
@@ -88,16 +88,16 @@ index 1111111..2222222 100644
 -
  [[package]]
  name = "colorchoice"
- version = "1.0.4"
-@@ -914,16 +908,6 @@ dependencies = [
-  "wasip2",
+ version = "1.0.5"
+@@ -975,16 +969,6 @@ dependencies = [
+  "rand_core 0.10.1",
  ]
  
 -[[package]]
 -name = "gif"
--version = "0.14.1"
+-version = "0.14.2"
 -source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f5df2ba84018d80c213569363bdcd0c64e6933c67fe4c1d60ecf822971a3c35e"
+-checksum = "ee8cfcc411d9adbbaba82fb72661cc1bcca13e8bba98b364e62b2dba8f960159"
 -dependencies = [
 - "color_quant",
 - "weezl",
@@ -105,8 +105,8 @@ index 1111111..2222222 100644
 -
  [[package]]
  name = "gio"
- version = "0.22.1"
-@@ -1321,10 +1305,7 @@ checksum = "85ab80394333c02fe689eaf900ab500fbd0c2213da414687ebf995a65d5a6104"
+ version = "0.22.6"
+@@ -1311,10 +1295,7 @@ checksum = "85ab80394333c02fe689eaf900ab500fbd0c2213da414687ebf995a65d5a6104"
  dependencies = [
   "bytemuck",
   "byteorder-lite",
@@ -117,7 +117,7 @@ index 1111111..2222222 100644
   "moxcms",
   "mp4parse",
   "num-traits",
-@@ -1333,16 +1314,6 @@ dependencies = [
+@@ -1323,16 +1304,6 @@ dependencies = [
   "zune-jpeg",
  ]
  
@@ -133,7 +133,7 @@ index 1111111..2222222 100644
 -
  [[package]]
  name = "indexmap"
- version = "2.13.0"
+ version = "2.14.0"
 diff --git a/rsvg/Cargo.toml b/rsvg/Cargo.toml
 index 1111111..2222222 100644
 --- a/rsvg/Cargo.toml

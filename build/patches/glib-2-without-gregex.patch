@@ -190,7 +190,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -2248,50 +2248,6 @@ else
+@@ -2252,50 +2252,6 @@ else
    libiconv = dependency('iconv')
  endif
  
