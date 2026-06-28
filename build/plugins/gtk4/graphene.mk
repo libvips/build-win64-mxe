@@ -2,9 +2,9 @@ PKG             := graphene
 $(PKG)_WEBSITE  := https://github.com/ebassi/graphene
 $(PKG)_DESCR    := A thin layer of graphic data types
 $(PKG)_IGNORE   :=
-# https://github.com/ebassi/graphene/tarball/0cfa05ff62f244e4d5e7ac35a1979a23f25c5151
-$(PKG)_VERSION  := 0cfa05f
-$(PKG)_CHECKSUM := ea56afe5d9f90c5ead9cba4be117b6a75db68ab4da3940569dc2c747b791fe66
+# https://github.com/ebassi/graphene/tarball/98173e59a3d80d3dd5ad6e4eaab919b4649ac7e5
+$(PKG)_VERSION  := 98173e5
+$(PKG)_CHECKSUM := 2b122352dda3f68d5d561a9b628bc9ac6c0ccc7af044e6c8fa9fdd496f98def2
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := ebassi/graphene/branches/master
 $(PKG)_DEPS     := cc meson-wrapper glib

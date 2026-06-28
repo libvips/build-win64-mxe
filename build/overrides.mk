@@ -2,6 +2,15 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
+# upstream version is 2.44.6
+# gdk-pixbuf is still used by gtk4
+gdk-pixbuf_VERSION  := 2.44.7
+gdk-pixbuf_CHECKSUM := 172f80e3626ec31520a970400f1a3694e04718f6c2cd2885f75250fb5a6995a4
+gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
+gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
+gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
+gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
+
 # upstream version is 3.5.2
 libffi_VERSION  := 3.6.0
 libffi_CHECKSUM := 31ff1fe32deaebfbb388727f32677bb254bf2a41382c51464c0b1837c9ee9828
@@ -41,6 +50,14 @@ librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
+
+# upstream version is 1.57.1
+pango_VERSION  := 1.58.0
+pango_CHECKSUM := bc5bad6213ad4886a47d1e80292fd850b64159b50db67917a43d9ea80ee2298a
+pango_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/pango-[0-9]*.patch)))
+pango_SUBDIR   := pango-$(pango_VERSION)
+pango_FILE     := pango-$(pango_VERSION).tar.xz
+pango_URL      := https://download.gnome.org/sources/pango/$(call SHORT_PKG_VERSION,pango)/$(pango_FILE)
 
 # upstream version is 1.0.13
 fribidi_VERSION  := 1.0.16
