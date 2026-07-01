@@ -129,6 +129,12 @@ openexr_SUBDIR   :=
 openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
 
+# upstream version is 3.1.4.1
+libjpeg-turbo_VERSION  := 3.2.0
+libjpeg-turbo_CHECKSUM := 6f30092cef9fb839779646608f4ee14ae3cbac989c47fa05e841b0841f09878e
+libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+libjpeg-turbo_GH_CONF  := libjpeg-turbo/libjpeg-turbo/releases,,,90
+
 # upstream version is 26.05.0
 poppler_VERSION  := 26.06.0
 poppler_CHECKSUM := 4cb4e5a3dc8cb5eec751c8a23c8ba19f61f96dedc0cd07d2aee6b0c8e2cf6ba4

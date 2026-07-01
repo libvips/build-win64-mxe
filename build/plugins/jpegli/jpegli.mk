@@ -2,9 +2,9 @@ PKG             := jpegli
 $(PKG)_WEBSITE  := https://github.com/google/jpegli
 $(PKG)_DESCR    := Improved JPEG encoder and decoder implementation
 $(PKG)_IGNORE   :=
-# https://github.com/google/jpegli/tarball/7cdf212790241868c77dca777dbee14e98128cba
-$(PKG)_VERSION  := 7cdf212
-$(PKG)_CHECKSUM := 95986bb49501c73b51feab948edd6bd05ba550e3545e65430042f434f56c457a
+# https://github.com/google/jpegli/tarball/031a0077f5799a6041004267fc12b956c1f52a20
+$(PKG)_VERSION  := 031a007
+$(PKG)_CHECKSUM := dff4e18cbc121c031d05fb8f9e7c3d6b647a8aa9097d56d18e4ef3298c8d43db
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
 $(PKG)_GH_CONF  := google/jpegli/branches/main
 $(PKG)_DEPS     := cc highway lcms libjpeg-turbo

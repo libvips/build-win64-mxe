@@ -144,7 +144,7 @@ In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 3.1.4.1    | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 3.2.0      | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/LICENSE.md
@@ -166,9 +166,9 @@ In that case, the following version of jpegli is built:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [jpegli]        | [7cdf212]  | BSD 3-Clause                                                 |
+| [jpegli]        | [031a007]  | BSD 3-Clause                                                 |
 
-[7cdf212]: https://github.com/google/jpegli/commit/7cdf212790241868c77dca777dbee14e98128cba
+[031a007]: https://github.com/google/jpegli/commit/031a0077f5799a6041004267fc12b956c1f52a20
 
 [jpegli]: https://github.com/google/jpegli
 
