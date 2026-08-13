@@ -2,6 +2,23 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
+# upstream version is 2.44.7
+# gdk-pixbuf is still used by gtk4
+gdk-pixbuf_VERSION  := 2.44.8
+gdk-pixbuf_CHECKSUM := 919f529512961a12e81cd4b4b466a48c3933469e7f9a310c6513cd4fb252ba3c
+gdk-pixbuf_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gdk-pixbuf-[0-9]*.patch)))
+gdk-pixbuf_SUBDIR   := gdk-pixbuf-$(gdk-pixbuf_VERSION)
+gdk-pixbuf_FILE     := gdk-pixbuf-$(gdk-pixbuf_VERSION).tar.xz
+gdk-pixbuf_URL      := https://download.gnome.org/sources/gdk-pixbuf/$(call SHORT_PKG_VERSION,gdk-pixbuf)/$(gdk-pixbuf_FILE)
+
+# upstream version is 3.7.1
+libffi_VERSION  := 3.8.0
+libffi_CHECKSUM := 7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4
+libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
+libffi_SUBDIR   := libffi-$(libffi_VERSION)
+libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
+libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
+
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -42,11 +59,25 @@ fribidi_CHECKSUM := 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9e
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
+# upstream version is 2.8.2
+expat_VERSION  := 2.8.3
+expat_CHECKSUM := f6256df90c906773d344da084402b7d3e4f22ed41b1a59c989098a83d3ea0c85
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.26
 libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e471476c0c
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
+
+# upstream version is 14.3.0
+harfbuzz_VERSION  := 14.3.1
+harfbuzz_CHECKSUM := 9dae9538aae2ffdf70cec31f2c27bf68e2aaeeae3112688467697d5faf6194f7
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 4.6.3
 cfitsio_VERSION  := 4.6.4
@@ -57,8 +88,8 @@ cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
 # upstream version is 2.17.1
-fontconfig_VERSION  := 2.18.2
-fontconfig_CHECKSUM := cf8e6576ef0484c15079bdaf77cd9c51c464df5365814ada4d3ee7331ea31eb5
+fontconfig_VERSION  := 2.18.3
+fontconfig_CHECKSUM := 4f7b554a38cdf78c033f666c8871f3749e14a094f65a07f630c91ed0b43d35e3
 fontconfig_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fontconfig-[0-9]*.patch)))
 fontconfig_SUBDIR   := fontconfig-$(fontconfig_VERSION)
 fontconfig_FILE     := fontconfig-$(fontconfig_VERSION).tar.xz

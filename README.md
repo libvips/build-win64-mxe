@@ -20,23 +20,23 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.14.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.3      | MIT License                                                  |
-| [expat]         | 2.8.2      | MIT License                                                  |
-| [fontconfig]    | 2.18.2     | [fontconfig License] (BSD-like)                              |
+| [expat]         | 2.8.3      | MIT License                                                  |
+| [fontconfig]    | 2.18.3     | [fontconfig License] (BSD-like)                              |
 | [freetype]      | 2.14.3     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
 | [glib]          | 2.89.3     | LGPLv3                                                       |
-| [harfbuzz]      | 14.3.0     | MIT License                                                  |
+| [harfbuzz]      | 14.3.1     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.19.1     | MIT License                                                  |
 | [libarchive]    | 3.8.9      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
-| [libffi]        | 3.7.1      | MIT License                                                  |
+| [libffi]        | 3.8.0      | MIT License                                                  |
 | [libheif]       | 1.23.1     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.90    | LGPLv3                                                       |
 | [libtiff]       | 4.7.2      | [libtiff License] (BSD-like)                                 |
-| [libultrahdr]   | 1.5.1      | MIT License                                                  |
+| [libultrahdr]   | 2.0.2      | MIT License                                                  |
 | [libvips]       | 8.18.5     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
 | [libxml2]       | 2.15.3     | MIT License                                                  |

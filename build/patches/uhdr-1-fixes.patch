@@ -78,7 +78,7 @@ index 1111111..2222222 100644
  ###########################################################
  # Directories
  ###########################################################
-@@ -285,45 +226,9 @@ elseif(EMSCRIPTEN)
+@@ -286,45 +227,9 @@ elseif(EMSCRIPTEN)
                             or try 'cmake -DUHDR_BUILD_DEPS=1'")
      endif()
    endif()
@@ -127,7 +127,7 @@ index 1111111..2222222 100644
  endif()
  
  ###########################################################
-@@ -612,7 +517,8 @@ set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
+@@ -613,7 +518,8 @@ set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
  ###########################################################
  file(GLOB UHDR_CORE_SRCS_LIST "${SOURCE_DIR}/src/*.cpp")
  if(UHDR_ENABLE_INTRINSICS)
