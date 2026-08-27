@@ -16,7 +16,7 @@ diff --git a/src/io.c b/src/io.c
 index 1111111..2222222 100644
 --- a/src/io.c
 +++ b/src/io.c
-@@ -32,7 +32,7 @@
+@@ -13,7 +13,7 @@
  #if defined(_WIN32)
  #define WIN32_LEAN_AND_MEAN
  #define NOGDI

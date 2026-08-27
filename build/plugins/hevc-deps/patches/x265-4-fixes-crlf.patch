@@ -5,9 +5,12 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 27 Sep 2020 14:00:00 +0200
-Subject: [PATCH 1/1] Correctly annotate data symbols within module-definition
+Subject: [PATCH 1/1] win32: ensure data symbols are correctly annotated
 
-Helps llvm-mingw.
+Without this, the linker may treat data symbols as functions and
+generate import thunks for them, which can cause crashes.
+
+Upstream-Status: Backport [https://github.com/Multicorewareinc/x265/commit/ccdf5b2b0323fb413c04a4ce3459c8fa75bf91ae]
 
 diff --git a/source/x265.def.in b/source/x265.def.in
 index 1111111..2222222 100644

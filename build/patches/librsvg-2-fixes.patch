@@ -89,7 +89,7 @@ index 1111111..2222222 100644
  [[package]]
  name = "colorchoice"
  version = "1.0.5"
-@@ -975,16 +969,6 @@ dependencies = [
+@@ -967,16 +961,6 @@ dependencies = [
   "rand_core 0.10.1",
  ]
  
@@ -100,12 +100,12 @@ index 1111111..2222222 100644
 -checksum = "ee8cfcc411d9adbbaba82fb72661cc1bcca13e8bba98b364e62b2dba8f960159"
 -dependencies = [
 - "color_quant",
-- "weezl",
+- "weezl 0.1.12",
 -]
 -
  [[package]]
  name = "gio"
- version = "0.22.6"
+ version = "0.22.8"
 @@ -1311,10 +1295,7 @@ checksum = "85ab80394333c02fe689eaf900ab500fbd0c2213da414687ebf995a65d5a6104"
  dependencies = [
   "bytemuck",
@@ -134,6 +134,28 @@ index 1111111..2222222 100644
  [[package]]
  name = "indexmap"
  version = "2.14.0"
+@@ -1656,7 +1627,7 @@ dependencies = [
+  "stringprep",
+  "thiserror",
+  "time",
+- "weezl 0.2.1",
++ "weezl",
+ ]
+ 
+ [[package]]
+@@ -3122,12 +3093,6 @@ dependencies = [
+  "string_cache_codegen",
+ ]
+ 
+-[[package]]
+-name = "weezl"
+-version = "0.1.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a28ac98ddc8b9274cb41bb4d9d4d5c425b6020c50c46f25559911905610b4a88"
+-
+ [[package]]
+ name = "weezl"
+ version = "0.2.1"
 diff --git a/rsvg/Cargo.toml b/rsvg/Cargo.toml
 index 1111111..2222222 100644
 --- a/rsvg/Cargo.toml

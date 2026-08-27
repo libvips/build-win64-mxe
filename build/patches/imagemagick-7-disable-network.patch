@@ -39,7 +39,7 @@ index 1111111..2222222 100644
  subdir = .
  ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
  am__aclocal_m4_deps = $(top_srcdir)/m4/ax_c___attribute__.m4 \
-@@ -1860,7 +1858,7 @@ coders_uil_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+@@ -1869,7 +1867,7 @@ coders_uil_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
  @WITH_MODULES_TRUE@am_coders_uil_la_rpath = -rpath $(codersdir)
  coders_url_la_DEPENDENCIES = $(MAGICKCORE_LIBS) $(am__DEPENDENCIES_1) \
  	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -48,7 +48,7 @@ index 1111111..2222222 100644
  am_coders_url_la_OBJECTS = coders/url_la-url.lo
  coders_url_la_OBJECTS = $(am_coders_url_la_OBJECTS)
  coders_url_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-@@ -3614,7 +3612,7 @@ MODULECOMMONCPPFLAGS = $(AM_CPPFLAGS)
+@@ -3638,7 +3636,7 @@ MODULECOMMONCPPFLAGS = $(AM_CPPFLAGS)
  DISTCHECK_CONFIGURE_FLAGS = $(DISTCHECK_CONFIG_FLAGS)
  DISTCLEANFILES = _configs.sed MagickCore/magick-baseconfig.h
  CLEANFILES = $(MAGICKWAND_CLEANFILES) $(MAGICKPP_CLEANFILES) \
@@ -57,7 +57,7 @@ index 1111111..2222222 100644
  
  # Binary scripts
  bin_SCRIPTS = \
-@@ -5129,8 +5127,7 @@ coders_uil_la_LIBADD = $(MAGICKCORE_LIBS)
+@@ -5167,8 +5165,7 @@ coders_uil_la_LIBADD = $(MAGICKCORE_LIBS)
  coders_url_la_SOURCES = coders/url.c
  coders_url_la_CPPFLAGS = $(MAGICK_CODER_CPPFLAGS)
  coders_url_la_LDFLAGS = $(MODULECOMMONFLAGS)
@@ -67,7 +67,7 @@ index 1111111..2222222 100644
  
  # UYVY coder module
  coders_uyvy_la_SOURCES = coders/uyvy.c
-@@ -5277,13 +5274,11 @@ MAGICKCORE_LIBS = MagickCore/libMagickCore-@MAGICK_MAJOR_VERSION@.@MAGICK_ABI_SU
+@@ -5321,13 +5318,11 @@ MAGICKCORE_LIBS = MagickCore/libMagickCore-@MAGICK_MAJOR_VERSION@.@MAGICK_ABI_SU
  @WITH_MODULES_FALSE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES = $(MAGICKCORE_BASE_SRCS) $(MAGICKCORE_PLATFORM_SRCS) $(MAGICKCORE_CODER_SRCS) $(MAGICKCORE_FILTER_SRCS)
  @WITH_MODULES_TRUE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES = $(MAGICKCORE_BASE_SRCS) $(MAGICKCORE_PLATFORM_SRCS)
  @WITH_MODULES_FALSE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_LIBADD =  \
@@ -88,7 +88,7 @@ diff --git a/coders/Makefile.am b/coders/Makefile.am
 index 1111111..2222222 100644
 --- a/coders/Makefile.am
 +++ b/coders/Makefile.am
-@@ -1428,9 +1428,6 @@ coders_url_la_SOURCES      = coders/url.c
+@@ -1442,9 +1442,6 @@ coders_url_la_SOURCES      = coders/url.c
  coders_url_la_CPPFLAGS     = $(MAGICK_CODER_CPPFLAGS)
  coders_url_la_LDFLAGS      = $(MODULECOMMONFLAGS)
  coders_url_la_LIBADD       = $(MAGICKCORE_LIBS) $(XML_LIBS) $(LZMA_LIBS) $(ZLIB_LIBS) $(MATH_LIBS)
