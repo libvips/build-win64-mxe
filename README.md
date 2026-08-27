@@ -18,6 +18,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
 | [aom]           | 3.14.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [brotli]        | 1.2.0      | MIT Licence                                                  |
 | [cairo]         | 1.18.4     | Mozilla Public License 2.0                                   |
 | [cgif]          | 0.5.3      | MIT License                                                  |
 | [expat]         | 2.8.3      | MIT License                                                  |
@@ -33,6 +34,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libffi]        | 3.8.0      | MIT License                                                  |
 | [libheif]       | 1.23.2     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
+| [libjxl]        | 0.12.0     | BSD 3-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.91    | LGPLv3                                                       |
 | [libtiff]       | 4.7.2      | [libtiff License] (BSD-like)                                 |
@@ -52,6 +54,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 [aom]: https://aomedia.googlesource.com/aom/
 [Alliance for Open Media Patent License 1.0]: https://aomedia.org/license/patent-license/
+[brotli]: https://github.com/google/brotli
 [cairo]: https://gitlab.freedesktop.org/cairo/cairo
 [cgif]: https://github.com/dloebl/cgif
 [expat]: https://github.com/libexpat/libexpat
@@ -69,6 +72,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 [libffi]: https://github.com/libffi/libffi
 [libheif]: https://github.com/strukturag/libheif
 [libimagequant]: https://github.com/lovell/libimagequant
+[libjxl]: https://github.com/libjxl/libjxl
 [libpng]: https://github.com/pnggroup/libpng
 [libpng License version 2]: https://github.com/pnggroup/libpng/blob/master/LICENSE
 [librsvg]: https://gitlab.gnome.org/GNOME/librsvg
@@ -92,13 +96,11 @@ Same as libvips-web + these extra dependencies:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [brotli]        | 1.2.0      | MIT License                                                  |
 | [cfitsio]       | 4.7.0      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
 | [imagemagick]   | 7.1.2-30   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.3.0      | MIT License                                                  |
-| [libjxl]        | 0.12.0     | BSD 3-Clause                                                 |
 | [libraw]        | 0.22.2     | LGPL-2.1-only                                                |
 | [matio]         | 1.6.0      | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1      | Public domain                                                |
@@ -109,14 +111,12 @@ Same as libvips-web + these extra dependencies:
 | [sqlite]        | 3.53.4     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 
-[brotli]: https://github.com/google/brotli
 [cfitsio]: https://github.com/HEASARC/cfitsio
 [fftw]: https://github.com/FFTW/fftw3
 [imagemagick]: https://github.com/ImageMagick/ImageMagick
 [ImageMagick License]: https://github.com/ImageMagick/ImageMagick/blob/main/LICENSE
 [imath]: https://github.com/AcademySoftwareFoundation/Imath
 [libdicom]: https://github.com/ImagingDataCommons/libdicom
-[libjxl]: https://github.com/libjxl/libjxl
 [libraw]: https://github.com/LibRaw/LibRaw
 [matio]: https://github.com/tbeu/matio
 [nifticlib]: https://github.com/NIFTI-Imaging/nifti_clib
