@@ -17,21 +17,21 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [aom]           | 3.14.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.15.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.4     | Mozilla Public License 1.1                                   |
-| [cgif]          | 0.5.3      | MIT License                                                  |
-| [expat]         | 2.8.3      | MIT License                                                  |
+| [cgif]          | 0.5.4      | MIT License                                                  |
+| [expat]         | 2.8.4      | MIT License                                                  |
 | [fontconfig]    | 2.18.3     | [fontconfig License] (BSD-like)                              |
 | [freetype]      | 2.14.3     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
 | [glib]          | 2.89.4     | LGPLv3                                                       |
-| [harfbuzz]      | 14.3.1     | MIT License                                                  |
+| [harfbuzz]      | 14.4.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.19.1     | MIT License                                                  |
 | [libarchive]    | 3.8.9      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.8.0      | MIT License                                                  |
-| [libheif]       | 1.23.2     | LGPLv3                                                       |
+| [libheif]       | 1.23.3     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
 | [librsvg]       | 2.62.91    | LGPLv3                                                       |
@@ -39,7 +39,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [libultrahdr]   | 2.0.2      | MIT License                                                  |
 | [libvips]       | 8.18.6     | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
-| [libxml2]       | 2.15.3     | MIT License                                                  |
+| [libxml2]       | 2.15.4     | MIT License                                                  |
 | [mozjpeg]       | [0826579]  | [zlib License, IJG License, BSD 3-Clause]                    |
 | [pango]         | 1.58.2     | LGPLv3                                                       |
 | [pixman]        | 0.46.4     | MIT License                                                  |
@@ -95,7 +95,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.2.0      | MIT License                                                  |
 | [cfitsio]       | 4.7.0      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
-| [imagemagick]   | 7.1.2-30   | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 7.1.2-31   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.3.0      | MIT License                                                  |
 | [libjxl]        | 0.12.0     | BSD 3-Clause                                                 |
@@ -203,7 +203,7 @@ prebuilt binaries while it is patent-encumbered.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [libde265]      | 1.1.1      | LGPLv3                                                       |
+| [libde265]      | 1.1.2      | LGPLv3                                                       |
 | [x265]          | 4.3        | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265

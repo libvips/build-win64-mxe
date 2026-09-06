@@ -12,7 +12,7 @@ diff --git a/globals.c b/globals.c
 index 1111111..2222222 100644
 --- a/globals.c
 +++ b/globals.c
-@@ -786,11 +786,8 @@ xmlDllMain(ATTRIBUTE_UNUSED void *hinstDLL, unsigned long fdwReason,
+@@ -808,11 +808,8 @@ xmlDllMain(ATTRIBUTE_UNUSED void *hinstDLL, unsigned long fdwReason,
   * Note that we do NOT want to include this function declaration in
   * a public header because it's meant to be called by Windows itself,
   * not a program that uses this library.

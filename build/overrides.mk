@@ -2,6 +2,15 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 
 ## Update dependencies
 
+# no longer needed by libvips, but some of the deps need it
+# upstream version is 2.15.3
+libxml2_VERSION  := 2.15.4
+libxml2_CHECKSUM := 98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821
+libxml2_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
+libxml2_SUBDIR   := libxml2-$(libxml2_VERSION)
+libxml2_FILE     := libxml2-$(libxml2_VERSION).tar.xz
+libxml2_URL      := https://download.gnome.org/sources/libxml2/$(call SHORT_PKG_VERSION,libxml2)/$(libxml2_FILE)
+
 # upstream version is 3.7.1
 libffi_VERSION  := 3.8.0
 libffi_CHECKSUM := 7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4
@@ -29,8 +38,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7.1.2-17
-imagemagick_VERSION  := 7.1.2-30
-imagemagick_CHECKSUM := 55100ca72b2332df6b2df4769bc153afcfcf588753dfc49b6fb8afa8ead59b23
+imagemagick_VERSION  := 7.1.2-31
+imagemagick_CHECKSUM := 168a9710b3a8d69dbd20eb0a35f145b0c0ed35f076b2fc98d3eb57daa919c376
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
@@ -50,11 +59,25 @@ fribidi_CHECKSUM := 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9e
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
+# upstream version is 2.8.3
+expat_VERSION  := 2.8.4
+expat_CHECKSUM := 656ae1cc8da3b4ea513bb4e254f33e6243938084c0ec6239da873376b09985a7
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.26
 libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e471476c0c
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
+
+# upstream version is 14.3.1
+harfbuzz_VERSION  := 14.4.0
+harfbuzz_CHECKSUM := 2357ed966c6ced7bfa720b0640c0231065af01158fbea215093ffa15aed44371
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 4.6.3
 cfitsio_VERSION  := 4.7.0
