@@ -24,17 +24,17 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [fontconfig]    | 2.18.3     | [fontconfig License] (BSD-like)                              |
 | [freetype]      | 2.14.3     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.16     | LGPLv3                                                       |
-| [glib]          | 2.89.4     | LGPLv3                                                       |
+| [glib]          | 2.90.0     | LGPLv3                                                       |
 | [harfbuzz]      | 14.4.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.19.1     | MIT License                                                  |
 | [libarchive]    | 3.8.9      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.8.0      | MIT License                                                  |
-| [libheif]       | 1.23.3     | LGPLv3                                                       |
+| [libheif]       | 1.23.4     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
-| [librsvg]       | 2.62.91    | LGPLv3                                                       |
+| [librsvg]       | 2.63.0     | LGPLv3                                                       |
 | [libtiff]       | 4.7.2      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 2.0.2      | MIT License                                                  |
 | [libvips]       | 8.18.6     | LGPLv3                                                       |
@@ -105,7 +105,7 @@ Same as libvips-web + these extra dependencies:
 | [openexr]       | 3.1.13     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.1      | LGPL-2.1-only                                                |
-| [poppler]       | 26.08.0    | GPLv2                                                        |
+| [poppler]       | 26.09.0    | GPLv2                                                        |
 | [sqlite]        | 3.53.4     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 

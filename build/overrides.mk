@@ -46,8 +46,8 @@ imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_GH_CONF  := ImageMagick/ImageMagick/releases,,,,,.tar.xz
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.62.91
-librsvg_CHECKSUM := 6caeae129d40dd88f8ec49436fd89bfe4ada716a125187a7fa0def8fcaa0b250
+librsvg_VERSION  := 2.63.0
+librsvg_CHECKSUM := cab7f7d1326fb001e4eb9f37990de66d4578a5f48465507471a69322d8b326e3
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -58,6 +58,14 @@ fribidi_VERSION  := 1.0.16
 fribidi_CHECKSUM := 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9ea05c
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
+
+# upstream version is 2.89.4
+glib_VERSION  := 2.90.0
+glib_CHECKSUM := 17d15cac2af80a33271127408e0abc2748eb297c595c2a26409e81e14e7d1b8f
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 2.8.3
 expat_VERSION  := 2.8.4
@@ -98,6 +106,14 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   :=
 openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
+
+# upstream version is 26.08.0
+poppler_VERSION  := 26.09.0
+poppler_CHECKSUM := 8059eadb6805340768f138c465b57f8164c92b4a0773c37ef031ea6c0d987b2e
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
 libraw_VERSION  := 0.22.2
@@ -554,6 +570,7 @@ define librsvg_BUILD
 endef
 
 # compile with CMake
+# disable HarfBuzz support (as it requires -DFONT_CONFIGURATION=fontconfig)
 define poppler_BUILD
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
         -DENABLE_LIBTIFF=ON \
@@ -573,6 +590,7 @@ define poppler_BUILD
         -DENABLE_QT5=OFF \
         -DENABLE_QT6=OFF \
         -DENABLE_LIBCURL=OFF \
+        -DENABLE_HARFBUZZ=OFF \
         -DBUILD_QT5_TESTS=OFF \
         -DBUILD_QT6_TESTS=OFF \
         -DBUILD_CPP_TESTS=OFF \
