@@ -2,10 +2,11 @@ PKG             := vipsdisp
 $(PKG)_WEBSITE  := https://github.com/libvips/vipsdisp
 $(PKG)_DESCR    := Tiny libvips / gtk+4 image viewer
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4.1.4
-$(PKG)_CHECKSUM := c9d29b371782b550512e36abbe9191c105837ea34af5514958e55284a86a09f3
+# https://github.com/libvips/vipsdisp/tarball/f7f5994b563bcd413bd60861e938f145138fe9d3
+$(PKG)_VERSION  := f7f5994
+$(PKG)_CHECKSUM := 6314b1206bc062049df12c54dacf0eee39ea2d7fe3ada3d2d21e544c333d8af7
 $(PKG)_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/$(PKG)-[0-9]*.patch)))
-$(PKG)_GH_CONF  := libvips/vipsdisp/releases,v,,,,.tar.xz
+$(PKG)_GH_CONF  := libvips/vipsdisp/branches/master
 $(PKG)_DEPS     := cc meson-wrapper gtk4 adwaita-icon-theme vips-all
 
 define $(PKG)_PRE_CONFIGURE
