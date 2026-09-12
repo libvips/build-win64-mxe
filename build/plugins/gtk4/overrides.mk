@@ -33,8 +33,8 @@ graphene_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LI
 graphene_GH_CONF  := ebassi/graphene/branches/master
 
 # upstream version is 4.18.6
-gtk4_VERSION  := 4.23.3
-gtk4_CHECKSUM := c81912b082a5beaad1d84944805bf7cc0f86c6a933e131664dad3db326ede924
+gtk4_VERSION  := 4.24.0
+gtk4_CHECKSUM := 28ba4ac1c04f86eac09b79a163cb163a4c2b54442d9f7eccc04679062a581044
 gtk4_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gtk-[0-9]*.patch)))
 gtk4_SUBDIR   := gtk-$(gtk4_VERSION)
 gtk4_FILE     := gtk-$(gtk4_VERSION).tar.xz
