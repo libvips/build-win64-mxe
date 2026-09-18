@@ -33,12 +33,22 @@ graphene_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LI
 graphene_GH_CONF  := ebassi/graphene/branches/master
 
 # upstream version is 4.18.6
-gtk4_VERSION  := 4.23.3
-gtk4_CHECKSUM := c81912b082a5beaad1d84944805bf7cc0f86c6a933e131664dad3db326ede924
+gtk4_VERSION  := 4.24.0
+gtk4_CHECKSUM := 28ba4ac1c04f86eac09b79a163cb163a4c2b54442d9f7eccc04679062a581044
 gtk4_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gtk-[0-9]*.patch)))
 gtk4_SUBDIR   := gtk-$(gtk4_VERSION)
 gtk4_FILE     := gtk-$(gtk4_VERSION).tar.xz
 gtk4_URL      := https://download.gnome.org/sources/gtk/$(call SHORT_PKG_VERSION,gtk4)/$(gtk4_FILE)
+
+# upstream version is 1.6.58
+# build from the libpng18 branch for APNG support
+# https://github.com/pnggroup/libpng/tarball/964b4135949703b705fc760fc3fb546b86e5ab47
+libpng_VERSION  := 964b413
+libpng_CHECKSUM := b7a21695e49b6aa23240add6eead18381a01d3bc31fc2a07d1dd8e6059c691cc
+libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
+libpng_SUBDIR   := pnggroup-libpng-$(libpng_VERSION)
+libpng_FILE     := pnggroup-libpng-$(libpng_VERSION).tar.gz
+libpng_URL      := https://github.com/pnggroup/libpng/tarball/$(libpng_VERSION)/$(libpng_FILE)
 
 ## Override sub-dependencies
 # adwaita-icon-theme:
@@ -84,4 +94,16 @@ define gtk4_BUILD
         '$(BUILD_DIR)'
 
     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
+endef
+
+# autoreconf as we're building from Git sources
+define libpng_BUILD
+    # need to generate the configure script
+    cd '$(SOURCE_DIR)' && autoreconf -fi
+
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
+        $(MXE_CONFIGURE_OPTS)
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(INSTALL_STRIP_LIB) bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS=
+
+    ln -sf '$(PREFIX)/$(TARGET)/bin/libpng-config' '$(PREFIX)/bin/$(TARGET)-libpng-config'
 endef

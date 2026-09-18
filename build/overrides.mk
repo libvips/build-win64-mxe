@@ -104,8 +104,8 @@ gsl_URL_2    := https://ftp.snt.utwente.nl/pub/software/gnu/gsl/$(gsl_FILE)
 
 # upstream version is 3.36.1
 # needed by nip4 and vipsdisp
-adwaita-icon-theme_VERSION  := 50.0
-adwaita-icon-theme_CHECKSUM := fac6e0401fca714780561a081b8f7e27c3bc1db34ebda4da175081f26b24d460
+adwaita-icon-theme_VERSION  := 51.0
+adwaita-icon-theme_CHECKSUM := ba561cf3c96305a47179fa5605856ad695c9238ea07f7093aebd9ba80c4e323b
 adwaita-icon-theme_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/adwaita-icon-theme-[0-9]*.patch)))
 adwaita-icon-theme_SUBDIR   := adwaita-icon-theme-$(adwaita-icon-theme_VERSION)
 adwaita-icon-theme_FILE     := adwaita-icon-theme-$(adwaita-icon-theme_VERSION).tar.xz

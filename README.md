@@ -203,7 +203,7 @@ prebuilt binaries while it is patent-encumbered.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [libde265]      | 1.1.2      | LGPLv3                                                       |
+| [libde265]      | 1.1.3      | LGPLv3                                                       |
 | [x265]          | 4.3        | GPLv2                                                        |
 
 [libde265]: https://github.com/strukturag/libde265
