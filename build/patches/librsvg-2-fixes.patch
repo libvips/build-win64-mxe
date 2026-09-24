@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Thu, 28 Mar 2024 18:29:25 +0100
-Subject: [PATCH 1/4] Ignore any errors from native-static-libs query
+Subject: [PATCH 1/5] Ignore any errors from native-static-libs query
 
 It will not properly work with `-Zbuild-std`.
 
@@ -32,7 +32,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 7 Jul 2023 18:41:29 +0200
-Subject: [PATCH 2/4] Disable PDF/PostScript features in cairo-rs
+Subject: [PATCH 2/5] Disable PDF/PostScript features in cairo-rs
 
 We build Cairo with `-Dzlib=disabled`, which implicitly disables
 these surface backends.
@@ -67,7 +67,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Sun, 21 Apr 2024 12:01:02 +0200
-Subject: [PATCH 3/4] Disallow GIF and WebP embedded in SVG images
+Subject: [PATCH 3/5] Disallow GIF and WebP embedded in SVG images
 
 Upstream-Status: Inappropriate [disable feature]
 This is specific to libvips' prebuilt binaries.
@@ -76,9 +76,9 @@ diff --git a/Cargo.lock b/Cargo.lock
 index 1111111..2222222 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -453,12 +453,6 @@ version = "1.1.0"
+@@ -453,12 +453,6 @@ version = "1.1.1"
  source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
+ checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
  
 -[[package]]
 -name = "color_quant"
@@ -89,7 +89,7 @@ index 1111111..2222222 100644
  [[package]]
  name = "colorchoice"
  version = "1.0.5"
-@@ -967,16 +961,6 @@ dependencies = [
+@@ -980,16 +974,6 @@ dependencies = [
   "rand_core 0.10.1",
  ]
  
@@ -105,8 +105,8 @@ index 1111111..2222222 100644
 -
  [[package]]
  name = "gio"
- version = "0.22.8"
-@@ -1311,10 +1295,7 @@ checksum = "85ab80394333c02fe689eaf900ab500fbd0c2213da414687ebf995a65d5a6104"
+ version = "0.22.9"
+@@ -1325,10 +1309,7 @@ checksum = "85ab80394333c02fe689eaf900ab500fbd0c2213da414687ebf995a65d5a6104"
  dependencies = [
   "bytemuck",
   "byteorder-lite",
@@ -117,7 +117,7 @@ index 1111111..2222222 100644
   "moxcms",
   "mp4parse",
   "num-traits",
-@@ -1323,16 +1304,6 @@ dependencies = [
+@@ -1337,16 +1318,6 @@ dependencies = [
   "zune-jpeg",
  ]
  
@@ -133,8 +133,8 @@ index 1111111..2222222 100644
 -
  [[package]]
  name = "indexmap"
- version = "2.14.0"
-@@ -1656,7 +1627,7 @@ dependencies = [
+ version = "2.14.2"
+@@ -1671,7 +1642,7 @@ dependencies = [
   "stringprep",
   "thiserror",
   "time",
@@ -143,7 +143,7 @@ index 1111111..2222222 100644
  ]
  
  [[package]]
-@@ -3122,12 +3093,6 @@ dependencies = [
+@@ -3184,12 +3155,6 @@ dependencies = [
   "string_cache_codegen",
  ]
  
@@ -173,7 +173,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 17 Apr 2026 12:47:45 +0200
-Subject: [PATCH 4/4] Avoid linking with `--whole-archive`
+Subject: [PATCH 4/5] Avoid linking with `--whole-archive`
 
 See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/1210.
 
@@ -199,3 +199,109 @@ index 1111111..2222222 100644
          dependencies: library_dependencies,
          include_directories: [includeinc],
        )
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 20 Sep 2026 11:11:58 +0200
+Subject: [PATCH 5/5] Ensure embedded image memory limits are enforced
+
+The image crate limits per-image allocations to 512 MB by default.
+Since commit 87a2d8bb, librsvg has unconditionally disabled this
+limit.
+
+Only disable the image crate's limits when `unlimited_size` is
+enabled, and update the API and `rsvg-convert` documentation to
+reflect that `RSVG_HANDLE_FLAG_UNLIMITED` also applies to embedded
+images.
+
+Part-of: <https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1215>
+Upstream-Status: Backport [https://gitlab.gnome.org/GNOME/librsvg/-/commit/9106011db93d701728ac2c9da50c9ab2c1bb5dc6]
+
+diff --git a/include/librsvg/rsvg.h b/include/librsvg/rsvg.h
+index 1111111..2222222 100644
+--- a/include/librsvg/rsvg.h
++++ b/include/librsvg/rsvg.h
+@@ -951,10 +951,11 @@ gboolean rsvg_handle_get_intrinsic_size_in_pixels (RsvgHandle *handle,
+ /**
+  * RsvgHandleFlags:
+  * @RSVG_HANDLE_FLAGS_NONE: No flags are set.
+- * @RSVG_HANDLE_FLAG_UNLIMITED: Disable safety limits in the XML parser.  Libxml2 has
++ * @RSVG_HANDLE_FLAG_UNLIMITED: Disable safety limits in the XML parser and on embedded images.  Libxml2 has
+  * [several limits](https://gitlab.gnome.org/GNOME/libxml2/blob/master/include/libxml/parserInternals.h)
+- * designed to keep malicious XML content from consuming too much memory while parsing.
+- * For security reasons, this should only be used for trusted input!  Since: 2.40.3
++ * designed to keep malicious XML content from consuming too much memory while parsing.  The image crate
++ * also limits per-image allocations to 512 MB by default.  For security reasons, this should only be used
++ * for trusted input!  Since: 2.40.3
+  * @RSVG_HANDLE_FLAG_KEEP_IMAGE_DATA: Use this if the Cairo surface to which you are
+  * rendering is a PDF, PostScript, SVG, or Win32 Printing surface.  This will make librsvg
+  * and Cairo use the original, compressed data for images in the final output, instead of
+diff --git a/rsvg-convert.rst b/rsvg-convert.rst
+index 1111111..2222222 100644
+--- a/rsvg-convert.rst
++++ b/rsvg-convert.rst
+@@ -559,12 +559,12 @@ MISCELLANEOUS
+    If not specified, all objects will be exported.
+ 
+ ``-u``, ``--unlimited``
+-   Turn off the XML parser's guards.
++   Turn off safety limits in the XML parser and for embedded images.
+    The XML parser has some guards designed to mitigate large CPU or
+-   memory consumption in the face of malicious documents. It may also
+-   refuse to resolve ``data:`` URIs used to embed image data in SVG
+-   documents. If you are running into such issues when converting a
+-   SVG, this option allows to turn off these guards.
++   memory consumption in the face of malicious documents. The image
++   crate also limits per-image allocations to 512 MB by default. If
++   you are running into such issues when converting a SVG, this option
++   allows to turn off these safety limits.
+ 
+ ``--testing``
+    For developers only: render images for librsvg's test suite.
+diff --git a/rsvg/src/api.rs b/rsvg/src/api.rs
+index 1111111..2222222 100644
+--- a/rsvg/src/api.rs
++++ b/rsvg/src/api.rs
+@@ -124,7 +124,8 @@ impl Loader {
+     /// Creates a `Loader` with the default flags.
+     ///
+     /// * [`unlimited_size`](#method.with_unlimited_size) defaults to `false`, as malicious
+-    ///   SVG documents could cause the XML parser to consume very large amounts of memory.
++    ///   SVG documents could consume very large amounts of memory while parsing XML or
++    ///   decoding embedded images.
+     ///
+     /// * [`keep_image_data`](#method.keep_image_data) defaults to
+     ///   `false`.  You may only need this if rendering to Cairo
+diff --git a/rsvg/src/document.rs b/rsvg/src/document.rs
+index 1111111..2222222 100644
+--- a/rsvg/src/document.rs
++++ b/rsvg/src/document.rs
+@@ -78,7 +78,7 @@ pub struct LoadOptions {
+     /// Load url resolver; all references will be resolved with respect to this.
+     pub url_resolver: UrlResolver,
+ 
+-    /// Whether to turn off size limits in libxml2.
++    /// Whether to turn off size limits in libxml2 and the image crate.
+     pub unlimited_size: bool,
+ 
+     /// Whether to keep original (undecoded) image data to embed in Cairo PDF surfaces.
+@@ -95,7 +95,7 @@ impl LoadOptions {
+         }
+     }
+ 
+-    /// Sets whether libxml2's limits on memory usage should be turned off.
++    /// Sets whether libxml2's and the image crate's memory usage limits should be turned off.
+     ///
+     /// This should only be done for trusted data.
+     pub fn with_unlimited_size(mut self, unlimited: bool) -> Self {
+@@ -881,7 +881,9 @@ fn load_image_with_image_rs(
+         let cursor = Cursor::new(&bytes);
+ 
+         let mut reader = image::ImageReader::with_format(cursor, format);
+-        reader.no_limits();
++        if load_options.unlimited_size {
++            reader.no_limits();
++        }
+ 
+         let image = reader
+             .decode()

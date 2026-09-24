@@ -37,24 +37,46 @@ imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_GH_CONF  := ImageMagick/ImageMagick/releases,,,,,.tar.xz
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.63.0
-librsvg_CHECKSUM := cab7f7d1326fb001e4eb9f37990de66d4578a5f48465507471a69322d8b326e3
+librsvg_VERSION  := 2.63.2
+librsvg_CHECKSUM := 852b18e1a00b8605528825a27dc7748bff2a5dd254028f59dc22a34ea57e81b6
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
 # upstream version is 1.0.13
-fribidi_VERSION  := 1.0.16
-fribidi_CHECKSUM := 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9ea05c
+fribidi_VERSION  := 1.0.17
+fribidi_CHECKSUM := 6949dcde27d41cebad1fd741fcafc36d55a1020d2d872d4a6eb3914caabbada2
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
+
+# upstream version is 2.8.4
+expat_VERSION  := 2.8.5
+expat_CHECKSUM := 1e727b8933ec51a77a9a9d9afcf8e688bce45d907c13e36ab7393fe36e703182
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
 
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.26
 libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e471476c0c
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
+
+# upstream version is 1.18.4
+cairo_VERSION  := 1.18.6
+cairo_CHECKSUM := 1c767308174337a74694da0f3ec069c271452163a1ef4540964c50c301f157d4
+cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
+cairo_SUBDIR   := cairo-$(cairo_VERSION)
+cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
+cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
+
+# upstream version is 14.4.0
+harfbuzz_VERSION  := 14.5.0
+harfbuzz_CHECKSUM := b7132e148358a45185c9feafd049dbaf243649d3c44414b3534d9c95d18592b9
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 4.6.3
 cfitsio_VERSION  := 4.7.0

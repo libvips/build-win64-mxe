@@ -17,24 +17,24 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [aom]           | 3.15.0     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
-| [cairo]         | 1.18.4     | Mozilla Public License 1.1                                   |
+| [aom]           | 3.15.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [cairo]         | 1.18.6     | Mozilla Public License 1.1                                   |
 | [cgif]          | 0.5.4      | MIT License                                                  |
-| [expat]         | 2.8.4      | MIT License                                                  |
+| [expat]         | 2.8.5      | MIT License                                                  |
 | [fontconfig]    | 2.18.3     | [fontconfig License] (BSD-like)                              |
 | [freetype]      | 2.14.3     | [freetype License] (BSD-like)                                |
-| [fribidi]       | 1.0.16     | LGPLv3                                                       |
+| [fribidi]       | 1.0.17     | LGPLv3                                                       |
 | [glib]          | 2.90.0     | LGPLv3                                                       |
-| [harfbuzz]      | 14.4.0     | MIT License                                                  |
+| [harfbuzz]      | 14.5.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.19.1     | MIT License                                                  |
 | [libarchive]    | 3.8.9      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.8.0      | MIT License                                                  |
-| [libheif]       | 1.23.4     | LGPLv3                                                       |
+| [libheif]       | 1.23.5     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.58     | [libpng License version 2]                                   |
-| [librsvg]       | 2.63.0     | LGPLv3                                                       |
+| [librsvg]       | 2.63.2     | LGPLv3                                                       |
 | [libtiff]       | 4.7.2      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 2.0.2      | MIT License                                                  |
 | [libvips]       | 8.18.6     | LGPLv3                                                       |

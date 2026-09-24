@@ -5,7 +5,7 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 25 Nov 2019 15:30:00 +0100
-Subject: [PATCH 1/4] Remove -D_FORTIFY_SOURCE=2 flag
+Subject: [PATCH 1/5] Remove -D_FORTIFY_SOURCE=2 flag
 
 See:
 https://github.com/msys2/MINGW-packages/issues/5803
@@ -15,7 +15,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -71,10 +71,6 @@ if cc.get_id() != 'msvc'
+@@ -76,10 +76,6 @@ if cc.get_id() != 'msvc'
      '-fno-common'
    ]
  
@@ -24,39 +24,39 @@ index 1111111..2222222 100644
 -  endif
 -
    supported_cflags = cc.get_supported_arguments(cflags)
-   add_project_arguments(supported_cflags, language: 'c')
+   add_project_arguments(supported_cflags, language: ['c', 'cpp'])
  
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Fri, 20 Mar 2020 13:00:00 +0100
-Subject: [PATCH 2/4] Avoid mapping platform-specific functions on MinGW
+Subject: [PATCH 2/5] Avoid mapping platform-specific functions on MinGW
 
 
 diff --git a/src/cairo-compiler-private.h b/src/cairo-compiler-private.h
 index 1111111..2222222 100644
 --- a/src/cairo-compiler-private.h
 +++ b/src/cairo-compiler-private.h
-@@ -149,7 +149,7 @@
+@@ -153,7 +153,7 @@
  #define __attribute__(x)
  #endif
  
 -#if (defined(__WIN32__) && !defined(__WINE__)) || defined(_MSC_VER)
 +#if (defined(__WIN32__) && !defined(__WINE__) && !defined(__MINGW32__)) || defined(_MSC_VER)
- #define access _access
  #ifndef R_OK
  #define R_OK 4
+ #endif
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Kleis Auke Wolthuizen <github@kleisauke.nl>
 Date: Mon, 25 Sep 2023 09:01:52 +0200
-Subject: [PATCH 3/4] Expose `-DCAIRO_WIN32_STATIC_BUILD` in the .pc file
+Subject: [PATCH 3/5] Expose `-DCAIRO_WIN32_STATIC_BUILD` in the .pc file
 
 
 diff --git a/src/meson.build b/src/meson.build
 index 1111111..2222222 100644
 --- a/src/meson.build
 +++ b/src/meson.build
-@@ -263,6 +263,7 @@ libcairo_dep = declare_dependency(link_with: libcairo,
+@@ -265,6 +265,7 @@ libcairo_dep = declare_dependency(link_with: libcairo,
  
  pkgmod.generate(libcairo,
    description: 'Multi-platform 2D graphics library',
@@ -67,7 +67,7 @@ index 1111111..2222222 100644
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Luca Bacci <luca.bacci982@gmail.com>
 Date: Mon, 28 Apr 2025 14:49:48 +0200
-Subject: [PATCH 4/4] DWrite: Get glyph bitmap with D2D in selected cases
+Subject: [PATCH 4/5] DWrite: Get glyph bitmap with D2D in selected cases
 
 Getting the glyph coverage mask in linear space using IDWriteGlyphRunAnalysis
 brings us very close to the way FreeType fonts are rendered, however that doesn't
@@ -85,7 +85,7 @@ diff --git a/src/win32/cairo-dwrite-font.cpp b/src/win32/cairo-dwrite-font.cpp
 index 1111111..2222222 100644
 --- a/src/win32/cairo-dwrite-font.cpp
 +++ b/src/win32/cairo-dwrite-font.cpp
-@@ -96,6 +96,11 @@ _dwrite_draw_glyphs_to_gdi_surface_gdi(cairo_win32_surface_t *surface,
+@@ -89,6 +89,11 @@ _dwrite_draw_glyphs_to_gdi_surface_gdi(cairo_win32_surface_t *surface,
  				       cairo_dwrite_scaled_font_t *scaled_font,
  				       const RECT &area);
  
@@ -97,7 +97,7 @@ index 1111111..2222222 100644
  /**
   * _cairo_dwrite_error:
   * @hr HRESULT code
-@@ -1319,23 +1324,105 @@ _cairo_dwrite_scaled_font_init_glyph_color_surface(cairo_dwrite_scaled_font_t *s
+@@ -1351,23 +1356,105 @@ _cairo_dwrite_scaled_font_init_glyph_color_surface(cairo_dwrite_scaled_font_t *s
      return CAIRO_INT_STATUS_SUCCESS;
  }
  
@@ -214,7 +214,7 @@ index 1111111..2222222 100644
                                                        WICBitmapCacheOnLoad,
                                                        &bitmap);
      if (FAILED(hr))
-@@ -1343,11 +1430,7 @@ init_glyph_surface_fallback_a8 (cairo_dwrite_scaled_font_t  *scaled_font,
+@@ -1375,11 +1462,7 @@ init_glyph_surface_fallback_a8 (cairo_dwrite_scaled_font_t  *scaled_font,
  
      D2D1_RENDER_TARGET_PROPERTIES properties = D2D1::RenderTargetProperties(
          D2D1_RENDER_TARGET_TYPE_DEFAULT,
@@ -227,7 +227,7 @@ index 1111111..2222222 100644
          D2D1_RENDER_TARGET_USAGE_NONE,
          D2D1_FEATURE_LEVEL_DEFAULT);
  
-@@ -1356,14 +1439,43 @@ init_glyph_surface_fallback_a8 (cairo_dwrite_scaled_font_t  *scaled_font,
+@@ -1388,14 +1471,43 @@ init_glyph_surface_fallback_a8 (cairo_dwrite_scaled_font_t  *scaled_font,
      if (FAILED(hr))
          return _cairo_dwrite_error (hr, "CreateWicBitmapRenderTarget failed");
  
@@ -275,7 +275,7 @@ index 1111111..2222222 100644
  
      hr = rt->EndDraw();
      if (FAILED(hr))
-@@ -1371,20 +1483,122 @@ init_glyph_surface_fallback_a8 (cairo_dwrite_scaled_font_t  *scaled_font,
+@@ -1403,16 +1515,122 @@ init_glyph_surface_fallback_a8 (cairo_dwrite_scaled_font_t  *scaled_font,
  
      // TODO: rt->Flush()?
  
@@ -288,9 +288,12 @@ index 1111111..2222222 100644
      if (cairo_surface_status (surface))
          return CAIRO_INT_STATUS_UNSUPPORTED;
  
--    // Tell pixman that it should use component alpha blending when the surface is
--    // used as a source
--    pixman_image_set_component_alpha (((cairo_image_surface_t*)surface)->pixman_image, TRUE);
+-    int stride = cairo_image_surface_get_stride (surface);
+-    WICRect rect = { 0, 0, width, height };
+-    bitmap->CopyPixels(&rect,
+-                       stride,
+-                       height * stride,
+-                       cairo_image_surface_get_data (surface));
 +    if (antialias == ANTIALIAS_CLEARTYPE) {
 +        // Tell pixman that it should use component alpha blending when the surface is
 +        // used as a source
@@ -398,17 +401,11 @@ index 1111111..2222222 100644
 +            ptr += surface_stride;
 +        }
 +    }
- 
--    int stride = cairo_image_surface_get_stride (surface);
--    WICRect rect = { 0, 0, width, height };
--    bitmap->CopyPixels(&rect,
--                       stride,
--                       height * stride,
--                       cairo_image_surface_get_data (surface));
++
      cairo_surface_mark_dirty (surface);
      cairo_surface_set_device_offset (surface, -x1, -y1);
      _cairo_scaled_glyph_set_surface (scaled_glyph,
-@@ -1394,9 +1608,10 @@ init_glyph_surface_fallback_a8 (cairo_dwrite_scaled_font_t  *scaled_font,
+@@ -1422,9 +1640,10 @@ init_glyph_surface_fallback_a8 (cairo_dwrite_scaled_font_t  *scaled_font,
      return CAIRO_INT_STATUS_SUCCESS;
  }
  
@@ -421,7 +418,7 @@ index 1111111..2222222 100644
  {
      HRESULT hr;
  
-@@ -1560,8 +1775,11 @@ _cairo_dwrite_scaled_font_init_glyph_surface (cairo_dwrite_scaled_font_t *scaled
+@@ -1591,8 +1810,11 @@ _cairo_dwrite_scaled_font_init_glyph_surface (cairo_dwrite_scaled_font_t *scaled
              // IDWriteGlyphRunAnalysis supports gray-scale antialiasing only when
              // created from IDWriteFactory2 or later. If we have IDWriteFactory
              // only, fallback to rendering with Direct2D on A8 targets.
@@ -433,7 +430,7 @@ index 1111111..2222222 100644
          }
  
          hr = DWriteFactory::Instance()->CreateGlyphRunAnalysis(&run, 1,
-@@ -1813,6 +2031,51 @@ _cairo_dwrite_scaled_font_init_glyph_surface (cairo_dwrite_scaled_font_t *scaled
+@@ -1844,6 +2066,51 @@ _cairo_dwrite_scaled_font_init_glyph_surface (cairo_dwrite_scaled_font_t *scaled
      return CAIRO_INT_STATUS_SUCCESS;
  }
  
@@ -485,3 +482,38 @@ index 1111111..2222222 100644
  static cairo_int_status_t
  _cairo_dwrite_load_truetype_table(void                 *scaled_font,
  				  unsigned long         tag,
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Luca Bacci <luca.bacci982@gmail.com>
+Date: Tue, 22 Sep 2026 11:43:39 +0200
+Subject: [PATCH 5/5] Win32: Fix build with DWrite disabled
+
+Upstream-Status: Backport [https://gitlab.freedesktop.org/cairo/cairo/-/commit/a1718af9e33bd33a717a1327cfa319790beba937]
+
+diff --git a/src/win32/cairo-win32-system.c b/src/win32/cairo-win32-system.c
+index 1111111..2222222 100644
+--- a/src/win32/cairo-win32-system.c
++++ b/src/win32/cairo-win32-system.c
+@@ -52,6 +52,12 @@
+ 
+ #include <stdbool.h>
+ 
++#if _WIN32_WINNT < _WIN32_WINNT_WIN8
++
++DECLARE_HANDLE(CO_MTA_USAGE_COOKIE);
++
++#endif
++
+ typedef HRESULT (__stdcall *pCoIncrementMTAUsage_t) (CO_MTA_USAGE_COOKIE*);
+ typedef HRESULT (__stdcall *pCoDecrementMTAUsage_t) (CO_MTA_USAGE_COOKIE);
+ 
+@@ -248,7 +254,9 @@ cairo_win32_initialize (void)
+ static void
+ cairo_win32_finalize (void)
+ {
++#if CAIRO_HAS_DWRITE_FONT
+     cairo_win32_dwrite_finalize ();
++#endif
+     cairo_win32_thread_data_finalize ();
+     cairo_win32_mta_finalize ();
+     CAIRO_MUTEX_FINALIZE ();

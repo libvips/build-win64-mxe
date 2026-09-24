@@ -10,7 +10,7 @@ diff --git a/meson.build b/meson.build
 index 1111111..2222222 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -485,29 +485,6 @@ if host_machine.system() == 'windows'
+@@ -502,29 +502,6 @@ if host_machine.system() == 'windows'
  
    add_project_arguments('-DWIN32_LEAN_AND_MEAN', '-DNOMINMAX', language: ['c', 'cpp'])
  
@@ -38,5 +38,5 @@ index 1111111..2222222 100644
 -  ]
 -
    cpp_compiler = meson.get_compiler('cpp')
-   d2d_dep = cpp_compiler.find_library('d2d1', required: get_option('dwrite'))
-   dwrite_dep = cpp_compiler.find_library('dwrite', required: get_option('dwrite'))
+ 
+   if get_option('dwrite').allowed()
