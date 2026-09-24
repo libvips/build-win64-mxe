@@ -20,14 +20,6 @@ matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
-# upstream version is 3.4.0
-libarchive_VERSION  := 3.8.9
-libarchive_CHECKSUM := 888c934f9d95648ecb9163dc8e23ab80a476ecb81a8f1154704a227b5b676dde
-libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
-libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
-libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
-libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
-
 # upstream version is 7.1.2-17
 imagemagick_VERSION  := 7.1.2-31
 imagemagick_CHECKSUM := 168a9710b3a8d69dbd20eb0a35f145b0c0ed35f076b2fc98d3eb57daa919c376
@@ -50,14 +42,6 @@ fribidi_CHECKSUM := 6949dcde27d41cebad1fd741fcafc36d55a1020d2d872d4a6eb3914caabb
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
-# upstream version is 2.8.4
-expat_VERSION  := 2.8.5
-expat_CHECKSUM := 1e727b8933ec51a77a9a9d9afcf8e688bce45d907c13e36ab7393fe36e703182
-expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
-expat_SUBDIR   := expat-$(expat_VERSION)
-expat_FILE     := expat-$(expat_VERSION).tar.xz
-expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
-
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.26
 libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e471476c0c
@@ -71,12 +55,6 @@ cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)
 cairo_SUBDIR   := cairo-$(cairo_VERSION)
 cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
 cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
-
-# upstream version is 14.4.0
-harfbuzz_VERSION  := 14.5.0
-harfbuzz_CHECKSUM := b7132e148358a45185c9feafd049dbaf243649d3c44414b3534d9c95d18592b9
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 4.6.3
 cfitsio_VERSION  := 4.7.0
@@ -146,6 +124,7 @@ glib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 harfbuzz_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 imath_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imath-[0-9]*.patch)))
 lcms_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
+libarchive_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libjpeg-turbo_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
 libraw_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libraw-[0-9]*.patch)))
 libxml2_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libxml2-[0-9]*.patch)))
@@ -211,7 +190,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # HarfBuzz:
 #  Removed: brotli, icu4c
 # libarchive:
-#  Removed: bzip2, libiconv, libxml2, nettle, openssl, xz
+#  Removed: bzip2, libiconv, libxml2, openssl, xz, zstd
 # SQLite:
 #  Added: zlib
 #  Removed: dlfcn-win32
@@ -540,7 +519,7 @@ define librsvg_BUILD
         -Dvala=disabled \
         -Dtests=false \
         -Dtriplet='$(PROCESSOR)-pc-windows-gnullvm' \
-        -Dc_link_args='$(LDFLAGS) -lntdll -luserenv' \
+        -Dc_link_args='$(LDFLAGS) -lntdll -luserenv -lsynchronization' \
         '$(SOURCE_DIR)' \
         '$(BUILD_DIR)'
 
@@ -549,7 +528,7 @@ define librsvg_BUILD
     # Add native libraries needed for static linking to .pc file.
     # We cannot use rustc --print native-static-libs due to -Zbuild-std.
     # See: https://gitlab.gnome.org/GNOME/librsvg/-/issues/968
-    $(SED) -i "/^Libs.private:/s/$$/ -lntdll -luserenv/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc'
+    $(SED) -i "/^Libs.private:/s/$$/ -lntdll -luserenv -lsynchronization/" '$(PREFIX)/$(TARGET)/lib/pkgconfig/librsvg-2.0.pc'
 endef
 
 # compile with CMake
