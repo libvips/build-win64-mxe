@@ -33,8 +33,8 @@ graphene_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LI
 graphene_GH_CONF  := ebassi/graphene/branches/master
 
 # upstream version is 4.18.6
-gtk4_VERSION  := 4.24.0
-gtk4_CHECKSUM := 28ba4ac1c04f86eac09b79a163cb163a4c2b54442d9f7eccc04679062a581044
+gtk4_VERSION  := 4.24.1
+gtk4_CHECKSUM := e98abe720e16129c8c0f50761dee0a2e9ae2478055e31018f6cf977fcf6513e9
 gtk4_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/gtk-[0-9]*.patch)))
 gtk4_SUBDIR   := gtk-$(gtk4_VERSION)
 gtk4_FILE     := gtk-$(gtk4_VERSION).tar.xz
@@ -42,9 +42,9 @@ gtk4_URL      := https://download.gnome.org/sources/gtk/$(call SHORT_PKG_VERSION
 
 # upstream version is 1.6.58
 # build from the libpng18 branch for APNG support
-# https://github.com/pnggroup/libpng/tarball/964b4135949703b705fc760fc3fb546b86e5ab47
-libpng_VERSION  := 964b413
-libpng_CHECKSUM := b7a21695e49b6aa23240add6eead18381a01d3bc31fc2a07d1dd8e6059c691cc
+# https://github.com/pnggroup/libpng/tarball/8334628be93c6e8db518581fcd2a25e7b66db4a3
+libpng_VERSION  := 8334628
+libpng_CHECKSUM := beb595155ee7425a28324c2ba4234b2b4782230cafbf76bffcf847ac1dc17d73
 libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
 libpng_SUBDIR   := pnggroup-libpng-$(libpng_VERSION)
 libpng_FILE     := pnggroup-libpng-$(libpng_VERSION).tar.gz
