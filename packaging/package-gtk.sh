@@ -79,7 +79,7 @@ if [ -d "$module_dir" ]; then
 fi
 
 if [ "$package" = "nip4" ]; then
-  pe_targets+=($bin_dir/{convert,gspawn-win64-helper-console,gspawn-win64-helper}.exe)
+  pe_targets+=($bin_dir/{convert,snip,gspawn-win64-helper-console,gspawn-win64-helper}.exe)
 fi
 
 zip_suffix="$package_version"
