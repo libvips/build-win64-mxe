@@ -10,14 +10,6 @@ libffi_SUBDIR   := libffi-$(libffi_VERSION)
 libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
 libffi_URL      := https://github.com/libffi/libffi/releases/download/v$(libffi_VERSION)/$(libffi_FILE)
 
-# upstream version is 1.6.58
-libpng_VERSION  := 1.6.59
-libpng_CHECKSUM := d80dd2a38a37f803cb9b6ac7b14bd6e74ddc3b654780a8380bdf93523fdb4389
-libpng_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libpng-[0-9]*.patch)))
-libpng_SUBDIR   := libpng-$(libpng_VERSION)
-libpng_FILE     := libpng-$(libpng_VERSION).tar.xz
-libpng_URL      := https://$(SOURCEFORGE_MIRROR)/project/libpng/libpng16/$(libpng_VERSION)/$(libpng_FILE)
-
 # upstream version is 1.5.23
 # cannot use GH_CONF:
 # matio_GH_CONF  := tbeu/matio/releases,v
@@ -71,14 +63,6 @@ libexif_VERSION  := 0.6.26
 libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e471476c0c
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
-
-# upstream version is 1.18.4
-cairo_VERSION  := 1.18.6
-cairo_CHECKSUM := 1c767308174337a74694da0f3ec069c271452163a1ef4540964c50c301f157d4
-cairo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/cairo-[0-9]*.patch)))
-cairo_SUBDIR   := cairo-$(cairo_VERSION)
-cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
-cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
 
 # upstream version is 14.5.0
 harfbuzz_VERSION  := 14.6.0
