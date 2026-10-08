@@ -50,6 +50,22 @@ fribidi_CHECKSUM := 6949dcde27d41cebad1fd741fcafc36d55a1020d2d872d4a6eb3914caabb
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
+# upstream version is 2.90.0
+glib_VERSION  := 2.90.1
+glib_CHECKSUM := 93c941aa17d5eb1d53fe838365f29a8b4e539c222a256d974ec8f30fc413e396
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
+# upstream version is 2.8.5
+expat_VERSION  := 2.9.0
+expat_CHECKSUM := 1e6371862cc31999b368c3b89b49994f0677e1bab5f1b2b85ae3741f5d803051
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
+
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.26
 libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e471476c0c
@@ -65,8 +81,8 @@ cairo_FILE     := cairo-$(cairo_VERSION).tar.xz
 cairo_URL      := https://cairographics.org/releases/$(cairo_FILE)
 
 # upstream version is 14.5.0
-harfbuzz_VERSION  := 14.5.1
-harfbuzz_CHECKSUM := 7e2fa4e8c7c98e8d8140671f5772542afaaa6acccfbd746506886b6d85f7f8d6
+harfbuzz_VERSION  := 14.6.0
+harfbuzz_CHECKSUM := d07a007327277708a2a73ae437887cdbaf282937f6d03ca5467723e9099af586
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
@@ -89,6 +105,14 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   :=
 openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
+
+# upstream version is 26.09.0
+poppler_VERSION  := 26.10.0
+poppler_CHECKSUM := 6792cb7c69205007ad87d2e936cecc5b3a31fac29ab54ffc3175fdb6b2a6ce35
+poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
+poppler_SUBDIR   := poppler-$(poppler_VERSION)
+poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
+poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
 libraw_VERSION  := 0.22.2
@@ -179,7 +203,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 # OpenEXR:
 #  Removed: pthreads
 # Poppler:
-#  Added: libjpeg-turbo, lcms
+#  Added: libjpeg-turbo, lcms, brotli
 #  Removed: boost, curl, qt6-qtbase, libwebp
 # librsvg:
 #  Added: meson-wrapper, libxml2, rust, $(BUILD)~cargo-c
@@ -219,7 +243,7 @@ tiff_DEPS               := cc libjpeg-turbo libwebp zlib
 imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
 graphicsmagick_DEPS     := $(imagemagick_DEPS)
 openexr_DEPS            := cc imath zlib
-poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib
+poppler_DEPS            := cc cairo libjpeg-turbo freetype glib openjpeg lcms libpng tiff zlib brotli
 librsvg_DEPS            := cc meson-wrapper cairo glib pango libxml2 rust $(BUILD)~cargo-c
 cairo_DEPS              := $(filter-out lzo ,$(cairo_DEPS))
 matio_DEPS              := $(filter-out hdf5 ,$(matio_DEPS))
@@ -552,6 +576,7 @@ define poppler_BUILD
         -DENABLE_LIBTIFF=ON \
         -DENABLE_LIBPNG=ON \
         -DENABLE_GLIB=ON \
+        -DENABLE_BROTLI=ON \
         -DENABLE_LCMS=ON \
         -DENABLE_LIBOPENJPEG='openjpeg2' \
         -DENABLE_DCTDECODER='libjpeg' \
