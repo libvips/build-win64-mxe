@@ -17,24 +17,24 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [aom]           | 3.15.1     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.15.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.6     | Mozilla Public License 1.1                                   |
 | [cgif]          | 0.5.4      | MIT License                                                  |
 | [expat]         | 2.9.0      | MIT License                                                  |
 | [fontconfig]    | 2.18.3     | [fontconfig License] (BSD-like)                              |
-| [freetype]      | 2.14.3     | [freetype License] (BSD-like)                                |
+| [freetype]      | 2.15.0     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.17     | LGPLv3                                                       |
 | [glib]          | 2.90.1     | LGPLv3                                                       |
 | [harfbuzz]      | 14.6.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.19.1     | MIT License                                                  |
-| [libarchive]    | 3.8.9      | BSD 2-Clause                                                 |
+| [libarchive]    | 3.8.10      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.8.0      | MIT License                                                  |
 | [libheif]       | 1.23.6     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.59     | [libpng License version 2]                                   |
-| [librsvg]       | 2.63.2     | LGPLv3                                                       |
+| [librsvg]       | 2.63.3     | LGPLv3                                                       |
 | [libtiff]       | 4.7.2      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 2.0.2      | MIT License                                                  |
 | [libvips]       | 8.18.7     | LGPLv3                                                       |
@@ -95,7 +95,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.2.0      | MIT License                                                  |
 | [cfitsio]       | 4.7.0      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
-| [imagemagick]   | 7.1.2-32   | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 7.1.2-34   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.3.0      | MIT License                                                  |
 | [libjxl]        | 0.12.0     | BSD 3-Clause                                                 |

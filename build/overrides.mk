@@ -20,17 +20,25 @@ matio_SUBDIR   := matio-$(matio_VERSION)
 matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
+# upstream version is 3.8.9
+libarchive_VERSION  := 3.8.10
+libarchive_CHECKSUM := 56cad765459d5ee25a3b761f90c47d99379d28297fbfb72d908880d6b875fb96
+libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
+libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
+libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
+libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
+
 # upstream version is 7.1.2-17
-imagemagick_VERSION  := 7.1.2-32
-imagemagick_CHECKSUM := abc38dad4adfbab671857822499e69c8745278a914f5d38517baecd400b820c2
+imagemagick_VERSION  := 7.1.2-34
+imagemagick_CHECKSUM := 55fe0ec246245b46c429f9e6bc65294ad4a78a66b88abd9817971ca157856323
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_GH_CONF  := ImageMagick/ImageMagick/releases,,,,,.tar.xz
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.63.2
-librsvg_CHECKSUM := 852b18e1a00b8605528825a27dc7748bff2a5dd254028f59dc22a34ea57e81b6
+librsvg_VERSION  := 2.63.3
+librsvg_CHECKSUM := 55311c2293612e4a2e38cd9bdb6160a1c85c158adc7c97e423e1e65949afb6a4
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -89,6 +97,22 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   :=
 openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
+
+# upstream version is 2.14.3
+freetype_VERSION  := 2.15.0
+freetype_CHECKSUM := 93cd47eb719c325107f2d3cf087d06299e944c3b48a40b55537302304dea1dd5
+freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
+freetype_SUBDIR   := freetype-$(freetype_VERSION)
+freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
+freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
+
+# upstream version is 2.14.3
+freetype-bootstrap_VERSION  := $(freetype_VERSION)
+freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
+freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
+freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
+freetype-bootstrap_FILE     := $(freetype_FILE)
+freetype-bootstrap_URL      := $(freetype_URL)
 
 # upstream version is 26.09.0
 poppler_VERSION  := 26.10.0
@@ -713,14 +737,19 @@ define libarchive_BUILD
         --without-lz4 \
         --without-zstd \
         --without-lzma \
+        --without-cng \
         --without-openssl \
+        --without-md \
         --without-xml2 \
+        --without-xmllite \
+        --without-bsdxml \
         --without-expat \
         --disable-acl \
         --disable-xattr \
         --disable-bsdtar \
         --disable-bsdcat \
         --disable-bsdcpio \
+        --disable-bsdunzip \
         --disable-posix-regex-lib \
         $(if $(BUILD_STATIC), CFLAGS='$(CFLAGS) -DLIBARCHIVE_STATIC')
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_CRUFT)

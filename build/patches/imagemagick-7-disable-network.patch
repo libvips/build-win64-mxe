@@ -57,7 +57,7 @@ index 1111111..2222222 100644
  
  # Binary scripts
  bin_SCRIPTS = \
-@@ -5198,8 +5196,7 @@ coders_uil_la_LIBADD = $(MAGICKCORE_LIBS)
+@@ -5200,8 +5198,7 @@ coders_uil_la_LIBADD = $(MAGICKCORE_LIBS)
  coders_url_la_SOURCES = coders/url.c
  coders_url_la_CPPFLAGS = $(MAGICK_CODER_CPPFLAGS)
  coders_url_la_LDFLAGS = $(MODULECOMMONFLAGS)
@@ -67,7 +67,7 @@ index 1111111..2222222 100644
  
  # UYVY coder module
  coders_uyvy_la_SOURCES = coders/uyvy.c
-@@ -5352,13 +5349,11 @@ MAGICKCORE_LIBS = MagickCore/libMagickCore-@MAGICK_MAJOR_VERSION@.@MAGICK_ABI_SU
+@@ -5354,13 +5351,11 @@ MAGICKCORE_LIBS = MagickCore/libMagickCore-@MAGICK_MAJOR_VERSION@.@MAGICK_ABI_SU
  @WITH_MODULES_FALSE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES = $(MAGICKCORE_BASE_SRCS) $(MAGICKCORE_PLATFORM_SRCS) $(MAGICKCORE_CODER_SRCS) $(MAGICKCORE_FILTER_SRCS)
  @WITH_MODULES_TRUE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_SOURCES = $(MAGICKCORE_BASE_SRCS) $(MAGICKCORE_PLATFORM_SRCS)
  @WITH_MODULES_FALSE@MagickCore_libMagickCore_@MAGICK_MAJOR_VERSION@_@MAGICK_ABI_SUFFIX@_la_LIBADD =  \
@@ -88,7 +88,7 @@ diff --git a/coders/Makefile.am b/coders/Makefile.am
 index 1111111..2222222 100644
 --- a/coders/Makefile.am
 +++ b/coders/Makefile.am
-@@ -1456,9 +1456,6 @@ coders_url_la_SOURCES      = coders/url.c
+@@ -1458,9 +1458,6 @@ coders_url_la_SOURCES      = coders/url.c
  coders_url_la_CPPFLAGS     = $(MAGICK_CODER_CPPFLAGS)
  coders_url_la_LDFLAGS      = $(MODULECOMMONFLAGS)
  coders_url_la_LIBADD       = $(MAGICKCORE_LIBS) $(XML_LIBS) $(LZMA_LIBS) $(ZLIB_LIBS) $(MATH_LIBS)
@@ -102,7 +102,7 @@ diff --git a/coders/url.c b/coders/url.c
 index 1111111..2222222 100644
 --- a/coders/url.c
 +++ b/coders/url.c
-@@ -59,7 +59,7 @@
+@@ -60,7 +60,7 @@
  #include "MagickCore/resource_.h"
  #include "MagickCore/string_.h"
  #include "MagickCore/utility.h"
@@ -111,7 +111,7 @@ index 1111111..2222222 100644
  #  include <urlmon.h>
  #  if !defined(__MINGW32__)
  #    pragma comment(lib, "urlmon.lib")
-@@ -93,7 +93,7 @@
+@@ -94,7 +94,7 @@
  %
  */
  
@@ -120,7 +120,7 @@ index 1111111..2222222 100644
  static Image *InvokeURLDelegate(ImageInfo *read_info,Image *image,
    const char *delegate,ExceptionInfo *exception)
  {
-@@ -146,7 +146,7 @@ static Image *ReadURLImage(const ImageInfo *image_info,ExceptionInfo *exception)
+@@ -147,7 +147,7 @@ static Image *ReadURLImage(const ImageInfo *image_info,ExceptionInfo *exception)
    image=AcquireImage(image_info,exception);
    read_info=CloneImageInfo(image_info);
    SetImageInfoBlob(read_info,(void *) NULL,0);
@@ -129,7 +129,7 @@ index 1111111..2222222 100644
    if (LocaleCompare(read_info->magick,"http") == 0)
      {
        images=InvokeURLDelegate(read_info,image,"http:decode",exception);
-@@ -189,7 +189,7 @@ static Image *ReadURLImage(const ImageInfo *image_info,ExceptionInfo *exception)
+@@ -190,7 +190,7 @@ static Image *ReadURLImage(const ImageInfo *image_info,ExceptionInfo *exception)
    LocaleLower(filename);
    (void) ConcatenateMagickString(filename,image_info->filename,
      MagickPathExtent);
@@ -138,7 +138,7 @@ index 1111111..2222222 100644
    (void) fclose(file);
    if (URLDownloadToFile(NULL,filename,read_info->filename,0,NULL) != S_OK)
      {
-@@ -259,7 +259,7 @@ ModuleExport size_t RegisterURLImage(void)
+@@ -260,7 +260,7 @@ ModuleExport size_t RegisterURLImage(void)
    entry->format_type=ImplicitFormatType;
    (void) RegisterMagickInfo(entry);
    entry=AcquireMagickInfo("URL","FTP","Uniform Resource Locator (ftp://)");
