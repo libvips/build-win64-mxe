@@ -44,12 +44,6 @@ librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
-# upstream version is 1.0.13
-fribidi_VERSION  := 1.0.17
-fribidi_CHECKSUM := 6949dcde27d41cebad1fd741fcafc36d55a1020d2d872d4a6eb3914caabbada2
-fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
-fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
-
 # upstream version is 2.90.0
 glib_VERSION  := 2.90.1
 glib_CHECKSUM := 93c941aa17d5eb1d53fe838365f29a8b4e539c222a256d974ec8f30fc413e396
@@ -58,25 +52,11 @@ glib_SUBDIR   := glib-$(glib_VERSION)
 glib_FILE     := glib-$(glib_VERSION).tar.xz
 glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
-# upstream version is 2.8.5
-expat_VERSION  := 2.9.0
-expat_CHECKSUM := 1e6371862cc31999b368c3b89b49994f0677e1bab5f1b2b85ae3741f5d803051
-expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
-expat_SUBDIR   := expat-$(expat_VERSION)
-expat_FILE     := expat-$(expat_VERSION).tar.xz
-expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
-
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.26
 libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e471476c0c
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
-
-# upstream version is 14.5.0
-harfbuzz_VERSION  := 14.6.0
-harfbuzz_CHECKSUM := d07a007327277708a2a73ae437887cdbaf282937f6d03ca5467723e9099af586
-harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
-harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
 
 # upstream version is 4.6.3
 cfitsio_VERSION  := 4.7.0
@@ -97,22 +77,6 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   :=
 openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
-
-# upstream version is 2.14.3
-freetype_VERSION  := 2.15.0
-freetype_CHECKSUM := 93cd47eb719c325107f2d3cf087d06299e944c3b48a40b55537302304dea1dd5
-freetype_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/freetype-[0-9]*.patch)))
-freetype_SUBDIR   := freetype-$(freetype_VERSION)
-freetype_FILE     := freetype-$(freetype_VERSION).tar.xz
-freetype_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(freetype_VERSION)/$(freetype_FILE)
-
-# upstream version is 2.14.3
-freetype-bootstrap_VERSION  := $(freetype_VERSION)
-freetype-bootstrap_CHECKSUM := $(freetype_CHECKSUM)
-freetype-bootstrap_PATCHES  := $(freetype_PATCHES)
-freetype-bootstrap_SUBDIR   := $(freetype_SUBDIR)
-freetype-bootstrap_FILE     := $(freetype_FILE)
-freetype-bootstrap_URL      := $(freetype_URL)
 
 # upstream version is 26.09.0
 poppler_VERSION  := 26.10.0
@@ -203,7 +167,7 @@ zlib_PATCHES := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))
 #  Removed: jpeg, tiff
 # libtiff:
 #  Replaced: jpeg with libjpeg-turbo
-#  Removed: xz, zstd
+#  Removed: libdeflate, xz, zstd
 # ImageMagick / GraphicsMagick:
 #  Added: libxml2, openjpeg
 #  Removed: bzip2, ffmpeg, fftw, freetype, jasper, liblqr-1, libltdl, libpng, libraw, openexr, pthreads, tiff, zlib
@@ -248,6 +212,7 @@ glib_DEPS               := cc meson-wrapper gettext libffi zlib
 gdk-pixbuf_DEPS         := cc meson-wrapper glib libjpeg-turbo libpng tiff
 lcms_DEPS               := $(subst jpeg tiff,meson-wrapper,$(lcms_DEPS))
 tiff_DEPS               := cc libjpeg-turbo libwebp zlib
+tiff_DEPS_SHARED        := $(tiff_DEPS)
 imagemagick_DEPS        := cc libxml2 openjpeg lcms libjpeg-turbo
 graphicsmagick_DEPS     := $(imagemagick_DEPS)
 openexr_DEPS            := cc imath zlib

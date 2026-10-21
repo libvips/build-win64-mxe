@@ -21,6 +21,7 @@ openslide_DEPS          := $(subst zlib,zlib-ng,$(openslide_DEPS))
 poppler_DEPS            := $(subst zlib,zlib-ng,$(poppler_DEPS))
 sqlite_DEPS             := $(subst zlib,zlib-ng,$(sqlite_DEPS))
 tiff_DEPS               := $(subst zlib,zlib-ng,$(tiff_DEPS))
+tiff_DEPS_SHARED        := $(tiff_DEPS)
 
 # Disable the zlib build, just to be sure
 zlib_BUILD_x86_64-w64-mingw32  =

@@ -21,3 +21,4 @@ tiff_CMAKE_OPTS = -Dzstd=ON
 
 # Override sub-dependencies
 tiff_DEPS := $(tiff_DEPS) zstd
+tiff_DEPS_SHARED := $(tiff_DEPS)

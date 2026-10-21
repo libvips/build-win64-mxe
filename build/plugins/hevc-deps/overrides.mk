@@ -4,7 +4,7 @@ IS_HEVC := $(true)
 
 ## Update dependencies
 
-# upstream version is 4.1
+# upstream version is 4.2
 # cannot use GH_CONF:
 # x265_GH_CONF  := Multicorewareinc/x265/releases
 x265_VERSION  := 4.3
