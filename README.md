@@ -25,16 +25,16 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [freetype]      | 2.15.0     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.17     | LGPLv3                                                       |
 | [glib]          | 2.90.1     | LGPLv3                                                       |
-| [harfbuzz]      | 14.6.0     | MIT License                                                  |
+| [harfbuzz]      | 15.0.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.19.1     | MIT License                                                  |
 | [libarchive]    | 3.8.10      | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.8.0      | MIT License                                                  |
-| [libheif]       | 1.23.6     | LGPLv3                                                       |
+| [libheif]       | 1.23.7     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.59     | [libpng License version 2]                                   |
-| [librsvg]       | 2.63.3     | LGPLv3                                                       |
+| [librsvg]       | 2.63.4     | LGPLv3                                                       |
 | [libtiff]       | 4.7.2      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 2.0.2      | MIT License                                                  |
 | [libvips]       | 8.18.7     | LGPLv3                                                       |
@@ -92,14 +92,14 @@ Same as libvips-web + these extra dependencies:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [brotli]        | 1.2.0      | MIT License                                                  |
+| [brotli]        | 1.2.1      | MIT License                                                  |
 | [cfitsio]       | 4.7.0      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
 | [imagemagick]   | 7.1.2-34   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.3.0      | MIT License                                                  |
 | [libjxl]        | 0.12.0     | BSD 3-Clause                                                 |
-| [libraw]        | 0.22.2     | LGPL-2.1-only                                                |
+| [libraw]        | 0.22.3     | LGPL-2.1-only                                                |
 | [matio]         | 1.6.0      | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1      | Public domain                                                |
 | [openexr]       | 3.1.13     | BSD 3-Clause                                                 |

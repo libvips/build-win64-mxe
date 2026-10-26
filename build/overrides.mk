@@ -37,8 +37,8 @@ imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
 imagemagick_GH_CONF  := ImageMagick/ImageMagick/releases,,,,,.tar.xz
 
 # upstream version is 2.40.21
-librsvg_VERSION  := 2.63.3
-librsvg_CHECKSUM := 55311c2293612e4a2e38cd9bdb6160a1c85c158adc7c97e423e1e65949afb6a4
+librsvg_VERSION  := 2.63.4
+librsvg_CHECKSUM := 31f07d9350dad3f8964fd613c31309ac160fdef13dfac59df6fd082de78d6e8f
 librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/librsvg-[0-9]*.patch)))
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
@@ -58,6 +58,12 @@ libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e47147
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
 
+# upstream version is 14.6.0
+harfbuzz_VERSION  := 15.0.0
+harfbuzz_CHECKSUM := 968536e9abd782f07f7954044c0c4020199fcdd39b41d221ec42d2a3be4a44df
+harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
+harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
 # upstream version is 4.6.3
 cfitsio_VERSION  := 4.7.0
 cfitsio_CHECKSUM := ce573bbea8e75b429f8c3d3e86498741ba3dc9628a1530d2f65268397ad059e8
@@ -65,6 +71,12 @@ cfitsio_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
+
+# upstream version is 1.2.0
+brotli_VERSION  := 1.2.1
+brotli_CHECKSUM := 98d35d11a78dc453aebb7d10c3748f3f73ff78c8267c0dc697b8631f67bf7e8f
+brotli_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/brotli-[0-9]*.patch)))
+brotli_GH_CONF  := google/brotli/tags,v
 
 # upstream version is 2.2.0
 # cannot use GH_CONF:
@@ -87,8 +99,8 @@ poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
 poppler_URL      := https://poppler.freedesktop.org/$(poppler_FILE)
 
 # upstream version is 0.21.1
-libraw_VERSION  := 0.22.2
-libraw_CHECKSUM := de86b035655accff8d4010f1a221fdf50d353cb7b1422ba26f14a0db92612cfa
+libraw_VERSION  := 0.22.3
+libraw_CHECKSUM := 789f3c33466210a1a0907f747a97c715d21bbf4af712f257fcbbd90111b227e4
 libraw_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libraw-[0-9]*.patch)))
 libraw_SUBDIR   := LibRaw-$(libraw_VERSION)
 libraw_FILE     := LibRaw-$(libraw_VERSION).tar.gz
