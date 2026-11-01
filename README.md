@@ -17,18 +17,18 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [aom]           | 3.15.2     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
+| [aom]           | 3.15.3     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.6     | Mozilla Public License 1.1                                   |
 | [cgif]          | 0.5.4      | MIT License                                                  |
 | [expat]         | 2.9.0      | MIT License                                                  |
 | [fontconfig]    | 2.18.3     | [fontconfig License] (BSD-like)                              |
 | [freetype]      | 2.15.0     | [freetype License] (BSD-like)                                |
-| [fribidi]       | 1.0.17     | LGPLv3                                                       |
+| [fribidi]       | 1.0.18     | LGPLv3                                                       |
 | [glib]          | 2.90.1     | LGPLv3                                                       |
 | [harfbuzz]      | 15.0.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
-| [lcms]          | 2.19.1     | MIT License                                                  |
-| [libarchive]    | 3.8.10      | BSD 2-Clause                                                 |
+| [lcms]          | 2.20       | MIT License                                                  |
+| [libarchive]    | 3.8.11     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
 | [libffi]        | 3.8.0      | MIT License                                                  |
 | [libheif]       | 1.23.7     | LGPLv3                                                       |
@@ -95,7 +95,7 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.2.1      | MIT License                                                  |
 | [cfitsio]       | 4.7.0      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
-| [imagemagick]   | 7.1.2-34   | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 7.1.2-35   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.3.0      | MIT License                                                  |
 | [libjxl]        | 0.12.0     | BSD 3-Clause                                                 |
@@ -142,7 +142,7 @@ In that case, the following version of libjpeg-turbo is built:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [libjpeg-turbo] | 3.2.0      | [zlib License, IJG License]                                  |
+| [libjpeg-turbo] | 3.2.1      | [zlib License, IJG License]                                  |
 
 [libjpeg-turbo]: https://github.com/libjpeg-turbo/libjpeg-turbo
 [zlib License, IJG License]: https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/LICENSE.md

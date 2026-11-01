@@ -21,16 +21,16 @@ matio_FILE     := matio-$(matio_VERSION).tar.gz
 matio_URL      := https://github.com/tbeu/matio/releases/download/v$(matio_VERSION)/$(matio_FILE)
 
 # upstream version is 3.8.9
-libarchive_VERSION  := 3.8.10
-libarchive_CHECKSUM := 56cad765459d5ee25a3b761f90c47d99379d28297fbfb72d908880d6b875fb96
+libarchive_VERSION  := 3.8.11
+libarchive_CHECKSUM := a3dc0872b1b39da34dc18ef1b944f0f11ffd37425d70ae04be679279f1cf43d2
 libarchive_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libarchive-[0-9]*.patch)))
 libarchive_SUBDIR   := libarchive-$(libarchive_VERSION)
 libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7.1.2-17
-imagemagick_VERSION  := 7.1.2-34
-imagemagick_CHECKSUM := 55fe0ec246245b46c429f9e6bc65294ad4a78a66b88abd9817971ca157856323
+imagemagick_VERSION  := 7.1.2-35
+imagemagick_CHECKSUM := 9554556c8cbf7d347cbd6bedae931ccf323a2bd5e0f08d4834856568ee19f080
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
@@ -43,6 +43,12 @@ librsvg_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
+
+# upstream version is 1.0.17
+fribidi_VERSION  := 1.0.18
+fribidi_CHECKSUM := 1de5e8073d035388b71d0b2d452b1da1f8caeea8a7702997b401fe1b6250727f
+fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
+fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
 # upstream version is 2.90.0
 glib_VERSION  := 2.90.1
@@ -57,6 +63,16 @@ libexif_VERSION  := 0.6.26
 libexif_CHECKSUM := 4a055ed6575e61ca46c3172be3c753cc16c9becd0f99ec71d58dd0e471476c0c
 libexif_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libexif-[0-9]*.patch)))
 libexif_GH_CONF  := libexif/libexif/releases,v,,,,.tar.xz
+
+# upstream version is 2.19.1
+# cannot use GH_CONF:
+# lcms_GH_CONF  := mm2/Little-CMS,lcms
+lcms_VERSION  := 2.20
+lcms_CHECKSUM := 18ff5504fa9cc8a2b1f3591180d90ead16c8a2ea78e530523b46eab70e1ca6b9
+lcms_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/lcms-[0-9]*.patch)))
+lcms_SUBDIR   := lcms2-$(lcms_VERSION)
+lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
+lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
 
 # upstream version is 14.6.0
 harfbuzz_VERSION  := 15.0.0
@@ -89,6 +105,12 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   :=
 openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
+
+# upstream version is 3.2.0
+libjpeg-turbo_VERSION  := 3.2.1
+libjpeg-turbo_CHECKSUM := c27ad72a68da151177929aa969ae773a2da5ac2af9ce946079314fdac8cece7f
+libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
+libjpeg-turbo_GH_CONF  := libjpeg-turbo/libjpeg-turbo/releases,,,90
 
 # upstream version is 26.09.0
 poppler_VERSION  := 26.10.0
