@@ -50,6 +50,14 @@ fribidi_CHECKSUM := 1de5e8073d035388b71d0b2d452b1da1f8caeea8a7702997b401fe1b6250
 fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
 fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
 
+# upstream version is 2.9.0
+expat_VERSION  := 2.10.0
+expat_CHECKSUM := c624ba2998fc65df1163a49641ff3f9ab73138b11641d92c86bee0fb01b1bc7f
+expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
+expat_SUBDIR   := expat-$(expat_VERSION)
+expat_FILE     := expat-$(expat_VERSION).tar.xz
+expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
+
 # upstream version is 2.90.0
 glib_VERSION  := 2.90.1
 glib_CHECKSUM := 93c941aa17d5eb1d53fe838365f29a8b4e539c222a256d974ec8f30fc413e396
@@ -75,10 +83,16 @@ lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
 lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
 
 # upstream version is 14.6.0
-harfbuzz_VERSION  := 15.0.0
-harfbuzz_CHECKSUM := 968536e9abd782f07f7954044c0c4020199fcdd39b41d221ec42d2a3be4a44df
+harfbuzz_VERSION  := 15.1.0
+harfbuzz_CHECKSUM := 0fc7c565443a5f4be7da65ac5ee5bd737d9b158dc908708b7689a0a5796b0c8d
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
 harfbuzz_GH_CONF  := harfbuzz/harfbuzz/releases,,,,,.tar.xz
+
+# upstream version is 1.3.2
+zlib_VERSION  := 1.4
+zlib_CHECKSUM := 4f11c512053d7bab8d9e9b89bde3575add3e4c50a383b42ef6cb837035fc5a7c
+zlib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/zlib-[0-9]*.patch)))
+zlib_GH_CONF  := madler/zlib/releases,v,,,,.tar.xz
 
 # upstream version is 4.6.3
 cfitsio_VERSION  := 4.7.0

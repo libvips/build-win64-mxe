@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "fix@me" <fix@me>
-Date: Sunday, 25 Feb 2018 21:37:44 +0200
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Thu, 5 Nov 2026 13:51:31 +0100
 Subject: [PATCH 1/2] Fix static library naming (libzs.a -> libz.a)
 
 
@@ -8,19 +8,33 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 1111111..2222222 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -149,10 +149,10 @@ set(ZLIB_SRCS
+@@ -233,10 +233,9 @@ set(ZLIB_SRCS
      uncompr.c
      zutil.c)
  
 -if(WIN32)
+-    set(zlib_static_suffix "s")
 +if(MSVC)
-     set(zlib_static_suffix "s")
      set(CMAKE_DEBUG_POSTFIX "d")
 -endif(WIN32)
 +endif(MSVC)
  
  if(ZLIB_BUILD_SHARED)
      add_library(
+@@ -324,11 +323,11 @@ if(ZLIB_BUILD_STATIC)
+     if(MSVC)
+         set_target_properties(zlibstatic
+             PROPERTIES
+-                ARCHIVE_OUTPUT_NAME libz${zlib_static_suffix})
++                ARCHIVE_OUTPUT_NAME libzs)
+     else(MSVC)
+         set_target_properties(zlibstatic
+             PROPERTIES
+-                ARCHIVE_OUTPUT_NAME z${zlib_static_suffix})
++                ARCHIVE_OUTPUT_NAME z)
+     endif(MSVC)
+ 
+     set_target_properties(zlibstatic
 
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Nicolas Pena <npm@chromium.org>
@@ -39,7 +53,7 @@ diff --git a/inflate.c b/inflate.c
 index 1111111..2222222 100644
 --- a/inflate.c
 +++ b/inflate.c
-@@ -203,6 +203,7 @@ int stream_size;
+@@ -211,6 +211,7 @@ int ZEXPORT inflateInit2_(z_streamp strm, int windowBits,
      state->strm = strm;
      state->window = Z_NULL;
      state->mode = HEAD;     /* to pass state test in inflateReset2() */

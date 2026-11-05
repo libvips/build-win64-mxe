@@ -20,12 +20,12 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.15.3     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.6     | Mozilla Public License 1.1                                   |
 | [cgif]          | 0.5.4      | MIT License                                                  |
-| [expat]         | 2.9.0      | MIT License                                                  |
+| [expat]         | 2.10.0     | MIT License                                                  |
 | [fontconfig]    | 2.18.3     | [fontconfig License] (BSD-like)                              |
 | [freetype]      | 2.15.0     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.18     | LGPLv3                                                       |
 | [glib]          | 2.90.1     | LGPLv3                                                       |
-| [harfbuzz]      | 15.0.0     | MIT License                                                  |
+| [harfbuzz]      | 15.1.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.20       | MIT License                                                  |
 | [libarchive]    | 3.8.11     | BSD 2-Clause                                                 |
@@ -184,7 +184,7 @@ In that case, the following version of zlib is built:
 
 | Dependency      | Version    | Used under the terms of                                      |
 |-----------------|------------|--------------------------------------------------------------|
-| [zlib]          | 1.3.2      | [zlib License]                                               |
+| [zlib]          | 1.4        | [zlib License]                                               |
 
 [zlib]: https://github.com/madler/zlib
 [zlib License]: https://github.com/madler/zlib/blob/develop/LICENSE
