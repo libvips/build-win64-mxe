@@ -44,12 +44,6 @@ librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
-# upstream version is 1.0.17
-fribidi_VERSION  := 1.0.18
-fribidi_CHECKSUM := 1de5e8073d035388b71d0b2d452b1da1f8caeea8a7702997b401fe1b6250727f
-fribidi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/fribidi-[0-9]*.patch)))
-fribidi_GH_CONF  := fribidi/fribidi/releases,v,,,,.tar.xz
-
 # upstream version is 2.9.0
 expat_VERSION  := 2.10.0
 expat_CHECKSUM := c624ba2998fc65df1163a49641ff3f9ab73138b11641d92c86bee0fb01b1bc7f
@@ -57,14 +51,6 @@ expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)
 expat_SUBDIR   := expat-$(expat_VERSION)
 expat_FILE     := expat-$(expat_VERSION).tar.xz
 expat_URL      := https://github.com/libexpat/libexpat/releases/download/R_$(subst .,_,$(expat_VERSION))/$(expat_FILE)
-
-# upstream version is 2.90.0
-glib_VERSION  := 2.90.1
-glib_CHECKSUM := 93c941aa17d5eb1d53fe838365f29a8b4e539c222a256d974ec8f30fc413e396
-glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
-glib_SUBDIR   := glib-$(glib_VERSION)
-glib_FILE     := glib-$(glib_VERSION).tar.xz
-glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
 
 # upstream version is 0.6.22
 libexif_VERSION  := 0.6.26
@@ -82,7 +68,7 @@ lcms_SUBDIR   := lcms2-$(lcms_VERSION)
 lcms_FILE     := lcms2-$(lcms_VERSION).tar.gz
 lcms_URL      := https://github.com/mm2/Little-CMS/releases/download/lcms$(lcms_VERSION)/$(lcms_FILE)
 
-# upstream version is 14.6.0
+# upstream version is 15.0.0
 harfbuzz_VERSION  := 15.1.0
 harfbuzz_CHECKSUM := 0fc7c565443a5f4be7da65ac5ee5bd737d9b158dc908708b7689a0a5796b0c8d
 harfbuzz_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/harfbuzz-[0-9]*.patch)))
@@ -102,12 +88,6 @@ cfitsio_SUBDIR   := cfitsio-$(cfitsio_VERSION)
 cfitsio_FILE     := cfitsio-$(cfitsio_VERSION).tar.gz
 cfitsio_URL      := https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/$(cfitsio_FILE)
 
-# upstream version is 1.2.0
-brotli_VERSION  := 1.2.1
-brotli_CHECKSUM := 98d35d11a78dc453aebb7d10c3748f3f73ff78c8267c0dc697b8631f67bf7e8f
-brotli_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/brotli-[0-9]*.patch)))
-brotli_GH_CONF  := google/brotli/tags,v
-
 # upstream version is 2.2.0
 # cannot use GH_CONF:
 # openexr_GH_CONF  := AcademySoftwareFoundation/openexr/releases,v
@@ -119,12 +99,6 @@ openexr_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIS
 openexr_SUBDIR   :=
 openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
-
-# upstream version is 3.2.0
-libjpeg-turbo_VERSION  := 3.2.1
-libjpeg-turbo_CHECKSUM := c27ad72a68da151177929aa969ae773a2da5ac2af9ce946079314fdac8cece7f
-libjpeg-turbo_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libjpeg-turbo-[0-9]*.patch)))
-libjpeg-turbo_GH_CONF  := libjpeg-turbo/libjpeg-turbo/releases,,,90
 
 # upstream version is 26.09.0
 poppler_VERSION  := 26.10.0
@@ -490,7 +464,7 @@ define imagemagick_BUILD
 endef
 
 # Alias GraphicsMagick build with ImageMagick
-define graphicsmagick_BUILD
+define graphicsmagick_BUILD_SHARED
     $(imagemagick_BUILD)
 endef
 

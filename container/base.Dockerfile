@@ -6,12 +6,12 @@ RUN \
     # http://mxe.cc/#requirements-debian
     autopoint bison build-essential flex gettext gperf \
     intltool jq libtool-bin libxml-parser-perl lzip p7zip-full \
-    python-is-python3 python3-mako ruby zip \
+    python-is-python3 python3-mako python3-yaml ruby zip \
     # needed by adwaita-icon-theme
     gtk-update-icon-cache
 
 WORKDIR /usr/local
-RUN git clone -b llvm-mingw-20261021 --single-branch https://github.com/kleisauke/mxe.git
+RUN git clone -b llvm-mingw-20261105 --single-branch https://github.com/kleisauke/mxe.git
 
 WORKDIR /usr/local/mxe
 
