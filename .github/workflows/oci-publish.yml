@@ -30,6 +30,7 @@ jobs:
             org.opencontainers.image.authors=libvips team and contributors
             org.opencontainers.image.url=https://libvips.org
             org.opencontainers.image.documentation=https://github.com/${{ github.repository }}
+            org.opencontainers.image.licenses=MIT
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.vendor=libvips
             org.opencontainers.image.title=OCI image for ${{ github.repository }}
