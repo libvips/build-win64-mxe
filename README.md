@@ -37,7 +37,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [librsvg]       | 2.63.4     | LGPLv3                                                       |
 | [libtiff]       | 4.7.2      | [libtiff License] (BSD-like)                                 |
 | [libultrahdr]   | 2.0.2      | MIT License                                                  |
-| [libvips]       | 8.18.7     | LGPLv3                                                       |
+| [libvips]       | 8.19.0[^2] | LGPLv3                                                       |
 | [libwebp]       | 1.6.0      | New BSD License                                              |
 | [libxml2]       | 2.15.4     | MIT License                                                  |
 | [mozjpeg]       | [0826579]  | [zlib License, IJG License, BSD 3-Clause]                    |
@@ -47,6 +47,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [zlib-ng]       | 2.3.3      | [zlib-ng License]                                            |
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
+[^2]: libvips is built from the [`v8.19.0-rc1`](https://github.com/libvips/libvips/tree/v8.19.0-rc1) tag, see:
+https://github.com/libvips/libvips/releases/tag/v8.19.0-rc1
 
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
