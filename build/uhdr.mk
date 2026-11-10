@@ -9,13 +9,11 @@ $(PKG)_GH_CONF  := google/libultrahdr/tags,v
 $(PKG)_DEPS     := cc libjpeg-turbo
 
 define $(PKG)_BUILD
-    $(eval export CFLAGS += -O3)
-    $(eval export CXXFLAGS += -O3)
-
     # Ensure install targets are enabled when cross-compiling
     $(SED) -i 's/CMAKE_CROSSCOMPILING AND UHDR_ENABLE_INSTALL/FALSE/' '$(SOURCE_DIR)/CMakeLists.txt'
 
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DUHDR_BUILD_EXAMPLES=FALSE \
         -DUHDR_ENABLE_HEIF=FALSE \
         -DUHDR_MAX_DIMENSION=65500 \

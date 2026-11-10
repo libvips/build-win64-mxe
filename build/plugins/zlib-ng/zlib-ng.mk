@@ -9,9 +9,8 @@ $(PKG)_GH_CONF  := zlib-ng/zlib-ng/tags
 $(PKG)_DEPS     := cc
 
 define $(PKG)_BUILD
-    $(eval export CFLAGS += -O3)
-
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DBUILD_TESTING=OFF \
         -DZLIB_COMPAT=ON \
         '$(SOURCE_DIR)'
