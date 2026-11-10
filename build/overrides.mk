@@ -410,8 +410,6 @@ endef
 # build with -DCMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT to avoid a
 # horrible hack (we don't target pre-Windows XP, so it should be safe)
 define lcms_BUILD
-    $(eval export CFLAGS += -O3)
-
     $(MXE_MESON_WRAPPER) \
         -Dtests=disabled \
         -Djpeg=disabled \
@@ -565,6 +563,7 @@ define librsvg_BUILD
 endef
 
 # compile with CMake
+# Poppler doesn't support building with -DCMAKE_BUILD_TYPE=MinSizeRel
 # disable HarfBuzz support (as it requires -DFONT_CONFIGURATION=fontconfig)
 define poppler_BUILD
     cd '$(BUILD_DIR)' && '$(TARGET)-cmake' \

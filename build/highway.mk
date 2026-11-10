@@ -9,10 +9,8 @@ $(PKG)_GH_CONF  := google/highway/releases
 $(PKG)_DEPS     := cc
 
 define $(PKG)_BUILD
-    $(eval export CFLAGS += -O3)
-    $(eval export CXXFLAGS += -O3)
-
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DBUILD_TESTING=OFF \
         -DHWY_ENABLE_CONTRIB=OFF \
         -DHWY_ENABLE_EXAMPLES=OFF \

@@ -9,8 +9,6 @@ $(PKG)_GH_CONF  := dloebl/cgif/tags,v
 $(PKG)_DEPS     := cc meson-wrapper
 
 define $(PKG)_BUILD
-    $(eval export CFLAGS += -O3)
-
     $(MXE_MESON_WRAPPER) \
         -Dexamples=false \
         -Dtests=false \
