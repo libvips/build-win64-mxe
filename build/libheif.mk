@@ -9,10 +9,8 @@ $(PKG)_GH_CONF  := strukturag/libheif/releases,v
 $(PKG)_DEPS     := cc aom
 
 define $(PKG)_BUILD
-    $(eval export CFLAGS += -O3)
-    $(eval export CXXFLAGS += -O3)
-
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DENABLE_PLUGIN_LOADING=0 \
         -DBUILD_TESTING=0 \
         -DWITH_EXAMPLES=0 \

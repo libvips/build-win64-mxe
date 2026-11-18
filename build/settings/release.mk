@@ -11,8 +11,7 @@ MXE_VERBOSE := true
 MXE_TMP := /var/tmp
 
 # Special flags for compiler.
-# Default optimisation level is for binary size (-Os).
-# Overridden to performance (-O3) for select dependencies that benefit.
+# Optimise for binary size (-Os).
 TARGET_CFLAGS   := -Os -g -gcodeview -fdata-sections -ffunction-sections
 TARGET_CXXFLAGS := -Os -g -gcodeview -fdata-sections -ffunction-sections
 TARGET_LDFLAGS  := -Wl,--pdb= -Wl,--gc-sections -Wl,-s

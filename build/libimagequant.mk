@@ -9,8 +9,6 @@ $(PKG)_GH_CONF  := lovell/libimagequant/tags,v
 $(PKG)_DEPS     := cc meson-wrapper
 
 define $(PKG)_BUILD
-    $(eval export CFLAGS += -O3)
-
     $(MXE_MESON_WRAPPER) '$(SOURCE_DIR)' '$(BUILD_DIR)'
 
     $(MXE_NINJA) -C '$(BUILD_DIR)' -j '$(JOBS)' install
