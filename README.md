@@ -30,7 +30,7 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [lcms]          | 2.20       | MIT License                                                  |
 | [libarchive]    | 3.8.11     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
-| [libffi]        | 3.8.0      | MIT License                                                  |
+| [libffi]        | 3.8.1      | MIT License                                                  |
 | [libheif]       | 1.23.7     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.59     | [libpng License version 2]                                   |
@@ -95,17 +95,17 @@ Same as libvips-web + these extra dependencies:
 | [brotli]        | 1.2.1      | MIT License                                                  |
 | [cfitsio]       | 4.7.0      | BSD-like                                                     |
 | [fftw]          | 3.3.11     | GPLv2                                                        |
-| [imagemagick]   | 7.1.2-35   | [ImageMagick License] (Apache-2.0-like)                      |
+| [imagemagick]   | 7.1.2-36   | [ImageMagick License] (Apache-2.0-like)                      |
 | [imath]         | 3.2.2      | BSD 3-Clause                                                 |
 | [libdicom]      | 1.3.0      | MIT License                                                  |
-| [libjxl]        | 0.12.0     | BSD 3-Clause                                                 |
+| [libjxl]        | 0.13.0     | BSD 3-Clause                                                 |
 | [libraw]        | 0.22.3     | LGPL-2.1-only                                                |
 | [matio]         | 1.6.0      | BSD 2-Clause                                                 |
 | [nifticlib]     | 3.0.1      | Public domain                                                |
 | [openexr]       | 3.1.13     | BSD 3-Clause                                                 |
 | [openjpeg]      | 2.5.4      | BSD 2-Clause                                                 |
 | [openslide]     | 4.0.1      | LGPL-2.1-only                                                |
-| [poppler]       | 26.10.0    | GPLv2                                                        |
+| [poppler]       | 26.11.0    | GPLv2                                                        |
 | [sqlite]        | 3.54.1     | Public domain                                                |
 | [zstd]          | 1.5.7      | BSD 3-Clause                                                 |
 

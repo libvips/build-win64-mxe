@@ -3,8 +3,8 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 ## Update dependencies
 
 # upstream version is 3.7.1
-libffi_VERSION  := 3.8.0
-libffi_CHECKSUM := 7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4
+libffi_VERSION  := 3.8.1
+libffi_CHECKSUM := 81e879c094cc5ec3186c48510c6385ac6b3e866192e8bc71a35245703757ee40
 libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
 libffi_SUBDIR   := libffi-$(libffi_VERSION)
 libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
@@ -29,8 +29,8 @@ libarchive_FILE     := libarchive-$(libarchive_VERSION).tar.xz
 libarchive_URL      := https://github.com/libarchive/libarchive/releases/download/v$(libarchive_VERSION)/$(libarchive_FILE)
 
 # upstream version is 7.1.2-17
-imagemagick_VERSION  := 7.1.2-35
-imagemagick_CHECKSUM := 9554556c8cbf7d347cbd6bedae931ccf323a2bd5e0f08d4834856568ee19f080
+imagemagick_VERSION  := 7.1.2-36
+imagemagick_CHECKSUM := 410cab5ed416329290e77cbd7833a76502671ea25a42d1cfe010f9067b27c2d6
 imagemagick_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/imagemagick-[0-9]*.patch)))
 imagemagick_SUBDIR   := ImageMagick-$(imagemagick_VERSION)
 imagemagick_FILE     := ImageMagick-$(imagemagick_VERSION).tar.xz
@@ -101,8 +101,8 @@ openexr_FILE     := openexr-v$(openexr_VERSION).tar.gz
 openexr_URL      := https://github.com/AcademySoftwareFoundation/openexr/releases/download/v$(openexr_VERSION)/$(openexr_FILE)
 
 # upstream version is 26.09.0
-poppler_VERSION  := 26.10.0
-poppler_CHECKSUM := 6792cb7c69205007ad87d2e936cecc5b3a31fac29ab54ffc3175fdb6b2a6ce35
+poppler_VERSION  := 26.11.0
+poppler_CHECKSUM := 41c32680160addf5a8dd7a830e4869c01e9f6bee1abb91e44fabd1ba9d7828fb
 poppler_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/poppler-[0-9]*.patch)))
 poppler_SUBDIR   := poppler-$(poppler_VERSION)
 poppler_FILE     := poppler-$(poppler_VERSION).tar.xz
