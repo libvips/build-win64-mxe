@@ -21,11 +21,11 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [cairo]         | 1.18.6     | Mozilla Public License 1.1                                   |
 | [cgif]          | 0.5.4      | MIT License                                                  |
 | [expat]         | 2.10.0     | MIT License                                                  |
-| [fontconfig]    | 2.18.3     | [fontconfig License] (BSD-like)                              |
+| [fontconfig]    | 2.18.4     | [fontconfig License] (BSD-like)                              |
 | [freetype]      | 2.15.0     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.18     | LGPLv3                                                       |
 | [glib]          | 2.90.1     | LGPLv3                                                       |
-| [harfbuzz]      | 15.1.0     | MIT License                                                  |
+| [harfbuzz]      | 15.2.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.20       | MIT License                                                  |
 | [libarchive]    | 3.8.11     | BSD 2-Clause                                                 |
