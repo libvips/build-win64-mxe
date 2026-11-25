@@ -47,8 +47,8 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [zlib-ng]       | 2.3.3      | [zlib-ng License]                                            |
 
 [^1]: [A fork](https://github.com/lovell/libimagequant) of the BSD 2-Clause licensed libimagequant v2.4.1 is used.
-[^2]: libvips is built from the [`v8.19.0-rc2`](https://github.com/libvips/libvips/tree/v8.19.0-rc2) tag, see:
-https://github.com/libvips/libvips/releases/tag/v8.19.0-rc2
+[^2]: libvips is built from the [`v8.19.0-rc3`](https://github.com/libvips/libvips/tree/v8.19.0-rc3) tag, see:
+https://github.com/libvips/libvips/releases/tag/v8.19.0-rc3
 
 [0826579]: https://github.com/mozilla/mozjpeg/commit/08265790774cd0714832c9e675522acbe5581437
 
