@@ -20,17 +20,17 @@ Run the top-level [build script](build.sh) with the `--help` parameter for help.
 | [aom]           | 3.15.3     | BSD 2-Clause + [Alliance for Open Media Patent License 1.0]  |
 | [cairo]         | 1.18.6     | Mozilla Public License 1.1                                   |
 | [cgif]          | 0.5.4      | MIT License                                                  |
-| [expat]         | 2.10.0     | MIT License                                                  |
+| [expat]         | 2.11.0     | MIT License                                                  |
 | [fontconfig]    | 2.18.4     | [fontconfig License] (BSD-like)                              |
 | [freetype]      | 2.15.0     | [freetype License] (BSD-like)                                |
 | [fribidi]       | 1.0.18     | LGPLv3                                                       |
-| [glib]          | 2.90.1     | LGPLv3                                                       |
+| [glib]          | 2.91.0     | LGPLv3                                                       |
 | [harfbuzz]      | 15.2.0     | MIT License                                                  |
 | [highway]       | 1.4.0      | BSD 3-Clause                                                 |
 | [lcms]          | 2.20       | MIT License                                                  |
 | [libarchive]    | 3.8.11     | BSD 2-Clause                                                 |
 | [libexif]       | 0.6.26     | LGPLv3                                                       |
-| [libffi]        | 3.8.1      | MIT License                                                  |
+| [libffi]        | 3.8.2      | MIT License                                                  |
 | [libheif]       | 1.23.7     | LGPLv3                                                       |
 | [libimagequant] | 2.4.1[^1]  | BSD 2-Clause                                                 |
 | [libpng]        | 1.6.59     | [libpng License version 2]                                   |
