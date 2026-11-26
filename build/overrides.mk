@@ -3,8 +3,8 @@ $(info [overrides]   $(lastword $(MAKEFILE_LIST)))
 ## Update dependencies
 
 # upstream version is 3.7.1
-libffi_VERSION  := 3.8.1
-libffi_CHECKSUM := 81e879c094cc5ec3186c48510c6385ac6b3e866192e8bc71a35245703757ee40
+libffi_VERSION  := 3.8.2
+libffi_CHECKSUM := a699fda2b090c4b46cb79cf60c4dacfce480eb05742c0de66acf3af174a47f92
 libffi_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/libffi-[0-9]*.patch)))
 libffi_SUBDIR   := libffi-$(libffi_VERSION)
 libffi_FILE     := libffi-$(libffi_VERSION).tar.gz
@@ -44,9 +44,17 @@ librsvg_SUBDIR   := librsvg-$(librsvg_VERSION)
 librsvg_FILE     := librsvg-$(librsvg_VERSION).tar.xz
 librsvg_URL      := https://download.gnome.org/sources/librsvg/$(call SHORT_PKG_VERSION,librsvg)/$(librsvg_FILE)
 
+# upstream version is 2.90.1
+glib_VERSION  := 2.91.0
+glib_CHECKSUM := f1bd54b70a58aabd408adf9bb48c5e9e2dfa7894c4c5be26ba508f088a704dcf
+glib_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/glib-[0-9]*.patch)))
+glib_SUBDIR   := glib-$(glib_VERSION)
+glib_FILE     := glib-$(glib_VERSION).tar.xz
+glib_URL      := https://download.gnome.org/sources/glib/$(call SHORT_PKG_VERSION,glib)/$(glib_FILE)
+
 # upstream version is 2.9.0
-expat_VERSION  := 2.10.0
-expat_CHECKSUM := c624ba2998fc65df1163a49641ff3f9ab73138b11641d92c86bee0fb01b1bc7f
+expat_VERSION  := 2.11.0
+expat_CHECKSUM := 61e7614b602201c28a189dafee78f5bceaee192bbde46a930752ff09cf5542fa
 expat_PATCHES  := $(realpath $(sort $(wildcard $(dir $(lastword $(MAKEFILE_LIST)))/patches/expat-[0-9]*.patch)))
 expat_SUBDIR   := expat-$(expat_VERSION)
 expat_FILE     := expat-$(expat_VERSION).tar.xz
